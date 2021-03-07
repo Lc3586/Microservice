@@ -1,0 +1,86 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Label="Globals">
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="DataAccess\**" />
+    <EmbeddedResource Remove="DataAccess\**" />
+    <None Remove="DataAccess\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Template\Referenced\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="IdentityModel" Version="5.0.1" />
+    <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="3.1.0" />
+    <PackageReference Include="Microservice.Library.Cache" Version="0.0.0-gf58a743371-alpha" />
+    <PackageReference Include="Microservice.Library.Configuration" Version="0.0.0-gf58a743371-alpha" />
+    <PackageReference Include="Microservice.Library.ConsoleTool" Version="0.0.0-gf58a743371-alpha" />
+    <PackageReference Include="Microservice.Library.File" Version="0.0.0-gf58a743371-alpha" />
+    <PackageReference Include="Microservice.Library.FreeSql" Version="0.0.0-gf58a743371-alpha" />
+    <PackageReference Include="Microservice.Library.Http" Version="0.0.0-gf58a743371-alpha" />
+    <PackageReference Include="Microservice.Library.NLogger" Version="0.0.0-gf58a743371-alpha" />
+    <PackageReference Include="Microservice.Library.OfficeDocuments" Version="0.0.0-g004c4ebb96-alpha" />
+    <PackageReference Include="Microservice.Library.OpenApi" Version="0.0.0-g004c4ebb96-alpha" />
+    <PackageReference Include="System.CodeDom" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="LanguageResource\Resource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resource.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Template\Model_Entity.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Model_Entity.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Template\Model_Expand.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Model_Expand.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="LanguageResource\Resource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Template\Model_Entity.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>Model_Entity.cs</LastGenOutput>
+    </None>
+    <None Update="Template\Model_Expand.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>Model_Expand.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" jsonconfig_4command_1json__JsonSchema="https://json.schemastore.org/appsettings" /></VisualStudio></ProjectExtensions>
+
+</Project>

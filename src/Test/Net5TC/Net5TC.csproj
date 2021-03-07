@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net5.0;netcoreapp3.1;net461</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
+    <PackageReference Include="IdHelper.Zookeeper" Version="1.5.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="DTO\" />
+    <Folder Include="Entity\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microservice.Library.DataMapping" Version="0.0.0-g12c826cc74-alpha" />
+    <PackageReference Include="Microservice.Library.Elasticsearch" Version="0.0.0-g12c826cc74-alpha" />
+    <PackageReference Include="Microservice.Library.FreeSql" Version="0.0.0-g12c826cc74-alpha" />
+    <PackageReference Include="Microservice.Library.OpenApi" Version="0.0.0-g12c826cc74-alpha" />
+    <PackageReference Include="System.Net.NameResolution" Version="4.3.0" />
+    <PackageReference Include="System.Net.Primitives" Version="4.3.0" />
+  </ItemGroup>
+
+</Project>

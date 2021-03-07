@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <DocumentationFile>Entity.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>Entity.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\Administrator\.nuget\packages\library.models\1.2.0.6-alpha\contentFiles\any\netstandard2.0\Library.Models.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microservice.Library.Elasticsearch" Version="0.0.0-gf58a743371-alpha" />
+    <PackageReference Include="Microservice.Library.FreeSql" Version="0.0.0-gf58a743371-alpha" />
+    <PackageReference Include="Microservice.Library.OpenApi" Version="0.0.0-gf58a743371-alpha" />
+    <PackageReference Include="Microservice.Library.Soap" Version="0.0.0-gf58a743371-alpha" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Entity.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
