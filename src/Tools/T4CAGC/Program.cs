@@ -5,16 +5,10 @@ using Microservice.Library.ConsoleTool;
 using Microservice.Library.Container;
 using Microservice.Library.Extension;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using T4CAGC.Config;
+using T4CAGC.Configures;
 using T4CAGC.Handler;
-using T4CAGC.Log;
 using T4CAGC.Model;
 
 namespace T4CAGC
@@ -25,92 +19,14 @@ namespace T4CAGC
     class Program
     {
         static Task<int> Main(string[] args) => CommandLineApplication.ExecuteAsync<Program>(args);
-        //{
-
-
-        //    var app = new CommandLineApplication
-        //    {
-        //        Description = config.Description
-        //    };
-        //    var version = app.VersionOption("--version", config.Version);
-        //    version.Description = config.Description;
-        //    var help = app.HelpOption();
-        //    return app.ExecuteAsync(args);
-
-        //    config.Command.Modulars
-        //        .OrderBy(modular => modular.Sort)
-        //        .ForEach(modular =>
-        //        {
-        //            app.Command(modular.Name, command =>
-        //            {
-        //                command.HelpOption("-h|--help");
-        //                command.Description = modular.Description;
-
-        //                var argument = command.Argument("method", "指定要执行的方法");
-
-        //                List<CommandOption> options = new List<CommandOption>();
-        //                Dictionary<string, Arg> options_arg = new Dictionary<string, Arg>();
-        //                modular.Args
-        //                    .OrderBy(o => o.Sort)
-        //                    .ForEach(arg =>
-        //                    {
-        //                        var option = command.Option(arg.Name, arg.Description, arg.Type_enum);
-        //                        options.Add(option);
-        //                        options_arg.Add(option.LongName, arg);
-        //                    });
-        //                command.OnExecute(() =>
-        //                    Handler(command.Name, argument.Value, options.Select(o => new Arg_internal()
-        //                    {
-        //                        Name = o.LongName,
-        //                        Method = options_arg[o.LongName].Method,
-        //                        Value = o.OptionType == CommandOptionType.MultipleValue
-        //                        ? o.Values == null || o.Values.Count == 0 ? (options_arg[o.LongName].Default.IsNullOrEmpty() ? null : (options_arg[o.LongName].DataType == "System.String" ? options_arg[o.LongName].Default.ToString().Split("&&").ToList() : (object)options_arg[o.LongName].Default.ToString().Split("&&").Select(v => v.ConvertToAny<object>(null, options_arg[o.LongName].DataType_Type)).ToList())) : (options_arg[o.LongName].DataType == "System.String" ? o.Values : (object)o.Values?.Select(v => v.ConvertToAny<object>(null, options_arg[o.LongName].DataType_Type)).ToList())
-        //                        : o.Value().ConvertToAny(Convert.ChangeType(options_arg[o.LongName].Default, options_arg[o.LongName].DataType_Type), options_arg[o.LongName].DataType_Type)
-        //                    }).ToList())
-        //                );
-        //            });
-        //        });
-
-        //}
 
         #region 配置
 
-        [Option("-C|--ConfigPath", Description = "配置文件路径: 不指定时使用默认配置.")]
+        [Option("-c|--ConfigPath", Description = "配置文件路径: 不指定时使用默认配置.")]
         public string ConfigPath { get; } = null;
 
-        [Option("-p|--OutputPath", Description = "输出路径. 默认程序根目录下 ./output文件夹")]
-        public string OutputPath { get; } = "./output";
-
-        [Option("-ds|--DataSource", Description = "数据源: CSV文件路径、数据库连接字符串.")]
-        string DataSource { get; }
-
-        [Option("-dt|--DataSourceType", Description = "数据源类型: CSV (电子表格)、DataBase(数据库). 默认为CSV.")]
-        public DataSourceType DataSourceType { get; } = DataSourceType.CSV;
-
-        [Option("-g|--GenType", Description = "生成类型: All (全部)、Api(接口项目)、Business(业务类库)、Model(业务模型类库)、Entity(实体类库)、Single(单个项目). 默认为All.")]
-        public GenType GenType { get; } = GenType.All;
-
-        [Option("-st|--SpecifyTable", Description = "指定表: 多张表请使用英文逗号进行分隔[,]. 默认指定所有的表.")]
-        public string SpecifyTable { get; } = null;
-
-        [Option("-it|--IgnoreTable", Description = "忽略表: 多张表请使用英文逗号进行分隔[,].")]
-        public string IgnoreTable { get; } = null;
-
-        [Option("-lt|--LoggerType", Description = "日志组件类型: Console(输出到控制台)、File(使用txt文件记录日志)、RDBMS(使用关系型数据库记录日志)、ElasticSearch(使用ElasticSearch记录日志). 默认 Console.")]
-        public LoggerType LoggerType { get; } = LoggerType.Console;
-
-        [Option("-ll|--MinLogLevel", Description = "需要记录的日志的最低等级: 0(Trace)、1(Debug)、2(Info)、3(Warn)、4(Error)、5(Fatal)、6(Off). 默认 0(Trace).")]
-        public int MinLogLevel { get; } = 0;
-
-        /// <summary>
-        /// 指定的表
-        /// </summary>
-        List<string> SpecifyTableList => SpecifyTable?.Split(',').ToList();
-
-        /// <summary>
-        /// 忽略的表
-        /// </summary>
-        List<string> IgnoreTableList => IgnoreTable?.Split(',').ToList();
+        [Option("-p|--OutputPath", Description = "输出路径")]
+        public string OutputPath { get; }
 
         #endregion
 
@@ -143,11 +59,17 @@ namespace T4CAGC
                     return 1;
                 }
 
+                if (!OutputPath.IsNullOrWhiteSpace())
+                    config.OutputPath = OutputPath;
+
                 var services = new ServiceCollection();
 
                 services.AddSingleton(config)
                     .AddLogging()
-                    .RegisterNLog(LoggerType, MinLogLevel);
+                    .RegisterNLog(config.LoggerType, config.MinLogLevel);
+
+                if (config.DataSourceType == DataSourceType.DataBase)
+                    services.RegisterFreeSql(config.DataSource, config.DataBaseType);
 
                 AutofacHelper.Container = new AutofacServiceProviderFactory()
                     .CreateBuilder(services)
@@ -155,27 +77,7 @@ namespace T4CAGC
 
                 "已应用Autofac容器.".ConsoleWrite();
 
-                var tables = DataSourceType switch
-                {
-                    DataSourceType.CSV => CSVHandler.Analysis(DataSource),
-                    _ => DataBaseHandler.Analysis(DataSource)
-                };
-
-                //if (GenType == GenType.All)
-                //    GenerateHandler.GenerateAll(tables, config);
-                //else if (GenType == GenType.Single)
-                //    GenerateHandler.GenerateSingle(tables, config);
-                //else
-                //{
-                //    if (GenType == GenType.Api)
-                //        GenerateHandler.GenerateApi(tables, config);
-                //    if (GenType == GenType.Business)
-                //        GenerateHandler.GenerateBusiness(tables, config);
-                //    if (GenType == GenType.Model)
-                //        GenerateHandler.GenerateModel(tables, config);
-                //    if (GenType == GenType.Entity)
-                //        GenerateHandler.GenerateEntity(tables, config);
-                //}
+                GenerateHandler.Generate();
 
                 return 0;
             }

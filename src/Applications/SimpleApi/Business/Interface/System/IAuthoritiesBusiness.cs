@@ -31,6 +31,15 @@ namespace Business.Interface.System
         void AuthorizeRoleForUser(Model.System.AuthorizeDTO.RoleForUser data, bool runTransaction = true);
 
         /// <summary>
+        /// 授权角色给用户
+        /// </summary>
+        /// <param name="roleId">角色Id</param>
+        /// <param name="userId">用户Id</param>
+        /// <param name="allChilds">同时授权所有子集角色</param>
+        /// <param name="runTransaction">运行事务（默认运行）</param>
+        void AuthorizeRoleForUser(string roleId, string userId, bool allChilds = false, bool runTransaction = true);
+
+        /// <summary>
         /// 授权角色给会员
         /// </summary>
         /// <param name="data">数据</param>
@@ -38,10 +47,29 @@ namespace Business.Interface.System
         void AuthorizeRoleForMember(Model.System.AuthorizeDTO.RoleForMember data, bool runTransaction = true);
 
         /// <summary>
+        /// 授权角色给会员
+        /// </summary>
+        /// <param name="roleId">角色Id</param>
+        /// <param name="memberId">会员Id</param>
+        /// <param name="allChilds">同时授权所有子集角色</param>
+        /// <param name="runTransaction">运行事务（默认运行）</param>
+        void AuthorizeRoleForMember(string roleId, string memberId, bool allChilds = false, bool runTransaction = true);
+
+        /// <summary>
         /// 授权菜单给用户
         /// </summary>
         /// <param name="data">数据</param>
-        void AuthorizeMenuForUser(Model.System.AuthorizeDTO.MenuForUser data);
+        /// <param name="runTransaction">运行事务（默认运行）</param>
+        void AuthorizeMenuForUser(Model.System.AuthorizeDTO.MenuForUser data, bool runTransaction = true);
+
+        /// <summary>
+        /// 授权菜单给用户
+        /// </summary>
+        /// <param name="menuId">菜单Id</param>
+        /// <param name="userId">用户Id</param>
+        /// <param name="allChilds">同时授权所有子集菜单</param>
+        /// <param name="runTransaction">运行事务（默认运行）</param>
+        void AuthorizeMenuForUser(string menuId, string userId, bool allChilds = false, bool runTransaction = true);
 
         /// <summary>
         /// 授权资源给用户
@@ -53,7 +81,17 @@ namespace Business.Interface.System
         /// 授权菜单给角色
         /// </summary>
         /// <param name="data">数据</param>
-        void AuthorizeMenuForRole(Model.System.AuthorizeDTO.MenuForRole data);
+        /// <param name="runTransaction">运行事务（默认运行）</param>
+        void AuthorizeMenuForRole(Model.System.AuthorizeDTO.MenuForRole data, bool runTransaction = true);
+
+        /// <summary>
+        /// 授权菜单给角色
+        /// </summary>
+        /// <param name="menuId">菜单Id</param>
+        /// <param name="roleId">角色Id</param>
+        /// <param name="allChilds">同时授权所有子集菜单</param>
+        /// <param name="runTransaction">运行事务（默认运行）</param>
+        void AuthorizeMenuForRole(string menuId, string roleId, bool allChilds = false, bool runTransaction = true);
 
         /// <summary>
         /// 授权资源给角色
@@ -129,6 +167,15 @@ namespace Business.Interface.System
         void RevocationRoleForUser(Model.System.AuthorizeDTO.RoleForUser data, bool runTransaction = true);
 
         /// <summary>
+        /// 撤销用户的角色授权
+        /// </summary>
+        /// <param name="roleId">角色Id</param>
+        /// <param name="userId">用户Id</param>
+        /// <param name="allChilds">同时撤销所有子集角色授权</param>
+        /// <param name="runTransaction">运行事务（默认运行）</param>
+        void RevocationRoleForUser(string roleId, string userId, bool allChilds = false, bool runTransaction = true);
+
+        /// <summary>
         /// 撤销会员的角色授权
         /// </summary>
         /// <param name="data">数据</param>
@@ -136,11 +183,29 @@ namespace Business.Interface.System
         void RevocationRoleForMember(Model.System.AuthorizeDTO.RoleForMember data, bool runTransaction = true);
 
         /// <summary>
+        /// 撤销会员的角色授权
+        /// </summary>
+        /// <param name="roleId">角色Id</param>
+        /// <param name="memberId">会员Id</param>
+        /// <param name="allChilds">同时撤销所有子集角色授权</param>
+        /// <param name="runTransaction">运行事务（默认运行）</param>
+        void RevocationRoleForMember(string roleId, string memberId, bool allChilds = false, bool runTransaction = true);
+
+        /// <summary>
         /// 撤销用户的菜单授权
         /// </summary>
         /// <param name="data">数据</param>
         /// <param name="runTransaction">运行事务（默认运行）</param>
         void RevocationMenuForUser(Model.System.AuthorizeDTO.MenuForUser data, bool runTransaction = true);
+
+        /// <summary>
+        /// 撤销用户的菜单授权
+        /// </summary>
+        /// <param name="menuId">菜单Id</param>
+        /// <param name="userId">用户Id</param>
+        /// <param name="allChilds">同时撤销所有子集菜单授权</param>
+        /// <param name="runTransaction">运行事务（默认运行）</param>
+        void RevocationMenuForUser(string menuId, string userId, bool allChilds = false, bool runTransaction = true);
 
         /// <summary>
         /// 撤销用户的资源授权
@@ -155,6 +220,15 @@ namespace Business.Interface.System
         /// <param name="data">数据</param>
         /// <param name="runTransaction">运行事务（默认运行）</param>
         void RevocationMenuForRole(Model.System.AuthorizeDTO.MenuForRole data, bool runTransaction = true);
+
+        /// <summary>
+        /// 撤销角色的菜单授权
+        /// </summary>
+        /// <param name="menuId">菜单Id</param>
+        /// <param name="roleId">角色Id</param>
+        /// <param name="allChilds">同时撤销所有子集菜单授权</param>
+        /// <param name="runTransaction">运行事务（默认运行）</param>
+        void RevocationMenuForRole(string menuId, string roleId, bool allChilds = false, bool runTransaction = true);
 
         /// <summary>
         /// 撤销角色的资源授权

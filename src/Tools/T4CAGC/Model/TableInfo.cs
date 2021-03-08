@@ -13,14 +13,9 @@ namespace T4CAGC.Model
         public string Name { get; set; }
 
         /// <summary>
-        /// 注释
-        /// </summary>
-        public string Remark { get; set; } = string.Empty;
-
-        /// <summary>
         /// 说明
         /// </summary>
-        public string Description { get; set; } = string.Empty;
+        public string Remark { get; set; } = string.Empty;
 
         /// <summary>
         /// 字段集合

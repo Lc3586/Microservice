@@ -1,11 +1,7 @@
-﻿using McMaster.Extensions.CommandLineUtils;
-using Microsoft.Extensions.Configuration;
-using System;
+﻿using Microservice.Library.Container;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
+using System.Linq;
 using T4CAGC.Model;
-using T4CAGC.Template;
 
 namespace T4CAGC.Handler
 {
@@ -14,13 +10,49 @@ namespace T4CAGC.Handler
     /// </summary>
     public class GenerateHandler
     {
-        public GenerateHandler()
+        public GenerateHandler(List<TableInfo> tables)
         {
-
+            Tables = tables;
         }
 
-        public static void GenerateEntityModel(List<TableInfo> tables)
+        readonly List<TableInfo> Tables;
+
+        readonly GenerateConfig Config = AutofacHelper.GetService<GenerateConfig>();
+
+        List<TableInfo> GetTables()
         {
+            var tables = Config.DataSourceType switch
+            {
+                DataSourceType.CSV => DataSourceHandler.GetCSVData(
+                    Config.DataSource,
+                    Config.SpecifyTable?.Split(',').ToList(),
+                    Config.IgnoreTable?.Split(',').ToList()),
+                _ => DataSourceHandler.GetDataBaseData(
+                    Config.TableType,
+                    Config.SpecifyTable?.Split(',').ToList(),
+                    Config.IgnoreTable?.Split(',').ToList())
+            };
+
+            return tables;
+        }
+
+        public static void Generate()
+        {
+            //if (GenType == GenType.All)
+            //    GenerateHandler.GenerateAll(tables, config);
+            //else if (GenType == GenType.Single)
+            //    GenerateHandler.GenerateSingle(tables, config);
+            //else
+            //{
+            //    if (GenType == GenType.Api)
+            //        GenerateHandler.GenerateApi(tables, config);
+            //    if (GenType == GenType.Business)
+            //        GenerateHandler.GenerateBusiness(tables, config);
+            //    if (GenType == GenType.Model)
+            //        GenerateHandler.GenerateModel(tables, config);
+            //    if (GenType == GenType.Entity)
+            //        GenerateHandler.GenerateEntity(tables, config);
+            //}
             //if (config.Language.IsNullOrEmpty())
             //    throw new Exception("Language must be certainty");
             //if (!config.DbType_Type.HasValue)

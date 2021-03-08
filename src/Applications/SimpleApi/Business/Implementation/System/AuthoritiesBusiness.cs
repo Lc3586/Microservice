@@ -253,6 +253,24 @@ namespace Business.Implementation.System
                 handler();
         }
 
+        public void AuthorizeRoleForUser(string roleId, string userId, bool allChilds = false, bool runTransaction = true)
+        {
+            List<string> roleIds;
+            var q = Repository_Role.Select.Where($"a.[Id] = '{roleId}' AND a.[Enable] = 1");
+
+            if (allChilds)
+                q = q.AsTreeCte();
+
+            roleIds = q.ToList(o => o.Id);
+
+            if (roleIds.Any())
+                AuthorizeRoleForUser(new RoleForUser
+                {
+                    UserIds = new List<string> { userId },
+                    RoleIds = roleIds
+                }, runTransaction);
+        }
+
         public void AuthorizeRoleForMember(RoleForMember data, bool runTransaction = true)
         {
             var members = data.MemberIds.Select(o => GetMemberWithCheck(o));
@@ -313,7 +331,25 @@ namespace Business.Implementation.System
                 handler();
         }
 
-        public void AuthorizeMenuForUser(MenuForUser data)
+        public void AuthorizeRoleForMember(string roleId, string memberId, bool allChilds = false, bool runTransaction = true)
+        {
+            List<string> roleIds;
+            var q = Repository_Role.Select.Where($"a.[Id] = '{roleId}' AND a.[Enable] = 1");
+
+            if (allChilds)
+                q = q.AsTreeCte();
+
+            roleIds = q.ToList(o => o.Id);
+
+            if (roleIds.Any())
+                AuthorizeRoleForMember(new RoleForMember
+                {
+                    MemberIds = new List<string> { memberId },
+                    RoleIds = roleIds
+                }, runTransaction);
+        }
+
+        public void AuthorizeMenuForUser(MenuForUser data, bool runTransaction = true)
         {
             var users = data.UserIds.Select(o => GetUserWithCheck(o));
 
@@ -327,7 +363,7 @@ namespace Business.Implementation.System
             if (!menus.Any())
                 throw new ApplicationException("没有可供授权的菜单.");
 
-            (bool success, Exception ex) = Orm.RunTransaction(() =>
+            void handler()
             {
                 var orId = OperationRecordBusiness.Create(new Common_OperationRecord
                 {
@@ -343,10 +379,35 @@ namespace Business.Implementation.System
                     UserId = p.Id,
                     MenuId = o.Id
                 })));
-            });
+            }
 
-            if (!success)
-                throw new ApplicationException("授权失败.", ex);
+            if (runTransaction)
+            {
+                (bool success, Exception ex) = Orm.RunTransaction(handler);
+
+                if (!success)
+                    throw new ApplicationException("授权失败.", ex);
+            }
+            else
+                handler();
+        }
+
+        public void AuthorizeMenuForUser(string menuId, string userId, bool allChilds = false, bool runTransaction = true)
+        {
+            List<string> menuIds;
+            var q = Repository_Menu.Select.Where($"a.[Id] = '{menuId}' AND a.[Enable] = 1");
+
+            if (allChilds)
+                q = q.AsTreeCte();
+
+            menuIds = q.ToList(o => o.Id);
+
+            if (menuIds.Any())
+                AuthorizeMenuForUser(new MenuForUser
+                {
+                    UserIds = new List<string> { userId },
+                    MenuIds = menuIds
+                }, runTransaction);
         }
 
         public void AuthorizeResourcesForUser(ResourcesForUser data)
@@ -385,7 +446,7 @@ namespace Business.Implementation.System
                 throw new ApplicationException("授权失败.", ex);
         }
 
-        public void AuthorizeMenuForRole(MenuForRole data)
+        public void AuthorizeMenuForRole(MenuForRole data, bool runTransaction = true)
         {
             var roles = data.RoleIds.Select(o => GetRoleWithCheck(o));
 
@@ -399,7 +460,7 @@ namespace Business.Implementation.System
             if (!menus.Any())
                 throw new ApplicationException("没有可供授权的菜单.");
 
-            (bool success, Exception ex) = Orm.RunTransaction(() =>
+            void handler()
             {
                 var orId = OperationRecordBusiness.Create(new Common_OperationRecord
                 {
@@ -415,10 +476,35 @@ namespace Business.Implementation.System
                     RoleId = p.Id,
                     MenuId = o.Id
                 })));
-            });
+            }
 
-            if (!success)
-                throw new ApplicationException("授权失败.", ex);
+            if (runTransaction)
+            {
+                (bool success, Exception ex) = Orm.RunTransaction(handler);
+
+                if (!success)
+                    throw new ApplicationException("授权失败.", ex);
+            }
+            else
+                handler();
+        }
+
+        public void AuthorizeMenuForRole(string menuId, string roleId, bool allChilds = false, bool runTransaction = true)
+        {
+            List<string> menuIds;
+            var q = Repository_Menu.Select.Where($"a.[Id] = '{menuId}' AND a.[Enable] = 1");
+
+            if (allChilds)
+                q = q.AsTreeCte();
+
+            menuIds = q.ToList(o => o.Id);
+
+            if (menuIds.Any())
+                AuthorizeMenuForRole(new MenuForRole
+                {
+                    RoleIds = new List<string> { roleId },
+                    MenuIds = menuIds
+                }, runTransaction);
         }
 
         public void AuthorizeResourcesForRole(ResourcesForRole data)
@@ -579,6 +665,24 @@ namespace Business.Implementation.System
                 handler();
         }
 
+        public void RevocationRoleForUser(string roleId, string userId, bool allChilds = false, bool runTransaction = true)
+        {
+            List<string> roleIds;
+            var q = Repository_Role.Select.Where($"a.[Id] = '{roleId}' AND a.[Enable] = 1");
+
+            if (allChilds)
+                q = q.AsTreeCte();
+
+            roleIds = q.ToList(o => o.Id);
+
+            if (roleIds.Any())
+                RevocationRoleForUser(new RoleForUser
+                {
+                    UserIds = new List<string> { userId },
+                    RoleIds = roleIds
+                }, runTransaction);
+        }
+
         public void RevocationRoleForMember(RoleForMember data, bool runTransaction = true)
         {
             var members = data.MemberIds.Select(o => GetMemberWithCheck(o));
@@ -621,6 +725,24 @@ namespace Business.Implementation.System
                 handler();
         }
 
+        public void RevocationRoleForMember(string roleId, string memberId, bool allChilds = false, bool runTransaction = true)
+        {
+            List<string> roleIds;
+            var q = Repository_Role.Select.Where($"a.[Id] = '{roleId}' AND a.[Enable] = 1");
+
+            if (allChilds)
+                q = q.AsTreeCte();
+
+            roleIds = q.ToList(o => o.Id);
+
+            if (roleIds.Any())
+                RevocationRoleForMember(new RoleForMember
+                {
+                    MemberIds = new List<string> { memberId },
+                    RoleIds = roleIds
+                }, runTransaction);
+        }
+
         public void RevocationMenuForUser(MenuForUser data, bool runTransaction = true)
         {
             var users = data.UserIds.Select(o => GetUserWithCheck(o));
@@ -661,6 +783,24 @@ namespace Business.Implementation.System
             }
             else
                 handler();
+        }
+
+        public void RevocationMenuForUser(string menuId, string userId, bool allChilds = false, bool runTransaction = true)
+        {
+            List<string> menuIds;
+            var q = Repository_Menu.Select.Where($"a.[Id] = '{menuId}' AND a.[Enable] = 1");
+
+            if (allChilds)
+                q = q.AsTreeCte();
+
+            menuIds = q.ToList(o => o.Id);
+
+            if (menuIds.Any())
+                RevocationMenuForUser(new MenuForUser
+                {
+                    UserIds = new List<string> { userId },
+                    MenuIds = menuIds
+                }, runTransaction);
         }
 
         public void RevocationResourcesForUser(ResourcesForUser data, bool runTransaction = true)
@@ -745,6 +885,24 @@ namespace Business.Implementation.System
             }
             else
                 handler();
+        }
+
+        public void RevocationMenuForRole(string menuId, string roleId, bool allChilds = false, bool runTransaction = true)
+        {
+            List<string> menuIds;
+            var q = Repository_Menu.Select.Where($"a.[Id] = '{menuId}' AND a.[Enable] = 1");
+
+            if (allChilds)
+                q = q.AsTreeCte();
+
+            menuIds = q.ToList(o => o.Id);
+
+            if (menuIds.Any())
+                RevocationMenuForRole(new MenuForRole
+                {
+                    RoleIds = new List<string> { roleId },
+                    MenuIds = menuIds
+                }, runTransaction);
         }
 
         public void RevocationResourcesForRole(ResourcesForRole data, bool runTransaction = true)

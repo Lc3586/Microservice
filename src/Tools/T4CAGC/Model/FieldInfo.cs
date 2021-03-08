@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace T4CAGC.Model
 {
@@ -17,14 +14,19 @@ namespace T4CAGC.Model
         public string Name { get; set; }
 
         /// <summary>
-        /// 注释
+        /// 主键
         /// </summary>
-        public string Remark { get; set; } = string.Empty;
+        public bool Primary { get; set; } = false;
 
         /// <summary>
         /// 说明
         /// </summary>
         public string Description { get; set; } = string.Empty;
+
+        /// <summary>
+        /// 注释
+        /// </summary>
+        public string Remark { get; set; } = string.Empty;
 
         /// <summary>
         /// 索引类型
@@ -47,9 +49,14 @@ namespace T4CAGC.Model
         public int Length { get; set; }
 
         /// <summary>
-        /// 精度
+        /// 小数位
         /// </summary>
-        public List<int> Precision { get; set; }
+        public int Scale { get; set; }
+
+        /// <summary>
+        /// 数据库类型
+        /// </summary>
+        public string DbType { get; set; }
 
         /// <summary>
         /// 标签
@@ -57,10 +64,10 @@ namespace T4CAGC.Model
         public List<string> Tag { get; set; }
 
         /// <summary>
-        /// 标签
+        /// 标签属性
         /// </summary>
         /// <remarks>匹配<see cref="Microservice.Library.OpenApi.Annotations.OpenApiSchemaFormat"/>属性名</remarks>
-        public string OAS { get; set; }
+        public string OASF { get; set; }
 
 
     }

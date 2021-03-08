@@ -642,6 +642,15 @@
             <param name="data">数据</param>
             <returns></returns>
         </member>
+        <member name="M:Api.Controllers.AuthoritiesController.AuthorizeRoleForUser(System.String,System.String,System.Boolean)">
+            <summary>
+            为用户授权角色
+            </summary>
+            <param name="roleId">角色Id</param>
+            <param name="userId">用户Id</param>
+            <param name="allChilds">同时授权所有子集角色</param>
+            <returns></returns>
+        </member>
         <member name="M:Api.Controllers.AuthoritiesController.AuthorizeRoleForMember(Model.System.AuthorizeDTO.RoleForMember)">
             <summary>
             为会员授权角色
@@ -649,11 +658,29 @@
             <param name="data">数据</param>
             <returns></returns>
         </member>
+        <member name="M:Api.Controllers.AuthoritiesController.AuthorizeRoleForMember(System.String,System.String,System.Boolean)">
+            <summary>
+            为会员授权角色
+            </summary>
+            <param name="roleId">角色Id</param>
+            <param name="memberId">会员Id</param>
+            <param name="allChilds">同时授权所有子集角色</param>
+            <returns></returns>
+        </member>
         <member name="M:Api.Controllers.AuthoritiesController.AuthorizeMenuForUser(Model.System.AuthorizeDTO.MenuForUser)">
             <summary>
             为用户授权菜单
             </summary>
             <param name="data">数据</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.AuthoritiesController.AuthorizeMenuForUser(System.String,System.String,System.Boolean)">
+            <summary>
+            为用户授权菜单
+            </summary>
+            <param name="menuId">菜单Id</param>
+            <param name="userId">用户Id</param>
+            <param name="allChilds">同时授权所有子集菜单</param>
             <returns></returns>
         </member>
         <member name="M:Api.Controllers.AuthoritiesController.AuthorizeResourcesForUser(Model.System.AuthorizeDTO.ResourcesForUser)">
@@ -668,6 +695,15 @@
             为角色授权菜单
             </summary>
             <param name="data">数据</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.AuthoritiesController.AuthorizeMenuForRole(System.String,System.String,System.Boolean)">
+            <summary>
+            为角色授权菜单
+            </summary>
+            <param name="menuId">菜单Id</param>
+            <param name="roleId">角色Id</param>
+            <param name="allChilds">同时授权所有子集菜单</param>
             <returns></returns>
         </member>
         <member name="M:Api.Controllers.AuthoritiesController.AuthorizeResourcesForRole(Model.System.AuthorizeDTO.ResourcesForRole)">
@@ -740,6 +776,15 @@
             <param name="data">数据</param>
             <returns></returns>
         </member>
+        <member name="M:Api.Controllers.AuthoritiesController.RevocationRoleForUser(System.String,System.String,System.Boolean)">
+            <summary>
+            撤销用户的角色授权
+            </summary>
+            <param name="roleId">角色Id</param>
+            <param name="userId">用户Id</param>
+            <param name="allChilds">同时撤销所有子集角色授权</param>
+            <returns></returns>
+        </member>
         <member name="M:Api.Controllers.AuthoritiesController.RevocationRoleForMember(Model.System.AuthorizeDTO.RoleForMember)">
             <summary>
             撤销会员的角色授权
@@ -747,11 +792,29 @@
             <param name="data">数据</param>
             <returns></returns>
         </member>
+        <member name="M:Api.Controllers.AuthoritiesController.RevocationRoleForMember(System.String,System.String,System.Boolean)">
+            <summary>
+            撤销会员的角色授权
+            </summary>
+            <param name="roleId">角色Id</param>
+            <param name="memberId">会员Id</param>
+            <param name="allChilds">同时撤销所有子集角色授权</param>
+            <returns></returns>
+        </member>
         <member name="M:Api.Controllers.AuthoritiesController.RevocationMenuForUser(Model.System.AuthorizeDTO.MenuForUser)">
             <summary>
             撤销用户的菜单授权
             </summary>
             <param name="data">数据</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.AuthoritiesController.RevocationMenuForUser(System.String,System.String,System.Boolean)">
+            <summary>
+            撤销用户的菜单授权
+            </summary>
+            <param name="menuId">菜单Id</param>
+            <param name="userId">用户Id</param>
+            <param name="allChilds">同时撤销所有子集菜单授权</param>
             <returns></returns>
         </member>
         <member name="M:Api.Controllers.AuthoritiesController.RevocationResourcesForUser(Model.System.AuthorizeDTO.ResourcesForUser)">
@@ -766,6 +829,15 @@
             撤销角色的菜单授权
             </summary>
             <param name="data">数据</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.AuthoritiesController.RevocationMenuForRole(System.String,System.String,System.Boolean)">
+            <summary>
+            撤销角色的菜单授权
+            </summary>
+            <param name="menuId">菜单Id</param>
+            <param name="roleId">角色Id</param>
+            <param name="allChilds">同时撤销所有子集菜单授权</param>
             <returns></returns>
         </member>
         <member name="M:Api.Controllers.AuthoritiesController.RevocationResourcesForRole(Model.System.AuthorizeDTO.ResourcesForRole)">

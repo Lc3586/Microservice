@@ -598,6 +598,15 @@
             <param name="data">数据</param>
             <param name="runTransaction">运行事务（默认运行）</param>
         </member>
+        <member name="M:Business.Interface.System.IAuthoritiesBusiness.AuthorizeRoleForUser(System.String,System.String,System.Boolean,System.Boolean)">
+            <summary>
+            授权角色给用户
+            </summary>
+            <param name="roleId">角色Id</param>
+            <param name="userId">用户Id</param>
+            <param name="allChilds">同时授权所有子集角色</param>
+            <param name="runTransaction">运行事务（默认运行）</param>
+        </member>
         <member name="M:Business.Interface.System.IAuthoritiesBusiness.AuthorizeRoleForMember(Model.System.AuthorizeDTO.RoleForMember,System.Boolean)">
             <summary>
             授权角色给会员
@@ -605,11 +614,30 @@
             <param name="data">数据</param>
             <param name="runTransaction">运行事务（默认运行）</param>
         </member>
-        <member name="M:Business.Interface.System.IAuthoritiesBusiness.AuthorizeMenuForUser(Model.System.AuthorizeDTO.MenuForUser)">
+        <member name="M:Business.Interface.System.IAuthoritiesBusiness.AuthorizeRoleForMember(System.String,System.String,System.Boolean,System.Boolean)">
+            <summary>
+            授权角色给会员
+            </summary>
+            <param name="roleId">角色Id</param>
+            <param name="memberId">会员Id</param>
+            <param name="allChilds">同时授权所有子集角色</param>
+            <param name="runTransaction">运行事务（默认运行）</param>
+        </member>
+        <member name="M:Business.Interface.System.IAuthoritiesBusiness.AuthorizeMenuForUser(Model.System.AuthorizeDTO.MenuForUser,System.Boolean)">
             <summary>
             授权菜单给用户
             </summary>
             <param name="data">数据</param>
+            <param name="runTransaction">运行事务（默认运行）</param>
+        </member>
+        <member name="M:Business.Interface.System.IAuthoritiesBusiness.AuthorizeMenuForUser(System.String,System.String,System.Boolean,System.Boolean)">
+            <summary>
+            授权菜单给用户
+            </summary>
+            <param name="menuId">菜单Id</param>
+            <param name="userId">用户Id</param>
+            <param name="allChilds">同时授权所有子集菜单</param>
+            <param name="runTransaction">运行事务（默认运行）</param>
         </member>
         <member name="M:Business.Interface.System.IAuthoritiesBusiness.AuthorizeResourcesForUser(Model.System.AuthorizeDTO.ResourcesForUser)">
             <summary>
@@ -617,11 +645,21 @@
             </summary>
             <param name="data">数据</param>
         </member>
-        <member name="M:Business.Interface.System.IAuthoritiesBusiness.AuthorizeMenuForRole(Model.System.AuthorizeDTO.MenuForRole)">
+        <member name="M:Business.Interface.System.IAuthoritiesBusiness.AuthorizeMenuForRole(Model.System.AuthorizeDTO.MenuForRole,System.Boolean)">
             <summary>
             授权菜单给角色
             </summary>
             <param name="data">数据</param>
+            <param name="runTransaction">运行事务（默认运行）</param>
+        </member>
+        <member name="M:Business.Interface.System.IAuthoritiesBusiness.AuthorizeMenuForRole(System.String,System.String,System.Boolean,System.Boolean)">
+            <summary>
+            授权菜单给角色
+            </summary>
+            <param name="menuId">菜单Id</param>
+            <param name="roleId">角色Id</param>
+            <param name="allChilds">同时授权所有子集菜单</param>
+            <param name="runTransaction">运行事务（默认运行）</param>
         </member>
         <member name="M:Business.Interface.System.IAuthoritiesBusiness.AuthorizeResourcesForRole(Model.System.AuthorizeDTO.ResourcesForRole)">
             <summary>
@@ -692,6 +730,15 @@
             <param name="data">数据</param>
             <param name="runTransaction">运行事务（默认运行）</param>
         </member>
+        <member name="M:Business.Interface.System.IAuthoritiesBusiness.RevocationRoleForUser(System.String,System.String,System.Boolean,System.Boolean)">
+            <summary>
+            撤销用户的角色授权
+            </summary>
+            <param name="roleId">角色Id</param>
+            <param name="userId">用户Id</param>
+            <param name="allChilds">同时撤销所有子集角色授权</param>
+            <param name="runTransaction">运行事务（默认运行）</param>
+        </member>
         <member name="M:Business.Interface.System.IAuthoritiesBusiness.RevocationRoleForMember(Model.System.AuthorizeDTO.RoleForMember,System.Boolean)">
             <summary>
             撤销会员的角色授权
@@ -699,11 +746,29 @@
             <param name="data">数据</param>
             <param name="runTransaction">运行事务（默认运行）</param>
         </member>
+        <member name="M:Business.Interface.System.IAuthoritiesBusiness.RevocationRoleForMember(System.String,System.String,System.Boolean,System.Boolean)">
+            <summary>
+            撤销会员的角色授权
+            </summary>
+            <param name="roleId">角色Id</param>
+            <param name="memberId">会员Id</param>
+            <param name="allChilds">同时撤销所有子集角色授权</param>
+            <param name="runTransaction">运行事务（默认运行）</param>
+        </member>
         <member name="M:Business.Interface.System.IAuthoritiesBusiness.RevocationMenuForUser(Model.System.AuthorizeDTO.MenuForUser,System.Boolean)">
             <summary>
             撤销用户的菜单授权
             </summary>
             <param name="data">数据</param>
+            <param name="runTransaction">运行事务（默认运行）</param>
+        </member>
+        <member name="M:Business.Interface.System.IAuthoritiesBusiness.RevocationMenuForUser(System.String,System.String,System.Boolean,System.Boolean)">
+            <summary>
+            撤销用户的菜单授权
+            </summary>
+            <param name="menuId">菜单Id</param>
+            <param name="userId">用户Id</param>
+            <param name="allChilds">同时撤销所有子集菜单授权</param>
             <param name="runTransaction">运行事务（默认运行）</param>
         </member>
         <member name="M:Business.Interface.System.IAuthoritiesBusiness.RevocationResourcesForUser(Model.System.AuthorizeDTO.ResourcesForUser,System.Boolean)">
@@ -718,6 +783,15 @@
             撤销角色的菜单授权
             </summary>
             <param name="data">数据</param>
+            <param name="runTransaction">运行事务（默认运行）</param>
+        </member>
+        <member name="M:Business.Interface.System.IAuthoritiesBusiness.RevocationMenuForRole(System.String,System.String,System.Boolean,System.Boolean)">
+            <summary>
+            撤销角色的菜单授权
+            </summary>
+            <param name="menuId">菜单Id</param>
+            <param name="roleId">角色Id</param>
+            <param name="allChilds">同时撤销所有子集菜单授权</param>
             <param name="runTransaction">运行事务（默认运行）</param>
         </member>
         <member name="M:Business.Interface.System.IAuthoritiesBusiness.RevocationResourcesForRole(Model.System.AuthorizeDTO.ResourcesForRole,System.Boolean)">

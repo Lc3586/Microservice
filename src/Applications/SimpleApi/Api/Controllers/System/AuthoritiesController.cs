@@ -18,7 +18,6 @@ namespace Api.Controllers
     [Route("/authorities")]
     [ApiPermission]
     [CheckModel]
-    [SwaggerTag("权限接口")]
     public class AuthoritiesController : BaseApiController
     {
         #region DI
@@ -40,10 +39,25 @@ namespace Api.Controllers
         /// <param name="data">数据</param>
         /// <returns></returns>
         [HttpPost("authorize-role-for-user")]
-        [SwaggerOperation("AAA", "aaa", Tags = new[] { "123" })]
+        [SwaggerOperation(Tags = new[] { "授权" })]
         public async Task<object> AuthorizeRoleForUser([FromBody] RoleForUser data)
         {
             AuthoritiesBusiness.AuthorizeRoleForUser(data);
+            return await Task.FromResult(Success());
+        }
+
+        /// <summary>
+        /// 为用户授权角色
+        /// </summary>
+        /// <param name="roleId">角色Id</param>
+        /// <param name="userId">用户Id</param>
+        /// <param name="allChilds">同时授权所有子集角色</param>
+        /// <returns></returns>
+        [HttpPost("authorize-role-for-user/{roleId}/{userId}")]
+        [SwaggerOperation(Tags = new[] { "授权" })]
+        public async Task<object> AuthorizeRoleForUser(string roleId, string userId, bool allChilds = false)
+        {
+            AuthoritiesBusiness.AuthorizeRoleForUser(roleId, userId, allChilds);
             return await Task.FromResult(Success());
         }
 
@@ -53,9 +67,25 @@ namespace Api.Controllers
         /// <param name="data">数据</param>
         /// <returns></returns>
         [HttpPost("authorize-role-for-member")]
+        [SwaggerOperation(Tags = new[] { "授权" })]
         public async Task<object> AuthorizeRoleForMember([FromBody] RoleForMember data)
         {
             AuthoritiesBusiness.AuthorizeRoleForMember(data);
+            return await Task.FromResult(Success());
+        }
+
+        /// <summary>
+        /// 为会员授权角色
+        /// </summary>
+        /// <param name="roleId">角色Id</param>
+        /// <param name="memberId">会员Id</param>
+        /// <param name="allChilds">同时授权所有子集角色</param>
+        /// <returns></returns>
+        [HttpPost("authorize-role-for-member/{roleId}/{memberId}")]
+        [SwaggerOperation(Tags = new[] { "授权" })]
+        public async Task<object> AuthorizeRoleForMember(string roleId, string memberId, bool allChilds = false)
+        {
+            AuthoritiesBusiness.AuthorizeRoleForMember(roleId, memberId, allChilds);
             return await Task.FromResult(Success());
         }
 
@@ -65,9 +95,25 @@ namespace Api.Controllers
         /// <param name="data">数据</param>
         /// <returns></returns>
         [HttpPost("authorize-menu-for-user")]
+        [SwaggerOperation(Tags = new[] { "授权" })]
         public async Task<object> AuthorizeMenuForUser([FromBody] MenuForUser data)
         {
             AuthoritiesBusiness.AuthorizeMenuForUser(data);
+            return await Task.FromResult(Success());
+        }
+
+        /// <summary>
+        /// 为用户授权菜单
+        /// </summary>
+        /// <param name="menuId">菜单Id</param>
+        /// <param name="userId">用户Id</param>
+        /// <param name="allChilds">同时授权所有子集菜单</param>
+        /// <returns></returns>
+        [HttpPost("authorize-menu-for-user/{menuId}/{userId}")]
+        [SwaggerOperation(Tags = new[] { "授权" })]
+        public async Task<object> AuthorizeMenuForUser(string menuId, string userId, bool allChilds = false)
+        {
+            AuthoritiesBusiness.AuthorizeMenuForUser(menuId, userId, allChilds);
             return await Task.FromResult(Success());
         }
 
@@ -77,6 +123,7 @@ namespace Api.Controllers
         /// <param name="data">数据</param>
         /// <returns></returns>
         [HttpPost("authorize-resources-for-user")]
+        [SwaggerOperation(Tags = new[] { "授权" })]
         public async Task<object> AuthorizeResourcesForUser([FromBody] ResourcesForUser data)
         {
             AuthoritiesBusiness.AuthorizeResourcesForUser(data);
@@ -89,9 +136,25 @@ namespace Api.Controllers
         /// <param name="data">数据</param>
         /// <returns></returns>
         [HttpPost("authorize-menu-for-role")]
+        [SwaggerOperation(Tags = new[] { "授权" })]
         public async Task<object> AuthorizeMenuForRole([FromBody] MenuForRole data)
         {
             AuthoritiesBusiness.AuthorizeMenuForRole(data);
+            return await Task.FromResult(Success());
+        }
+
+        /// <summary>
+        /// 为角色授权菜单
+        /// </summary>
+        /// <param name="menuId">菜单Id</param>
+        /// <param name="roleId">角色Id</param>
+        /// <param name="allChilds">同时授权所有子集菜单</param>
+        /// <returns></returns>
+        [HttpPost("authorize-menu-for-role/{menuId}/{roleId}")]
+        [SwaggerOperation(Tags = new[] { "授权" })]
+        public async Task<object> AuthorizeMenuForRole(string menuId, string roleId, bool allChilds = false)
+        {
+            AuthoritiesBusiness.AuthorizeMenuForRole(menuId, roleId, allChilds);
             return await Task.FromResult(Success());
         }
 
@@ -101,6 +164,7 @@ namespace Api.Controllers
         /// <param name="data">数据</param>
         /// <returns></returns>
         [HttpPost("authorize-resources-for-role")]
+        [SwaggerOperation(Tags = new[] { "授权" })]
         public async Task<object> AuthorizeResourcesForRole([FromBody] ResourcesForRole data)
         {
             AuthoritiesBusiness.AuthorizeResourcesForRole(data);
@@ -117,6 +181,7 @@ namespace Api.Controllers
         /// <param name="roleIds">角色Id集合</param>
         /// <returns></returns>
         [HttpPost("revocation-role-for-all-user")]
+        [SwaggerOperation(Tags = new[] { "撤销授权" })]
         public async Task<object> RevocationRoleForAllUser(IEnumerable<string> roleIds)
         {
             AuthoritiesBusiness.RevocationRoleForAllUser(roleIds?.ToList());
@@ -129,6 +194,7 @@ namespace Api.Controllers
         /// <param name="roleIds">角色Id集合</param>
         /// <returns></returns>
         [HttpPost("revocation-role-for-all-member")]
+        [SwaggerOperation(Tags = new[] { "撤销授权" })]
         public async Task<object> RevocationRoleForAllMember(IEnumerable<string> roleIds)
         {
             AuthoritiesBusiness.RevocationRoleForAllMember(roleIds?.ToList());
@@ -141,6 +207,7 @@ namespace Api.Controllers
         /// <param name="userIds">用户Id集合</param>
         /// <returns></returns>
         [HttpPost("revocation-all-role-for-user")]
+        [SwaggerOperation(Tags = new[] { "撤销授权" })]
         public async Task<object> RevocationRoleForUser(IEnumerable<string> userIds)
         {
             AuthoritiesBusiness.RevocationRoleForUser(userIds?.ToList());
@@ -153,6 +220,7 @@ namespace Api.Controllers
         /// <param name="memberIds">会员Id集合</param>
         /// <returns></returns>
         [HttpPost("revocation-all-role-for-member")]
+        [SwaggerOperation(Tags = new[] { "撤销授权" })]
         public async Task<object> RevocationRoleForMember(IEnumerable<string> memberIds)
         {
             AuthoritiesBusiness.RevocationRoleForMember(memberIds?.ToList());
@@ -165,6 +233,7 @@ namespace Api.Controllers
         /// <param name="userIds">用户Id集合</param>
         /// <returns></returns>
         [HttpPost("revocation-all-menu-for-user")]
+        [SwaggerOperation(Tags = new[] { "撤销授权" })]
         public async Task<object> RevocationMenuForUser(IEnumerable<string> userIds)
         {
             AuthoritiesBusiness.RevocationMenuForUser(userIds?.ToList());
@@ -177,6 +246,7 @@ namespace Api.Controllers
         /// <param name="userIds">用户Id集合</param>
         /// <returns></returns>
         [HttpPost("revocation-all-resources-for-user")]
+        [SwaggerOperation(Tags = new[] { "撤销授权" })]
         public async Task<object> RevocationResourcesForUser(IEnumerable<string> userIds)
         {
             AuthoritiesBusiness.RevocationResourcesForUser(userIds?.ToList());
@@ -189,6 +259,7 @@ namespace Api.Controllers
         /// <param name="roleIds">角色Id集合</param>
         /// <returns></returns>
         [HttpPost("revocation-all-menu-for-role")]
+        [SwaggerOperation(Tags = new[] { "撤销授权" })]
         public async Task<object> RevocationMenuForRole(IEnumerable<string> roleIds)
         {
             AuthoritiesBusiness.RevocationMenuForRole(roleIds?.ToList());
@@ -201,6 +272,7 @@ namespace Api.Controllers
         /// <param name="roleIds">角色Id集合</param>
         /// <returns></returns>
         [HttpPost("revocation-all-resources-for-role")]
+        [SwaggerOperation(Tags = new[] { "撤销授权" })]
         public async Task<object> RevocationResourcesForRole(IEnumerable<string> roleIds)
         {
             AuthoritiesBusiness.RevocationResourcesForRole(roleIds?.ToList());
@@ -213,9 +285,25 @@ namespace Api.Controllers
         /// <param name="data">数据</param>
         /// <returns></returns>
         [HttpPost("revocation-role-for-user")]
+        [SwaggerOperation(Tags = new[] { "撤销授权" })]
         public async Task<object> RevocationRoleForUser(RoleForUser data)
         {
             AuthoritiesBusiness.RevocationRoleForUser(data);
+            return await Task.FromResult(Success());
+        }
+
+        /// <summary>
+        /// 撤销用户的角色授权
+        /// </summary>
+        /// <param name="roleId">角色Id</param>
+        /// <param name="userId">用户Id</param>
+        /// <param name="allChilds">同时撤销所有子集角色授权</param>
+        /// <returns></returns>
+        [HttpPost("revocation-role-for-user/{roleId}/{userId}")]
+        [SwaggerOperation(Tags = new[] { "撤销授权" })]
+        public async Task<object> RevocationRoleForUser(string roleId, string userId, bool allChilds = false)
+        {
+            AuthoritiesBusiness.AuthorizeMenuForRole(roleId, userId, allChilds);
             return await Task.FromResult(Success());
         }
 
@@ -225,9 +313,25 @@ namespace Api.Controllers
         /// <param name="data">数据</param>
         /// <returns></returns>
         [HttpPost("revocation-role-for-member")]
+        [SwaggerOperation(Tags = new[] { "撤销授权" })]
         public async Task<object> RevocationRoleForMember(RoleForMember data)
         {
             AuthoritiesBusiness.RevocationRoleForMember(data);
+            return await Task.FromResult(Success());
+        }
+
+        /// <summary>
+        /// 撤销会员的角色授权
+        /// </summary>
+        /// <param name="roleId">角色Id</param>
+        /// <param name="memberId">会员Id</param>
+        /// <param name="allChilds">同时撤销所有子集角色授权</param>
+        /// <returns></returns>
+        [HttpPost("revocation-role-for-member/{roleId}/{memberId}")]
+        [SwaggerOperation(Tags = new[] { "撤销授权" })]
+        public async Task<object> RevocationRoleForMember(string roleId, string memberId, bool allChilds = false)
+        {
+            AuthoritiesBusiness.RevocationRoleForMember(roleId, memberId, allChilds);
             return await Task.FromResult(Success());
         }
 
@@ -237,9 +341,25 @@ namespace Api.Controllers
         /// <param name="data">数据</param>
         /// <returns></returns>
         [HttpPost("revocation-menu-for-user")]
+        [SwaggerOperation(Tags = new[] { "撤销授权" })]
         public async Task<object> RevocationMenuForUser(MenuForUser data)
         {
             AuthoritiesBusiness.RevocationMenuForUser(data);
+            return await Task.FromResult(Success());
+        }
+
+        /// <summary>
+        /// 撤销用户的菜单授权
+        /// </summary>
+        /// <param name="menuId">菜单Id</param>
+        /// <param name="userId">用户Id</param>
+        /// <param name="allChilds">同时撤销所有子集菜单授权</param>
+        /// <returns></returns>
+        [HttpPost("revocation-menu-for-user/{menuId}/{userId}")]
+        [SwaggerOperation(Tags = new[] { "撤销授权" })]
+        public async Task<object> RevocationMenuForUser(string menuId, string userId, bool allChilds = false)
+        {
+            AuthoritiesBusiness.RevocationMenuForUser(menuId, userId, allChilds);
             return await Task.FromResult(Success());
         }
 
@@ -249,6 +369,7 @@ namespace Api.Controllers
         /// <param name="data">数据</param>
         /// <returns></returns>
         [HttpPost("revocation-resources-for-user")]
+        [SwaggerOperation(Tags = new[] { "撤销授权" })]
         public async Task<object> RevocationResourcesForUser(ResourcesForUser data)
         {
             AuthoritiesBusiness.RevocationResourcesForUser(data);
@@ -261,9 +382,25 @@ namespace Api.Controllers
         /// <param name="data">数据</param>
         /// <returns></returns>
         [HttpPost("revocation-menu-for-role")]
+        [SwaggerOperation(Tags = new[] { "撤销授权" })]
         public async Task<object> RevocationMenuForRole(MenuForRole data)
         {
             AuthoritiesBusiness.RevocationMenuForRole(data);
+            return await Task.FromResult(Success());
+        }
+
+        /// <summary>
+        /// 撤销角色的菜单授权
+        /// </summary>
+        /// <param name="menuId">菜单Id</param>
+        /// <param name="roleId">角色Id</param>
+        /// <param name="allChilds">同时撤销所有子集菜单授权</param>
+        /// <returns></returns>
+        [HttpPost("revocation-menu-for-role/{menuId}/{roleId}")]
+        [SwaggerOperation(Tags = new[] { "撤销授权" })]
+        public async Task<object> RevocationMenuForRole(string menuId, string roleId, bool allChilds = false)
+        {
+            AuthoritiesBusiness.RevocationMenuForRole(menuId, roleId, allChilds);
             return await Task.FromResult(Success());
         }
 
@@ -273,6 +410,7 @@ namespace Api.Controllers
         /// <param name="data">数据</param>
         /// <returns></returns>
         [HttpPost("revocation-resources-for-role")]
+        [SwaggerOperation(Tags = new[] { "撤销授权" })]
         public async Task<object> RevocationResourcesForRole(ResourcesForRole data)
         {
             AuthoritiesBusiness.RevocationResourcesForRole(data);
@@ -285,6 +423,7 @@ namespace Api.Controllers
         /// <param name="menuIds">菜单Id集合</param>
         /// <returns></returns>
         [HttpPost("revocation-menu-for-all")]
+        [SwaggerOperation(Tags = new[] { "撤销授权" })]
         public async Task<object> RevocationMenuForAll(IEnumerable<string> menuIds)
         {
             AuthoritiesBusiness.RevocationMenuForAll(menuIds?.ToList());
@@ -297,6 +436,7 @@ namespace Api.Controllers
         /// <param name="resourcesIds">资源Id集合</param>
         /// <returns></returns>
         [HttpPost("revocation-resources-for-all")]
+        [SwaggerOperation(Tags = new[] { "撤销授权" })]
         public async Task<object> RevocationResourcesForAll(IEnumerable<string> resourcesIds)
         {
             AuthoritiesBusiness.RevocationResourcesForAll(resourcesIds?.ToList());
@@ -318,6 +458,7 @@ namespace Api.Controllers
         /// <param name="mergeRoleResources">合并角色的授权资源</param>
         /// <returns></returns>
         [HttpPost("user-data")]
+        [SwaggerOperation(Tags = new[] { "获取授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.UserDTO.Authorities))]
         public async Task<object> GetUser(string userId, bool includeRole, bool includeMenu, bool includeResources, bool mergeRoleMenu = true, bool mergeRoleResources = true)
         {
@@ -333,6 +474,7 @@ namespace Api.Controllers
         /// <param name="includeResources">包括授权资源</param>
         /// <returns></returns>
         [HttpPost("member-data")]
+        [SwaggerOperation(Tags = new[] { "获取授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.Public.MemberDTO.Authorities))]
         public async Task<object> GetMember(string memberId, bool includeRole, bool includeMenu, bool includeResources)
         {
@@ -347,6 +489,7 @@ namespace Api.Controllers
         /// <param name="includeResources">包括授权资源</param>
         /// <returns></returns>
         [HttpPost("user-role-data")]
+        [SwaggerOperation(Tags = new[] { "获取授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.RoleDTO.Authorities))]
         public async Task<object> GetUserRole(string userId, bool includeMenu, bool includeResources)
         {
@@ -361,6 +504,7 @@ namespace Api.Controllers
         /// <param name="includeResources">包括授权资源</param>
         /// <returns></returns>
         [HttpPost("member-role-data")]
+        [SwaggerOperation(Tags = new[] { "获取授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.RoleDTO.Authorities))]
         public async Task<object> GetMemberRole(string memberId, bool includeMenu, bool includeResources)
         {
@@ -374,6 +518,7 @@ namespace Api.Controllers
         /// <param name="mergeRoleMenu">包括角色的授权菜单</param>
         /// <returns></returns>
         [HttpPost("user-menu-data")]
+        [SwaggerOperation(Tags = new[] { "获取授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.MenuDTO.Authorities))]
         public async Task<object> GetUserMenu(string userId, bool mergeRoleMenu)
         {
@@ -386,6 +531,7 @@ namespace Api.Controllers
         /// <param name="memberId">会员Id</param>
         /// <returns></returns>
         [HttpPost("member-menu-data")]
+        [SwaggerOperation(Tags = new[] { "获取授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.MenuDTO.Authorities))]
         public async Task<object> GetMemberMenu(string memberId)
         {
@@ -399,6 +545,7 @@ namespace Api.Controllers
         /// <param name="mergeRoleResources">包括角色的授权资源</param>
         /// <returns></returns>
         [HttpPost("user-resources-data")]
+        [SwaggerOperation(Tags = new[] { "获取授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.ResourcesDTO.Authorities))]
         public async Task<object> GetUserResources(string userId, bool mergeRoleResources)
         {
@@ -411,6 +558,7 @@ namespace Api.Controllers
         /// <param name="memberId">会员Id</param>
         /// <returns></returns>
         [HttpPost("member-resources-data")]
+        [SwaggerOperation(Tags = new[] { "获取授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.ResourcesDTO.Authorities))]
         public async Task<object> GetMemberResources(string memberId)
         {
@@ -425,6 +573,7 @@ namespace Api.Controllers
         /// <param name="includeResources">包括授权资源</param>
         /// <returns></returns>
         [HttpPost("role-data")]
+        [SwaggerOperation(Tags = new[] { "获取授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.RoleDTO.Authorities))]
         public async Task<object> GetRole(string roleId, bool includeMenu, bool includeResources)
         {
@@ -437,6 +586,7 @@ namespace Api.Controllers
         /// <param name="roleId">角色Id</param>
         /// <returns></returns>
         [HttpPost("role-menu-data")]
+        [SwaggerOperation(Tags = new[] { "获取授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.MenuDTO.Authorities))]
         public async Task<object> GetRoleMenu(string roleId)
         {
@@ -449,6 +599,7 @@ namespace Api.Controllers
         /// <param name="roleId">角色Id</param>
         /// <returns></returns>
         [HttpPost("role-resources-data")]
+        [SwaggerOperation(Tags = new[] { "获取授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.ResourcesDTO.Authorities))]
         public async Task<object> GetRoleResources(string roleId)
         {
@@ -466,6 +617,7 @@ namespace Api.Controllers
         /// <param name="checkEnable">检查是否已启用（默认true）</param>
         /// <returns></returns>
         [HttpPost("is-super-admin-user")]
+        [SwaggerOperation(Tags = new[] { "验证授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
         public async Task<object> IsSuperAdminUser(string userId, bool checkEnable = true)
         {
@@ -479,6 +631,7 @@ namespace Api.Controllers
         /// <param name="checkEnable">检查是否已启用（默认true）</param>
         /// <returns></returns>
         [HttpPost("is-super-admin-role")]
+        [SwaggerOperation(Tags = new[] { "验证授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
         public async Task<object> IsSuperAdminRole(string roleId, bool checkEnable = true)
         {
@@ -492,6 +645,7 @@ namespace Api.Controllers
         /// <param name="checkEnable">检查是否已启用（默认true）</param>
         /// <returns></returns>
         [HttpPost("is-admin-user")]
+        [SwaggerOperation(Tags = new[] { "验证授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
         public async Task<object> IsAdminUser(string userId, bool checkEnable = true)
         {
@@ -505,6 +659,7 @@ namespace Api.Controllers
         /// <param name="checkEnable">检查是否已启用（默认true）</param>
         /// <returns></returns>
         [HttpPost("is-admin-role")]
+        [SwaggerOperation(Tags = new[] { "验证授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
         public async Task<object> IsAdminRole(string roleId, bool checkEnable = true)
         {
@@ -519,6 +674,7 @@ namespace Api.Controllers
         /// <param name="checkEnable">检查是否已启用（默认true）</param>
         /// <returns></returns>
         [HttpPost("user-has-role")]
+        [SwaggerOperation(Tags = new[] { "验证授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
         public async Task<object> UserHasRole(string userId, string roleId, bool checkEnable = true)
         {
@@ -533,6 +689,7 @@ namespace Api.Controllers
         /// <param name="checkEnable">检查是否已启用（默认true）</param>
         /// <returns></returns>
         [HttpPost("member-has-role")]
+        [SwaggerOperation(Tags = new[] { "验证授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
         public async Task<object> MemberHasRole(string memberId, string roleId, bool checkEnable = true)
         {
@@ -547,6 +704,7 @@ namespace Api.Controllers
         /// <param name="checkEnable">检查是否已启用（默认true）</param>
         /// <returns></returns>
         [HttpPost("user-has-menu")]
+        [SwaggerOperation(Tags = new[] { "验证授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
         public async Task<object> UserHasMenu(string userId, string menuId, bool checkEnable = true)
         {
@@ -561,6 +719,7 @@ namespace Api.Controllers
         /// <param name="checkEnable">检查是否已启用（默认true）</param>
         /// <returns></returns>
         [HttpPost("user-has-menu-uri")]
+        [SwaggerOperation(Tags = new[] { "验证授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
         public async Task<object> UserHasMenuUri(string userId, string menuUri, bool checkEnable = true)
         {
@@ -575,6 +734,7 @@ namespace Api.Controllers
         /// <param name="checkEnable">检查是否已启用（默认true）</param>
         /// <returns></returns>
         [HttpPost("member-has-menu")]
+        [SwaggerOperation(Tags = new[] { "验证授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
         public async Task<object> MemberHasMenu(string userId, string menuId, bool checkEnable = true)
         {
@@ -589,6 +749,7 @@ namespace Api.Controllers
         /// <param name="checkEnable">检查是否已启用（默认true）</param>
         /// <returns></returns>
         [HttpPost("member-has-menu-uri")]
+        [SwaggerOperation(Tags = new[] { "验证授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
         public async Task<object> MemberHasMenuUri(string userId, string menuUri, bool checkEnable = true)
         {
@@ -603,6 +764,7 @@ namespace Api.Controllers
         /// <param name="checkEnable">检查是否已启用（默认true）</param>
         /// <returns></returns>
         [HttpPost("user-has-resources")]
+        [SwaggerOperation(Tags = new[] { "验证授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
         public async Task<object> UserHasResources(string userId, string resourcesId, bool checkEnable = true)
         {
@@ -617,6 +779,7 @@ namespace Api.Controllers
         /// <param name="checkEnable">检查是否已启用（默认true）</param>
         /// <returns></returns>
         [HttpPost("user-has-resources-uri")]
+        [SwaggerOperation(Tags = new[] { "验证授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
         public async Task<object> UserHasResourcesUri(string userId, string resourcesUri, bool checkEnable = true)
         {
@@ -631,6 +794,7 @@ namespace Api.Controllers
         /// <param name="checkEnable">检查是否已启用（默认true）</param>
         /// <returns></returns>
         [HttpPost("member-has-resources")]
+        [SwaggerOperation(Tags = new[] { "验证授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
         public async Task<object> MemberHasResources(string memberId, string resourcesId, bool checkEnable = true)
         {
@@ -645,6 +809,7 @@ namespace Api.Controllers
         /// <param name="checkEnable">检查是否已启用（默认true）</param>
         /// <returns></returns>
         [HttpPost("member-has-resources-uri")]
+        [SwaggerOperation(Tags = new[] { "验证授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
         public async Task<object> MemberHasResourcesUri(string memberId, string resourcesUri, bool checkEnable = true)
         {
@@ -662,6 +827,7 @@ namespace Api.Controllers
         /// <param name="paramter">参数</param>
         /// <returns></returns>
         [HttpPost("role-data-menu-tree/{roleId}")]
+        [SwaggerOperation(Tags = new[] { "权限相关拓展接口" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.MenuDTO.AuthoritiesTree))]
         public async Task<object> GetRoleMenuTree(string roleId, Model.System.MenuDTO.TreeListParamter paramter)
         {
@@ -675,6 +841,7 @@ namespace Api.Controllers
         /// <param name="paramter">参数</param>
         /// <returns></returns>
         [HttpPost("user-data-role-tree/{userId}")]
+        [SwaggerOperation(Tags = new[] { "权限相关拓展接口" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.RoleDTO.AuthoritiesTree))]
         public async Task<object> GetUserRoleTree(string userId, Model.System.RoleDTO.TreeListParamter paramter)
         {
@@ -688,6 +855,7 @@ namespace Api.Controllers
         /// <param name="paramter">参数</param>
         /// <returns></returns>
         [HttpPost("member-data-role-tree/{memberId}")]
+        [SwaggerOperation(Tags = new[] { "权限相关拓展接口" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.RoleDTO.AuthoritiesTree))]
         public async Task<object> GetMemberRoleTree(string memberId, Model.System.RoleDTO.TreeListParamter paramter)
         {
@@ -701,6 +869,7 @@ namespace Api.Controllers
         /// <param name="paramter">参数</param>
         /// <returns></returns>
         [HttpPost("user-data-menu-tree/{userId}")]
+        [SwaggerOperation(Tags = new[] { "权限相关拓展接口" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.MenuDTO.AuthoritiesTree))]
         public async Task<object> GetUserMenuTree(string userId, Model.System.MenuDTO.TreeListParamter paramter)
         {

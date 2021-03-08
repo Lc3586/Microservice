@@ -88,6 +88,7 @@ namespace Business.Implementation.System
                     var rank = paramter.Rank;
                     if (!rank.HasValue || rank > 0)
                     {
+                        paramter.ParentId = o.Id;
                         paramter.Rank--;
                         o.Childs_ = GetTreeList(paramter, true);
                     }

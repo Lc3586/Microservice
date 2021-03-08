@@ -46,7 +46,7 @@ namespace Entity.System
         /// <summary>
         /// 父级角色Id
         /// </summary>
-        [OpenApiSubTag("List", "TreeList", "Edit", "Sort")]
+        [OpenApiSubTag("List", "TreeList", "Create", "Edit", "Sort")]
         [Column(StringLength = 36)]
         public string ParentId { get; set; }
 

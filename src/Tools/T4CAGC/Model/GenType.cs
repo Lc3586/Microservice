@@ -1,4 +1,4 @@
-﻿namespace T4CAGC.Config
+﻿namespace T4CAGC.Model
 {
     /// <summary>
     /// 生成类型

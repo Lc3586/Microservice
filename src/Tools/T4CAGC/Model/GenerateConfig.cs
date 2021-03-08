@@ -1,6 +1,8 @@
 ﻿using FreeSql;
-using System;
+using FreeSql.DatabaseModel;
+using NLog;
 using System.Collections.Generic;
+using T4CAGC.Log;
 
 namespace T4CAGC.Model
 {
@@ -12,106 +14,74 @@ namespace T4CAGC.Model
         /// <summary>
         /// 版本
         /// </summary>
-        public string Version { get; set; } = "";
+        public string Version { get; set; }
 
         /// <summary>
-        /// 语言
+        /// 数据源
         /// </summary>
-        public string Language { get; set; }
+        /// <remarks>
+        /// <para>CSV文件路径</para>
+        /// <para>数据库连接字符串</para>
+        /// </remarks>
+        public string DataSource { get; set; }
 
         /// <summary>
-        /// 输出路径
+        /// 数据源类型
         /// </summary>
-        public List<string> OutputPath { get; set; }
-
-        /// <summary>
-        /// 文件输出政策
-        /// </summary>
-        public string outputFile { get; set; }
+        /// <remarks>默认 <see cref="DataSourceType.CSV"/></remarks>
+        public DataSourceType DataSourceType { get; set; } = DataSourceType.CSV;
 
         /// <summary>
         /// 数据库类型
         /// </summary>
-        public DataType DbType { get; set; }
+        /// <remarks>默认 <see cref="DataType.SqlServer"/></remarks>
+        public DataType DataBaseType { get; set; } = DataType.SqlServer;
 
         /// <summary>
-        /// 数据库连接语句
+        /// 数据表类型
         /// </summary>
-        public string DbConnection { get; set; }
+        /// <remarks>默认 <see cref="DbTableType.TABLE"/> + <see cref="DbTableType.VIEW"/></remarks>
+        public List<DbTableType> TableType { get; set; } = new List<DbTableType> { DbTableType.TABLE, DbTableType.VIEW };
 
         /// <summary>
-        /// 目标数据库
+        /// 日志组件类型
         /// </summary>
-        public List<string> Database { get; set; }
+        /// <remarks>默认 <see cref="LoggerType.File"/></remarks>
+        public LoggerType LoggerType { get; } = LoggerType.File;
+
+        /// <summary>
+        /// 需要记录的日志的最低等级
+        /// </summary>
+        /// <remarks>默认 <see cref="LogLevel.Trace.Ordinal"/></remarks>
+        public int MinLogLevel { get; } = LogLevel.Trace.Ordinal;
+
+        /// <summary>
+        /// 输出路径
+        /// </summary>
+        public string OutputPath { get; set; }
+
+        /// <summary>
+        /// 生成类型
+        /// </summary>
+        /// <remarks>默认 <see cref="Config.GenType.All"/></remarks>
+        public GenType GenType { get; } = GenType.All;
 
         /// <summary>
         /// 指定表
         /// </summary>
-        public List<string> Table { get; set; }
+        /// <remarks>多张表请使用英文逗号进行分隔[,]. 默认指定所有的表.</remarks>
+        public string SpecifyTable { get; }
 
         /// <summary>
         /// 忽略表
         /// </summary>
-        public List<string> TableIgnore { get; set; }
+        /// <remarks>多张表请使用英文逗号进行分隔[,].</remarks>
+        public string IgnoreTable { get; }
 
         /// <summary>
-        /// 类注释
+        /// 表设置
         /// </summary>
-        public List<string> ClassComments { get; set; }
-
-        /// <summary>
-        /// 类属性
-        /// </summary>
-        public List<string> ClassAttribute { get; set; }
-
-        /// <summary>
-        /// 类修饰符
-        /// </summary>
-        public List<string> ClassModifier { get; set; }
-
-        /// <summary>
-        /// 类继承
-        /// </summary>
-        public List<string> ClassInheritance { get; set; }
-
-        /// <summary>
-        /// 类默认方法
-        /// </summary>
-        public List<string> ClassDefaultFunction { get; set; }
-
-        /// <summary>
-        /// 成员注释
-        /// </summary>
-        public List<string> MemberComments { get; set; }
-
-        /// <summary>
-        /// 成员属性
-        /// </summary>
-        public List<string> MemberAttribute { get; set; }
-
-        /// <summary>
-        /// 成员修饰符
-        /// </summary>
-        public List<string> MemberModifier { get; set; }
-
-        /// <summary>
-        /// 使用数据库注释作为成员显示名称
-        /// </summary>
-        public bool MemberDisplay { get; set; }
-
-        /// <summary>
-        /// 成员数据验证策略
-        /// </summary>
-        public List<string> MemberVerify { get; set; }
-
-        /// <summary>
-        /// 成员默认值
-        /// </summary>
-        public List<string> MemberDefaultValue { get; set; }
-
-        /// <summary>
-        /// 成员附加策略
-        /// </summary>
-        public List<string> MemberAdd { get; set; }
+        /// <remarks>此配置将会作为默认规则的补充</remarks>
+        public List<TableSetting> TableSettings { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace T4CAGC.Config
+﻿namespace T4CAGC.Model
 {
     /// <summary>
     /// 数据源类型

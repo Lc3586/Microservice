@@ -61,6 +61,9 @@ namespace Api
                 context.ModelState
                     .Where(o =>
                     {
+                        if (o.Key.IsNullOrWhiteSpace())
+                            return false;
+
                         var key = o.Key[(o.Key.LastIndexOf('.') + 1)..];
                         return (!hasTag || propNames.Contains(key)) &&
                          (!Ignore.Any_Ex() || !Ignore.Contains(key)) &&
