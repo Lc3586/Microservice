@@ -1,6 +1,9 @@
-﻿using Microservice.Library.Container;
+﻿using Microservice.Library.ConsoleTool;
+using Microservice.Library.Container;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using T4CAGC.Model;
 
 namespace T4CAGC.Handler
@@ -8,36 +11,32 @@ namespace T4CAGC.Handler
     /// <summary>
     /// 生成类
     /// </summary>
-    public class GenerateHandler
+    public static class GenerateHandler
     {
-        public GenerateHandler(List<TableInfo> tables)
-        {
-            Tables = tables;
-        }
+        readonly static GenerateConfig Config = AutofacHelper.GetService<GenerateConfig>();
 
-        readonly List<TableInfo> Tables;
+        readonly static List<TableInfo> Tables = GetTables();
 
-        readonly GenerateConfig Config = AutofacHelper.GetService<GenerateConfig>();
-
-        List<TableInfo> GetTables()
+        static List<TableInfo> GetTables()
         {
             var tables = Config.DataSourceType switch
             {
-                DataSourceType.CSV => DataSourceHandler.GetCSVData(
-                    Config.DataSource,
-                    Config.SpecifyTable?.Split(',').ToList(),
-                    Config.IgnoreTable?.Split(',').ToList()),
-                _ => DataSourceHandler.GetDataBaseData(
-                    Config.TableType,
-                    Config.SpecifyTable?.Split(',').ToList(),
-                    Config.IgnoreTable?.Split(',').ToList())
+                DataSourceType.CSV => Config.DataSource.GetCSVData(Config.SpecifyTable, Config.IgnoreTable),
+                DataSourceType.CSV_Simple => Config.DataSource.GetCSVData_Simple(Config.SpecifyTable, Config.IgnoreTable),
+                _ => Config.TableType.GetDataBaseData(Config.SpecifyTable, Config.IgnoreTable)
             };
 
             return tables;
         }
 
-        public static void Generate()
+        public static async Task Generate()
         {
+            $"共获取到了{Tables.Count}张表信息.".ConsoleWrite();
+
+            foreach (var table in Tables)
+            {
+                $"{table.Remark} {table.Name}.".ConsoleWrite();
+            }
             //if (GenType == GenType.All)
             //    GenerateHandler.GenerateAll(tables, config);
             //else if (GenType == GenType.Single)

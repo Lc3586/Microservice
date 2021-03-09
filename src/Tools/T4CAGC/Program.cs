@@ -5,17 +5,19 @@ using Microservice.Library.ConsoleTool;
 using Microservice.Library.Container;
 using Microservice.Library.Extension;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using T4CAGC.Configures;
 using T4CAGC.Handler;
+using T4CAGC.Log;
 using T4CAGC.Model;
 
 namespace T4CAGC
 {
     [Command(Name = "generate", Description = "代码自动生成工具.")]
-    [VersionOption("v0.0.0.1-beta", Description = "当前为开发版本.")]
-    [HelpOption]
+    [VersionOption("-v|--version", "v0.0.0.1-beta", Description = "版本信息.")]
+    [HelpOption(Description = "帮助信息.")]
     class Program
     {
         static Task<int> Main(string[] args) => CommandLineApplication.ExecuteAsync<Program>(args);
@@ -39,12 +41,6 @@ namespace T4CAGC
 
         async Task<int> OnExecuteAsync(CommandLineApplication app, CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrEmpty(OutputPath))
-            {
-                app.ShowHelp();
-                return 0;
-            }
-
             try
             {
                 "程序启动中.".ConsoleWrite();
@@ -75,9 +71,17 @@ namespace T4CAGC
                     .CreateBuilder(services)
                     .Build();
 
-                "已应用Autofac容器.".ConsoleWrite();
+                "已应用Autofac容器.\r\n".ConsoleWrite();
 
-                GenerateHandler.Generate();
+                try
+                {
+                    await GenerateHandler.Generate();
+                }
+                catch (System.Exception ex)
+                {
+                    Logger.Log(NLog.LogLevel.Error, LogType.系统异常, $"生成失败, {GetExceptionAllMsg(ex.InnerException)}", null, ex);
+                    return 1;
+                }
 
                 return 0;
             }
@@ -85,6 +89,19 @@ namespace T4CAGC
             {
                 return 1;
             }
+        }
+
+        /// <summary>
+        /// 获取异常消息
+        /// </summary>
+        /// <param name="ex"></param>
+        /// <returns></returns>
+        public static string GetExceptionAllMsg(Exception ex)
+        {
+            var message = ex?.Message;
+            if (ex.InnerException != null)
+                message += $" {GetExceptionAllMsg(ex.InnerException)}";
+            return message;
         }
 
         ///// <summary>

@@ -2,7 +2,7 @@
   "profiles": {
     "T4CAGC": {
       "commandName": "Project",
-      "commandLineArgs": "generate model_entity -t sys_application"
+      "commandLineArgs": "-c F:\\图锐信息\\项目框架学习\\GitHub社区项目\\Microservice\\src\\Tools\\T4CAGC\\jsonconfig/generateconfig.json"
     }
   }
 }

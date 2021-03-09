@@ -23,6 +23,8 @@
 
         public const string 类型 = "Type";
 
+        public const string 数据库类型 = "DbType";
+
         public const string 长度 = "Length";
 
         public const string 小数位 = "Scale";
@@ -30,6 +32,8 @@
         public const string 可为空 = "Nullable";
 
         public const string 说明 = "Description";
+
+        public const string 非空验证 = "Required";
 
         public const string 标签 = "Tags";
 

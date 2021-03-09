@@ -19,6 +19,31 @@ namespace T4CAGC.Model
         public bool Primary { get; set; } = false;
 
         /// <summary>
+        /// 关联数据字段
+        /// </summary>
+        public bool Virtual { get; set; }
+
+        /// <summary>
+        /// 一对一关联标记
+        /// </summary>
+        public bool FK { get; set; }
+
+        /// <summary>
+        /// 多对多关联标记
+        /// </summary>
+        public bool RK { get; set; }
+
+        /// <summary>
+        /// 关联标识
+        /// </summary>
+        public string KValue { get; set; }
+
+        /// <summary>
+        /// 关联数据
+        /// </summary>
+        public string Bind { get; set; }
+
+        /// <summary>
         /// 说明
         /// </summary>
         public string Description { get; set; } = string.Empty;
@@ -59,6 +84,11 @@ namespace T4CAGC.Model
         public string DbType { get; set; }
 
         /// <summary>
+        /// 非空验证
+        /// </summary>
+        public bool Required { get; set; }
+
+        /// <summary>
         /// 标签
         /// </summary>
         public List<string> Tag { get; set; }
@@ -68,7 +98,5 @@ namespace T4CAGC.Model
         /// </summary>
         /// <remarks>匹配<see cref="Microservice.Library.OpenApi.Annotations.OpenApiSchemaFormat"/>属性名</remarks>
         public string OASF { get; set; }
-
-
     }
 }

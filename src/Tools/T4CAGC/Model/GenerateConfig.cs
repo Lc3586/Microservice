@@ -47,13 +47,13 @@ namespace T4CAGC.Model
         /// 日志组件类型
         /// </summary>
         /// <remarks>默认 <see cref="LoggerType.File"/></remarks>
-        public LoggerType LoggerType { get; } = LoggerType.File;
+        public LoggerType LoggerType { get; set; } = LoggerType.File;
 
         /// <summary>
         /// 需要记录的日志的最低等级
         /// </summary>
         /// <remarks>默认 <see cref="LogLevel.Trace.Ordinal"/></remarks>
-        public int MinLogLevel { get; } = LogLevel.Trace.Ordinal;
+        public int MinLogLevel { get; set; } = LogLevel.Trace.Ordinal;
 
         /// <summary>
         /// 输出路径
@@ -64,19 +64,17 @@ namespace T4CAGC.Model
         /// 生成类型
         /// </summary>
         /// <remarks>默认 <see cref="Config.GenType.All"/></remarks>
-        public GenType GenType { get; } = GenType.All;
+        public GenType GenType { get; set; } = GenType.All;
 
         /// <summary>
         /// 指定表
         /// </summary>
-        /// <remarks>多张表请使用英文逗号进行分隔[,]. 默认指定所有的表.</remarks>
-        public string SpecifyTable { get; }
+        public List<string> SpecifyTable { get; set; }
 
         /// <summary>
         /// 忽略表
         /// </summary>
-        /// <remarks>多张表请使用英文逗号进行分隔[,].</remarks>
-        public string IgnoreTable { get; }
+        public List<string> IgnoreTable { get; set; }
 
         /// <summary>
         /// 表设置

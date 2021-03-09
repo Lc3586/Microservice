@@ -23,11 +23,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Annotations\" />
     <Folder Include="Template\Referenced\" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="IdentityModel" Version="5.0.1" />
     <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="3.1.0" />
     <PackageReference Include="Microservice.Library.Cache" Version="0.0.0-gf58a743371-alpha" />
     <PackageReference Include="Microservice.Library.Configuration" Version="0.0.0-gf58a743371-alpha" />
