@@ -7,6 +7,8 @@
     {
         public const string 表 = "Table";
 
+        public const string 树状结构表 = "TreeTable";
+
         public const string 字段 = "Field";
 
         public const string 主键 = "PK";
@@ -14,6 +16,8 @@
         public const string 关联数据字段 = "VField";
 
         public const string 一对一关联标记 = "FK";
+
+        public const string 一对多关联标记 = "FRK";
 
         public const string 多对多关联标记 = "RK";
 
@@ -38,5 +42,11 @@
         public const string 标签 = "Tags";
 
         public const string 接口框架数据格式化 = "OASF";
+
+        public const string 映射 = "Map";
+
+        public const string 常量 = "Const";
+
+        public const string 枚举 = "Enum";
     }
 }

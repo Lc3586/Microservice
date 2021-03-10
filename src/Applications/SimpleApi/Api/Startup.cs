@@ -140,7 +140,7 @@ namespace Api
                 services.RegisterAutoMapper(Config);
 
             if (Config.EnableWeChatService)
-                services.RegisterWeChat(Config);
+                services.RegisterWeChat(Configuration, Config);
 
             if (Config.EnableSoap)
                 services.RegisterSoap(Config);

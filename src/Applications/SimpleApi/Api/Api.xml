@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>SimpleApi.Api</name>
+        <name>SimpleApi</name>
     </assembly>
     <members>
         <member name="T:Api.Configures.AutoMapperConfigura">
@@ -237,11 +237,12 @@
             微信配置类
             </summary>
         </member>
-        <member name="M:Api.Configures.WeChatServiceConfigura.RegisterWeChat(Microsoft.Extensions.DependencyInjection.IServiceCollection,Model.Utils.Config.SystemConfig)">
+        <member name="M:Api.Configures.WeChatServiceConfigura.RegisterWeChat(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration,Model.Utils.Config.SystemConfig)">
             <summary>
             注册WeChat服务
             </summary>
             <param name="services"></param>
+            <param name="configuration"></param>
             <param name="config"></param>
         </member>
         <member name="M:Api.Configures.WeChatServiceConfigura.ConfiguraWeChat(Microsoft.AspNetCore.Builder.IApplicationBuilder,Model.Utils.Config.SystemConfig)">

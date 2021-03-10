@@ -17,6 +17,7 @@ namespace Entity.System
     [OraclePrimaryKeyName("pk_" + nameof(System_User))]
     #region 设置索引
     [Index(nameof(System_User) + "_idx_" + nameof(Account), nameof(Account) + " ASC")]
+    [Index(nameof(System_User) + "_idx_" + nameof(Nickname), nameof(Nickname) + " ASC")]
     [Index(nameof(System_User) + "_idx_" + nameof(Name), nameof(Name) + " ASC")]
     [Index(nameof(System_User) + "_idx_" + nameof(Tel), nameof(Tel) + " ASC")]
     [Index(nameof(System_User) + "_idx_" + nameof(Enable), nameof(Enable) + " DESC")]

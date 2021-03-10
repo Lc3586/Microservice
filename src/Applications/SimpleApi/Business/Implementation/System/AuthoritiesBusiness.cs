@@ -255,13 +255,21 @@ namespace Business.Implementation.System
 
         public void AuthorizeRoleForUser(string roleId, string userId, bool allChilds = false, bool runTransaction = true)
         {
-            List<string> roleIds;
-            var q = Repository_Role.Select.Where($"a.[Id] = '{roleId}' AND a.[Enable] = 1");
+            List<string> roleIds = new List<string>();
+            var q_Up = Repository_Role.Select.Where($"a.[Id] = '{roleId}' AND a.[Enable] = 1")
+                                        .AsTreeCte(null, true)
+                                        .Where($"a.[Enable] = 1");
+            roleIds.AddRange(q_Up.ToList(o => o.Id));
+
+            roleIds.Remove(roleId);
+
+            var q_Down = Repository_Role.Select.Where($"a.[Id] = '{roleId}' AND a.[Enable] = 1");
 
             if (allChilds)
-                q = q.AsTreeCte();
+                q_Down = q_Down.AsTreeCte()
+                             .Where($"a.[Enable] = 1");
 
-            roleIds = q.ToList(o => o.Id);
+            roleIds.AddRange(q_Down.Where($"a.[Enable] = 1").ToList(o => o.Id));
 
             if (roleIds.Any())
                 AuthorizeRoleForUser(new RoleForUser
@@ -333,13 +341,20 @@ namespace Business.Implementation.System
 
         public void AuthorizeRoleForMember(string roleId, string memberId, bool allChilds = false, bool runTransaction = true)
         {
-            List<string> roleIds;
+            List<string> roleIds = new List<string>();
+            var q_Up = Repository_Role.Select.Where($"a.[Id] = '{roleId}' AND a.[Enable] = 1")
+                                        .AsTreeCte(null, true)
+                                        .Where($"a.[Enable] = 1");
+            roleIds.AddRange(q_Up.ToList(o => o.Id));
+
+            roleIds.Remove(roleId);
+
             var q = Repository_Role.Select.Where($"a.[Id] = '{roleId}' AND a.[Enable] = 1");
 
             if (allChilds)
                 q = q.AsTreeCte();
 
-            roleIds = q.ToList(o => o.Id);
+            roleIds = q.Where($"a.[Enable] = 1").ToList(o => o.Id);
 
             if (roleIds.Any())
                 AuthorizeRoleForMember(new RoleForMember
@@ -394,13 +409,20 @@ namespace Business.Implementation.System
 
         public void AuthorizeMenuForUser(string menuId, string userId, bool allChilds = false, bool runTransaction = true)
         {
-            List<string> menuIds;
+            List<string> menuIds = new List<string>();
+            var q_Up = Repository_Menu.Select.Where($"a.[Id] = '{menuId}' AND a.[Enable] = 1")
+                                        .AsTreeCte(null, true)
+                                        .Where($"a.[Enable] = 1");
+            menuIds.AddRange(q_Up.ToList(o => o.Id));
+
+            menuIds.Remove(menuId);
+
             var q = Repository_Menu.Select.Where($"a.[Id] = '{menuId}' AND a.[Enable] = 1");
 
             if (allChilds)
                 q = q.AsTreeCte();
 
-            menuIds = q.ToList(o => o.Id);
+            menuIds = q.Where($"a.[Enable] = 1").ToList(o => o.Id);
 
             if (menuIds.Any())
                 AuthorizeMenuForUser(new MenuForUser
@@ -491,13 +513,20 @@ namespace Business.Implementation.System
 
         public void AuthorizeMenuForRole(string menuId, string roleId, bool allChilds = false, bool runTransaction = true)
         {
-            List<string> menuIds;
+            List<string> menuIds = new List<string>();
+            var q_Up = Repository_Menu.Select.Where($"a.[Id] = '{menuId}' AND a.[Enable] = 1")
+                                        .AsTreeCte(null, true)
+                                        .Where($"a.[Enable] = 1");
+            menuIds.AddRange(q_Up.ToList(o => o.Id));
+
+            menuIds.Remove(menuId);
+
             var q = Repository_Menu.Select.Where($"a.[Id] = '{menuId}' AND a.[Enable] = 1");
 
             if (allChilds)
                 q = q.AsTreeCte();
 
-            menuIds = q.ToList(o => o.Id);
+            menuIds = q.Where($"a.[Enable] = 1").ToList(o => o.Id);
 
             if (menuIds.Any())
                 AuthorizeMenuForRole(new MenuForRole

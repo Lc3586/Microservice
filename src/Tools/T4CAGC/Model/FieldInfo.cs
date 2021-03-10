@@ -29,6 +29,11 @@ namespace T4CAGC.Model
         public bool FK { get; set; }
 
         /// <summary>
+        /// 一对多关联标记
+        /// </summary>
+        public bool FRK { get; set; }
+
+        /// <summary>
         /// 多对多关联标记
         /// </summary>
         public bool RK { get; set; }
@@ -98,5 +103,21 @@ namespace T4CAGC.Model
         /// </summary>
         /// <remarks>匹配<see cref="Microservice.Library.OpenApi.Annotations.OpenApiSchemaFormat"/>属性名</remarks>
         public string OASF { get; set; }
+
+        /// <summary>
+        /// 数据映射
+        /// </summary>
+        /// <remarks>类型/字段名称</remarks>
+        public Dictionary<Type, string> Map { get; set; } = new Dictionary<Type, string>();
+
+        /// <summary>
+        /// 常量
+        /// </summary>
+        public Dictionary<string, string> Const { get; set; } = new Dictionary<string, string>();
+
+        /// <summary>
+        /// 枚举
+        /// </summary>
+        public Dictionary<string, int?> Enum { get; set; } = new Dictionary<string, int?>();
     }
 }

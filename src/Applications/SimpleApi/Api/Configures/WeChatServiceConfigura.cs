@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Model.Utils.Config;
+using Senparc.CO2NET.RegisterServices;
+using Senparc.Weixin.RegisterServices;
 
 namespace Api.Configures
 {
@@ -14,10 +17,14 @@ namespace Api.Configures
         /// 注册WeChat服务
         /// </summary>
         /// <param name="services"></param>
+        /// <param name="configuration"></param>
         /// <param name="config"></param>
-        public static IServiceCollection RegisterWeChat(this IServiceCollection services, SystemConfig config)
+        public static IServiceCollection RegisterWeChat(
+            this IServiceCollection services,
+            IConfiguration configuration,
+            SystemConfig config)
         {
-            services.AddWeChatService(option =>
+            services.AddWeChatService(configuration, option =>
             {
                 option.WeChatDevOptions.TokenVerificationUrl = new PathString(config.WeChatService.TokenVerificationUrl);
                 option.WeChatDevOptions.Token = config.WeChatService.Token;

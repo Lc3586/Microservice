@@ -185,8 +185,15 @@ namespace T4CAGC.Handler
                         var value = tables.Rows[rowIndex][columnIndex].ToString();
                         if (value.Exist(SettingKeyword.表))
                         {
+                            tableInfo = new TableInfo();
+
                             if (!value.TryMatch(SettingKeyword.表, out string tableName, out string remark))
-                                SettingKeyword.表.SettingException();
+                            {
+                                if (!value.TryMatch(SettingKeyword.树状结构表, out tableName, out remark))
+                                    SettingKeyword.表.SettingException();
+
+                                tableInfo.Tree = true;
+                            }
 
                             if (specifyTable?.Contains(tableName) == false
                                 || ignoreTable?.Contains(tableName) == true
@@ -194,12 +201,8 @@ namespace T4CAGC.Handler
                                 //未指定的表 或者 忽略的表 或者 冗余数据
                                 continue;
 
-                            tableInfo = new TableInfo
-                            {
-                                Name = tableName,
-                                Remark = remark,
-                                Fields = new List<FieldInfo>()
-                            };
+                            tableInfo.Name = tableName;
+                            tableInfo.Remark = remark;
 
                             return true;
                         }
@@ -403,6 +406,37 @@ namespace T4CAGC.Handler
 
                                 fieldInfo.OASF = oasf;
                             }
+                            else if (value.Exist(SettingKeyword.映射))
+                            {
+                                if (!value.TryMatch(SettingKeyword.映射, out string mapType, out string mapField))
+                                    SettingKeyword.映射.SettingException();
+
+                                fieldInfo.Map.Add(mapType.GetCsType(), mapField);
+                            }
+                            else if (value.Exist(SettingKeyword.常量))
+                            {
+                                if (!value.TryMatch(SettingKeyword.常量, out string @const, out string constValue))
+                                {
+                                    if (!value.TryMatch(SettingKeyword.常量, out @const))
+                                        SettingKeyword.常量.SettingException();
+
+                                    @const.Split(',').ForEach(o => fieldInfo.Const.Add(o, o));
+                                }
+                                else
+                                    fieldInfo.Const.Add(@const, constValue);
+                            }
+                            else if (value.Exist(SettingKeyword.枚举))
+                            {
+                                if (!value.TryMatch(SettingKeyword.枚举, out string @enum, out string enumValue))
+                                {
+                                    if (!value.TryMatch(SettingKeyword.枚举, out @enum))
+                                        SettingKeyword.枚举.SettingException();
+
+                                    @enum.Split(',').ForEach(o => fieldInfo.Enum.Add(o, null));
+                                }
+                                else
+                                    fieldInfo.Enum.Add(@enum, enumValue.ToInt());
+                            }
 
                             #endregion
                         }
@@ -416,6 +450,14 @@ namespace T4CAGC.Handler
                                     SettingKeyword.一对一关联标记.SettingException();
 
                                 fieldInfo.FK = true;
+                                fieldInfo.KValue = kValue;
+                            }
+                            else if (value.Exist(SettingKeyword.一对多关联标记))
+                            {
+                                if (!value.TryMatch(SettingKeyword.一对多关联标记, out string kValue))
+                                    SettingKeyword.一对多关联标记.SettingException();
+
+                                fieldInfo.FRK = true;
                                 fieldInfo.KValue = kValue;
                             }
                             else if (value.Exist(SettingKeyword.多对多关联标记))
@@ -457,6 +499,8 @@ namespace T4CAGC.Handler
              List<string> specifyTable = null,
              List<string> ignoreTable = null)
         {
+            throw new NotImplementedException("暂不支持.");
+
             var tables = filename.ReadCSV(true, Encoding.UTF8);
             int rowsCount = tables.Rows.Count,
                 columnsCount = tables.Columns.Count;

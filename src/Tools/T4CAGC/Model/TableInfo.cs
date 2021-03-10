@@ -13,6 +13,11 @@ namespace T4CAGC.Model
         public string Name { get; set; }
 
         /// <summary>
+        /// 树状结构
+        /// </summary>
+        public bool Tree { get; set; }
+
+        /// <summary>
         /// 说明
         /// </summary>
         public string Remark { get; set; } = string.Empty;
@@ -20,6 +25,6 @@ namespace T4CAGC.Model
         /// <summary>
         /// 字段集合
         /// </summary>
-        public List<FieldInfo> Fields { get; set; }
+        public List<FieldInfo> Fields { get; set; } = new List<FieldInfo>();
     }
 }
