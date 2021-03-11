@@ -60,4 +60,20 @@ namespace Model.Common.WeChatUserInfoDTO
         /// </summary>
         public string RedirectUrl { get; set; }
     }
+
+    /// <summary>
+    /// 系统用户绑定微信的链接
+    /// </summary>
+    public class UserBindUrl
+    {
+        /// <summary>
+        /// 用于生成二维码的链接
+        /// </summary>
+        public string Url { get; set; }
+
+        /// <summary>
+        /// 用于连接Signalr的字符串
+        /// </summary>
+        public string S { get; set; }
+    }
 }

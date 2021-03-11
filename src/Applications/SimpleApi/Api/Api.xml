@@ -175,6 +175,27 @@
             <param name="app"></param>
             <param name="config"></param>
         </member>
+        <member name="T:Api.Configures.SignalRConfigura">
+            <summary>
+            配置SignalR服务
+            </summary>
+        </member>
+        <member name="M:Api.Configures.SignalRConfigura.RegisterSignalR(Microsoft.Extensions.DependencyInjection.IServiceCollection,Model.Utils.Config.SystemConfig)">
+            <summary>
+            注册SignalR服务
+            </summary>
+            <param name="services"></param>
+            <param name="config"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Configures.SignalRConfigura.ConfiguraSignalR(Microsoft.AspNetCore.Builder.IApplicationBuilder,Model.Utils.Config.SystemConfig)">
+            <summary>
+            配置SignalR服务
+            </summary>
+            <param name="app"></param>
+            <param name="config"></param>
+            <returns></returns>
+        </member>
         <member name="T:Api.Configures.SoapConfigure">
             <summary>
             Soap配置类

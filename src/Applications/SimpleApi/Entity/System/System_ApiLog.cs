@@ -10,21 +10,20 @@ using System.Xml.Serialization;
 namespace Entity.System
 {
     /// <summary>
-    /// 系统日志
+    /// 接口日志
     /// </summary>
     [Table]
-    [OraclePrimaryKeyName("pk_" + nameof(System_Log))]
+    [OraclePrimaryKeyName("pk_" + nameof(System_ApiLog))]
     #region 设置索引
-    [Index(nameof(System_Log) + "_idx_" + nameof(Level), nameof(Level) + " ASC")]
-    [Index(nameof(System_Log) + "_idx_" + nameof(LogType), nameof(LogType) + " ASC")]
-    [Index(nameof(System_Log) + "_idx_" + nameof(CreatorId), nameof(CreatorId) + " ASC")]
-    [Index(nameof(System_Log) + "_idx_" + nameof(CreateTime), nameof(CreateTime) + " DESC")]
+    [Index(nameof(System_ApiLog) + "_idx_" + nameof(LogType), nameof(LogType) + " ASC")]
+    [Index(nameof(System_ApiLog) + "_idx_" + nameof(CreatorId), nameof(CreatorId) + " ASC")]
+    [Index(nameof(System_ApiLog) + "_idx_" + nameof(CreateTime), nameof(CreateTime) + " DESC")]
     #endregion
     #region Elasticsearch相关
     [ElasticsearchIndiceExtension(Version = "v1", IndicesSubType = NestIndexSubType.Day)]
-    [ElasticsearchType(RelationName = nameof(System_Log), IdProperty = nameof(Id))]
+    [ElasticsearchType(RelationName = nameof(System_ApiLog), IdProperty = nameof(Id))]
     #endregion
-    public class System_Log
+    public class System_ApiLog
     {
         /// <summary>
         /// Id
@@ -33,14 +32,6 @@ namespace Entity.System
         [Column(IsPrimary = true, StringLength = 36)]
         [Keyword]
         public string Id { get; set; }
-
-        /// <summary>
-        /// 级别
-        /// </summary>
-        [OpenApiSubTag("List", "Detail")]
-        [Column(StringLength = 10)]
-        [Keyword]
-        public string Level { get; set; }
 
         /// <summary>
         /// 类型

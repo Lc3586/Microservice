@@ -948,6 +948,51 @@
             微信用户信息
             </summary>
         </member>
+        <member name="T:Entity.System.System_ApiLog">
+            <summary>
+            接口日志
+            </summary>
+        </member>
+        <member name="P:Entity.System.System_ApiLog.Id">
+            <summary>
+            Id
+            </summary>
+        </member>
+        <member name="P:Entity.System.System_ApiLog.LogType">
+            <summary>
+            类型
+            </summary>
+        </member>
+        <member name="P:Entity.System.System_ApiLog.LogContent">
+            <summary>
+            内容
+            </summary>
+        </member>
+        <member name="P:Entity.System.System_ApiLog.Data">
+            <summary>
+            数据备份（转为JSON字符串）
+            </summary>
+        </member>
+        <member name="P:Entity.System.System_ApiLog.CreatorId">
+            <summary>
+            操作者
+            </summary>
+        </member>
+        <member name="P:Entity.System.System_ApiLog.CreatorName">
+            <summary>
+            操作者名称
+            </summary>
+        </member>
+        <member name="P:Entity.System.System_ApiLog.CreateTime">
+            <summary>
+            操作时间
+            </summary>
+        </member>
+        <member name="P:Entity.System.System_ApiLog.User">
+            <summary>
+            用户
+            </summary>
+        </member>
         <member name="T:Entity.System.System_Log">
             <summary>
             系统日志

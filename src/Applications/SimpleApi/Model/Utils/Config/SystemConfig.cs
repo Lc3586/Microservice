@@ -286,5 +286,19 @@ namespace Model.Utils.Config
         public WeChatServiceSetting WeChatService { get; set; }
 
         #endregion
+
+        #region Signalr
+
+        /// <summary>
+        /// 启用Signalr服务
+        /// </summary>
+        public bool EnableSignalr { get; set; }
+
+        /// <summary>
+        /// Signalr允许跨域
+        /// </summary>
+        public bool SignalrCors { get; set; }
+
+        #endregion
     }
 }

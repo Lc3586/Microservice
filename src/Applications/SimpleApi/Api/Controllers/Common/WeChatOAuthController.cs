@@ -1,9 +1,13 @@
 ﻿using Api.Controllers.Utils;
+using Business.Hub;
 using Business.Interface.Common;
 using Business.Interface.System;
+using Microservice.Library.Extension;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using Model.Utils.Result;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net;
 using System.Threading.Tasks;
@@ -24,11 +28,13 @@ namespace Api.Controllers
         public WeChatOAuthController(
             IHttpContextAccessor httpContextAccessor,
             IWeChatUserInfoBusiness weChatUserInfoBusiness,
-            IMemberBusiness memberBusiness)
+            IMemberBusiness memberBusiness,
+            IHubContext<WeChatServiceHub> weChatServiceHub)
         {
             HttpContextAccessor = httpContextAccessor;
             WeChatUserInfoBusiness = weChatUserInfoBusiness;
             MemberBusiness = memberBusiness;
+            WeChatServiceHub = weChatServiceHub;
         }
 
         readonly IHttpContextAccessor HttpContextAccessor;
@@ -36,6 +42,8 @@ namespace Api.Controllers
         readonly IWeChatUserInfoBusiness WeChatUserInfoBusiness;
 
         readonly IMemberBusiness MemberBusiness;
+
+        readonly IHubContext<WeChatServiceHub> WeChatServiceHub;
 
         #endregion
 
@@ -102,7 +110,7 @@ namespace Api.Controllers
         /// <param name="returnUrl">重定向地址</param>
         /// <returns></returns>
         [HttpGet("user-bind-url/{userId}/{asyncUserInfo}")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "链接地址", typeof(string))]
+        [SwaggerResponse((int)HttpStatusCode.OK, "链接地址", typeof(Model.Common.WeChatUserInfoDTO.UserBindUrl))]
         public async Task<object> GetUserBindUrl(string userId, bool asyncUserInfo, string returnUrl)
         {
             var state = WeChatUserInfoBusiness.GetState(new Model.Common.WeChatUserInfoDTO.StateInfo
@@ -124,7 +132,11 @@ namespace Api.Controllers
 
             var url = $"{Config.WeChatService.OAuthUserInfoUrl}?state={state}";
 
-            return await Task.FromResult(Success<string>(url));
+            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(new Model.Common.WeChatUserInfoDTO.UserBindUrl
+            {
+                Url = url,
+                S = state.ToMD5String()
+            })));
         }
 
         /// <summary>

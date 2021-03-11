@@ -141,6 +141,8 @@ namespace Api.Configures
                 s.InjectJavascript("/swagger/jquery-1.8.3.min.js");
                 s.InjectStylesheet("/swagger/waiting.css");
                 s.InjectJavascript("/swagger/waiting.min.js");
+                s.InjectJavascript("/swagger/vue.min.js");
+                s.InjectJavascript("/swagger/signalr.min.js");
                 s.InjectStylesheet("/swagger/custom-stylesheet.css");
                 s.InjectJavascript("/swagger/custom-javascript.js");
                 if (config.EnableCAS)

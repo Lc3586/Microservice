@@ -1,8 +1,11 @@
-﻿using Entity.System;
+﻿using Business.Hub;
+using Entity.System;
 using FreeSql;
 using Microservice.Library.Container;
 using Microservice.Library.FreeSql.Gen;
+using Microsoft.AspNetCore.SignalR;
 using Model.Utils.Config;
+using Model.Utils.SignalR;
 using NLog;
 using NLog.Targets;
 
@@ -16,6 +19,8 @@ namespace Business.Utils.Log
         {
 
         }
+
+        IHubContext<LogHub> LogHub => AutofacHelper.GetScopeService<IHubContext<LogHub>>();
 
         #endregion
 
@@ -45,6 +50,7 @@ namespace Business.Utils.Log
 
         protected override async void Write(LogEventInfo logEvent)
         {
+            Monitor(logEvent, logEvent.FormattedMessage);
             await GetRepository().InsertAsync(GetBase_SysLogInfo(logEvent).InitEntityWithoutOP());
         }
 
@@ -55,6 +61,25 @@ namespace Business.Utils.Log
                                             .GetFreeSql()
                                             .GetRepository<System_Log, string>();
             return Repository;
+        }
+
+        /// <summary>
+        /// 监听
+        /// </summary>
+        /// <param name="logEvent"></param>
+        /// <param name="formattedMessage">格式化后的信息</param>
+        async void Monitor(LogEventInfo logEvent, string formattedMessage)
+        {
+            try
+            {
+                await LogHub.Clients.All.SendCoreAsync(LogHubMethod.Log, new[] { formattedMessage });
+            }
+#pragma warning disable CA1031 // Do not catch general exception types
+            catch
+            {
+
+            }
+#pragma warning restore CA1031 // Do not catch general exception types
         }
 
         #endregion

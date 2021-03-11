@@ -21,6 +21,16 @@
             </summary>
             <param name="invocation"></param>
         </member>
+        <member name="T:Business.Hub.LogHub">
+            <summary>
+            日志中心
+            </summary>
+        </member>
+        <member name="T:Business.Hub.WeChatServiceHub">
+            <summary>
+            微信服务集线器
+            </summary>
+        </member>
         <member name="T:Business.Implementation.Common.EntryLogBusiness">
             <summary>
             档案操作记录业务类
@@ -1766,6 +1776,13 @@
             <param name="messageValue">消息值</param>
             <param name="timeout">超时时间（默认10秒）</param>
         </member>
+        <member name="M:Business.Utils.Log.ElasticSearchTarget.Monitor(NLog.LogEventInfo,System.String)">
+            <summary>
+            监听
+            </summary>
+            <param name="logEvent"></param>
+            <param name="formattedMessage">格式化后的信息</param>
+        </member>
         <member name="T:Business.Utils.Log.ILogBusiness">
             <summary>
             日志业务接口类
@@ -1823,6 +1840,25 @@
             <summary>
             日志业务类
             </summary>
+        </member>
+        <member name="T:Business.Utils.Log.MonitorFileTarget">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Business.Utils.Log.MonitorFileTarget.Monitor(NLog.LogEventInfo,System.String)">
+            <summary>
+            监听
+            </summary>
+            <param name="logEvent"></param>
+            <param name="formattedMessage">格式化后的信息</param>
+        </member>
+        <member name="M:Business.Utils.Log.RDBMSTarget.Monitor(NLog.LogEventInfo,System.String)">
+            <summary>
+            监听
+            </summary>
+            <param name="logEvent"></param>
+            <param name="formattedMessage">格式化后的信息</param>
         </member>
         <member name="T:Business.Utils.MessageException">
             <summary>

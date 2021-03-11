@@ -29,7 +29,7 @@ namespace Api.Configures
                     MinLevel = NLog.LogLevel.FromOrdinal(config.MinLogLevel),
                     Target = config.DefaultLoggerType switch
                     {
-                        LoggerType.File => new FileTarget
+                        LoggerType.File => new MonitorFileTarget
                         {
                             Name = config.DefaultLoggerName,
                             Layout = config.DefaultLoggerLayout ?? NLoggerConfig.Layout,

@@ -318,6 +318,21 @@
             重定向地址
             </summary>
         </member>
+        <member name="T:Model.Common.WeChatUserInfoDTO.UserBindUrl">
+            <summary>
+            系统用户绑定微信的链接
+            </summary>
+        </member>
+        <member name="P:Model.Common.WeChatUserInfoDTO.UserBindUrl.Url">
+            <summary>
+            用于生成二维码的链接
+            </summary>
+        </member>
+        <member name="P:Model.Common.WeChatUserInfoDTO.UserBindUrl.S">
+            <summary>
+            用于连接Signalr的字符串
+            </summary>
+        </member>
         <member name="T:Model.Example.DBDTO.List">
             <summary>
             列表
@@ -1981,6 +1996,16 @@
             微信服务配置
             </summary>
         </member>
+        <member name="P:Model.Utils.Config.SystemConfig.EnableSignalr">
+            <summary>
+            启用Signalr服务
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Config.SystemConfig.SignalrCors">
+            <summary>
+            Signalr允许跨域
+            </summary>
+        </member>
         <member name="T:Model.Utils.Config.WeChatServiceSetting">
             <summary>
             微信服务配置
@@ -3062,6 +3087,11 @@
         <member name="P:Model.Utils.SampleAuthentication.SampleAuthenticationDTO.LogoutRequest.ReturnUrl">
             <summary>
             登出后跳转地址
+            </summary>
+        </member>
+        <member name="T:Model.Utils.SignalR.LogHubMethod">
+            <summary>
+            日志中心前端方法
             </summary>
         </member>
     </members>

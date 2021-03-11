@@ -697,7 +697,7 @@ namespace Business.Implementation.System
         public void RevocationRoleForUser(string roleId, string userId, bool allChilds = false, bool runTransaction = true)
         {
             List<string> roleIds;
-            var q = Repository_Role.Select.Where($"a.[Id] = '{roleId}' AND a.[Enable] = 1");
+            var q = Repository_Role.Select.Where($"a.[Id] = '{roleId}'");
 
             if (allChilds)
                 q = q.AsTreeCte();
@@ -757,7 +757,7 @@ namespace Business.Implementation.System
         public void RevocationRoleForMember(string roleId, string memberId, bool allChilds = false, bool runTransaction = true)
         {
             List<string> roleIds;
-            var q = Repository_Role.Select.Where($"a.[Id] = '{roleId}' AND a.[Enable] = 1");
+            var q = Repository_Role.Select.Where($"a.[Id] = '{roleId}'");
 
             if (allChilds)
                 q = q.AsTreeCte();
@@ -817,7 +817,7 @@ namespace Business.Implementation.System
         public void RevocationMenuForUser(string menuId, string userId, bool allChilds = false, bool runTransaction = true)
         {
             List<string> menuIds;
-            var q = Repository_Menu.Select.Where($"a.[Id] = '{menuId}' AND a.[Enable] = 1");
+            var q = Repository_Menu.Select.Where($"a.[Id] = '{menuId}'");
 
             if (allChilds)
                 q = q.AsTreeCte();
@@ -919,7 +919,7 @@ namespace Business.Implementation.System
         public void RevocationMenuForRole(string menuId, string roleId, bool allChilds = false, bool runTransaction = true)
         {
             List<string> menuIds;
-            var q = Repository_Menu.Select.Where($"a.[Id] = '{menuId}' AND a.[Enable] = 1");
+            var q = Repository_Menu.Select.Where($"a.[Id] = '{menuId}'");
 
             if (allChilds)
                 q = q.AsTreeCte();

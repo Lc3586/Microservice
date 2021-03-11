@@ -145,6 +145,9 @@ namespace Api
             if (Config.EnableSoap)
                 services.RegisterSoap(Config);
 
+            if (Config.EnableSignalr)
+                services.RegisterSignalR(Config);
+
             services.RegisterNLog(Config);
         }
 
@@ -257,6 +260,9 @@ namespace Api
 
             if (Config.EnableSoap)
                 app.ConfiguraSoap(Config);
+
+            if (Config.EnableSignalr)
+                app.ConfiguraSignalR(Config);
 
             //获取AutofacIOC容器
             AutofacHelper.Container = app.ApplicationServices.GetAutofacRoot();

@@ -159,10 +159,14 @@ namespace Api.Configures
                 s.InjectJavascript("/swagger/jquery-1.8.3.min.js");
                 s.InjectStylesheet("/swagger/waiting.css");
                 s.InjectJavascript("/swagger/waiting.min.js");
+                s.InjectJavascript("/swagger/vue.min.js");
+                s.InjectJavascript("/swagger/signalr.min.js");
                 s.InjectStylesheet("/swagger/custom-stylesheet.css");//自定义样式表，需要启用静态文件
                 s.InjectJavascript("/swagger/custom-javascript.js");//自定义脚本，需要启用静态文件
                 if (config.EnableCAS)
                     s.InjectJavascript("/swagger/casLogin.js");//cas登录脚本脚本
+                if (config.EnableSampleAuthentication)
+                    s.InjectJavascript("/swagger/saLogin.js");//sa登录脚本脚本
 
                 #endregion
 

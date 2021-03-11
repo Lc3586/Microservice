@@ -28,7 +28,9 @@
     <PackageReference Include="Microservice.Library.NLogger" Version="0.0.0.20284-alpha-g3c4fe539e3" />
     <PackageReference Include="Microservice.Library.SelectOption" Version="0.0.0.20284-alpha-g3c4fe539e3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.1.0" />
     <PackageReference Include="NewId" Version="3.0.3" />
+    <PackageReference Include="SuperSocket.WebSocket" Version="2.0.0-beta.8" />
     <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.8" />
   </ItemGroup>
 
