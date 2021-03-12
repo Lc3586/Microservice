@@ -1,0 +1,63 @@
+﻿/*头部样式*/
+.el-header {
+    text-align: left;
+    line-height: 60px;
+    color: #586069;
+    font-weight: 400;
+}
+/*容器样式*/
+body > .full_container {
+    margin-bottom: 40px;
+}
+
+.main_container {
+    height: calc(100vh - 80px);
+}
+
+.el-tabs__content {
+    height: 100%;
+}
+
+.el-tabs {
+    width: 100%;
+}
+
+/*标签内容页的统一样式*/
+.el-tab-pane {
+    height: 100%;
+}
+
+/*标签内容页-实时日志部分的样式*/
+.reallog_pane {
+    padding-top: 20px !important;
+    border-radius: 4px !important;
+    background: #303133;
+}
+
+/*日志状态的图标样式*/
+.block i {
+    background-color: white;
+    border-radius: 20px;
+    transition: color .15s linear;
+    font-size: 32px;
+}
+
+/*一般日志的图标*/
+.el-icon-info {
+    color: #5e6d82;
+}
+
+/*正常日志的图标*/
+.el-icon-success {
+    color: #28a745;
+}
+
+/*警告日志的图标*/
+.el-icon-warning {
+    color: #ffc107;
+}
+
+/*异常日志的图标*/
+.el-icon-error {
+    color: #cb2431;
+}

@@ -1,0 +1,48 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="../../vue/vue.global.prod.js"></script>
+
+    <script src="../../utils/axios.min.js"></script>
+
+    <link href="../../element-plus/theme-chalk/element-plus.index.css" rel="stylesheet" />
+    <script src="../../element-plus/element-plus.index.full.js"></script>
+
+    <script src="../../utils/signalr.min.js"></script>
+
+    <link href="logconsole.css" rel="stylesheet" />
+    <script src="logconsole.js"></script>
+</head>
+<body>
+    <div id="app">
+        <el-container class="full_container">
+            <el-header>一切正常</el-header>
+            <el-container class="main_container" v-loading="loading">
+                <el-tabs tab-position="left" v-model="logTypeTabsValue" @tab-click="logTypeTabsChanged" >
+                    <el-tab-pane label="实时日志" class="reallog_pane" name="Console">
+                        <div class="block">
+                            <el-timeline>
+                                <el-timeline-item v-for="(log, index) in logs"
+                                                  :key="index"
+                                                  :icon="log.icon"
+                                                  :type="log.type"
+                                                  :color="log.color"
+                                                  :size="log.size"
+                                                  :timestamp="log.timestamp"
+                                                  placement="top">
+                                    {{log.content}}
+                                </el-timeline-item>
+                            </el-timeline>
+                        </div>
+                    </el-tab-pane>
+                    <el-tab-pane label="文件日志" name="File">文件日志</el-tab-pane>
+                    <el-tab-pane label="Elasticsearch日志" name="ElasticSearch">Elasticsearch日志</el-tab-pane>
+                    <el-tab-pane label="数据库日志" name="RDBMS">数据库日志</el-tab-pane>
+                </el-tabs>
+            </el-container>
+        </el-container>
+    </div>
+</body>
+</html>

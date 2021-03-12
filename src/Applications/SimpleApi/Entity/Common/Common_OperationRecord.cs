@@ -44,7 +44,7 @@ namespace Entity.Common
         /// <remarks>值为各数据模型的实体类名</remarks>
         [OpenApiSubTag("List", "Detail")]
         [Description("数据类型")]
-        [Column(StringLength = 30)]
+        [Column(StringLength = 100)]
         public string DataType { get; set; }
 
         /// <summary>

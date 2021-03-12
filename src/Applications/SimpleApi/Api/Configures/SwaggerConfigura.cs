@@ -136,19 +136,46 @@ namespace Api.Configures
                 s.DisplayOperationId();//显示操作Id
                 s.DisplayRequestDuration();//显示请求持续时间
                 s.EnableFilter();//启用顶部筛选框
-                //s.InjectStylesheet("/swagger/custom-stylesheet.css");//自定义样式表，需要启用静态文件
-                //s.InjectJavascript("/swagger/custom-javascript.js");//自定义脚本，需要启用静态文件
-                s.InjectJavascript("/swagger/jquery-1.8.3.min.js");
-                s.InjectStylesheet("/swagger/waiting.css");
-                s.InjectJavascript("/swagger/waiting.min.js");
-                s.InjectJavascript("/swagger/vue.min.js");
-                s.InjectJavascript("/swagger/signalr.min.js");
-                s.InjectStylesheet("/swagger/custom-stylesheet.css");
-                s.InjectJavascript("/swagger/custom-javascript.js");
-                if (config.EnableCAS)
-                    s.InjectJavascript("/swagger/casLogin.js");//cas登录脚本脚本
-                if (config.EnableSampleAuthentication)
-                    s.InjectJavascript("/swagger/saLogin.js");//sa登录脚本脚本
+
+                //注入自定义文件
+                s.InjectJavascript("/jquery/jquery-2.2.4.min.js");
+                s.InjectJavascript("/jquery/jquery-ui.min.js");
+                s.InjectStylesheet("/jquery/jquery-ui.min.css");
+                s.InjectStylesheet("/jquery/jquery-ui.theme.min.css");
+                s.InjectStylesheet("/jquery/jquery-ui.structure.min.css");
+                s.InjectStylesheet("/utils/waiting.css");
+                s.InjectJavascript("/utils/waiting.min.js");
+                var basePath = Path.GetDirectoryName(typeof(Program).Assembly.Location);
+                var dirPath = Path.Combine(basePath, "wwwroot/swagger/extensions");
+                InjectFileFromDir(new DirectoryInfo(dirPath));
+                void InjectFileFromDir(DirectoryInfo dir)
+                {
+                    foreach (var innerDir in dir.GetDirectories())
+                    {
+                        InjectFileFromDir(innerDir);
+                    }
+
+                    foreach (var file in dir.GetFiles())
+                    {
+                        if (file.Name.Contains("casLogin"))
+                        {
+                            //cas登录脚本脚本
+                            if (!config.EnableCAS)
+                                continue;
+                        }
+                        else if (file.Name.Contains("saLogin"))
+                        {
+                            //sa登录脚本脚本
+                            if (!config.EnableSampleAuthentication)
+                                continue;
+                        }
+
+                        if (file.Extension == ".js")
+                            s.InjectJavascript(file.FullName[file.FullName.IndexOf("\\swagger")..]);
+                        else if (file.Extension == ".css")
+                            s.InjectStylesheet(file.FullName[file.FullName.IndexOf("\\swagger")..]);
+                    }
+                }
 
                 #endregion
 
