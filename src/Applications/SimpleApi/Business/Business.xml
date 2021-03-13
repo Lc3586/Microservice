@@ -1776,11 +1776,11 @@
             <param name="messageValue">消息值</param>
             <param name="timeout">超时时间（默认10秒）</param>
         </member>
-        <member name="M:Business.Utils.Log.ElasticSearchTarget.Monitor(NLog.LogEventInfo,System.String)">
+        <member name="M:Business.Utils.Log.ElasticSearchTarget.Monitor(Entity.System.System_Log,System.String)">
             <summary>
             监听
             </summary>
-            <param name="logEvent"></param>
+            <param name="log"></param>
             <param name="formattedMessage">格式化后的信息</param>
         </member>
         <member name="T:Business.Utils.Log.ILogBusiness">
@@ -1805,6 +1805,12 @@
         <member name="M:Business.Utils.Log.ILogBusiness.GetFileContent(System.String)">
             <summary>
             获取日志文件内容
+            </summary>
+            <param name="filename">文件名</param>
+        </member>
+        <member name="M:Business.Utils.Log.ILogBusiness.DownloadFile(System.String)">
+            <summary>
+            下载日志文件内容
             </summary>
             <param name="filename">文件名</param>
         </member>
@@ -1853,11 +1859,11 @@
             <param name="logEvent"></param>
             <param name="formattedMessage">格式化后的信息</param>
         </member>
-        <member name="M:Business.Utils.Log.RDBMSTarget.Monitor(NLog.LogEventInfo,System.String)">
+        <member name="M:Business.Utils.Log.RDBMSTarget.Monitor(Entity.System.System_Log,System.String)">
             <summary>
             监听
             </summary>
-            <param name="logEvent"></param>
+            <param name="log"></param>
             <param name="formattedMessage">格式化后的信息</param>
         </member>
         <member name="T:Business.Utils.MessageException">

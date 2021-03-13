@@ -1,6 +1,7 @@
 ﻿using Business.Hub;
 using Microservice.Library.Container;
 using Microsoft.AspNetCore.SignalR;
+using Model.Utils.Config;
 using Model.Utils.SignalR;
 using NLog;
 using NLog.Targets;
@@ -30,7 +31,13 @@ namespace Business.Utils.Log
         {
             try
             {
-                await LogHub.Clients.All.SendCoreAsync(LogHubMethod.Log, new[] { formattedMessage });
+                logEvent.Properties.TryGetValue(NLoggerConfig.LogType, out object logType);
+                await LogHub.Clients.All.SendCoreAsync(LogHubMethod.Log,
+                    new object[] {
+                        logEvent.TimeStamp,
+                        logEvent.Level.ToString(),
+                        logType,
+                        formattedMessage });
             }
 #pragma warning disable CA1031 // Do not catch general exception types
             catch

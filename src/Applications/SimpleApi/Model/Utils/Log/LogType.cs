@@ -1,4 +1,6 @@
-﻿namespace Model.Utils.Log
+﻿using System.Collections.Generic;
+
+namespace Model.Utils.Log
 {
     /// <summary>
     /// 日志类型
@@ -38,6 +40,17 @@
                 "警告信息" => 警告信息,
                 "系统异常" => 系统异常,
                 _ => null,
+            };
+        }
+
+        public static Dictionary<byte, string> AllTypes()
+        {
+            return new Dictionary<byte, string>
+            {
+                { 系统跟踪,"系统跟踪"},
+                { 调试日志,"调试日志"},
+                { 警告信息,"警告信息"},
+                { 系统异常,"系统异常"},
             };
         }
 

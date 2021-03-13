@@ -12,7 +12,7 @@ $(function () {
     * @method check
     *
     */
-    var check = () => {
+    var check = (done) => {
         //方式一
         $.ajax({
             type: 'POST',
@@ -20,12 +20,13 @@ $(function () {
             url: "/cas/authorized",
             dataType: 'json',
             success: function (data) {
-                addBtn(data);
+                done(data);
             },
             error: function (response) {
                 if (response.status == 401)
-                    addBtn(false);
+                    done(false);
                 else {
+                    done(false);
                     window.showDialog(
                         '接口异常',
                         [
@@ -54,104 +55,105 @@ $(function () {
     * 
     */
     var addBtn = (data) => {
-        setTimeout(() => {
-            if (!$('.scheme-container .schemes').length) {
-                addBtn(data);
-                return;
-            }
-
-            var btns = [];
+        var open = (name, e) => {
             if (data) {
-                var btn = $('<button class="btn authorize unlocked "><span>CAS登录信息</span><svg width="20" height="20"><use href="#unlocked" xlink:href="#unlocked"></use></svg></button>');
-                btn.on('click', () => {
-                    var content = [];
-                    for (var item in data) {
-                        content.push(['input-readonly', item, data[item]]);
-                    }
-                    window.delayedEvent(() => {
-                        window.showDialog(
-                            'CAS登录信息',
-                            content,
-                            {
-                                '注销（方式一）': ['双击查看对接说明', {
-                                    'click': () => {
-                                        window.delayedEvent(() => { logout(1); }, 800, 'logout', false);
-                                    },
-                                    'dblclick': () => {
-                                        window.delayedEvent(() => {
-                                            window.showDialog(
-                                                '注销方式一',
-                                                [
-                                                    ['label', '注销登录', '跳转至注销地址/cas/logout?returnUrl=，并附带参数（登录后的重定向地址）'],
-                                                    ['label', '未登录', '浏览器重定向至指定地址'],
-                                                    ['label', '注销后', '浏览器重定向至指定地址'],
-                                                    ['label', '如果要单点注销', '附加参数logoutCAS=true']
-                                                ]);
-                                        }, 100, 'logout', false);
-                                    }
-                                }],
-                                '注销（方式二）': ['双击查看对接说明', {
-                                    'click': () => {
-                                        window.delayedEvent(() => { logout(2); }, 800, 'logout', false);
-                                    },
-                                    'dblclick': () => {
-                                        window.delayedEvent(() => {
-                                            window.showDialog(
-                                                '注销方式二',
-                                                [
-                                                    ['label', '注销登录', 'POST请求/cas/logout接口'],
-                                                    ['label', '未登录', '接口返回状态码401'],
-                                                    ['label', '注销后', '接口返回状态码200']
-                                                ]);
-                                        }, 100, 'logout', false);
-                                    }
-                                }]
-                            });
-                    }, 100, 'loginInfo', false);
-                });
-                btns.push(btn);
+                var content = [];
+                for (var item in data) {
+                    content.push(['input-readonly', item, data[item]]);
+                }
+                window.showDialog(
+                    'CAS登录信息',
+                    content,
+                    {
+                        '注销（方式一）': {
+                            'click': () => {
+                                logout(1);
+                            }
+                        },
+                        '查看对接说明（方式一）': {
+                            'click': () => {
+                                window.showDialog(
+                                    '注销方式一',
+                                    [
+                                        ['label', '注销登录', '跳转至注销地址/cas/logout?returnUrl=，并附带参数（登录后的重定向地址）'],
+                                        ['label', '未登录', '浏览器重定向至指定地址'],
+                                        ['label', '注销后', '浏览器重定向至指定地址'],
+                                        ['label', '如果要单点注销', '附加参数logoutCAS=true']
+                                    ]);
+                            }
+                        },
+                        '注销（方式二）': {
+                            'click': () => {
+                                logout(2);
+                            }
+                        },
+                        '查看对接说明（方式二）': {
+                            'click': () => {
+                                window.showDialog(
+                                    '注销方式二',
+                                    [
+                                        ['label', '注销登录', 'POST请求/cas/logout接口'],
+                                        ['label', '未登录', '接口返回状态码401'],
+                                        ['label', '注销后', '接口返回状态码200']
+                                    ]);
+                            }
+                        }
+                    });
             } else {
-                var btn_1_0 = $('<button class="btn authorize locked " title="双击查看对接说明"><span>CAS登录（方式一）</span><svg width="20" height="20"><use href="#locked" xlink:href="#locked"></use></svg></button>');
-                btn_1_0.on('click', () => {
-                    window.delayedEvent(() => { login(1); }, 800, 'login', false);
-                }).on('dblclick', () => {
-                    window.delayedEvent(() => {
-                        window.showDialog(
-                            '登录方式一',
-                            [
-                                ['label', '登录验证', 'POST请求/cas/authorized接口'],
-                                ['label', '未登录', '接口返回状态码401, 此时应该跳转至登录地址/cas/login?returnUrl=，并附带参数（登录后的重定向地址）'],
-                                ['label', '已登录', '接口返回状态码200, 以及身份信息']
-                            ]);
-                    }, 100, 'login', false);
-                });
-                btns.push(btn_1_0);
-
-                var btn_2_0 = $('<button class="btn authorize locked " title="双击查看对接说明"><span>CAS登录（方式二）</span><svg width="20" height="20"><use href="#locked" xlink:href="#locked"></use></svg></button>');
-                btn_2_0.on('click', () => {
-                    window.delayedEvent(() => { login(2); }, 800, 'login', false);
-                }).on('dblclick', () => {
-                    window.delayedEvent(() => {
-                        window.showDialog(
-                            '登录方式二',
-                            [
-                                ['label', '登录验证', '跳转至验证地址/cas/authorize?returnUrl=，并附带参数（登录后的重定向地址）'],
-                                ['label', '未登录', '浏览器重定向至登录地址'],
-                                ['label', '登录后', '浏览器重定向指指定地址，地址栏附带身份信息'],
-                                ['label', '获取身份信息', 'JSON.parse(decodeURI(window.location.request("casInfo")).replace(/%3A/g, ":"))'],
-                                ['label', '注释', 'window.location.request()是本页面的一个封装方法']
-                            ]);
-                    }, 100, 'login', false);
-                });
-                btns.push(btn_2_0);
+                window.showDialog(
+                    'CAS登录',
+                    null,
+                    {
+                        '登录（方式一）': {
+                            'click': () => {
+                                login(1);
+                            }
+                        },
+                        '查看对接说明（方式一）': {
+                            'click': () => {
+                                window.showDialog(
+                                    '登录方式一',
+                                    [
+                                        ['label', '登录验证', 'POST请求/cas/authorized接口'],
+                                        ['label', '未登录', '接口返回状态码401, 此时应该跳转至登录地址/cas/login?returnUrl=，并附带参数（登录后的重定向地址）'],
+                                        ['label', '已登录', '接口返回状态码200, 以及身份信息']
+                                    ]);
+                            }
+                        },
+                        '登录（方式二）': {
+                            'click': () => {
+                                login(2);
+                            }
+                        },
+                        '查看对接说明（方式二）': {
+                            'click': () => {
+                                window.showDialog(
+                                    '登录方式二',
+                                    [
+                                        ['label', '登录验证', '跳转至验证地址/cas/authorize?returnUrl=，并附带参数（登录后的重定向地址）'],
+                                        ['label', '未登录', '浏览器重定向至登录地址'],
+                                        ['label', '登录后', '浏览器重定向指指定地址，地址栏附带身份信息'],
+                                        ['label', '获取身份信息', 'JSON.parse(decodeURI(window.location.request("casInfo")).replace(/%3A/g, ":"))'],
+                                        ['label', '注释', 'window.location.request()是本页面的一个封装方法']
+                                    ]);
+                            }
+                        },
+                    });
             }
+        };
 
-            var $wrapper = $('<div class="auth-wrapper"></div>');
-            $.each(btns, (index, btn) => {
-                btn.appendTo($wrapper);
-            });
-            $wrapper.appendTo($('.scheme-container .schemes'));
-        }, 100);
+        var init = () => {
+            window.addPlugIn('cas', '统一身份认证-' + (data ? '已登录' : '未登录'), open, data ? '<svg t="1615632900894" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="37768" width="5em" height="5em"><path d="M512 943.559111l-9.443556-3.640889c-15.473778-6.030222-380.814222-149.276444-380.814222-365.795555V193.422222l15.587556-6.940444c8.988444-3.982222 204.8-58.595556 367.729778-103.765334l6.940444-2.275555 390.257778 109.795555v383.886223c0 216.177778-365.340444 359.765333-380.814222 365.795555zM174.08 229.376v344.746667C174.08 737.962667 456.362667 864.028444 512 887.466667c55.637333-22.755556 337.92-149.276444 337.92-313.116445V229.831111L512 134.826667c-118.101333 32.768-284.444444 78.961778-337.92 94.549333z" fill="#0590DF" p-id="37769"></path><path d="M460.913778 686.762667L265.443556 480.028444l38.001777-35.953777 157.582223 166.570666 259.527111-273.408 38.001777 36.067556-297.642666 313.457778z" fill="#0590DF" p-id="37770"></path></svg>' : '<svg t="1615632900894" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="37768" width="5em" height="5em"><path d="M512 943.559111l-9.443556-3.640889c-15.473778-6.030222-380.814222-149.276444-380.814222-365.795555V193.422222l15.587556-6.940444c8.988444-3.982222 204.8-58.595556 367.729778-103.765334l6.940444-2.275555 390.257778 109.795555v383.886223c0 216.177778-365.340444 359.765333-380.814222 365.795555zM174.08 229.376v344.746667C174.08 737.962667 456.362667 864.028444 512 887.466667c55.637333-22.755556 337.92-149.276444 337.92-313.116445V229.831111L512 134.826667c-118.101333 32.768-284.444444 78.961778-337.92 94.549333z" fill="#8a8a8a" p-id="37769"></path><path d="M460.913778 686.762667L265.443556 480.028444l38.001777-35.953777 157.582223 166.570666 259.527111-273.408 38.001777 36.067556-297.642666 313.457778z" fill="#8a8a8a" p-id="37770"></path></svg>');
+        };
+
+        init();
+
+        if (data) {
+            //定时检查  
+            var checking = setInterval(() => {
+                check((dataB) => { dataB ? 1 : (window.clearInterval(checking), addBtn(false)) });
+            }, 10000);
+        }
     };
 
     /**
@@ -235,5 +237,5 @@ $(function () {
         }
     };
 
-    check();
+    check(addBtn);
 });

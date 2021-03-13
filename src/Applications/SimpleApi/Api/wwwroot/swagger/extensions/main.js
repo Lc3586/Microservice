@@ -592,12 +592,14 @@ if (!window.showDialog) {
     *       }
     *   ]
     * }
-    * @param {any} closeButton 显示关闭按钮(默认显示)
+    * @param {boolean} closeButton 显示关闭按钮(默认显示)
+    * @param {boolean} mask 显示遮罩(默认显示)
+    * @param {boolean} drag 允许拖动(默认禁止)
     *
     */
-    window.showDialog = (title, content, button, closeButton = true) => {
-        var close = () => { body.fadeOut(); },
-            body = $('<div id="dialog" class="dialog-ux"><div class="backdrop-ux"></div><div class="modal-ux"><div class="modal-dialog-ux"><div class="modal-ux-inner"><div class="modal-ux-header"><h3>' + title + '</h3></div><div class="modal-ux-content"><div class="auth-container"><div><div><div class="auth-container-items"></div><div class="auth-btn-wrapper"></div></div></div></div></div></div></div></div></div></div>'),
+    window.showDialog = (title, content, button, closeButton = true, mask = true, drag = false) => {
+        var close = () => { $body.fadeOut(() => { $body.remove(); }); },
+            $body = $('<div id="dialog" class="dialog-ux ' + (mask ? '' : 'dialog-ux-none') + '">' + (mask ? '<div class="backdrop-ux"></div>' : '') + '<div class="modal-ux"><div class="modal-dialog-ux"><div class="modal-ux-inner"><div class="modal-ux-header"><h3>' + title + '</h3></div><div class="modal-ux-content"><div class="auth-container"><div><div><div class="auth-container-items"></div><div class="auth-btn-wrapper"></div></div></div></div></div></div></div></div></div></div>'),
             info = '';
 
         if (button)
@@ -605,13 +607,13 @@ if (!window.showDialog) {
                 var title = $.isArray(value) ? value[0] : '',
                     text = key,
                     events = $.isArray(value) ? value[1] : value,
-                    btn = $('<button class="btn modal-btn casBtn auth authorize button" title="' + title + '">' + text + '</button>');
+                    btn = $('<button class="btn swBtn authorize" title="' + title + '">' + text + '</button>');
 
                 $.each(events, (type, event) => {
                     btn.on(type, event);
                 });
 
-                btn.appendTo(body.find('.auth-btn-wrapper'));
+                btn.appendTo($body.find('.auth-btn-wrapper'));
             });
 
         if (content)
@@ -630,27 +632,36 @@ if (!window.showDialog) {
                         break;
                     case 'input':
                     case 'input-readonly':
-                        info += '<section class="block-tablet col-10-tablet block-desktop col-10-desktop"><input type="text" ' + (type == 'input-readonly' ? 'readonly="readonly"' : '') + ' class="casInput" id="' + _key + '" data-name="' + _key + '" value="' + _content + '"></section>';
+                        info += '<section class="block-tablet col-10-tablet block-desktop col-10-desktop"><input type="text" ' + (type == 'input-readonly' ? 'readonly="readonly"' : '') + ' class="swInput" id="' + _key + '" data-name="' + _key + '" value="' + _content + '"></section>';
+                        break;
+                    case 'iframe':
+                        info += '<iframe class="swIframe" id="' + _key + '" data-name="' + _key + '" src="' + _content + '" name="' + _title + '"><p>您的浏览器不支持iframes标签.</p></iframe >';
                         break;
                     case 'label':
                     default:
-                        info += '<section class="block-tablet col-10-tablet block-desktop col-10-desktop"><label class="casInput" id="' + _key + '" data-name="' + _key + '">' + _content + '</label></section>';
+                        info += '<section class="block-tablet col-10-tablet block-desktop col-10-desktop"><label class="swLabel" id="' + _key + '" data-name="' + _key + '">' + _content + '</label></section>';
                         break;
                 }
             });
 
         if (closeButton) {
-            $('<button class="btn modal-btn casBtn auth btn-done button">关闭</button>')
+            $('<button class="btn btn-done">关闭</button>')
                 .on('click', close)
-                .appendTo(body.find('.auth-btn-wrapper'));
+                .appendTo($body.find('.auth-btn-wrapper'));
             $('<button class="close-modal"><svg width="20" height="20"><use href="#close" xlink:href="#close"></use></svg></button>')
                 .on('click', close)
-                .appendTo(body.find('.modal-ux-header'));
+                .appendTo($body.find('.modal-ux-header'));
         }
 
-        body.find('.auth-container-items').append(info);
+        $body.find('.auth-container-items').append(info);
 
-        body.fadeIn().appendTo($('.scheme-container'));
+        $body.fadeIn().appendTo($('.scheme-container'));
+
+        if (drag)
+            $body.find('.modal-ux')
+                .draggable({ handle: ".modal-ux-header", scroll: false })
+                .find('.modal-ux-header')
+                .css({ 'cursor': 'move' });
     };
 }
 
@@ -659,26 +670,132 @@ if (!window.addPlugIn) {
      * 添加插件
      * 
      * @param {string} name 名称
+     * @param {string} title 标题
      * @param {Function} fun 回调方法
      * @param {string} svg 图标
      */
-    window.addPlugIn = (name, fun, svg) => {
-        var body = $('#plugInBody');
-        if (body.length == 0)
-            body = $('<div id="plugInBody" style="position:fixed; top:0px; right:0px; height:100%; /*background-color: #000;*/ z-index: 998;"></div>')
+    window.addPlugIn = (name, title, fun, svg) => {
+        var $body = $('#plugInBody');
+        if ($body.length == 0) {
+            $body = $('<div id="plugInBody"></div>')
                 .appendTo($('body'))
-                .draggable({ containment: $('body'), scroll: false });
+                .draggable({ containment: $('#swagger-ui'), scroll: false });
 
-        $('<i title="{name}" class="plug-in ui-draggable ui-draggable-handle" style="position:absolute; right:5px; bottom:100px; z-index: 999;">{svg}</i>'.format({ name: name, svg: svg }))
-            .animate({ bottom: (100 + ($('.plug-in').length * 60)) + 'px' })
-            .appendTo(body)
-            .on('click', (e) => { fun(name, e); });
+            $('<i title="展开拓展功能" class="plug-in-all"><svg t="1615609432254" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1514" width="80" height="80"><path d="M119.049445 308.054588a496.562 165.864 30 1 0 860.070613 496.562 496.562 165.864 30 1 0-860.070613-496.562Z" fill="#80CFF4" p-id="1515"></path><path d="M546.378 1023.114c-50.304 0-96.306-54.79-129.534-154.274-31.754-95.07-49.244-221.226-49.244-355.218s17.49-260.144 49.246-355.22c33.228-99.48 79.23-154.264 129.534-154.264 50.302 0 96.304 54.786 129.534 154.264 31.758 95.078 49.246 221.23 49.246 355.22 0 133.992-17.492 260.148-49.246 355.218-33.23 99.488-79.234 154.274-129.536 154.274z m0-993.146c-73.864 0-152.946 194.344-152.946 483.656 0 289.308 79.082 483.656 152.946 483.656 73.866 0 152.95-194.348 152.95-483.656-0.002-289.312-79.086-483.656-152.95-483.656z" p-id="1516"></path><path d="M215.344 813.43c-55.07 0-93.176-15.582-110.196-45.058-25.152-43.562-0.708-110.796 68.83-189.312 66.458-75.042 166.968-153.264 283.01-220.262 154.886-89.428 315.982-144.978 420.42-144.978 55.072 0 93.18 15.584 110.2 45.062 25.152 43.566 0.706 110.796-68.832 189.314-66.458 75.04-166.964 153.258-283.008 220.262-154.892 89.42-315.99 144.972-420.424 144.972z m662.064-573.78c-100.166 0-256.312 54.226-407.506 141.518C219.352 525.824 90.584 691.484 127.52 755.458c15.338 26.566 56.226 32.144 87.826 32.144 100.166 0 256.31-54.226 407.506-141.52 113.696-65.64 211.924-142.002 276.586-215.016 60.692-68.524 84.67-126.578 65.798-159.27-15.34-26.57-56.228-32.146-87.828-32.146z" p-id="1517"></path><path d="M877.408 813.43c-104.438 0-265.534-55.55-420.418-144.972-116.042-67.004-216.55-145.222-283.008-220.264-69.538-78.516-93.984-145.75-68.83-189.314 17.02-29.48 55.126-45.062 110.2-45.062 104.432 0 265.528 55.552 420.416 144.978 116.042 66.998 216.548 145.222 283.008 220.26 69.542 78.52 93.986 145.75 68.832 189.308-17.02 29.484-55.128 45.066-110.2 45.066z m-662.058-573.78c-31.6 0-72.488 5.576-87.83 32.146-18.874 32.692 5.106 90.744 65.796 159.274 64.664 73.014 162.89 149.372 276.588 215.016 151.192 87.29 307.332 141.516 407.502 141.516 31.6 0 72.49-5.578 87.828-32.148 18.878-32.692-5.106-90.742-65.798-159.27-64.662-73.012-162.892-149.372-276.586-215.016-151.192-87.292-307.338-141.518-407.5-141.518z" p-id="1518"></path><path d="M259.54 51.118a14.782 14.782 0 0 1-9.29-3.3 14.652 14.652 0 0 1-5.384-9.928 14.672 14.672 0 0 1 3.22-10.828 14.692 14.692 0 0 1 11.466-5.464c3.37 0 6.67 1.17 9.292 3.294 6.318 5.128 7.286 14.442 2.162 20.762a14.698 14.698 0 0 1-11.466 5.464z m0.012-26.938c-3.692 0-7.14 1.644-9.462 4.508a12.096 12.096 0 0 0-2.654 8.932 12.08 12.08 0 0 0 4.44 8.188 12.192 12.192 0 0 0 7.662 2.722 12.14 12.14 0 0 0 9.462-4.506 12.194 12.194 0 0 0-1.784-17.126 12.066 12.066 0 0 0-7.664-2.718z" fill="#F18D00" p-id="1519"></path><path d="M78.344 41.29m-40.402 0a40.402 40.402 0 1 0 80.804 0 40.402 40.402 0 1 0-80.804 0Z" fill="#36B8F2" p-id="1520"></path><path d="M74.88 106.51a48.266 48.266 0 0 1-30.302-10.752 47.854 47.854 0 0 1-17.564-32.4 47.84 47.84 0 0 1 10.494-35.328 47.974 47.974 0 0 1 37.424-17.82 48.222 48.222 0 0 1 30.298 10.754c9.99 8.098 16.226 19.606 17.562 32.4s-2.39 25.338-10.49 35.326a47.98 47.98 0 0 1-37.422 17.82z m0.052-80.8c-9.904 0-19.16 4.404-25.386 12.086a32.446 32.446 0 0 0-7.116 23.956 32.434 32.434 0 0 0 11.912 21.972 32.274 32.274 0 0 0 20.542 7.292 32.54 32.54 0 0 0 25.386-12.086 32.422 32.422 0 0 0 7.11-23.956 32.436 32.436 0 0 0-11.908-21.972 32.27 32.27 0 0 0-20.54-7.292zM173.798 45.346a5.164 5.164 0 0 1-0.778-10.27l24.936-3.824a5.168 5.168 0 0 1 1.566 10.214l-24.938 3.822a5.492 5.492 0 0 1-0.786 0.058z" p-id="1521"></path><path d="M188.176 55.902a5.17 5.17 0 0 1-5.102-4.386l-3.822-24.938a5.168 5.168 0 0 1 10.214-1.566l3.822 24.938a5.17 5.17 0 0 1-5.112 5.952z" p-id="1522"></path><path d="M828.736 933.464H761.4a7.746 7.746 0 0 1-7.748-7.75 7.748 7.748 0 0 1 7.748-7.75h67.336a7.75 7.75 0 0 1 0 15.5z" fill="#E81F1F" p-id="1523"></path><path d="M795.066 967.128a7.746 7.746 0 0 1-7.748-7.746v-67.336a7.748 7.748 0 1 1 15.498 0v67.336a7.744 7.744 0 0 1-7.75 7.746z" fill="#E81F1F" p-id="1524"></path><path d="M883.948 925.716m-21.884 0a21.884 21.884 0 1 0 43.768 0 21.884 21.884 0 1 0-43.768 0Z" fill="#58B530" p-id="1525"></path><path d="M956.786 907.106a5.138 5.138 0 0 1-3.472-1.344l-21.78-19.782a5.164 5.164 0 1 1 6.944-7.648l21.78 19.782a5.168 5.168 0 0 1-3.472 8.992z" fill="#36B8F2" p-id="1526"></path><path d="M936.004 908.11a5.168 5.168 0 0 1-3.822-8.644l19.782-21.782a5.166 5.166 0 1 1 7.646 6.944l-19.782 21.786a5.148 5.148 0 0 1-3.824 1.696z" fill="#36B8F2" p-id="1527"></path></svg></i>')
+                .appendTo($body)
+                .on('click', (e) => {
+                    var open = $(e.currentTarget).data('open');
+                    $(e.currentTarget).data('open', open == 1 ? 0 : 1)
+                    $(e.currentTarget).attr('title', open == 1 ? '展开拓展功能' : '收起拓展功能');
+                    $(e.currentTarget.children[0]).animate({ 'height': (open == 1 ? 80 : 70) + 'px', 'width': (open == 1 ? 80 : 70) + 'px' });
+                    $(e.currentTarget.parentElement).find('.plug-in').each((index, item) => {
+                        if (open == 1)
+                            $(item).animate({ 'opacity': 0, 'top': 0 + 'px' });
+                        else
+                            $(item).animate({ 'opacity': 1, 'top': (100 + index * 90) + 'px' });
+                    });
+                });
+
+            //提醒
+            var attention = (s = 0) => {
+                if (s > 10)
+                    return;
+                $('.plug-in-all svg').animate({ 'height': (s % 2 != 0 ? 100 : 80) + 'px', 'width': (s % 2 != 0 ? 100 : 80) + 'px' }, 390, () => { attention(++s) });
+            }
+            attention(1);
+        }
+
+        if ($('#plug-in-' + name).length == 0)
+            $('<i title="{title}" class="plug-in" id="plug-in-{name}">{svg}</i>'
+                .format({ name: name, title: title, svg: svg }))
+                .appendTo($body)
+                .on('click', (e) => { fun(name, e); });
+        else
+            $('#plug-in-' + name)
+                .empty()
+                .html(svg)
+                .attr('title', title)
+                .off('click')
+                .on('click', (e) => { fun(name, e); });
     }
 }
 
 var callback = function () {
-    //本土化
-    var replacePlaceholder = setInterval(() => { $('.operation-filter-input').length ? ($('.operation-filter-input').attr('placeholder', '标签名称（区分大小写）'), window.clearInterval(replacePlaceholder)) : 0; });
+    //返回顶部
+    var $scrollToTop = $('<i title="返回顶部" class="scrollToTop" ><svg t="1615613258516" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="32909" width="80" height="80"><path d="M869.477693 469.30536L554.231089 22.857856c-19.341263-27.429428-65.152883-27.397459-84.494147 0L154.522307 469.30536a51.598014 51.598014 0 0 0-3.676439 53.644033c8.919359 17.199338 26.534295 27.908963 45.939496 27.908963h185.740064v296.704567a23.976773 23.976773 0 0 0 47.953545 0v-319.6903a23.497237 23.497237 0 0 0-2.014048-9.494802 23.880865 23.880865 0 0 0-22.250445-15.47301H196.753395c-0.575443 0-2.30177 0-3.324779-2.014049-1.054978-2.046018-0.063938-3.452655 0.255752-3.932191l315.214636-446.447504a3.772346 3.772346 0 0 1 6.138054 0l315.246605 446.447504c0.31969 0.479535 1.342699 1.886173 0.255752 3.900222-1.054978 2.014049-2.749337 2.014049-3.324779 2.014049h-208.565952l-0.159845 0.031969-0.159845-0.031969a23.976773 23.976773 0 0 0-23.976773 23.976772v263.520715a23.976773 23.976773 0 0 0 47.953545 0V550.826387h184.90887c19.373232 0 36.988168-10.709625 45.907527-27.908963a51.470138 51.470138 0 0 0-3.64447-53.612064zM618.360963 893.534389a23.976773 23.976773 0 0 0-23.976773 23.976772v81.552996a23.976773 23.976773 0 0 0 47.953545 0V917.511161a23.976773 23.976773 0 0 0-23.976772-23.976772z" fill="#438CFF" p-id="32910"></path><path d="M577.24879 288.232774m-31.96903 0a31.96903 31.96903 0 1 0 63.93806 0 31.96903 31.96903 0 1 0-63.93806 0Z" fill="#438CFF" p-id="32911"></path></svg></i>')
+        .appendTo($("body"))
+        .on('click', (e) => { $(document).scrollTop(0); });
+
+    $(window).scroll(function (e) {
+        h = $(window).height();
+        t = $(document).scrollTop();
+        if (t > h) {
+            $scrollToTop.show();
+        } else {
+            $scrollToTop.hide();
+        }
+    });
+
+    var loaded = () => {
+        $('.operation-filter-input').attr('placeholder', '标签名称（区分大小写）')
+            .on('change', (e) => {
+                generateTags();
+            });
+
+        //生成左侧标签
+        var generateTags = () => {
+            var $tagBody = $('.tagsBody');
+            if ($tagBody.length == 0)
+                $tagBody = $('<div class="tagsBody"></div>')
+                    .appendTo($('body'));
+
+            $('.opblock-tag').each((index, item) => {
+                var $tag = $('<span title="{1}">{0}</span>'.format(item.dataset['tag'], $(item).find('.renderedMarkdown p').text()))
+                    .css({ 'top': (item.offsetTop + 5) + 'px' })
+                    .appendTo($tagBody)
+                    .on('click', (e) => {
+                        $(document).scrollTop(item.offsetTop);
+                    });
+
+                $(window).scroll(function (e) {
+                    var current = index * 75;
+                    var valueA = item.offsetTop - $(document).scrollTop();
+                    var valueB = valueA - current;
+                    $tag.css({
+                        'top': (valueB > 0 ? valueA : current + 10) + 'px'
+                    });
+
+                    if (valueB <= 0 && current >= window.outerHeight) {
+                        $('.tagsBody span').each((indexB, itemB) => {
+                            $(itemB).css({ 'top': (indexB - 1) * 75 - current + window.outerHeight + 'px' });
+                        });
+                    }
+                });
+            });
+        };
+
+        //监听HTML结构发生的变化
+        var mutationObserver = window.MutationObserver
+            || window.WebKitMutationObserver
+            || window.MozMutationObserver;//浏览器兼容
+
+        var observer = new mutationObserver((mutations) => {
+            for (var index in mutations) {
+                if (mutations[index].type == 'childList') {
+                    $('.tagsBody').empty();
+                    generateTags();
+                    break;
+                }
+            }
+        });
+        observer.observe($(".opblock-tag-section")[0].parentElement.parentElement, { attributes: false, childList: true });
+
+        generateTags();
+    };
+
+    var isLoaded = setInterval(() => {
+        $('.information-container').length != 0 ? (window.clearInterval(isLoaded), loaded()) : 0;
+    }, 100);
 };
 
 document.readyState === "complete" || (document.readyState !== "loading" && !document.documentElement.doScroll) ? callback() : document.addEventListener("DOMContentLoaded", callback);

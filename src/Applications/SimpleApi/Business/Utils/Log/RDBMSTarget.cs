@@ -50,8 +50,9 @@ namespace Business.Utils.Log
 
         protected override async void Write(LogEventInfo logEvent)
         {
-            Monitor(logEvent, logEvent.FormattedMessage);
-            await GetRepository().InsertAsync(GetBase_SysLogInfo(logEvent).InitEntityWithoutOP());
+            var log = GetBase_SysLogInfo(logEvent);
+            Monitor(log, logEvent.FormattedMessage);
+            await GetRepository().InsertAsync(log);
         }
 
         private IBaseRepository<System_Log, string> GetRepository()
@@ -66,12 +67,18 @@ namespace Business.Utils.Log
         /// <summary>
         /// 监听
         /// </summary>
-        /// <param name="logEvent"></param>
+        /// <param name="log"></param>
         /// <param name="formattedMessage">格式化后的信息</param>
-        async void Monitor(LogEventInfo logEvent, string formattedMessage)
+        async void Monitor(System_Log log, string formattedMessage)
         {
             try
             {
+                await LogHub.Clients.All.SendCoreAsync(LogHubMethod.Log,
+                    new object[] {
+                        log.CreateTime,
+                        log.Level,
+                        log.LogType,
+                        formattedMessage });
                 await LogHub.Clients.All.SendCoreAsync(LogHubMethod.Log, new[] { formattedMessage });
             }
 #pragma warning disable CA1031 // Do not catch general exception types

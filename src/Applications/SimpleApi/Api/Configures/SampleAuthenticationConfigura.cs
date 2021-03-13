@@ -11,12 +11,12 @@ using System;
 namespace Api.Configures
 {
     /// <summary>
-    /// 简易身份验证配置类
+    /// 简易身份认证配置类
     /// </summary>
     public static class SampleAuthenticationConfigura
     {
         /// <summary>
-        /// 注册简易身份验证服务
+        /// 注册简易身份认证服务
         /// </summary>
         /// <param name="services"></param>
         /// <param name="config"></param>
@@ -75,7 +75,7 @@ namespace Api.Configures
         }
 
         /// <summary>
-        /// 配置简易身份验证
+        /// 配置简易身份认证
         /// 注：方法在UseEndpoints之前调用
         /// </summary>
         /// <param name="app"></param>

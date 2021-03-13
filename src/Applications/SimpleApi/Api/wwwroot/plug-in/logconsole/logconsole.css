@@ -5,6 +5,19 @@
     color: #586069;
     font-weight: 400;
 }
+
+    .el-header i {
+        font-size: 39px;
+    }
+
+    .el-header .overall_title {
+        font-size: 30px;
+    }
+
+    .el-header .overall_explain {
+        font-size: 20px;
+    }
+
 /*容器样式*/
 body > .full_container {
     margin-bottom: 40px;
@@ -29,10 +42,28 @@ body > .full_container {
 
 /*标签内容页-实时日志部分的样式*/
 .reallog_pane {
+    overflow: auto;
     padding-top: 20px !important;
     border-radius: 4px !important;
-    background: #303133;
+    background: #24292e;
 }
+
+    .reallog_pane .block {
+        padding-bottom: 50px;
+    }
+
+    .reallog_pane .el-timeline-item__timestamp {
+        line-height: 20px;
+        color: #fafbfc;
+    }
+
+    .reallog_pane .el-timeline-item__content {
+        overflow-x: auto;
+        white-space: pre-wrap;
+        color: #e1e4e8;
+        font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace !important;
+        font-size: 12px !important;
+    }
 
 /*日志状态的图标样式*/
 .block i {

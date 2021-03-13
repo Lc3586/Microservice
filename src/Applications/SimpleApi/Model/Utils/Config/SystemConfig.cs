@@ -95,7 +95,7 @@ namespace Model.Utils.Config
         public long WorkerId { get; set; }
 
         /// <summary>
-        /// 简易身份验证
+        /// 简易身份认证
         /// </summary>
         public bool EnableSampleAuthentication { get; set; }
 

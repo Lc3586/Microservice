@@ -1862,7 +1862,7 @@
         </member>
         <member name="P:Model.Utils.Config.SystemConfig.EnableSampleAuthentication">
             <summary>
-            简易身份验证
+            简易身份认证
             </summary>
         </member>
         <member name="P:Model.Utils.Config.SystemConfig.DefaultLoggerName">
@@ -2141,7 +2141,7 @@
         </member>
         <member name="P:Model.Utils.Log.LogDTO.FileInfo.LastWriteTime">
             <summary>
-            上次写入时间
+            最后写入时间
             </summary>
         </member>
         <member name="T:Model.Utils.Log.LogType">

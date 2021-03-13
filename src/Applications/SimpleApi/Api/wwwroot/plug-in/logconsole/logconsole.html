@@ -17,14 +17,14 @@
 </head>
 <body>
     <div id="app">
-        <el-container class="full_container">
-            <el-header>一切正常</el-header>
-            <el-container class="main_container" v-loading="loading">
-                <el-tabs tab-position="left" v-model="logTypeTabsValue" @tab-click="logTypeTabsChanged" >
-                    <el-tab-pane label="实时日志" class="reallog_pane" name="Console">
+        <el-container class="full_container" v-loading="loading">
+            <el-header><i :class="overall.state"></i><span class="overall_title">{{overall.title}}</span> <span class="overall_explain">{{overall.explain}}</span></el-header>
+            <el-container class="main_container">
+                <el-tabs tab-position="left" v-model="logTypeTabsValue" @tab-click="logTypeTabsChanged">
+                    <el-tab-pane label="实时日志" class="reallog_pane" name="Console" @mouseenter="mouseenterConsole" @mouseleave="mouseleaveConsole">
                         <div class="block">
                             <el-timeline>
-                                <el-timeline-item v-for="(log, index) in logs"
+                                <el-timeline-item v-for="(log, index) in realLogs"
                                                   :key="index"
                                                   :icon="log.icon"
                                                   :type="log.type"
@@ -32,13 +32,145 @@
                                                   :size="log.size"
                                                   :timestamp="log.timestamp"
                                                   placement="top">
-                                    {{log.content}}
+                                    <span v-html="log.content"></span>
                                 </el-timeline-item>
                             </el-timeline>
                         </div>
                     </el-tab-pane>
-                    <el-tab-pane label="文件日志" name="File">文件日志</el-tab-pane>
-                    <el-tab-pane label="Elasticsearch日志" name="ElasticSearch">Elasticsearch日志</el-tab-pane>
+                    <el-tab-pane label="文件日志" name="File">
+                        <el-row :gutter="20">
+                            <el-col :span="6" :offset="15">
+                                <el-date-picker v-model="logFile.date"
+                                                type="daterange"
+                                                unlink-panels
+                                                range-separator="至"
+                                                start-placeholder="开始日期"
+                                                end-placeholder="结束日期"
+                                                format="YYYY-MM-DD"
+                                                :shortcuts="dataRangShortcuts">
+                                </el-date-picker>
+                            </el-col>
+                            <el-col :span="3">
+                                <el-input v-model="logFile.search"
+                                          prefix-icon="el-icon-search"
+                                          placeholder="输入文件名筛选" />
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="20">
+                            <el-col :span="24">
+                                <el-table :data="logFile.list.filter(data => !logFile.search || data.Name.includes(logFile.search))"
+                                          stripe
+                                          :default-sort="{prop: 'Name', order: 'descending'}"
+                                          v-loading="logFile.loading"
+                                          style="width: 100%">
+                                    <el-table-column label="文件名"
+                                                     prop="Name"
+                                                     sortable>
+                                    </el-table-column>
+                                    <el-table-column label="文件后缀"
+                                                     prop="Suffix">
+                                    </el-table-column>
+                                    <el-table-column label="字节数"
+                                                     prop="Bytes"
+                                                     sortable>
+                                    </el-table-column>
+                                    <el-table-column label="文件大小"
+                                                     prop="Size"
+                                                     sortable>
+                                    </el-table-column>
+                                    <el-table-column label="创建时间"
+                                                     prop="CreateTime"
+                                                     sortable>
+                                    </el-table-column>
+                                    <el-table-column label="最后写入时间"
+                                                     prop="LastWriteTime"
+                                                     sortable>
+                                    </el-table-column>
+                                    <el-table-column align="right">
+                                        <template #default="scope">
+                                            <el-button size="mini"
+                                                       @click="openLogFile(scope.$index, scope.row)">查看</el-button>
+                                            <el-button size="mini"
+                                                       type="primary"
+                                                       @click="downloadLogFile(scope.$index, scope.row)">下载</el-button>
+                                        </template>
+                                    </el-table-column>
+                                </el-table>
+                            </el-col>
+                        </el-row>
+                    </el-tab-pane>
+                    <el-tab-pane label="Elasticsearch日志" name="ElasticSearch">
+                        <el-row :gutter="20">
+                            <el-col :span="6">
+                                <el-date-picker v-model="logES.date"
+                                                type="daterange"
+                                                unlink-panels
+                                                range-separator="至"
+                                                start-placeholder="开始日期"
+                                                end-placeholder="结束日期"
+                                                format="YYYY-MM-DD"
+                                                :shortcuts="dataRangShortcuts">
+                                </el-date-picker>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-checkbox :indeterminate="logES.isLevelIndeterminate" v-model="logES.checkAllLevels" @change="esAllLevel">所有日志级别</el-checkbox>
+                                <div style="margin: 15px 0;"></div>
+                                <el-checkbox-group v-model="logES.levels" @change="esLevelChange">
+                                    <el-checkbox v-for="level in log.levels" :label="level.name" :key="level.value">{{level.name}}</el-checkbox>
+                                </el-checkbox-group>
+
+                                <el-input v-model="logES.content"
+                                          prefix-icon="el-icon-search"
+                                          placeholder="选择日志级别搜索" />
+                            </el-col>
+                            <el-col :span="6">
+                                <el-input v-model="logES.content"
+                                          prefix-icon="el-icon-search"
+                                          placeholder="选择日志类型搜索" />
+                            </el-col>
+                            <el-col :span="6">
+                                <el-input v-model="logES.content"
+                                          prefix-icon="el-icon-search"
+                                          placeholder="输入日志内容搜索" />
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="20">
+                            <el-col :span="24">
+                                <el-table :data="logES.list"
+                                          stripe
+                                          :default-sort="{prop: 'CreateTime', order: 'descending'}"
+                                          v-loading="logES.loading"
+                                          style="width: 100%">
+                                    <el-table-column label="级别"
+                                                     prop="Level"
+                                                     sortable>
+                                    </el-table-column>
+                                    <el-table-column label="类型"
+                                                     prop="LogType">
+                                    </el-table-column>
+                                    <el-table-column label="内容"
+                                                     prop="LogContent"
+                                                     sortable>
+                                    </el-table-column>
+                                    <el-table-column label="操作者"
+                                                     prop="CreatorName"
+                                                     sortable>
+                                    </el-table-column>
+                                    <el-table-column label="操作时间"
+                                                     prop="CreateTime"
+                                                     sortable>
+                                    </el-table-column>
+                                    <el-table-column align="right">
+                                        <template #default="scope">
+                                            <el-button size="mini"
+                                                       type="primary"
+                                                       @click="LogESDetail(scope.$index, scope.row)">详情</el-button>
+                                        </template>
+                                    </el-table-column>
+                                </el-table>
+                            </el-col>
+                        </el-row>
+                    </el-tab-pane>
                     <el-tab-pane label="数据库日志" name="RDBMS">数据库日志</el-tab-pane>
                 </el-tabs>
             </el-container>

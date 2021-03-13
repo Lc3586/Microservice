@@ -102,21 +102,18 @@ namespace Api.Configures
             #region 方言配置（展示用，普通项目无需添加此内容）
 
             var supportedCultures = new[]
-{
-                //简体中文
-                new CultureInfo("zh-chs-Hans"),
-                //繁体中文
-                new CultureInfo("zh-chs-Zh-hant"),
+            {
+                new CultureInfo("zh-CN"),
                 new CultureInfo("en-US"),
                 new CultureInfo("es-ES"),
-                new CultureInfo("fr"),
-                new CultureInfo("sv-SE"),
+                //new CultureInfo("fr"),
+                //new CultureInfo("sv-SE"),
             };
 
             app.UseRequestLocalization(new RequestLocalizationOptions
             {
                 //默认方言
-                DefaultRequestCulture = new RequestCulture("zh-chs-Hans"),
+                DefaultRequestCulture = new RequestCulture("zh-CN"),
                 // Formatting numbers, dates, etc.
                 SupportedCultures = supportedCultures,
                 // UI strings that we have localized.

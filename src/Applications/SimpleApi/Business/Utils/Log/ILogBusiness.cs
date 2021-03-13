@@ -19,6 +19,18 @@ namespace Business.Utils.Log
         string GetDefaultType();
 
         /// <summary>
+        /// 获取所有日志级别
+        /// </summary>
+        /// <returns></returns>
+        public List<string> GetLogLevels();
+
+        /// <summary>
+        /// 获取所有日志类型
+        /// </summary>
+        /// <returns></returns>
+        public List<string> GetLogTypes();
+
+        /// <summary>
         /// 获取日志文件列表
         /// </summary>
         /// <param name="start"></param>
@@ -31,6 +43,12 @@ namespace Business.Utils.Log
         /// </summary>
         /// <param name="filename">文件名</param>
         Task GetFileContent(string filename);
+
+        /// <summary>
+        /// 下载日志文件内容
+        /// </summary>
+        /// <param name="filename">文件名</param>
+        Task DownloadFile(string filename);
 
         /// <summary>
         /// 获取ES数据列表

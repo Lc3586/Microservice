@@ -17,11 +17,11 @@ using System.Threading.Tasks;
 namespace Api.Controllers.Utils
 {
     /// <summary>
-    /// 简易身份验证接口
+    /// 简易身份认证接口
     /// </summary>
     [Route("/sa")]
     [CheckModel]
-    [SwaggerTag("简易身份验证接口")]
+    [SwaggerTag("简易身份认证接口")]
     public class SampleAuthenticationController : BaseApiController
     {
         #region DI

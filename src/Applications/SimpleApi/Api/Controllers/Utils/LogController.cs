@@ -42,6 +42,26 @@ namespace Api.Controllers.Utils
         }
 
         /// <summary>
+        /// 获取所有日志级别
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("log-levels")]
+        public async Task<object> GetLogLevels()
+        {
+            return await Task.FromResult(Success(LogBusiness.GetLogLevels()));
+        }
+
+        /// <summary>
+        /// 获取所有日志类型
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("log-types")]
+        public async Task<object> GetLogTypes()
+        {
+            return await Task.FromResult(Success(LogBusiness.GetLogTypes()));
+        }
+
+        /// <summary>
         /// 获取日志文件列表
         /// </summary>
         /// <param name="start">开始日期</param>
@@ -64,6 +84,17 @@ namespace Api.Controllers.Utils
         public async Task GetFileContent(string filename)
         {
             await LogBusiness.GetFileContent(filename);
+        }
+
+        /// <summary>
+        /// 获取日志文件内容
+        /// </summary>
+        /// <param name="filename">文件名</param>
+        /// <returns></returns>
+        [HttpGet("file-download/{filename}")]
+        public async Task DownloadFile(string filename)
+        {
+            await LogBusiness.DownloadFile(filename);
         }
 
         /// <summary>

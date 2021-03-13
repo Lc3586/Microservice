@@ -92,11 +92,12 @@ namespace Api.Configures
             #region 用户语言（展示用，普通项目无需添加此内容）
 
             var supportedCultures = new[]
-{
+            {                
                 new CultureInfo("zh-CN"),
                 new CultureInfo("en-US"),
-                new CultureInfo("fr"),
-                new CultureInfo("sv-SE"),
+                new CultureInfo("es-ES"),
+                //new CultureInfo("fr"),
+                //new CultureInfo("sv-SE"),
             };
 
             app.UseRequestLocalization(new RequestLocalizationOptions

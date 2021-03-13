@@ -13,10 +13,13 @@ using Microservice.Library.OpenApi.Extention;
 using Microsoft.AspNetCore.Http;
 using Model.System.LogDTO;
 using Model.Utils.Config;
+using Model.Utils.Log;
 using Model.Utils.Pagination;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using FileInfo = Model.Utils.Log.LogDTO.FileInfo;
 
@@ -85,6 +88,16 @@ namespace Business.Utils.Log
             return Config.DefaultLoggerType.ToString();
         }
 
+        public List<string> GetLogLevels()
+        {
+            return LogLevel.AllLoggingLevels.Select(o => o.Name).ToList();
+        }
+
+        public List<string> GetLogTypes()
+        {
+            return LogType.AllTypes().Select(o => o.Value).ToList();
+        }
+
         public List<FileInfo> GetFileList(DateTime start, DateTime end)
         {
             var result = new List<FileInfo>();
@@ -133,13 +146,22 @@ namespace Business.Utils.Log
 
             var response = HttpContextAccessor.HttpContext.Response;
             response.ContentType = "text/plain";
-            response.Headers.Add("Content-Disposition", $"attachment; filename=\"{filename}\"");
 
-            //using var fs = new FileStream(path, FileMode.Open, FileAccess.Read);
-            //var bytes = new byte[fs.Length];
-            //fs.Read(bytes, 0, bytes.Length);
-            //response.ContentLength = bytes.Length;
-            //response.Body.Write(bytes);
+            await response.SendFileAsync(path);
+        }
+
+        public async Task DownloadFile(string name)
+        {
+            var filename = $"{name}{FileSuffix}";
+
+            var path = Path.Combine(FileDir, filename);
+
+            if (!File.Exists(path))
+                throw new ApplicationException("文件不存在或已被移除.");
+
+            var response = HttpContextAccessor.HttpContext.Response;
+            response.ContentType = "text/plain";
+            response.Headers.Add("Content-Disposition", $"attachment; filename=\"{filename}\"");
 
             await response.SendFileAsync(path);
         }

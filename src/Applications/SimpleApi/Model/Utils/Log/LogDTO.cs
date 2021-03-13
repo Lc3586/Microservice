@@ -37,7 +37,7 @@ namespace Model.Utils.Log.LogDTO
         public DateTime CreateTime { get; set; }
 
         /// <summary>
-        /// 上次写入时间
+        /// 最后写入时间
         /// </summary>
         [OpenApiSchema(OpenApiSchemaType.@string, OpenApiSchemaFormat.string_datetime)]
         [JsonConverter(typeof(Microservice.Library.OpenApi.JsonExtension.DateTimeConverter), "yyyy-MM-dd HH:mm:ss")]

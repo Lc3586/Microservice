@@ -50,8 +50,9 @@ namespace Business.Utils.Log
 
         protected override async void Write(LogEventInfo logEvent)
         {
-            Monitor(logEvent, logEvent.FormattedMessage);
-            await GetElasticClient().AddAsync(GetBase_SysLogInfo(logEvent));
+            var log = GetBase_SysLogInfo(logEvent);
+            Monitor(log, logEvent.FormattedMessage);
+            await GetElasticClient().AddAsync(log);
         }
 
         private ElasticsearchClient GetElasticClient()
@@ -65,13 +66,18 @@ namespace Business.Utils.Log
         /// <summary>
         /// 监听
         /// </summary>
-        /// <param name="logEvent"></param>
+        /// <param name="log"></param>
         /// <param name="formattedMessage">格式化后的信息</param>
-        async void Monitor(LogEventInfo logEvent, string formattedMessage)
+        async void Monitor(System_Log log, string formattedMessage)
         {
             try
             {
-                await LogHub.Clients.All.SendCoreAsync(LogHubMethod.Log, new[] { formattedMessage });
+                await LogHub.Clients.All.SendCoreAsync(LogHubMethod.Log,
+                    new object[] {
+                        log.CreateTime,
+                        log.Level,
+                        log.LogType,
+                        formattedMessage });
             }
 #pragma warning disable CA1031 // Do not catch general exception types
             catch

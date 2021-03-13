@@ -157,19 +157,19 @@
         </member>
         <member name="T:Api.Configures.SampleAuthenticationConfigura">
             <summary>
-            简易身份验证配置类
+            简易身份认证配置类
             </summary>
         </member>
         <member name="M:Api.Configures.SampleAuthenticationConfigura.RegisterSampleAuthentication(Microsoft.Extensions.DependencyInjection.IServiceCollection,Model.Utils.Config.SystemConfig)">
             <summary>
-            注册简易身份验证服务
+            注册简易身份认证服务
             </summary>
             <param name="services"></param>
             <param name="config"></param>
         </member>
         <member name="M:Api.Configures.SampleAuthenticationConfigura.ConfiguraSampleAuthentication(Microsoft.AspNetCore.Builder.IApplicationBuilder,Model.Utils.Config.SystemConfig)">
             <summary>
-            配置简易身份验证
+            配置简易身份认证
             注：方法在UseEndpoints之前调用
             </summary>
             <param name="app"></param>
@@ -1666,6 +1666,13 @@
             <param name="filename">文件名</param>
             <returns></returns>
         </member>
+        <member name="M:Api.Controllers.Utils.LogController.DownloadFile(System.String)">
+            <summary>
+            获取日志文件内容
+            </summary>
+            <param name="filename">文件名</param>
+            <returns></returns>
+        </member>
         <member name="M:Api.Controllers.Utils.LogController.GetESList(Model.Utils.Pagination.PaginationDTO)">
             <summary>
             获取ES数据列表
@@ -1696,7 +1703,7 @@
         </member>
         <member name="T:Api.Controllers.Utils.SampleAuthenticationController">
             <summary>
-            简易身份验证接口
+            简易身份认证接口
             </summary>
         </member>
         <member name="M:Api.Controllers.Utils.SampleAuthenticationController.Authorized">
