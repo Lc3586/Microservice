@@ -1651,6 +1651,18 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:Api.Controllers.Utils.LogController.GetLogLevels">
+            <summary>
+            获取所有日志级别
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.Utils.LogController.GetLogTypes">
+            <summary>
+            获取所有日志类型
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:Api.Controllers.Utils.LogController.GetFileList(System.DateTime,System.DateTime)">
             <summary>
             获取日志文件列表

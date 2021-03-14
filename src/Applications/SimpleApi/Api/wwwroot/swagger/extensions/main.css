@@ -63,15 +63,16 @@
 }
 
     .dialog-ux-none .modal-ux {
+        max-width: 70% !important;
         position: fixed !important;
     }
 
-.modal-ux {
-    max-width: 70% !important;
-}
+    .dialog-ux-none .modal-ux-content {
+        max-height: 100% !important;
+    }
 
-.modal-ux-content {
-    max-height: 100% !important;
+.modal-ux {
+    /*max-width: 70% !important;*/
 }
 
 .swIframe {

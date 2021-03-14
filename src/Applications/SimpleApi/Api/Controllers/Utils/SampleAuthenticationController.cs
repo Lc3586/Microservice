@@ -100,7 +100,7 @@ namespace Api.Controllers.Utils
         /// <returns></returns>
         [HttpPost("login")]
         [AllowAnonymous]
-        public async Task<object> Login(LoginRequest data)
+        public async Task<object> Login([FromBody]LoginRequest data)
         {
             var authenticationInfo = UserBusiness.Login(data.Account, data.Password);
 

@@ -692,7 +692,7 @@ if (!window.addPlugIn) {
                         if (open == 1)
                             $(item).animate({ 'opacity': 0, 'top': 0 + 'px' });
                         else
-                            $(item).animate({ 'opacity': 1, 'top': (100 + index * 90) + 'px' });
+                            $(item).animate({ 'opacity': 1, 'top': (100 + index * 100) + 'px' });
                     });
                 });
 
