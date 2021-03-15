@@ -370,8 +370,8 @@ namespace Business.Implementation.Common
             {
                 new Claim(nameof(AuthenticationInfo.Id), authenticationInfo.Id),
                 new Claim(nameof(AuthenticationInfo.Account), authenticationInfo.Account),
-                new Claim(nameof(AuthenticationInfo.Nickname), authenticationInfo.Nickname),
-                new Claim(nameof(AuthenticationInfo.Face), authenticationInfo.Face)
+                new Claim(nameof(AuthenticationInfo.Nickname), authenticationInfo.Nickname ?? string.Empty),
+                new Claim(nameof(AuthenticationInfo.Face), authenticationInfo.Face ?? string.Empty)
             };
 
             await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)));

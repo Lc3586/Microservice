@@ -50,14 +50,45 @@ body > .full_container {
 
 /*标签内容页-实时日志部分的样式*/
 .reallog_pane {
-    overflow-y: auto;
+    overflow: visible;
     padding-top: 20px !important;
-    border-radius: 4px !important;
-    background: #24292e;
 }
 
+    .reallog_pane .filter {
+        position: fixed;
+        margin-top: -20px;
+        display: contents;
+    }
+
+    .reallog_pane textarea {
+        margin-bottom: 10px;
+    }
+
+    .reallog_pane .tool {
+        position: fixed;
+        right: 20px;
+        margin-top: -60px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+        .reallog_pane .tool .max-slider {
+            min-width: 300px;
+        }
+
+    .reallog_pane .item {
+        margin-right: 20px;
+    }
+
     .reallog_pane .block {
+        background: #24292e;
+        overflow-y: auto;
+        padding-top: 30px;
         padding-bottom: 50px;
+        margin-top: 20px;
+        border-radius: 4px !important;
+        height: 80%;
     }
 
     .reallog_pane .el-timeline-item__timestamp {

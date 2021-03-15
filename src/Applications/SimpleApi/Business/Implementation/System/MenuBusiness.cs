@@ -202,7 +202,7 @@ namespace Business.Implementation.System
                 editData.Sort = Repository.Where(o => o.ParentId == editData.ParentId).Max(o => o.Sort) + 1;
 
                 if (Repository.UpdateDiy
-                         .Where(o => o.ParentId == entity.ParentId && o.Id != entity.Id && o.Sort > entity.Sort)
+                         .Where(o => o.ParentId == entity.ParentId && o.Id != entity.Id && o.Sort > editData.Sort)
                          .Set(o => o.Sort - 1)
                          .ExecuteAffrows() < 0)
                     throw new ApplicationException("重新排序失败.");

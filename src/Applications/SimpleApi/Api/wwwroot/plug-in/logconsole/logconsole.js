@@ -25,6 +25,9 @@
             addLoginFilter();
             getLogConfig();
 
+            this.logES.pageSize = getPageSize();
+            this.logDB.pageSize = getPageSize();
+
             //延迟处理用户的输入内容
             this.logESContentGetAnswer = _.debounce(getLogESList, 500);
             this.logDBContentGetAnswer = _.debounce(getLogDBList, 500);
@@ -63,7 +66,7 @@
                 handler(val) {
                     if (this.logReal.scroll)
                         this.$nextTick(() => {
-                            var container = this.$refs['realLog'].parentElement;
+                            var container = this.$refs['realLog'];
                             container.scrollTop = container.scrollHeight;
                         });
                 },
@@ -155,6 +158,9 @@
                 init: false,
                 loading: true,
                 scroll: true,
+                scrollLocked: false,
+                receive: true,
+                max: 1000,
                 list: [],
             },
             logFile: {
@@ -176,6 +182,9 @@
                 show: false,
                 loading: true,
                 tag: ''
+            },
+            pageConfig: {
+                sizes: [5, 10, 15, 20, 50, 100, 150, 200, 300, 400, 500]
             },
             logES: {
                 init: false,
@@ -399,19 +408,18 @@
             case 'Debug':
             case 'Info':
             default:
-                if (main.overall.state == 'el-icon-loading')
+                if (main.overall.state != 'el-icon-loading')
                     break;
                 main.overall.state = 'el-icon-loading';
                 main.overall.title = '一切正常';
                 main.overall.explain = '...';
-                break;
+                return;
             case 'Warn':
                 main.overall.warn++;
-                if (main.overall.state != 'el-icon-warning') {
+                if (main.overall.state != 'el-icon-warning' && main.overall.state != 'el-icon-error') {
                     main.overall.state = 'el-icon-warning';
                     main.overall.title = '出现警告';
                 }
-                main.overall.explain = '共' + main.overall.warn + '个警告.';
                 break;
             case 'Error':
             case 'Fatal':
@@ -420,23 +428,26 @@
                     main.overall.state = 'el-icon-error';
                     main.overall.title = '发生异常';
                 }
-                main.overall.explain = '共' + main.overall.error + '个异常.';
                 break;
         }
+
+        main.overall.explain = (main.overall.warn > 0 ? (main.overall.warn + '个警告.') : '') + (main.overall.error > 0 ? (main.overall.error + '个异常.') : '');
     }
 
     /**
      * 鼠标移入实时日志控制台
      * */
     function mouseenterConsole() {
-        main.logReal.scroll = false;
+        if (!main.logReal.scrollLocked)
+            main.logReal.scroll = false;
     }
 
     /**
      * 鼠标移出实时日志控制台
      * */
     function mouseleaveConsole() {
-        main.logReal.scroll = true;
+        if (!main.logReal.scrollLocked)
+            main.logReal.scroll = true;
     }
 
     /**
@@ -451,6 +462,14 @@
             .build();
 
         connection.on("ReceiveLog", (time, level, type, message) => {
+            if (!main.logReal.receive)
+                return;
+
+            if (main.logReal.list.length == main.logReal.max)
+                main.logReal.list.shift();
+            else if (main.logReal.list.length > main.logReal.max)
+                main.logReal.list.splice(0, main.logReal.list.length - main.logReal.max - 1);
+
             main.logReal.list.push({
                 content: message,
                 timestamp: time,
@@ -602,6 +621,29 @@
      * */
     function dbTypeChange(val) {
         getLogDBList();
+    }
+
+    /**
+     * 根据页面大小调整页面数据量
+     * */
+    function getPageSize() {
+        var current = window.innerHeight / 100,
+            min,
+            result;
+        for (var i in main.pageConfig.sizes) {
+            var size = main.pageConfig.sizes[i];
+            var abs = Math.abs(current - size);
+            if (!min)
+                min = abs;
+            else if (abs <= min)
+                min = abs;
+            else
+                continue;
+
+            result = size;
+        }
+
+        return result;
     }
 
     /**

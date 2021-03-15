@@ -26,10 +26,43 @@
             <el-header><i :class="overall.state"></i><span class="overall_title">{{overall.title}}</span> <span class="overall_explain">{{overall.explain}}</span></el-header>
             <el-container class="main_container">
                 <el-tabs tab-position="left" v-model="logConfig.LoggerType" @tab-click="logTypeTabsChanged">
-                    <el-tab-pane label="实时日志" class="reallog_pane" name="Console" @mouseenter="mouseenterConsole" @mouseleave="mouseleaveConsole" v-loading="logReal.loading">
-                        <div class="block" ref="realLog">
+                    <el-tab-pane label="实时日志" class="reallog_pane" name="Console" v-loading="logReal.loading">
+                        <div class="tool">
+                            <div class="item max-slider">
+                                <el-slider v-model="logReal.max"
+                                           :max="10000"
+                                           :step="10"
+                                           title="数据缓存上限">
+                                </el-slider>
+                            </div>
+                            <el-switch class="item"
+                                       v-model="logReal.scroll"
+                                       @change="logReal.scrollLocked = !logReal.scrollLocked"
+                                       active-text="滚动">
+                            </el-switch>
+                            <el-switch class="item"
+                                       v-model="logReal.receive"
+                                       active-text="接收数据">
+                            </el-switch>
+                            <el-button class="item"
+                                       type="danger"
+                                       @click="logReal.list = []">清空</el-button>
+                        </div>
+                        <div class="filter">
+                            <el-input type="textarea"
+                                      :autosize="{ minRows: 1, maxRows: 6}"
+                                      placeholder="过滤输出内容"
+                                      v-model="logReal.filter">
+                            </el-input>
+                            <el-input type="textarea"
+                                      :autosize="{ minRows: 1, maxRows: 6}"
+                                      placeholder="筛选输出内容"
+                                      v-model="logReal.search">
+                            </el-input>
+                        </div>
+                        <div class="block" ref="realLog" @mouseenter="mouseenterConsole" @mouseleave="mouseleaveConsole">
                             <el-timeline>
-                                <el-timeline-item v-for="(log, index) in logReal.list"
+                                <el-timeline-item v-for="(log, index) in logReal.list.filter(data => (!logReal.filter || data.content.includes(logReal.filter)) && (!logReal.search || !data.content.includes(logReal.search)))"
                                                   :key="index"
                                                   :icon="log.icon"
                                                   :type="log.type"
@@ -44,7 +77,7 @@
                     </el-tab-pane>
                     <el-tab-pane label="文件日志" name="File">
                         <el-row :gutter="20">
-                            <el-col :span="3" :offset="15">
+                            <el-col :span="5" :offset="13">
                                 <el-date-picker v-model="logFile.date"
                                                 type="daterange"
                                                 unlink-panels
@@ -121,12 +154,7 @@
                                     <el-checkbox v-for="type in logConfig.types" :label="type" :key="type">{{type}}</el-checkbox>
                                 </el-checkbox-group>
                             </el-col>
-                            <el-col :span="3">
-                                <el-input v-model="logES.content"
-                                          prefix-icon="el-icon-search"
-                                          placeholder="输入日志内容搜索" />
-                            </el-col>
-                            <el-col :span="6" :offset="1">
+                            <el-col :span="5" :offset="1">
                                 <el-date-picker v-model="logES.date"
                                                 type="datetimerange"
                                                 unlink-panels
@@ -137,6 +165,11 @@
                                                 :shortcuts="dataRangShortcuts">
                                 </el-date-picker>
                             </el-col>
+                            <el-col :span="3" :offset="1">
+                                <el-input v-model="logES.content"
+                                          prefix-icon="el-icon-search"
+                                          placeholder="输入日志内容搜索" />
+                            </el-col>
                         </el-row>
                         <el-row :gutter="20">
                             <el-col :span="24">
@@ -145,7 +178,6 @@
                                           :empty-text="logES.error"
                                           v-loading="logES.loading"
                                           @sort-change="logESSort"
-                                          max-height="1000"
                                           style="width: 100%"
                                           :row-class-name="logESListRowClassName">
                                     <el-table-column label="级别"
@@ -180,7 +212,7 @@
                                 <el-pagination @size-change="logESListSizeChange"
                                                @current-change="logESListCurrentChange"
                                                :current-page="logES.currentPage"
-                                               :page-sizes="[10, 15, 20, 50, 100, 150, 200, 300, 400, 500]"
+                                               :page-sizes="pageConfig.sizes"
                                                :page-size="logES.pageSize"
                                                layout="total, sizes, prev, pager, next, jumper"
                                                :hide-on-single-page="logES.hidePagination"
@@ -205,12 +237,7 @@
                                     <el-checkbox v-for="type in logConfig.types" :label="type" :key="type">{{type}}</el-checkbox>
                                 </el-checkbox-group>
                             </el-col>
-                            <el-col :span="3">
-                                <el-input v-model="logDB.content"
-                                          prefix-icon="el-icon-search"
-                                          placeholder="输入日志内容搜索" />
-                            </el-col>
-                            <el-col :span="6" :offset="1">
+                            <el-col :span="5" :offset="1">
                                 <el-date-picker v-model="logDB.date"
                                                 type="datetimerange"
                                                 unlink-panels
@@ -221,6 +248,11 @@
                                                 :shortcuts="dataRangShortcuts">
                                 </el-date-picker>
                             </el-col>
+                            <el-col :span="3" :offset="1">
+                                <el-input v-model="logDB.content"
+                                          prefix-icon="el-icon-search"
+                                          placeholder="输入日志内容搜索" />
+                            </el-col>
                         </el-row>
                         <el-row :gutter="20">
                             <el-col :span="24">
@@ -229,7 +261,6 @@
                                           :empty-text="logDB.error"
                                           v-loading="logDB.loading"
                                           @sort-change="logDBSort"
-                                          max-height="1000"
                                           style="width: 100%;"
                                           :row-class-name="logDBListRowClassName">
                                     <el-table-column label="级别"
@@ -264,7 +295,7 @@
                                 <el-pagination @size-change="logDBListSizeChange"
                                                @current-change="logDBListCurrentChange"
                                                :current-page="logDB.currentPage"
-                                               :page-sizes="[10, 15, 20, 50, 100, 150, 200, 300, 400, 500]"
+                                               :page-sizes="pageConfig.sizes"
                                                :page-size="logDB.pageSize"
                                                layout="total, sizes, prev, pager, next, jumper"
                                                :hide-on-single-page="logDB.hidePagination"

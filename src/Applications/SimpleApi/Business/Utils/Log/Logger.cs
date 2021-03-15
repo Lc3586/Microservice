@@ -29,6 +29,8 @@ namespace Business.Utils.Log
             };
 
             log.Properties[NLoggerConfig.LogType] = LogType.GetName(logType);
+            if (exception != null)
+                data += "\r\n\tStack Trace: " + exception.ExceptionToString();
             log.Properties[NLoggerConfig.Data] = data;
 
             if (withOP)
