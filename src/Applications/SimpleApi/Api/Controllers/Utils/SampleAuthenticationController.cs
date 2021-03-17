@@ -1,4 +1,5 @@
 ﻿using Business.Interface.System;
+using Business.Utils.AuthorizePolicy;
 using Microservice.Library.Extension;
 using Microservice.Library.Http;
 using Microsoft.AspNetCore.Authentication;
@@ -7,7 +8,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Model.Utils.SampleAuthentication.SampleAuthenticationDTO;
-using Model.System;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +20,6 @@ namespace Api.Controllers.Utils
     /// 简易身份认证接口
     /// </summary>
     [Route("/sa")]
-    [CheckModel]
     [SwaggerTag("简易身份认证接口")]
     public class SampleAuthenticationController : BaseApiController
     {
@@ -55,11 +54,19 @@ namespace Api.Controllers.Utils
             var info = new AuthenticationInfo()
             {
                 Id = Context.User.Claims?.FirstOrDefault(o => o.Type == nameof(AuthenticationInfo.Id))?.Value,
+
+                Account = Context.User.Claims?.FirstOrDefault(o => o.Type == ClaimTypes.Name)?.Value,
+
                 UserType = Context.User.Claims?.FirstOrDefault(o => o.Type == nameof(AuthenticationInfo.UserType))?.Value,
-                Account = Context.User.Claims?.FirstOrDefault(o => o.Type == nameof(AuthenticationInfo.Account))?.Value,
-                Nickname = Context.User.Claims?.FirstOrDefault(o => o.Type == nameof(AuthenticationInfo.Nickname))?.Value,
-                Sex = Context.User.Claims?.FirstOrDefault(o => o.Type == nameof(AuthenticationInfo.Sex))?.Value,
-                Face = Context.User.Claims?.FirstOrDefault(o => o.Type == nameof(AuthenticationInfo.Face))?.Value
+
+                RoleTypes = Context.User.Claims?.Where(o => o.Type == ClaimTypes.Role).Select(o => o.Value).ToList(),
+
+                Nickname = Context.User.Claims?.FirstOrDefault(o => o.Type == ClaimTypes.GivenName)?.Value,
+                Sex = Context.User.Claims?.FirstOrDefault(o => o.Type == ClaimTypes.Gender)?.Value,
+
+                Face = Context.User.Claims?.FirstOrDefault(o => o.Type == nameof(AuthenticationInfo.Face))?.Value,
+
+                AuthenticationMethod = Context.User.Claims?.FirstOrDefault(o => o.Type == ClaimTypes.AuthenticationMethod)?.Value
             };
 
             return await Task.FromResult(info);
@@ -100,19 +107,27 @@ namespace Api.Controllers.Utils
         /// <returns></returns>
         [HttpPost("login")]
         [AllowAnonymous]
-        public async Task<object> Login([FromBody]LoginRequest data)
+        public async Task<object> Login([FromBody] LoginRequest data)
         {
             var authenticationInfo = UserBusiness.Login(data.Account, data.Password);
 
             var claims = new List<Claim>
             {
                 new Claim(nameof(AuthenticationInfo.Id), authenticationInfo.Id),
+
+                new Claim(ClaimTypes.Name, authenticationInfo.Account),
+
                 new Claim(nameof(AuthenticationInfo.UserType), authenticationInfo.UserType),
-                new Claim(nameof(AuthenticationInfo.Account), authenticationInfo.Account),
-                new Claim(nameof(AuthenticationInfo.Nickname), authenticationInfo.Nickname ?? string.Empty),
-                new Claim(nameof(AuthenticationInfo.Sex), authenticationInfo.Sex ?? string.Empty),
-                new Claim(nameof(AuthenticationInfo.Face), authenticationInfo.Face ?? string.Empty)
+
+                new Claim(ClaimTypes.GivenName, authenticationInfo.Nickname ?? string.Empty),
+                new Claim(ClaimTypes.Gender, authenticationInfo.Sex ?? string.Empty),
+
+                new Claim(nameof(AuthenticationInfo.Face), authenticationInfo.Face ?? string.Empty),
+
+                new Claim(ClaimTypes.AuthenticationMethod, "SA")
             };
+
+            claims.AddRange(authenticationInfo.RoleTypes.Select(o => new Claim(ClaimTypes.Role, o)));
 
             await Context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)));
 
@@ -125,6 +140,7 @@ namespace Api.Controllers.Utils
         /// <param name="data">参数</param>
         /// <returns></returns>
         [HttpGet("logout")]
+        [Authorize(nameof(ApiAuthorizeRequirement))]
         public async Task Logout(LogoutRequest data)
         {
             if (data?.ReturnUrl?.ToLower().IndexOf("/sa/logout") >= 0)
@@ -140,16 +156,25 @@ namespace Api.Controllers.Utils
         /// </summary>
         /// <returns></returns>
         [HttpGet("getToken")]
+        [Authorize(nameof(ApiAuthorizeRequirement))]
         public async Task<string> GetToken()
         {
             return await Task.FromResult(JWTHelper.GetToken(new AuthenticationInfo
             {
                 Id = Context.User.Claims?.FirstOrDefault(o => o.Type == nameof(AuthenticationInfo.Id))?.Value,
+
+                Account = Context.User.Claims?.FirstOrDefault(o => o.Type == ClaimTypes.Name)?.Value,
+
                 UserType = Context.User.Claims?.FirstOrDefault(o => o.Type == nameof(AuthenticationInfo.UserType))?.Value,
-                Account = Context.User.Claims?.FirstOrDefault(o => o.Type == nameof(AuthenticationInfo.Account))?.Value,
-                Nickname = Context.User.Claims?.FirstOrDefault(o => o.Type == nameof(AuthenticationInfo.Nickname))?.Value,
-                Sex = Context.User.Claims?.FirstOrDefault(o => o.Type == nameof(AuthenticationInfo.Sex))?.Value,
-                Face = Context.User.Claims?.FirstOrDefault(o => o.Type == nameof(AuthenticationInfo.Face))?.Value
+
+                RoleTypes = Context.User.Claims?.Where(o => o.Type == ClaimTypes.Role).Select(o => o.Value).ToList(),
+
+                Nickname = Context.User.Claims?.FirstOrDefault(o => o.Type == ClaimTypes.GivenName)?.Value,
+                Sex = Context.User.Claims?.FirstOrDefault(o => o.Type == ClaimTypes.Gender)?.Value,
+
+                Face = Context.User.Claims?.FirstOrDefault(o => o.Type == nameof(AuthenticationInfo.Face))?.Value,
+
+                AuthenticationMethod = Context.User.Claims?.FirstOrDefault(o => o.Type == ClaimTypes.AuthenticationMethod)?.Value
             }.ToJson(), Config.JWTSecret));
         }
     }

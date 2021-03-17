@@ -201,43 +201,61 @@ namespace Business.Implementation.System
 
         public void AuthorizeRoleForUser(RoleForUser data, bool runTransaction = true)
         {
+            if (!data.UserIds.Any_Ex() || !data.RoleIds.Any_Ex())
+                return;
+
             var users = data.UserIds.Select(o => GetUserWithCheck(o));
 
-            var roles = Repository_Role.Where(o => (data.All == true || data.RoleIds.Contains(o.Id)) && o.Enable == true).ToList(o => new
-            {
-                o.Id,
-                o.Type,
-                o.Name
-            });
-
-            if (!roles.Any())
-                throw new ApplicationException("没有可供授权的角色.");
+            if (!users.Any())
+                return;
 
             void handler()
             {
-                var orId = OperationRecordBusiness.Create(new Common_OperationRecord
-                {
-                    DataType = nameof(System_UserRole),
-                    DataId = null,
-                    Explain = $"授权角色给用户.",
-                    Remark = $"被授权的用户: \r\n\t{string.Join(",", users.Select(o => $"[账号 {o.Account}, 姓名 {o.Name}]"))}\r\n" +
-                             $"授权的角色: \r\n\t{string.Join(",", roles.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
-                });
+                var newData = new List<System_UserRole>();
 
-                Repository_UserRole.Insert(roles.SelectMany(o => users.Select(p => new System_UserRole
+                foreach (var user in users)
                 {
-                    UserId = p.Id,
-                    RoleId = o.Id
-                })));
+                    string userId = user.Id;
+                    var roles = Repository_Role
+                                .Where(o => (data.All == true || data.RoleIds.Contains(o.Id))
+                                    && o.Enable == true
+                                    && !o.Users.AsSelect().Where(p => p.Id != userId).Any())
+                                .ToList(o => new
+                                {
+                                    o.Id,
+                                    o.Type,
+                                    o.Name
+                                });
+
+                    if (!roles.Any())
+                        continue;
+
+                    newData.AddRange(roles.Select(o => new System_UserRole
+                    {
+                        RoleId = o.Id,
+                        UserId = userId
+                    }));
+
+                    var orId = OperationRecordBusiness.Create(new Common_OperationRecord
+                    {
+                        DataType = nameof(System_UserRole),
+                        DataId = null,
+                        Explain = $"授权角色给用户.",
+                        Remark = $"被授权的用户: \r\n\t[账号 {user.Account}, 姓名 {user.Name}]\r\n" +
+                                 $"授权的角色: \r\n\t{string.Join(",", roles.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
+                    });
+                }
+
+                if (newData.Any())
+                    Repository_UserRole.Insert(newData);
 
                 if (data.RevocationOtherRoles)
                     data.UserIds.ForEach(o =>
                     {
-                        var roleIds = roles.Select(p => p.Id);
                         RevocationRoleForUser(new RoleForUser
                         {
                             UserIds = new List<string> { o },
-                            RoleIds = Repository_UserRole.Where(p => p.UserId == o && !roleIds.Contains(p.RoleId)).ToList(p => p.RoleId)
+                            RoleIds = Repository_UserRole.Where(p => p.UserId == o && !data.RoleIds.Contains(p.RoleId)).ToList(p => p.RoleId)
                         }, false);
                     });
             }
@@ -281,49 +299,64 @@ namespace Business.Implementation.System
 
         public void AuthorizeRoleForMember(RoleForMember data, bool runTransaction = true)
         {
-            var members = data.MemberIds.Select(o => GetMemberWithCheck(o));
+            if (!data.MemberIds.Any_Ex() || !data.RoleIds.Any_Ex())
+                return;
 
             if (Repository_Role.Where(o => data.RoleIds.Contains(o.Id) && o.Type != $"{RoleType.会员}").Any())
                 throw new ApplicationException($"只允许将类型为 {RoleType.会员}的角色授权给会员.");
 
-            var roles = Repository_Role.Where(o => data.RoleIds.Contains(o.Id) && o.Enable == true).ToList(o => new
-            {
-                o.Id,
-                o.Type,
-                o.Name
-            });
+            var members = data.MemberIds.Select(o => GetMemberWithCheck(o));
 
-            if (!roles.Any())
-                throw new ApplicationException("没有可供授权的角色.");
-
-            if (roles.Any(o => o.Type != RoleType.会员))
-                throw new ApplicationException($"只能将角色类型为{RoleType.会员}的角色授权给会员.");
+            if (!members.Any())
+                return;
 
             void handler()
             {
-                var orId = OperationRecordBusiness.Create(new Common_OperationRecord
-                {
-                    DataType = nameof(Public_MemberRole),
-                    DataId = null,
-                    Explain = $"授权角色给会员.",
-                    Remark = $"被授权的会员: \r\n\t{string.Join(",", members.Select(o => $"[账号 {o.Account}, 姓名 {o.Name}]"))}\r\n" +
-                            $"授权的角色: \r\n\t{string.Join(",", roles.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
-                });
+                var newData = new List<Public_MemberRole>();
 
-                Repository_MemberRole.Insert(roles.SelectMany(o => members.Select(p => new Public_MemberRole
+                foreach (var member in members)
                 {
-                    MemberId = p.Id,
-                    RoleId = o.Id
-                })));
+                    string memberId = member.Id;
+                    var roles = Repository_Role
+                                .Where(o => data.RoleIds.Contains(o.Id)
+                                    && o.Enable == true
+                                    && !o.Members.AsSelect().Where(p => p.Id != memberId).Any())
+                                .ToList(o => new
+                                {
+                                    o.Id,
+                                    o.Type,
+                                    o.Name
+                                });
+
+                    if (!roles.Any())
+                        continue;
+
+                    newData.AddRange(roles.Select(o => new Public_MemberRole
+                    {
+                        RoleId = o.Id,
+                        MemberId = memberId
+                    }));
+
+                    var orId = OperationRecordBusiness.Create(new Common_OperationRecord
+                    {
+                        DataType = nameof(Public_MemberRole),
+                        DataId = null,
+                        Explain = $"授权角色给会员.",
+                        Remark = $"被授权的会员: \r\n\t[账号 {member.Account}, 姓名 {member.Name}]\r\n" +
+                                $"授权的角色: \r\n\t{string.Join(",", roles.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
+                    });
+                }
+
+                if (newData.Any())
+                    Repository_MemberRole.Insert(newData);
 
                 if (data.RevocationOtherRoles)
                     data.MemberIds.ForEach(o =>
                     {
-                        var roleIds = roles.Select(p => p.Id);
                         RevocationRoleForMember(new RoleForMember
                         {
                             MemberIds = new List<string> { o },
-                            RoleIds = Repository_MemberRole.Where(p => p.MemberId == o && !roleIds.Contains(p.RoleId)).ToList(p => p.RoleId)
+                            RoleIds = Repository_MemberRole.Where(p => p.MemberId == o && !data.RoleIds.Contains(p.RoleId)).ToList(p => p.RoleId)
                         }, false);
                     });
             }
@@ -366,34 +399,53 @@ namespace Business.Implementation.System
 
         public void AuthorizeMenuForUser(MenuForUser data, bool runTransaction = true)
         {
+            if (!data.UserIds.Any_Ex() || !data.MenuIds.Any_Ex())
+                return;
+
             var users = data.UserIds.Select(o => GetUserWithCheck(o));
 
-            var menus = Repository_Menu.Where(o => (data.All == true || data.MenuIds.Contains(o.Id)) && o.Enable == true).ToList(o => new
-            {
-                o.Id,
-                o.Type,
-                o.Name
-            });
-
-            if (!menus.Any())
-                throw new ApplicationException("没有可供授权的菜单.");
+            if (!users.Any())
+                return;
 
             void handler()
             {
-                var orId = OperationRecordBusiness.Create(new Common_OperationRecord
-                {
-                    DataType = nameof(System_UserMenu),
-                    DataId = null,
-                    Explain = $"授权菜单给用户.",
-                    Remark = $"被授权的用户: \r\n\t{string.Join(",", users.Select(o => $"[账号 {o.Account}, 姓名 {o.Name}]"))}\r\n" +
-                            $"授权的菜单: \r\n\t{string.Join(",", menus.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
-                });
+                var newData = new List<System_UserMenu>();
 
-                Repository_UserMenu.Insert(menus.SelectMany(o => users.Select(p => new System_UserMenu
+                foreach (var user in users)
                 {
-                    UserId = p.Id,
-                    MenuId = o.Id
-                })));
+                    string userId = user.Id;
+                    var menus = Repository_Menu
+                                .Where(o => (data.All == true || data.MenuIds.Contains(o.Id))
+                                    && o.Enable == true
+                                    && !o.Users.AsSelect().Where(p => p.Id != userId).Any())
+                                .ToList(o => new
+                                {
+                                    o.Id,
+                                    o.Type,
+                                    o.Name
+                                });
+
+                    if (!menus.Any())
+                        continue;
+
+                    newData.AddRange(menus.Select(o => new System_UserMenu
+                    {
+                        MenuId = o.Id,
+                        UserId = userId
+                    }));
+
+                    var orId = OperationRecordBusiness.Create(new Common_OperationRecord
+                    {
+                        DataType = nameof(System_UserMenu),
+                        DataId = null,
+                        Explain = $"授权菜单给用户.",
+                        Remark = $"被授权的用户: \r\n\t[账号 {user.Account}, 姓名 {user.Name}]\r\n" +
+                                $"授权的菜单: \r\n\t{string.Join(",", menus.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
+                    });
+                }
+
+                if (newData.Any())
+                    Repository_UserMenu.Insert(newData);
             }
 
             if (runTransaction)
@@ -434,34 +486,53 @@ namespace Business.Implementation.System
 
         public void AuthorizeResourcesForUser(ResourcesForUser data)
         {
+            if (!data.UserIds.Any_Ex() || !data.ResourcesIds.Any_Ex())
+                return;
+
             var users = data.UserIds.Select(o => GetUserWithCheck(o));
 
-            var resources = Repository_Resources.Where(o => (data.All == true || data.ResourcesIds.Contains(o.Id)) && o.Enable == true).ToList(o => new
-            {
-                o.Id,
-                o.Type,
-                o.Name
-            });
-
-            if (!resources.Any())
-                throw new ApplicationException("没有可供授权的资源.");
+            if (!users.Any())
+                return;
 
             (bool success, Exception ex) = Orm.RunTransaction(() =>
             {
-                var orId = OperationRecordBusiness.Create(new Common_OperationRecord
-                {
-                    DataType = nameof(System_UserResources),
-                    DataId = null,
-                    Explain = $"授权资源给用户.",
-                    Remark = $"被授权的用户: \r\n\t{string.Join(",", users.Select(o => $"[账号 {o.Account}, 姓名 {o.Name}]"))}\r\n" +
-                            $"授权的资源: \r\n\t{string.Join(",", resources.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
-                });
+                var newData = new List<System_UserResources>();
 
-                Repository_UserResources.Insert(resources.SelectMany(o => users.Select(p => new System_UserResources
+                foreach (var user in users)
                 {
-                    UserId = p.Id,
-                    ResourcesId = o.Id
-                })));
+                    string userId = user.Id;
+                    var resources = Repository_Resources
+                                .Where(o => (data.All == true || data.ResourcesIds.Contains(o.Id))
+                                    && o.Enable == true
+                                    && !o.Users.AsSelect().Where(p => p.Id != userId).Any())
+                                .ToList(o => new
+                                {
+                                    o.Id,
+                                    o.Type,
+                                    o.Name
+                                });
+
+                    if (!resources.Any())
+                        continue;
+
+                    newData.AddRange(resources.Select(o => new System_UserResources
+                    {
+                        ResourcesId = o.Id,
+                        UserId = userId
+                    }));
+
+                    var orId = OperationRecordBusiness.Create(new Common_OperationRecord
+                    {
+                        DataType = nameof(System_UserResources),
+                        DataId = null,
+                        Explain = $"授权资源给用户.",
+                        Remark = $"被授权的用户: \r\n\t[账号 {user.Account}, 姓名 {user.Name}]\r\n" +
+                                $"授权的资源: \r\n\t{string.Join(",", resources.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
+                    });
+                }
+
+                if (newData.Any())
+                    Repository_UserResources.Insert(newData);
             });
 
             if (!success)
@@ -470,34 +541,53 @@ namespace Business.Implementation.System
 
         public void AuthorizeMenuForRole(MenuForRole data, bool runTransaction = true)
         {
+            if (!data.RoleIds.Any_Ex() || !data.MenuIds.Any_Ex())
+                return;
+
             var roles = data.RoleIds.Select(o => GetRoleWithCheck(o));
 
-            var menus = Repository_Menu.Where(o => (data.All == true || data.MenuIds.Contains(o.Id)) && o.Enable == true).ToList(o => new
-            {
-                o.Id,
-                o.Type,
-                o.Name
-            });
-
-            if (!menus.Any())
-                throw new ApplicationException("没有可供授权的菜单.");
+            if (!roles.Any())
+                return;
 
             void handler()
             {
-                var orId = OperationRecordBusiness.Create(new Common_OperationRecord
-                {
-                    DataType = nameof(System_RoleMenu),
-                    DataId = null,
-                    Explain = $"授权菜单给角色.",
-                    Remark = $"被授权的角色: \r\n\t{string.Join(",", roles.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}\r\n" +
-                            $"授权的菜单: \r\n\t{string.Join(",", menus.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
-                });
+                var newData = new List<System_RoleMenu>();
 
-                Repository_RoleMenu.Insert(menus.SelectMany(o => roles.Select(p => new System_RoleMenu
+                foreach (var role in roles)
                 {
-                    RoleId = p.Id,
-                    MenuId = o.Id
-                })));
+                    string roleId = role.Id;
+                    var menus = Repository_Menu
+                                .Where(o => (data.All == true || data.MenuIds.Contains(o.Id))
+                                    && o.Enable == true
+                                    && !o.Roles.AsSelect().Where(p => p.Id != roleId).Any())
+                                .ToList(o => new
+                                {
+                                    o.Id,
+                                    o.Type,
+                                    o.Name
+                                });
+
+                    if (!menus.Any())
+                        continue;
+
+                    newData.AddRange(menus.Select(o => new System_RoleMenu
+                    {
+                        MenuId = o.Id,
+                        RoleId = roleId
+                    }));
+
+                    var orId = OperationRecordBusiness.Create(new Common_OperationRecord
+                    {
+                        DataType = nameof(System_RoleMenu),
+                        DataId = null,
+                        Explain = $"授权菜单给角色.",
+                        Remark = $"被授权的角色: \r\n\t[名称 {role.Name}, 类型 {role.Type}]\r\n" +
+                                $"授权的菜单: \r\n\t{string.Join(",", menus.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
+                    });
+                }
+
+                if (newData.Any())
+                    Repository_RoleMenu.Insert(newData);
             }
 
             if (runTransaction)
@@ -538,34 +628,53 @@ namespace Business.Implementation.System
 
         public void AuthorizeResourcesForRole(ResourcesForRole data)
         {
+            if (!data.RoleIds.Any_Ex() || !data.ResourcesIds.Any_Ex())
+                return;
+
             var roles = data.RoleIds.Select(o => GetRoleWithCheck(o));
 
-            var resources = Repository_Resources.Where(o => (data.All == true || data.ResourcesIds.Contains(o.Id)) && o.Enable == true).ToList(o => new
-            {
-                o.Id,
-                o.Type,
-                o.Name
-            });
-
-            if (!resources.Any())
-                throw new ApplicationException("没有可供授权的资源.");
+            if (!roles.Any())
+                return;
 
             (bool success, Exception ex) = Orm.RunTransaction(() =>
             {
-                var orId = OperationRecordBusiness.Create(new Common_OperationRecord
-                {
-                    DataType = nameof(System_RoleResources),
-                    DataId = null,
-                    Explain = $"授权资源给角色.",
-                    Remark = $"被授权的角色: \r\n\t{string.Join(",", roles.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}\r\n" +
-                            $"授权的资源: \r\n\t{string.Join(",", resources.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
-                });
+                var newData = new List<System_RoleResources>();
 
-                Repository_RoleResources.Insert(resources.SelectMany(o => roles.Select(p => new System_RoleResources
+                foreach (var role in roles)
                 {
-                    RoleId = p.Id,
-                    ResourcesId = o.Id
-                })));
+                    string roleId = role.Id;
+                    var menus = Repository_Resources
+                                .Where(o => (data.All == true || data.ResourcesIds.Contains(o.Id))
+                                    && o.Enable == true
+                                    && !o.Roles.AsSelect().Where(p => p.Id != roleId).Any())
+                                .ToList(o => new
+                                {
+                                    o.Id,
+                                    o.Type,
+                                    o.Name
+                                });
+
+                    if (!menus.Any())
+                        continue;
+
+                    newData.AddRange(menus.Select(o => new System_RoleResources
+                    {
+                        ResourcesId = o.Id,
+                        RoleId = roleId
+                    }));
+
+                    var orId = OperationRecordBusiness.Create(new Common_OperationRecord
+                    {
+                        DataType = nameof(System_RoleResources),
+                        DataId = null,
+                        Explain = $"授权资源给角色.",
+                        Remark = $"被授权的角色: \r\n\t[名称 {role.Name}, 类型 {role.Type}]\r\n" +
+                                $"授权的资源: \r\n\t{string.Join(",", menus.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
+                    });
+                }
+
+                if (newData.Any())
+                    Repository_RoleResources.Insert(newData);
             });
 
             if (!success)
@@ -1156,6 +1265,22 @@ namespace Business.Implementation.System
             return roles;
         }
 
+        public List<string> GetUserRoleTypes(string userId)
+        {
+            var roleTypes = Repository_Role.Where(o => o.Users.AsSelect().Where(p => p.Id == userId).Any() && o.Enable == true)
+                                        .GroupBy(o => o.Type)
+                                        .ToList(o => o.Key);
+            return roleTypes;
+        }
+
+        public List<string> GetMemberRoleTypes(string memberId)
+        {
+            var roleTypes = Repository_Role.Where(o => o.Members.AsSelect().Where(p => p.Id == memberId).Any() && o.Enable == true)
+                                        .GroupBy(o => o.Type)
+                                        .ToList(o => o.Key);
+            return roleTypes;
+        }
+
         public List<Model.System.MenuDTO.Authorities> GetUserMenu(string userId, bool mergeRoleMenu)
         {
             var menus = Repository_Menu.Where(o => (o.Users.AsSelect()
@@ -1328,9 +1453,19 @@ namespace Business.Implementation.System
             return Repository_UserRole.Where(o => o.UserId == userId && o.RoleId == roleId && (checkEnable == false || o.Role.Enable == true)).Any();
         }
 
+        public bool UserHasRoleType(string userId, string roleType, bool checkEnable = true)
+        {
+            return Repository_UserRole.Where(o => o.UserId == userId && o.Role.Type == roleType && (checkEnable == false || o.Role.Enable == true)).Any();
+        }
+
         public bool MemberHasRole(string memberId, string roleId, bool checkEnable = true)
         {
             return Repository_MemberRole.Where(o => o.MemberId == memberId && o.RoleId == roleId && (checkEnable == false || o.Role.Enable == true)).Any();
+        }
+
+        public bool MemberHasRoleType(string memberId, string roleType, bool checkEnable = true)
+        {
+            return Repository_MemberRole.Where(o => o.MemberId == memberId && o.Role.Type == roleType && (checkEnable == false || o.Role.Enable == true)).Any();
         }
 
         public bool UserHasMenu(string userId, string menuId, bool checkEnable = true)

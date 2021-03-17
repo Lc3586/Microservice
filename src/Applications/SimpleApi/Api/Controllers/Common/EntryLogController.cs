@@ -1,5 +1,7 @@
 ﻿using Api.Controllers.Utils;
 using Business.Interface.Common;
+using Business.Utils.AuthorizePolicy;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model.Common.EntryLogDTO;
 using Model.Utils.Pagination;
@@ -14,8 +16,7 @@ namespace Api.Controllers
     /// 登录日志接口
     /// </summary>
     [Route("/entrylog")]
-    [ApiPermission]
-    [CheckModel]
+    [Authorize(nameof(ApiAuthorizeRequirement))]
     [SwaggerTag("登录日志接口")]
     public class EntryLogController : BaseApiController
     {

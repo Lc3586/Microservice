@@ -1,5 +1,6 @@
 ﻿using Api.Controllers.Utils;
 using Business.Interface.Common;
+using Business.Utils.AuthorizePolicy;
 using Microservice.Library.Extension;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,9 +19,7 @@ namespace Api.Controllers
     /// 文件处理接口
     /// </summary>
     [Route("/file")]
-    [Authorize]
-    [ApiPermission]
-    [CheckModel]
+    [Authorize(nameof(ApiAuthorizeRequirement))]
     [SwaggerTag("文件处理接口")]
     [Consumes("multipart/form-data")]
     public class FileController : BaseController

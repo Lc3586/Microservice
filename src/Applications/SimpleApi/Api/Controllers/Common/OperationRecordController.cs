@@ -1,5 +1,7 @@
 ﻿using Api.Controllers.Utils;
 using Business.Interface.Common;
+using Business.Utils.AuthorizePolicy;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model.Common.OperationRecordDTO;
 using Model.Utils.Pagination;
@@ -14,8 +16,7 @@ namespace Api.Controllers
     /// 操作记录接口
     /// </summary>
     [Route("/operationrecord")]
-    [ApiPermission]
-    [CheckModel]
+    [Authorize(nameof(ApiAuthorizeRequirement))]
     [SwaggerTag("操作记录接口")]
     public class OperationRecordController : BaseApiController
     {

@@ -1,6 +1,8 @@
 ﻿using Api.Controllers.Utils;
 using Business.Interface.Example;
+using Business.Utils.AuthorizePolicy;
 using Microservice.Library.Extension;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model.Example.DBDTO;
 using Model.Utils.Pagination;
@@ -17,7 +19,7 @@ namespace Api.Controllers
     /// 示例接口
     /// </summary>
     [Route("/sample")]//路由模板
-    [ApiPermission]//接口权限校验
+    [Authorize(nameof(ApiAuthorizeRequirement))]
     [SwaggerTag("示例接口，包含列表、增、删、改、查等接口")]//swagger标签
     public class SampleController : BaseApiController//继承接口基本控制器
     {
@@ -179,7 +181,6 @@ namespace Api.Controllers
         /// <param name="data">表单数据</param>
         /// <returns></returns>
         [HttpPost("edit")]
-        [CheckModel]//表单模型校验
         public async Task<object> Edit([FromBody] Edit data)
         {
             SampleBusiness.Edit(data);

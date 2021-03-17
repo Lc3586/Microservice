@@ -3059,6 +3059,11 @@
             用户类型
             </summary>
         </member>
+        <member name="P:Model.Utils.SampleAuthentication.SampleAuthenticationDTO.AuthenticationInfo.RoleTypes">
+            <summary>
+            角色类型
+            </summary>
+        </member>
         <member name="P:Model.Utils.SampleAuthentication.SampleAuthenticationDTO.AuthenticationInfo.Account">
             <summary>
             昵称
@@ -3077,6 +3082,11 @@
         <member name="P:Model.Utils.SampleAuthentication.SampleAuthenticationDTO.AuthenticationInfo.Face">
             <summary>
             头像
+            </summary>
+        </member>
+        <member name="P:Model.Utils.SampleAuthentication.SampleAuthenticationDTO.AuthenticationInfo.AuthenticationMethod">
+            <summary>
+            授权时所用的方法
             </summary>
         </member>
         <member name="T:Model.Utils.SampleAuthentication.SampleAuthenticationDTO.LogoutRequest">

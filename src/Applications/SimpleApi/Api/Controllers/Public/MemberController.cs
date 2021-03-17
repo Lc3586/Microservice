@@ -1,7 +1,9 @@
 ﻿using Api.Controllers.Utils;
 using Business.Interface.System;
+using Business.Utils.AuthorizePolicy;
 using Microservice.Library.Extension;
 using Microservice.Library.SelectOption;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model.Public.MemberDTO;
 using Model.Utils.Pagination;
@@ -18,9 +20,8 @@ namespace Api.Controllers
     /// 会员接口
     /// </summary>
     [Route("/member")]
-    [ApiPermission]
-    [CheckModel]
     [SwaggerTag("会员接口")]
+    [Authorize(nameof(ApiAuthorizeRequirement))]
     public class MemberController : BaseApiController
     {
         #region DI

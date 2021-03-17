@@ -1,5 +1,7 @@
-﻿using Microservice.Library.Extension;
+﻿using Business.Utils.AuthorizePolicy;
+using Microservice.Library.Extension;
 using Microservice.Library.OpenApi.Extention;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model.Utils.Pagination;
 using Model.Utils.Result;
@@ -11,6 +13,8 @@ namespace Api.Controllers.Utils
     /// <summary>
     /// 基控制器
     /// </summary>
+    [Authorize(nameof(AllowAuthenticatedRequirement))]//登录校验
+    [CheckModel]//检查模型
     [JsonParamter(true)]//Json参数转模型
     public class BaseController : ControllerBase
     {

@@ -1,5 +1,6 @@
 ﻿using Business.Hub;
 using Microservice.Library.Container;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using Model.Utils.Config;
 using Model.Utils.SignalR;
@@ -13,14 +14,24 @@ namespace Business.Utils.Log
     /// </summary>
     public class MonitorFileTarget : FileTarget
     {
-        IHubContext<LogHub> LogHub => AutofacHelper.GetScopeService<IHubContext<LogHub>>();
-
         protected override string GetFormattedMessage(LogEventInfo logEvent)
         {
             var formattedMessage = base.GetFormattedMessage(logEvent);
             Monitor(logEvent, formattedMessage);
             return formattedMessage;
         }
+
+        IHubContext<LogHub> LogHub
+        {
+            get
+            {
+                if (_LogHub == null)
+                    _LogHub = AutofacHelper.GetService<IHubContext<LogHub>>();
+                return _LogHub;
+            }
+        }
+
+        IHubContext<LogHub> _LogHub;
 
         /// <summary>
         /// 监听

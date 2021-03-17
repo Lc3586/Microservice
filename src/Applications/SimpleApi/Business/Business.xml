@@ -4,23 +4,6 @@
         <name>Business</name>
     </assembly>
     <members>
-        <member name="T:Business.Filter.AdministratorOnlyAttribute">
-            <summary>
-            仅限管理员
-            </summary>
-        </member>
-        <member name="M:Business.Filter.AdministratorOnlyAttribute.OnActionExecuting(Castle.DynamicProxy.IInvocation)">
-            <summary>
-            执行前
-            </summary>
-            <param name="invocation"></param>
-        </member>
-        <member name="M:Business.Filter.AdministratorOnlyAttribute.OnActionExecuted(Castle.DynamicProxy.IInvocation)">
-            <summary>
-            执行后
-            </summary>
-            <param name="invocation"></param>
-        </member>
         <member name="T:Business.Hub.LogHub">
             <summary>
             日志中心
@@ -883,6 +866,24 @@
             <para>资源授权信息</para>
             </returns>
         </member>
+        <member name="M:Business.Interface.System.IAuthoritiesBusiness.GetUserRoleTypes(System.String)">
+            <summary>
+            获取授权给用户的角色类型
+            </summary>
+            <param name="userId">用户Id</param>
+            <returns>
+            <para>角色类型信息<see cref="T:Model.System.RoleType"/></para>
+            </returns>
+        </member>
+        <member name="M:Business.Interface.System.IAuthoritiesBusiness.GetMemberRoleTypes(System.String)">
+            <summary>
+            获取授权给会员的角色类型
+            </summary>
+            <param name="memberId">会员Id</param>
+            <returns>
+            <para>角色类型信息<see cref="T:Model.System.RoleType"/></para>
+            </returns>
+        </member>
         <member name="M:Business.Interface.System.IAuthoritiesBusiness.GetUserMenu(System.String,System.Boolean)">
             <summary>
             获取授权给用户的菜单
@@ -993,12 +994,30 @@
             <param name="checkEnable">检查是否已启用</param>
             <returns></returns>
         </member>
+        <member name="M:Business.Interface.System.IAuthoritiesBusiness.UserHasRoleType(System.String,System.String,System.Boolean)">
+            <summary>
+            用户是否拥有某类型角色的授权
+            </summary>
+            <param name="userId">用户Id</param>
+            <param name="roleType">角色类型</param>
+            <param name="checkEnable">检查是否已启用</param>
+            <returns></returns>
+        </member>
         <member name="M:Business.Interface.System.IAuthoritiesBusiness.MemberHasRole(System.String,System.String,System.Boolean)">
             <summary>
             会员是否拥有角色授权
             </summary>
             <param name="memberId">会员Id</param>
             <param name="roleId">角色Id</param>
+            <param name="checkEnable">检查是否已启用</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Interface.System.IAuthoritiesBusiness.MemberHasRoleType(System.String,System.String,System.Boolean)">
+            <summary>
+            会员是否拥有某类型角色的授权
+            </summary>
+            <param name="memberId">会员Id</param>
+            <param name="roleType">角色类型</param>
             <param name="checkEnable">检查是否已启用</param>
             <returns></returns>
         </member>
@@ -1452,6 +1471,64 @@
             示例Soap服务接口类
             </summary>
         </member>
+        <member name="T:Business.Utils.AuthorizePolicy.AllowAuthenticatedRequirement">
+            <summary>
+            允许登录的用户访问，而不判断有没有授权
+            </summary>
+        </member>
+        <member name="T:Business.Utils.AuthorizePolicy.ApiAuthorizeRequirement">
+            <summary>
+            接口权限校验
+            </summary>
+        </member>
+        <member name="T:Business.Utils.AuthorizePolicy.BaseRequirement`1">
+            <summary>
+            自定义授权处理程序基类
+            </summary>
+            <typeparam name="TRequirement"></typeparam>
+        </member>
+        <member name="P:Business.Utils.AuthorizePolicy.BaseRequirement`1.Config">
+            <summary>
+            系统配置
+            </summary>
+        </member>
+        <member name="P:Business.Utils.AuthorizePolicy.BaseRequirement`1.Operator">
+            <summary>
+            当前操作者
+            </summary>
+        </member>
+        <member name="P:Business.Utils.AuthorizePolicy.BaseRequirement`1.AuthoritiesBusiness">
+            <summary>
+            授权中心
+            </summary>
+        </member>
+        <member name="T:Business.Utils.AuthorizePolicy.BaseRequirement`2">
+            <summary>
+            自定义授权处理程序基类
+            </summary>
+            <typeparam name="TRequirement"></typeparam>
+            <typeparam name="TResource"></typeparam>
+        </member>
+        <member name="P:Business.Utils.AuthorizePolicy.BaseRequirement`2.Config">
+            <summary>
+            系统配置
+            </summary>
+        </member>
+        <member name="P:Business.Utils.AuthorizePolicy.BaseRequirement`2.Operator">
+            <summary>
+            当前操作者
+            </summary>
+        </member>
+        <member name="P:Business.Utils.AuthorizePolicy.BaseRequirement`2.AuthoritiesBusiness">
+            <summary>
+            授权中心
+            </summary>
+        </member>
+        <member name="T:Business.Utils.AuthorizePolicy.HubMethodAuthorizeRequirement">
+            <summary>
+            SignalR Hub方法权限校验
+            </summary>
+        </member>
         <member name="T:Business.Utils.BaseBusiness">
             <summary>
             业务处理基类
@@ -1463,10 +1540,20 @@
         </member>
         <member name="P:Business.Utils.BaseBusiness.Config">
             <summary>
-            系统日志
+            系统配置
             </summary>
         </member>
         <member name="P:Business.Utils.BaseBusiness.Operator">
+            <summary>
+            当前登录人
+            </summary>
+        </member>
+        <member name="F:Business.Utils.BaseBusiness._Config">
+            <summary>
+            系统日志
+            </summary>
+        </member>
+        <member name="F:Business.Utils.BaseBusiness._Operator">
             <summary>
             当前登录人
             </summary>
@@ -1629,6 +1716,28 @@
             <param name="op"></param>
             <param name="operatorDetail"></param>
             <returns></returns>
+        </member>
+        <member name="T:Business.Utils.Filter.AdministratorOnlyAttribute">
+            <summary>
+            仅限管理员
+            </summary>
+        </member>
+        <member name="P:Business.Utils.Filter.AdministratorOnlyAttribute.Operator">
+            <summary>
+            当前登录人
+            </summary>
+        </member>
+        <member name="M:Business.Utils.Filter.AdministratorOnlyAttribute.OnActionExecuting(Castle.DynamicProxy.IInvocation)">
+            <summary>
+            执行前
+            </summary>
+            <param name="invocation"></param>
+        </member>
+        <member name="M:Business.Utils.Filter.AdministratorOnlyAttribute.OnActionExecuted(Castle.DynamicProxy.IInvocation)">
+            <summary>
+            执行后
+            </summary>
+            <param name="invocation"></param>
         </member>
         <member name="T:Business.Utils.ExceptionHelper">
             <summary>

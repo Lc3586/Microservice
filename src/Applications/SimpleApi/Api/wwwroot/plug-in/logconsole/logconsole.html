@@ -332,11 +332,19 @@
         </el-dialog>
 
         <!--文件内容-->
-        <el-dialog :title="logFile.fileContent.currentFile + '   ' + logFile.fileContent.size"
+        <el-dialog custom-class="logfile-content-dialog"
+                   :title="logFile.fileContent.currentFile + '   ' + logFile.fileContent.size"
                    v-model="logFile.fileContent.show"
-                   v-loading="logFile.fileContent.loading"
                    fullscreen="true">
-            <p v-html="logFile.fileContent.content" class="logfile-content"></p>
+            <el-progress v-show="logFile.fileContent.loading"
+                         :text-inside="true"
+                         :stroke-width="18"
+                         :percentage="logFile.fileContent.percentage"></el-progress>
+            <div class="logfile-content">
+                <el-skeleton :rows="10"
+                             v-show="logFile.fileContent.loading"></el-skeleton>
+                <p v-html="logFile.fileContent.content"></p>
+            </div>
             <template #footer>
                 <span class="dialog-footer">
                     <el-button @click="closeLogFile">关闭</el-button>

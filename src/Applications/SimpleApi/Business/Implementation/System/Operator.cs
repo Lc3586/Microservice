@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Model.Common;
 using Model.Utils.SampleAuthentication.SampleAuthenticationDTO;
 using System.Linq;
+using System.Security.Claims;
 
 namespace Business.Implementation.System
 {
@@ -30,10 +31,19 @@ namespace Business.Implementation.System
                 AuthenticationInfo = new AuthenticationInfo()
                 {
                     Id = httpContextAccessor.HttpContext.User.Claims?.FirstOrDefault(o => o.Type == nameof(AuthenticationInfo.Id))?.Value,
+
+                    Account = httpContextAccessor.HttpContext.User.Claims?.FirstOrDefault(o => o.Type == ClaimTypes.Name)?.Value,
+
                     UserType = httpContextAccessor.HttpContext.User.Claims?.FirstOrDefault(o => o.Type == nameof(AuthenticationInfo.UserType))?.Value,
-                    Account = httpContextAccessor.HttpContext.User.Claims?.FirstOrDefault(o => o.Type == nameof(AuthenticationInfo.Account))?.Value,
-                    Nickname = httpContextAccessor.HttpContext.User.Claims?.FirstOrDefault(o => o.Type == nameof(AuthenticationInfo.Nickname))?.Value,
-                    Face = httpContextAccessor.HttpContext.User.Claims?.FirstOrDefault(o => o.Type == nameof(AuthenticationInfo.Face))?.Value
+
+                    RoleTypes = httpContextAccessor.HttpContext.User.Claims?.Where(o => o.Type == ClaimTypes.Role).Select(o => o.Value).ToList(),
+
+                    Nickname = httpContextAccessor.HttpContext.User.Claims?.FirstOrDefault(o => o.Type == ClaimTypes.GivenName)?.Value,
+                    Sex = httpContextAccessor.HttpContext.User.Claims?.FirstOrDefault(o => o.Type == ClaimTypes.Gender)?.Value,
+
+                    Face = httpContextAccessor.HttpContext.User.Claims?.FirstOrDefault(o => o.Type == nameof(AuthenticationInfo.Face))?.Value,
+
+                    AuthenticationMethod = httpContextAccessor.HttpContext.User.Claims?.FirstOrDefault(o => o.Type == ClaimTypes.AuthenticationMethod)?.Value
                 };
         }
 

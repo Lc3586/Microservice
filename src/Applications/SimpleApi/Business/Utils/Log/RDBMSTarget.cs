@@ -20,13 +20,23 @@ namespace Business.Utils.Log
 
         }
 
-        IHubContext<LogHub> LogHub => AutofacHelper.GetScopeService<IHubContext<LogHub>>();
-
         #endregion
 
         #region 私有成员
 
-        IBaseRepository<System_Log, string> Repository;
+        IBaseRepository<System_Log, string> _Repository;
+
+        IBaseRepository<System_Log, string> Repository
+        {
+            get
+            {
+                if (_Repository == null)
+                    _Repository = AutofacHelper.GetService<IFreeSqlProvider>()
+                                                .GetFreeSql()
+                                                .GetRepository<System_Log, string>();
+                return _Repository;
+            }
+        }
 
         System_Log GetBase_SysLogInfo(LogEventInfo logEventInfo)
         {
@@ -52,17 +62,20 @@ namespace Business.Utils.Log
         {
             var log = GetBase_SysLogInfo(logEvent);
             Monitor(log, logEvent.FormattedMessage);
-            await GetRepository().InsertAsync(log);
+            await Repository.InsertAsync(log);
         }
 
-        private IBaseRepository<System_Log, string> GetRepository()
+        IHubContext<LogHub> LogHub
         {
-            if (Repository == null)
-                Repository = AutofacHelper.GetService<IFreeSqlProvider>()
-                                            .GetFreeSql()
-                                            .GetRepository<System_Log, string>();
-            return Repository;
+            get
+            {
+                if (_LogHub == null)
+                    _LogHub = AutofacHelper.GetService<IHubContext<LogHub>>();
+                return _LogHub;
+            }
         }
+
+        IHubContext<LogHub> _LogHub;
 
         /// <summary>
         /// 监听
@@ -79,7 +92,6 @@ namespace Business.Utils.Log
                         log.Level,
                         log.LogType,
                         formattedMessage });
-                await LogHub.Clients.All.SendCoreAsync(LogHubMethod.Log, new[] { formattedMessage });
             }
 #pragma warning disable CA1031 // Do not catch general exception types
             catch

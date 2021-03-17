@@ -13,8 +13,6 @@ namespace Api
     /// </summary>
     public class CheckJWTAttribute : BaseActionFilter, IActionFilter
     {
-        readonly SystemConfig Config = AutofacHelper.GetScopeService<SystemConfig>();
-
         static readonly ErrorCode _errorCode = ErrorCode.validation;
 
         /// <summary>

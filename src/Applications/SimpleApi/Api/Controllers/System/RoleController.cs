@@ -1,6 +1,8 @@
 ﻿using Api.Controllers.Utils;
 using Business.Interface.System;
+using Business.Utils.AuthorizePolicy;
 using Microservice.Library.Extension;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model.System.RoleDTO;
 using Model.Utils.Pagination;
@@ -17,8 +19,7 @@ namespace Api.Controllers
     /// 角色接口
     /// </summary>
     [Route("/role")]
-    [ApiPermission]
-    [CheckModel]
+    [Authorize(nameof(ApiAuthorizeRequirement))]
     [SwaggerTag("角色接口")]
     public class RoleController : BaseApiController
     {
@@ -142,7 +143,7 @@ namespace Api.Controllers
         /// <param name="data">数据</param>
         /// <returns></returns>
         [HttpPost("sort")]
-        public async Task<object> Sort(Sort data)
+        public async Task<object> Sort([FromBody] Sort data)
         {
             RoleBusiness.Sort(data);
             return await Task.FromResult(Success());
@@ -154,7 +155,7 @@ namespace Api.Controllers
         /// <param name="data">数据</param>
         /// <returns></returns>
         [HttpPost("dragsort")]
-        public async Task<object> DragSort(DragSort data)
+        public async Task<object> DragSort([FromBody] DragSort data)
         {
             RoleBusiness.DragSort(data);
             return await Task.FromResult(Success());

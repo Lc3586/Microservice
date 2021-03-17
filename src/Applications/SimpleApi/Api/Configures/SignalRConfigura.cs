@@ -1,4 +1,5 @@
 ﻿using Business.Hub;
+using Business.Utils.AuthorizePolicy;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Model.Utils.Config;
@@ -19,7 +20,14 @@ namespace Api.Configures
         /// <returns></returns>
         public static IServiceCollection RegisterSignalR(this IServiceCollection services, SystemConfig config)
         {
-            services.AddSignalR()
+            services.AddAuthorization(options =>
+                {
+                    options.AddPolicy(nameof(HubMethodAuthorizeRequirement), policy =>
+                    {
+                        policy.Requirements.Add(new HubMethodAuthorizeRequirement());
+                    });
+                })
+                .AddSignalR()
                 .AddHubOptions<LogHub>(option =>
                 {
                     option.ClientTimeoutInterval = TimeSpan.FromSeconds(30);

@@ -135,8 +135,24 @@ body > .full_container {
     min-height: 300px;
 }
 
+.logfile-content-dialog .el-dialog__body {
+    height: 80%;
+    overflow-y: auto;
+}
+
+.logfile-content-dialog .el-dialog__footer {
+    position: fixed;
+    right: 20px;
+}
+
 .logfile-content {
+    height: 100%;
     white-space: pre-wrap;
+    background-color: antiquewhite;
+    border-radius: 4px;
+    padding-top: 10px;
+    padding-left: 30px;
+    font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace !important;
 }
 
 /*列表中警告的日志*/

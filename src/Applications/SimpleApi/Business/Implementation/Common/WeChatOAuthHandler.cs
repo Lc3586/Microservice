@@ -26,6 +26,7 @@ using Model.Utils.SampleAuthentication.SampleAuthenticationDTO;
 using Senparc.Weixin.MP.AdvancedAPIs.OAuth;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -369,10 +370,20 @@ namespace Business.Implementation.Common
             var claims = new List<Claim>
             {
                 new Claim(nameof(AuthenticationInfo.Id), authenticationInfo.Id),
-                new Claim(nameof(AuthenticationInfo.Account), authenticationInfo.Account),
-                new Claim(nameof(AuthenticationInfo.Nickname), authenticationInfo.Nickname ?? string.Empty),
-                new Claim(nameof(AuthenticationInfo.Face), authenticationInfo.Face ?? string.Empty)
+
+                new Claim(ClaimTypes.Name, authenticationInfo.Account),
+
+                new Claim(nameof(AuthenticationInfo.UserType), authenticationInfo.UserType),
+
+                new Claim(ClaimTypes.GivenName, authenticationInfo.Nickname ?? string.Empty),
+                new Claim(ClaimTypes.Gender, authenticationInfo.Sex ?? string.Empty),
+
+                new Claim(nameof(AuthenticationInfo.Face), authenticationInfo.Face ?? string.Empty),
+
+                new Claim(ClaimTypes.AuthenticationMethod, "WeChatOAuth")
             };
+
+            claims.AddRange(authenticationInfo.RoleTypes.Select(o => new Claim(ClaimTypes.Role, o)));
 
             await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)));
         }

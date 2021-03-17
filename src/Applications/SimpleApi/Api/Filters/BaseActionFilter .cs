@@ -2,6 +2,7 @@
 using Microservice.Library.Container;
 using Microservice.Library.Extension;
 using Microsoft.AspNetCore.Mvc;
+using Model.Utils.Config;
 using Model.Utils.Result;
 using System;
 
@@ -13,6 +14,21 @@ namespace Api
     [AttributeUsage(AttributeTargets.Class)]
     public class BaseActionFilter : Attribute
     {
+        SystemConfig _Config;
+
+        /// <summary>
+        /// 系统配置
+        /// </summary>
+        protected SystemConfig Config
+        {
+            get
+            {
+                if (_Config == null)
+                    _Config = AutofacHelper.GetService<SystemConfig>();
+                return _Config;
+            }
+        }
+
         /// <summary>
         /// 当前操作者
         /// </summary>

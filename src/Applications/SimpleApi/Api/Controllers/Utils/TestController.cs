@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using Business.Utils.AuthorizePolicy;
 using IocServiceDemo;
 using Microservice.Library.DataMapping.Gen;
 using Microservice.Library.Extension;
 using Microservice.Library.FreeSql.Gen;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Threading.Tasks;
@@ -13,7 +15,7 @@ namespace Api.Controllers.Utils
     /// 测试
     /// </summary>
     [Route("/test")]
-    [CheckModel]
+    [Authorize(nameof(ApiAuthorizeRequirement))]
     [SwaggerTag("测试接口")]
     public class TestController : BaseApiController
     {

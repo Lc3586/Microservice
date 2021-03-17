@@ -1,6 +1,8 @@
 ﻿/* 
  * SampleAuthentication相关业务模型
  */
+using System.Collections.Generic;
+
 namespace Model.Utils.SampleAuthentication.SampleAuthenticationDTO
 {
     /// <summary>
@@ -35,6 +37,11 @@ namespace Model.Utils.SampleAuthentication.SampleAuthenticationDTO
         public string UserType { get; set; }
 
         /// <summary>
+        /// 角色类型
+        /// </summary>
+        public List<string> RoleTypes { get; set; }
+
+        /// <summary>
         /// 昵称
         /// </summary>
         public string Account { get; set; }
@@ -53,6 +60,11 @@ namespace Model.Utils.SampleAuthentication.SampleAuthenticationDTO
         /// 头像
         /// </summary>
         public string Face { get; set; }
+
+        /// <summary>
+        /// 授权时所用的方法
+        /// </summary>
+        public string AuthenticationMethod { get; set; }
     }
 
     /// <summary>

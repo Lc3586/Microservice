@@ -1,6 +1,5 @@
 ﻿using Business.Interface.System;
 using Microservice.Library.Container;
-using Microservice.Library.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Model.System;
@@ -15,9 +14,12 @@ namespace Api
     /// </summary>
     public class ApiPermissionAttribute : BaseActionFilter, IActionFilter
     {
-        SystemConfig Config => AutofacHelper.GetScopeService<SystemConfig>();
-
+        /// <summary>
+        /// 授权中心
+        /// </summary>
+#pragma warning disable CA1822 // 将成员标记为 static
         IAuthoritiesBusiness AuthoritiesBusiness => AutofacHelper.GetScopeService<IAuthoritiesBusiness>();
+#pragma warning restore CA1822 // 将成员标记为 static
 
         /// <summary>
         /// Action执行之前执行

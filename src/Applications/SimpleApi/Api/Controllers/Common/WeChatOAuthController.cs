@@ -2,6 +2,7 @@
 using Business.Hub;
 using Business.Interface.Common;
 using Business.Interface.System;
+using Business.Utils.AuthorizePolicy;
 using Microservice.Library.Extension;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -18,8 +19,7 @@ namespace Api.Controllers
     /// 微信认证接口
     /// </summary>
     [Route("/wechat-oath")]
-    [ApiPermission]
-    [CheckModel]
+    [Authorize(nameof(ApiAuthorizeRequirement))]
     [SwaggerTag("微信认证接口")]
     public class WeChatOAuthController : BaseApiController
     {

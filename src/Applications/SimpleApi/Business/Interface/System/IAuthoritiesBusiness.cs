@@ -314,6 +314,24 @@ namespace Business.Interface.System
         List<Model.System.RoleDTO.Authorities> GetMemberRole(string memberId, bool includeMenu, bool includeResources);
 
         /// <summary>
+        /// 获取授权给用户的角色类型
+        /// </summary>
+        /// <param name="userId">用户Id</param>
+        /// <returns>
+        /// <para>角色类型信息<see cref="Model.System.RoleType"/></para>
+        /// </returns>
+        List<string> GetUserRoleTypes(string userId);
+
+        /// <summary>
+        /// 获取授权给会员的角色类型
+        /// </summary>
+        /// <param name="memberId">会员Id</param>
+        /// <returns>
+        /// <para>角色类型信息<see cref="Model.System.RoleType"/></para>
+        /// </returns>
+        List<string> GetMemberRoleTypes(string memberId);
+
+        /// <summary>
         /// 获取授权给用户的菜单
         /// </summary>
         /// <param name="userId">用户Id</param>
@@ -428,6 +446,15 @@ namespace Business.Interface.System
         bool UserHasRole(string userId, string roleId, bool checkEnable = true);
 
         /// <summary>
+        /// 用户是否拥有某类型角色的授权
+        /// </summary>
+        /// <param name="userId">用户Id</param>
+        /// <param name="roleType">角色类型</param>
+        /// <param name="checkEnable">检查是否已启用</param>
+        /// <returns></returns>
+        bool UserHasRoleType(string userId, string roleType, bool checkEnable = true);
+
+        /// <summary>
         /// 会员是否拥有角色授权
         /// </summary>
         /// <param name="memberId">会员Id</param>
@@ -435,6 +462,15 @@ namespace Business.Interface.System
         /// <param name="checkEnable">检查是否已启用</param>
         /// <returns></returns>
         bool MemberHasRole(string memberId, string roleId, bool checkEnable = true);
+
+        /// <summary>
+        /// 会员是否拥有某类型角色的授权
+        /// </summary>
+        /// <param name="memberId">会员Id</param>
+        /// <param name="roleType">角色类型</param>
+        /// <param name="checkEnable">检查是否已启用</param>
+        /// <returns></returns>
+        bool MemberHasRoleType(string memberId, string roleType, bool checkEnable = true);
 
         /// <summary>
         /// 用户是否拥有菜单授权

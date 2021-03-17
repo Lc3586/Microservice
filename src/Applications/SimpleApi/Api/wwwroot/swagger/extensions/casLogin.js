@@ -25,6 +25,8 @@ $(function () {
             error: function (response) {
                 if (response.status == 401)
                     done(false);
+                else if (response.status == 503)
+                    console.info('接口维护中.');
                 else {
                     done(false);
                     window.showDialog(

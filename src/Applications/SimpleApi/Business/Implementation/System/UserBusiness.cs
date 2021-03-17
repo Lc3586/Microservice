@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Business.Filter;
+using Business.Utils.Filter;
 using Business.Interface.Common;
 using Business.Interface.System;
 using Business.Utils;
@@ -459,6 +459,7 @@ namespace Business.Implementation.System
             {
                 Id = user.Id,
                 UserType = UserType.系统用户,
+                RoleTypes = AuthoritiesBusiness.GetUserRoleTypes(user.Id),
                 Account = user.Account,
                 Nickname = user.Nickname,
                 Sex = user.Sex,
@@ -492,6 +493,7 @@ namespace Business.Implementation.System
             {
                 Id = user.Id,
                 UserType = UserType.系统用户,
+                RoleTypes = AuthoritiesBusiness.GetUserRoleTypes(user.Id),
                 Account = user.Account,
                 Nickname = user.Name,
                 Sex = user.Sex,

@@ -1,6 +1,8 @@
 ﻿using Api.Controllers.Utils;
 using Business.Interface.System;
+using Business.Utils.AuthorizePolicy;
 using Microservice.Library.Extension;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model.System.ResourcesDTO;
 using Model.Utils.Pagination;
@@ -17,8 +19,7 @@ namespace Api.Controllers
     /// 资源接口
     /// </summary>
     [Route("/resources")]
-    [ApiPermission]
-    [CheckModel]
+    [Authorize(nameof(ApiAuthorizeRequirement))]
     [SwaggerTag("资源接口")]
     public class ResourcesController : BaseApiController
     {

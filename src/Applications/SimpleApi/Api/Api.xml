@@ -1416,11 +1416,13 @@
             <summary>
             系统配置
             </summary>
+            <returns></returns>
         </member>
         <member name="P:Api.Controllers.Utils.BaseApiController.Operator">
             <summary>
             当前登录人
             </summary>
+            <returns></returns>
         </member>
         <member name="T:Api.Controllers.Utils.BaseController">
             <summary>
@@ -1793,6 +1795,11 @@
             拦截类基类
             </summary>
         </member>
+        <member name="P:Api.BaseActionFilter.Config">
+            <summary>
+            系统配置
+            </summary>
+        </member>
         <member name="P:Api.BaseActionFilter.Operator">
             <summary>
             当前操作者
@@ -1985,6 +1992,11 @@
         <member name="T:Api.ApiPermissionAttribute">
             <summary>
             接口权限校验
+            </summary>
+        </member>
+        <member name="P:Api.ApiPermissionAttribute.AuthoritiesBusiness">
+            <summary>
+            授权中心
             </summary>
         </member>
         <member name="M:Api.ApiPermissionAttribute.OnActionExecuting(Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext)">

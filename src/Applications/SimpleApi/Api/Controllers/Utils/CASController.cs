@@ -1,4 +1,5 @@
-﻿using Microservice.Library.Extension;
+﻿using Business.Utils.AuthorizePolicy;
+using Microservice.Library.Extension;
 using Microservice.Library.Http;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -16,7 +17,6 @@ namespace Api.Controllers.Utils
     /// CAS认证接口
     /// </summary>
     [Route("/cas")]
-    [CheckModel]
     [SwaggerTag("CAS认证接口")]
     public class CASController : BaseApiController
     {
@@ -134,6 +134,7 @@ namespace Api.Controllers.Utils
         /// <param name="logoutCAS">单点注销（当前登录的所有应用都会注销）</param>
         /// <returns></returns>
         [HttpGet("logout")]
+        [Authorize(nameof(ApiAuthorizeRequirement))]
         public async Task LogOut(string returnUrl, bool logoutCAS = false)
         {
             if (string.IsNullOrEmpty(returnUrl))
@@ -152,6 +153,7 @@ namespace Api.Controllers.Utils
         /// </summary>
         /// <returns></returns>
         [HttpPost("logout")]
+        [Authorize(nameof(ApiAuthorizeRequirement))]
         public async Task LogOut()
         {
             await Context.SignOutAsync();
@@ -162,6 +164,7 @@ namespace Api.Controllers.Utils
         /// </summary>
         /// <returns></returns>
         [HttpGet("getToken")]
+        [Authorize(nameof(ApiAuthorizeRequirement))]
         public async Task<string> GetToken()
         {
             return await Task.FromResult(JWTHelper.GetToken(new AuthorizedInfo

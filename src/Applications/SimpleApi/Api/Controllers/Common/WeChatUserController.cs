@@ -1,5 +1,7 @@
 ﻿using Api.Controllers.Utils;
 using Business.Interface.Common;
+using Business.Utils.AuthorizePolicy;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model.Common.EntryLogDTO;
 using Model.Utils.Pagination;
@@ -14,8 +16,7 @@ namespace Api.Controllers
     /// 微信用户信息接口
     /// </summary>
     [Route("/wechat-user")]
-    [ApiPermission]
-    [CheckModel]
+    [Authorize(nameof(ApiAuthorizeRequirement))]
     [SwaggerTag("微信用户信息接口")]
     public class WeChatUserController : BaseApiController
     {

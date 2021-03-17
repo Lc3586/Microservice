@@ -20,13 +20,22 @@ namespace Business.Utils.Log
 
         }
 
-        IHubContext<LogHub> LogHub => AutofacHelper.GetScopeService<IHubContext<LogHub>>();
-
         #endregion
 
         #region 私有成员
 
-        ElasticsearchClient Elasticsearch;
+        ElasticsearchClient _Elasticsearch;
+
+        ElasticsearchClient Elasticsearch
+        {
+            get
+            {
+                if (_Elasticsearch == null)
+                    _Elasticsearch = AutofacHelper.GetService<IElasticsearchProvider>()
+                                            .GetElasticsearch<System_Log>();
+                return _Elasticsearch;
+            }
+        }
 
         System_Log GetBase_SysLogInfo(LogEventInfo logEventInfo)
         {
@@ -52,16 +61,20 @@ namespace Business.Utils.Log
         {
             var log = GetBase_SysLogInfo(logEvent);
             Monitor(log, logEvent.FormattedMessage);
-            await GetElasticClient().AddAsync(log);
+            await Elasticsearch.AddAsync(log);
         }
 
-        private ElasticsearchClient GetElasticClient()
+        IHubContext<LogHub> LogHub
         {
-            if (Elasticsearch == null)
-                Elasticsearch = AutofacHelper.GetService<IElasticsearchProvider>()
-                                            .GetElasticsearch<System_Log>();
-            return Elasticsearch;
+            get
+            {
+                if (_LogHub == null)
+                    _LogHub = AutofacHelper.GetService<IHubContext<LogHub>>();
+                return _LogHub;
+            }
         }
+
+        IHubContext<LogHub> _LogHub;
 
         /// <summary>
         /// 监听

@@ -3,14 +3,28 @@ using Castle.DynamicProxy;
 using Microservice.Library.Container;
 using System;
 
-namespace Business.Filter
+namespace Business.Utils.Filter
 {
     /// <summary>
     /// 仅限管理员
     /// </summary>
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class AdministratorOnlyAttribute : BaseFilterAttribute
     {
-        readonly IOperator Operator = AutofacHelper.GetScopeService<IOperator>();
+        IOperator _Operator;
+
+        /// <summary>
+        /// 当前登录人
+        /// </summary>
+        protected IOperator Operator
+        {
+            get
+            {
+                if (_Operator == null)
+                    _Operator = AutofacHelper.GetScopeService<IOperator>();
+                return _Operator;
+            }
+        }
 
         /// <summary>
         /// 执行前

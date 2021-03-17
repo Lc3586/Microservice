@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using Business.Filter;
 using Business.Interface.Common;
 using Business.Interface.System;
 using Business.Utils;
+using Business.Utils.Filter;
 using Business.Utils.Pagination;
 using Entity.Common;
 using Entity.Public;
@@ -345,7 +345,8 @@ namespace Business.Implementation.Public
             return new AuthenticationInfo
             {
                 Id = member.Id,
-                UserType = UserType.系统用户,
+                UserType = UserType.会员,
+                RoleTypes = AuthoritiesBusiness.GetMemberRoleTypes(member.Id),
                 Account = member.Account,
                 Nickname = member.Nickname,
                 Sex = member.Sex,

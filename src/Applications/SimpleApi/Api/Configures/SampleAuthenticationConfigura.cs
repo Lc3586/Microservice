@@ -1,4 +1,5 @@
-﻿using Microservice.Library.Container;
+﻿using Business.Utils.AuthorizePolicy;
+using Microservice.Library.Container;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -31,7 +32,21 @@ namespace Api.Configures
                 options.Filters.Add(new AuthorizeFilter(policy));
             });
 
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(nameof(AllowAuthenticatedRequirement), policy =>
+                {
+                    policy.Requirements.Add(new AllowAuthenticatedRequirement());
+                });
+
+                options.AddPolicy(nameof(ApiAuthorizeRequirement), policy =>
+                {
+                    policy.Requirements.Add(new ApiAuthorizeRequirement());
+                });
+
+                options.InvokeHandlersAfterFailure = true;
+            })
+            .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(options =>
             {
                 options.Cookie.Name = ".SA";
@@ -60,15 +75,15 @@ namespace Api.Configures
                     },
                     //OnRedirectToAccessDenied = context =>
                     //{
-//#if DEBUG
-//                    Console.WriteLine("输出禁止访问提示.");
-//#endif
-                //    context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                //    context.Response.ContentType = "text/plain;charset=UTF-8";
-                //    context.Response.WriteAsync("拒绝访问.");
-                //    return context.Response.CompleteAsync();
-                //}
-            };
+                    //#if DEBUG
+                    //                    Console.WriteLine("输出禁止访问提示.");
+                    //#endif
+                    //    context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                    //    context.Response.ContentType = "text/plain;charset=UTF-8";
+                    //    context.Response.WriteAsync("拒绝访问.");
+                    //    return context.Response.CompleteAsync();
+                    //}
+                };
             });
 
             return services;

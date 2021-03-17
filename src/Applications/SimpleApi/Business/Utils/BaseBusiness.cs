@@ -22,20 +22,45 @@ namespace Business.Utils
         #region DI
 
         /// <summary>
-        /// 系统日志
+        /// 系统配置
         /// </summary>
-        protected SystemConfig Config => AutofacHelper.GetService<SystemConfig>();
+        protected SystemConfig Config
+        {
+            get
+            {
+                if (_Config == null)
+                    _Config = AutofacHelper.GetService<SystemConfig>();
+                return _Config;
+            }
+        }
 
         /// <summary>
         /// 当前登录人
         /// </summary>
-        protected IOperator Operator => AutofacHelper.GetScopeService<IOperator>();
+        protected IOperator Operator
+        {
+            get
+            {
+                if (_Operator == null)
+                    _Operator = AutofacHelper.GetScopeService<IOperator>();
+                return _Operator;
+            }
+        }
 
         #endregion
 
         #region 私有成员
 
+        /// <summary>
+        /// 系统日志
+        /// </summary>
 
+        SystemConfig _Config;
+
+        /// <summary>
+        /// 当前登录人
+        /// </summary>
+        IOperator _Operator;
 
         #endregion
 

@@ -174,6 +174,8 @@
                     show: false,
                     loading: false,
                     currentFile: '',
+                    percentage: 0,
+                    bytes: 0,
                     size: '',
                     content: ''
                 }
@@ -238,6 +240,10 @@
         }, (error) => {
             if (error && error.response && error.response.status == 401)
                 main.sa.show ? 1 : main.sa.show = true;
+            else if (error && error.response && error.response.status == 405) {
+                error.message = "无权限!";
+                return Promise.reject(error);
+            }
             else
                 return Promise.reject(error);
         });
@@ -501,7 +507,7 @@
             })
             .catch((error) => {
                 main.logFile.loading = false;
-                main.logFile.error = error;
+                main.logFile.error = error.message;
                 ElementPlus.ElMessage('获取日志文件列表时发生异常.');
             });
         main.logFile.init = true;
@@ -515,9 +521,15 @@
     function openLogFile(index, data) {
         main.logFile.fileContent.loading = true;
         main.logFile.fileContent.currentFile = data.Name + data.Suffix;
+        main.logFile.fileContent.bytes = data.Bytes;
         main.logFile.fileContent.size = data.Size;
         main.logFile.fileContent.show = true;
-        axios.get(apiUrls.logFileContent + data.Name).then((response) => {
+        axios.get(apiUrls.logFileContent + data.Name, {
+            onDownloadProgress: (progressEvent) => {
+                console.info(progressEvent);
+                main.logFile.fileContent.percentage = parseInt((progressEvent.loaded / main.logFile.fileContent.bytes * 100).toFixed(0));
+            }
+        }).then((response) => {
             main.logFile.fileContent.content = response.data;
             main.logFile.fileContent.loading = false;
         }).catch((error) => {
@@ -729,7 +741,7 @@
             main.logES.loading = false;
         }).catch(function (error) {
             main.logES.loading = false;
-            main.logES.error = error;
+            main.logES.error = error.message;
             ElementPlus.ElMessage('获取ES数据列表时发生异常.');
         });
         main.logES.init = true;
@@ -842,7 +854,7 @@
             main.logDB.loading = false;
         }).catch(function (error) {
             main.logDB.loading = false;
-            main.logDB.error = error;
+            main.logDB.error = error.message;
             ElementPlus.ElMessage('获取DB数据列表时发生异常.');
         });
         main.logDB.init = true;
