@@ -240,7 +240,7 @@
         }, (error) => {
             if (error && error.response && error.response.status == 401)
                 main.sa.show ? 1 : main.sa.show = true;
-            else if (error && error.response && error.response.status == 405) {
+            else if (error && error.response && error.response.status == 403) {
                 error.message = "无权限!";
                 return Promise.reject(error);
             }
