@@ -304,7 +304,7 @@ namespace Api.Controllers
         [SwaggerOperation(Tags = new[] { "撤销授权" })]
         public async Task<object> RevocationRoleForUser(string roleId, string userId, bool allChilds = false)
         {
-            AuthoritiesBusiness.AuthorizeMenuForRole(roleId, userId, allChilds);
+            AuthoritiesBusiness.RevocationRoleForUser(roleId, userId, allChilds);
             return await Task.FromResult(Success());
         }
 

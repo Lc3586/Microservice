@@ -52,7 +52,8 @@ namespace Business.Utils.AuthorizePolicy
 
             error:
             //context.Fail();
-            return ResponseError(context, "无权限");
+            //return ResponseError(context, "无权限");
+            return Task.CompletedTask;
         }
     }
 }

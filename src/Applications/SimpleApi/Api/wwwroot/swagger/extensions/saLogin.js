@@ -19,13 +19,16 @@ $(function () {
             url: "/sa/authorized",
             dataType: 'json',
             success: function (data) {
+                typeof (appOffline) != "undefined" ? appOffline = false : 1;
                 done(data);
             },
             error: function (response) {
                 if (response.status == 401)
                     done(false);
-                else if (response.status == 503)
-                    console.info('接口维护中.');
+                else if (response.status == 503) {
+                    console.info('站点维护中.');
+                    typeof (appOffline) != "undefined" && appOffline ? 1 : (appOffline = true, window.showDialog('站点维护中'));
+                }
                 else {
                     done(false);
                     window.showDialog(
@@ -81,7 +84,7 @@ $(function () {
                     'SA登录',
                     [
                         ['input', '用户名', ''],
-                        ['input', '密码', '']
+                        ['password', '密码', '']
                     ],
                     {
                         '登录': {
@@ -114,7 +117,7 @@ $(function () {
             //定时检查  
             var checking = setInterval(() => {
                 check((dataB) => { dataB ? 1 : (window.clearInterval(checking), addBtn(false)) });
-            }, 10000);
+            }, 30000);
         }
     };
 

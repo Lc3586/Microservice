@@ -69,16 +69,12 @@ namespace Business.Utils.AuthorizePolicy
             return ResponseError((DefaultHttpContext)context.Resource, message, errorCode);
         }
 
-        protected virtual Task ResponseError(DefaultHttpContext context, string message, Model.Utils.Result.ErrorCode errorCode)
+        protected virtual async Task<Task> ResponseError(DefaultHttpContext context, string message, Model.Utils.Result.ErrorCode errorCode)
         {
-            var res = new AjaxResult
-            {
-                Success = false,
-                Msg = message,
-                ErrorCode = (int)errorCode
-            };
-
-            return context.Response.WriteAsync(res.ToJson());
+            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            context.Response.ContentType = "text/plain;charset=UTF-8";
+            await context.Response.WriteAsync(message);
+            return context.Response.CompleteAsync();
         }
 
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, TRequirement requirement, TResource resource)

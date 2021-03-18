@@ -1733,7 +1733,7 @@
         </member>
         <member name="M:Api.Controllers.Utils.SampleAuthenticationController.AccessDenied">
             <summary>
-            拒绝访问
+            无权限/拒绝访问
             </summary>
             <returns></returns>
         </member>

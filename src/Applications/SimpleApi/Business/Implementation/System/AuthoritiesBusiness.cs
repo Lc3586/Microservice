@@ -219,7 +219,7 @@ namespace Business.Implementation.System
                     var roles = Repository_Role
                                 .Where(o => (data.All == true || data.RoleIds.Contains(o.Id))
                                     && o.Enable == true
-                                    && !o.Users.AsSelect().Where(p => p.Id != userId).Any())
+                                    && !o.Users.AsSelect().Where(p => p.Id == userId).Any())
                                 .ToList(o => new
                                 {
                                     o.Id,
@@ -320,7 +320,7 @@ namespace Business.Implementation.System
                     var roles = Repository_Role
                                 .Where(o => data.RoleIds.Contains(o.Id)
                                     && o.Enable == true
-                                    && !o.Members.AsSelect().Where(p => p.Id != memberId).Any())
+                                    && !o.Members.AsSelect().Where(p => p.Id == memberId).Any())
                                 .ToList(o => new
                                 {
                                     o.Id,
@@ -342,7 +342,7 @@ namespace Business.Implementation.System
                         DataType = nameof(Public_MemberRole),
                         DataId = null,
                         Explain = $"授权角色给会员.",
-                        Remark = $"被授权的会员: \r\n\t[账号 {member.Account}, 姓名 {member.Name}]\r\n" +
+                        Remark = $"被授权的会员: \r\n\t[账号 {member.Account}, 昵称 {member.Nickname}]\r\n" +
                                 $"授权的角色: \r\n\t{string.Join(",", roles.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
                     });
                 }
@@ -417,7 +417,7 @@ namespace Business.Implementation.System
                     var menus = Repository_Menu
                                 .Where(o => (data.All == true || data.MenuIds.Contains(o.Id))
                                     && o.Enable == true
-                                    && !o.Users.AsSelect().Where(p => p.Id != userId).Any())
+                                    && !o.Users.AsSelect().Where(p => p.Id == userId).Any())
                                 .ToList(o => new
                                 {
                                     o.Id,
@@ -504,7 +504,7 @@ namespace Business.Implementation.System
                     var resources = Repository_Resources
                                 .Where(o => (data.All == true || data.ResourcesIds.Contains(o.Id))
                                     && o.Enable == true
-                                    && !o.Users.AsSelect().Where(p => p.Id != userId).Any())
+                                    && !o.Users.AsSelect().Where(p => p.Id == userId).Any())
                                 .ToList(o => new
                                 {
                                     o.Id,
@@ -559,7 +559,7 @@ namespace Business.Implementation.System
                     var menus = Repository_Menu
                                 .Where(o => (data.All == true || data.MenuIds.Contains(o.Id))
                                     && o.Enable == true
-                                    && !o.Roles.AsSelect().Where(p => p.Id != roleId).Any())
+                                    && !o.Roles.AsSelect().Where(p => p.Id == roleId).Any())
                                 .ToList(o => new
                                 {
                                     o.Id,
@@ -646,7 +646,7 @@ namespace Business.Implementation.System
                     var menus = Repository_Resources
                                 .Where(o => (data.All == true || data.ResourcesIds.Contains(o.Id))
                                     && o.Enable == true
-                                    && !o.Roles.AsSelect().Where(p => p.Id != roleId).Any())
+                                    && !o.Roles.AsSelect().Where(p => p.Id == roleId).Any())
                                 .ToList(o => new
                                 {
                                     o.Id,
@@ -763,33 +763,47 @@ namespace Business.Implementation.System
 
         public void RevocationRoleForUser(RoleForUser data, bool runTransaction = true)
         {
+            if (!data.UserIds.Any_Ex() || !data.RoleIds.Any_Ex())
+                return;
+
             var users = data.UserIds.Select(o => GetUserWithCheck(o));
 
-            var roles = Repository_UserRole.Where(o => data.UserIds.Contains(o.UserId) && (data.All == true || data.RoleIds.Contains(o.RoleId))).ToList(o => new
-            {
-                o.RoleId,
-                o.Role.Type,
-                o.Role.Name
-            });
-
-            if (!roles.Any())
+            if (!users.Any())
                 return;
 
             void handler()
             {
-                var orId = OperationRecordBusiness.Create(new Common_OperationRecord
+                foreach (var user in users)
                 {
-                    DataType = nameof(System_UserRole),
-                    DataId = null,
-                    Explain = $"撤销用户的角色授权.",
-                    Remark = $"被撤销授权的用户: \r\n\t{string.Join(",", users.Select(o => $"[账号 {o.Account}, 姓名 {o.Name}]"))}\r\n" +
-                            $"撤销授权的角色: \r\n\t{string.Join(",", roles.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
-                });
+                    string userId = user.Id;
+                    var roles = Repository_Role
+                                .Where(o => (data.All == true || data.RoleIds.Contains(o.Id))
+                                    && o.Enable == true
+                                    && o.Users.AsSelect().Where(p => p.Id == userId).Any())
+                                .ToList(o => new
+                                {
+                                    o.Id,
+                                    o.Type,
+                                    o.Name
+                                });
 
-                var roleIds = roles.Select(o => o.RoleId);
+                    if (!roles.Any())
+                        continue;
 
-                if (Repository_UserRole.Delete(o => data.UserIds.Contains(o.UserId) && (roleIds.Contains(o.RoleId))) < 0)
-                    throw new ApplicationException("撤销授权失败.");
+                    var orId = OperationRecordBusiness.Create(new Common_OperationRecord
+                    {
+                        DataType = nameof(System_UserRole),
+                        DataId = null,
+                        Explain = $"撤销用户的角色授权.",
+                        Remark = $"被撤销授权的用户: \r\n\t[账号 {user.Account}, 姓名 {user.Name}]\r\n" +
+                                 $"撤销授权的角色: \r\n\t{string.Join(",", roles.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
+                    });
+
+                    var deleteIds = roles.Select(o => o.Id).ToList();
+
+                    if (Repository_UserRole.Delete(o => o.UserId == userId && deleteIds.Contains(o.RoleId)) < 0)
+                        throw new ApplicationException("撤销授权失败.");
+                }
             }
 
             if (runTransaction)
@@ -823,33 +837,47 @@ namespace Business.Implementation.System
 
         public void RevocationRoleForMember(RoleForMember data, bool runTransaction = true)
         {
+            if (!data.MemberIds.Any_Ex() || !data.RoleIds.Any_Ex())
+                return;
+
             var members = data.MemberIds.Select(o => GetMemberWithCheck(o));
 
-            var roles = Repository_MemberRole.Where(o => data.MemberIds.Contains(o.MemberId) && (data.All == true || data.RoleIds.Contains(o.RoleId))).ToList(o => new
-            {
-                o.RoleId,
-                o.Role.Type,
-                o.Role.Name
-            });
-
-            if (!roles.Any())
+            if (!members.Any())
                 return;
 
             void handler()
             {
-                var orId = OperationRecordBusiness.Create(new Common_OperationRecord
+                foreach (var member in members)
                 {
-                    DataType = nameof(Public_MemberRole),
-                    DataId = null,
-                    Explain = $"撤销会员的角色授权.",
-                    Remark = $"被撤销授权的会员: \r\n\t{string.Join(",", members.Select(o => $"[账号 {o.Account}, 姓名 {o.Name}]"))}\r\n" +
-                            $"撤销授权的角色: \r\n\t{string.Join(",", roles.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
-                });
+                    string memberId = member.Id;
+                    var roles = Repository_Role
+                                .Where(o => (data.All == true || data.RoleIds.Contains(o.Id))
+                                    && o.Enable == true
+                                    && o.Members.AsSelect().Where(p => p.Id == memberId).Any())
+                                .ToList(o => new
+                                {
+                                    o.Id,
+                                    o.Type,
+                                    o.Name
+                                });
 
-                var roleIds = roles.Select(o => o.RoleId);
+                    if (!roles.Any())
+                        continue;
 
-                if (Repository_MemberRole.Delete(o => data.MemberIds.Contains(o.MemberId) && (roleIds.Contains(o.RoleId))) < 0)
-                    throw new ApplicationException("撤销授权失败.");
+                    var orId = OperationRecordBusiness.Create(new Common_OperationRecord
+                    {
+                        DataType = nameof(Public_MemberRole),
+                        DataId = null,
+                        Explain = $"撤销会员的角色授权.",
+                        Remark = $"被撤销授权的会员: \r\n\t[账号 {member.Account}, 昵称 {member.Nickname}]\r\n" +
+                                 $"撤销授权的角色: \r\n\t{string.Join(",", roles.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
+                    });
+
+                    var deleteIds = roles.Select(o => o.Id).ToList();
+
+                    if (Repository_MemberRole.Delete(o => o.MemberId == memberId && deleteIds.Contains(o.RoleId)) < 0)
+                        throw new ApplicationException("撤销授权失败.");
+                }
             }
 
             if (runTransaction)
@@ -883,33 +911,46 @@ namespace Business.Implementation.System
 
         public void RevocationMenuForUser(MenuForUser data, bool runTransaction = true)
         {
+            if (!data.UserIds.Any_Ex() || !data.MenuIds.Any_Ex())
+                return;
+
             var users = data.UserIds.Select(o => GetUserWithCheck(o));
 
-            var menus = Repository_UserMenu.Where(o => data.UserIds.Contains(o.UserId) && (data.All == true || data.MenuIds.Contains(o.MenuId))).ToList(o => new
-            {
-                o.MenuId,
-                o.Menu.Type,
-                o.Menu.Name
-            });
-
-            if (!menus.Any())
+            if (!users.Any())
                 return;
 
             void handler()
             {
-                var orId = OperationRecordBusiness.Create(new Common_OperationRecord
+                foreach (var user in users)
                 {
-                    DataType = nameof(System_UserMenu),
-                    DataId = null,
-                    Explain = $"撤销用户的菜单授权.",
-                    Remark = $"被撤销授权的用户: \r\n\t{string.Join(",", users.Select(o => $"[账号 {o.Account}, 姓名 {o.Name}]"))}\r\n" +
-                            $"撤销授权的菜单: \r\n\t{string.Join(",", menus.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
-                });
+                    string userId = user.Id;
+                    var menus = Repository_Menu
+                                .Where(o => (data.All == true || data.MenuIds.Contains(o.Id))
+                                    && o.Users.AsSelect().Where(p => p.Id == userId).Any())
+                                .ToList(o => new
+                                {
+                                    o.Id,
+                                    o.Type,
+                                    o.Name
+                                });
 
-                var menuIds = menus.Select(o => o.MenuId);
+                    if (!menus.Any())
+                        continue;
 
-                if (Repository_UserMenu.Delete(o => data.UserIds.Contains(o.UserId) && (menuIds.Contains(o.MenuId))) < 0)
-                    throw new ApplicationException("撤销授权失败.");
+                    var orId = OperationRecordBusiness.Create(new Common_OperationRecord
+                    {
+                        DataType = nameof(System_UserMenu),
+                        DataId = null,
+                        Explain = $"撤销用户的菜单授权.",
+                        Remark = $"被撤销授权的用户: \r\n\t[账号 {user.Account}, 姓名 {user.Name}]\r\n" +
+                                 $"撤销授权的菜单: \r\n\t{string.Join(",", menus.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
+                    });
+
+                    var deleteIds = menus.Select(o => o.Id).ToList();
+
+                    if (Repository_UserMenu.Delete(o => o.UserId == userId && deleteIds.Contains(o.MenuId)) < 0)
+                        throw new ApplicationException("撤销授权失败.");
+                }
             }
 
             if (runTransaction)
@@ -943,33 +984,46 @@ namespace Business.Implementation.System
 
         public void RevocationResourcesForUser(ResourcesForUser data, bool runTransaction = true)
         {
+            if (!data.UserIds.Any_Ex() || !data.ResourcesIds.Any_Ex())
+                return;
+
             var users = data.UserIds.Select(o => GetUserWithCheck(o));
 
-            var resourcess = Repository_UserResources.Where(o => data.UserIds.Contains(o.UserId) && (data.All == true || data.ResourcesIds.Contains(o.ResourcesId))).ToList(o => new
-            {
-                o.ResourcesId,
-                o.Resources.Type,
-                o.Resources.Name
-            });
-
-            if (!resourcess.Any())
+            if (!users.Any())
                 return;
 
             void handler()
             {
-                var orId = OperationRecordBusiness.Create(new Common_OperationRecord
+                foreach (var user in users)
                 {
-                    DataType = nameof(System_UserResources),
-                    DataId = null,
-                    Explain = $"撤销用户的资源授权.",
-                    Remark = $"被撤销授权的用户: \r\n\t{string.Join(",", users.Select(o => $"[账号 {o.Account}, 姓名 {o.Name}]"))}\r\n" +
-                            $"撤销授权的资源: \r\n\t{string.Join(",", resourcess.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
-                });
+                    string userId = user.Id;
+                    var resourcess = Repository_Resources
+                                .Where(o => (data.All == true || data.ResourcesIds.Contains(o.Id))
+                                    && o.Users.AsSelect().Where(p => p.Id == userId).Any())
+                                .ToList(o => new
+                                {
+                                    o.Id,
+                                    o.Type,
+                                    o.Name
+                                });
 
-                var resourcesIds = resourcess.Select(o => o.ResourcesId);
+                    if (!resourcess.Any())
+                        continue;
 
-                if (Repository_UserResources.Delete(o => data.UserIds.Contains(o.UserId) && (resourcesIds.Contains(o.ResourcesId))) < 0)
-                    throw new ApplicationException("撤销授权失败.");
+                    var orId = OperationRecordBusiness.Create(new Common_OperationRecord
+                    {
+                        DataType = nameof(System_UserResources),
+                        DataId = null,
+                        Explain = $"撤销用户的资源授权.",
+                        Remark = $"被撤销授权的用户: \r\n\t[账号 {user.Account}, 姓名 {user.Name}]\r\n" +
+                                 $"撤销授权的资源: \r\n\t{string.Join(",", resourcess.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
+                    });
+
+                    var deleteIds = resourcess.Select(o => o.Id).ToList();
+
+                    if (Repository_UserResources.Delete(o => o.UserId == userId && deleteIds.Contains(o.ResourcesId)) < 0)
+                        throw new ApplicationException("撤销授权失败.");
+                }
             }
 
             if (runTransaction)
@@ -985,33 +1039,46 @@ namespace Business.Implementation.System
 
         public void RevocationMenuForRole(MenuForRole data, bool runTransaction = true)
         {
+            if (!data.RoleIds.Any_Ex() || !data.MenuIds.Any_Ex())
+                return;
+
             var roles = data.RoleIds.Select(o => GetRoleWithCheck(o));
 
-            var menus = Repository_RoleMenu.Where(o => data.RoleIds.Contains(o.RoleId) && (data.All == true || data.MenuIds.Contains(o.MenuId))).ToList(o => new
-            {
-                o.MenuId,
-                o.Menu.Type,
-                o.Menu.Name
-            });
-
-            if (!menus.Any())
+            if (!roles.Any())
                 return;
 
             void handler()
             {
-                var orId = OperationRecordBusiness.Create(new Common_OperationRecord
+                foreach (var role in roles)
                 {
-                    DataType = nameof(System_RoleMenu),
-                    DataId = null,
-                    Explain = $"撤销角色的菜单授权.",
-                    Remark = $"被撤销授权的角色: \r\n\t{string.Join(",", roles.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}\r\n" +
-                            $"撤销授权的菜单: \r\n\t{string.Join(",", menus.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
-                });
+                    string roleId = role.Id;
+                    var menus = Repository_Menu
+                                .Where(o => (data.All == true || data.MenuIds.Contains(o.Id))
+                                    && o.Roles.AsSelect().Where(p => p.Id == roleId).Any())
+                                .ToList(o => new
+                                {
+                                    o.Id,
+                                    o.Type,
+                                    o.Name
+                                });
 
-                var menuIds = menus.Select(o => o.MenuId);
+                    if (!menus.Any())
+                        continue;
 
-                if (Repository_RoleMenu.Delete(o => data.RoleIds.Contains(o.RoleId) && (menuIds.Contains(o.MenuId))) < 0)
-                    throw new ApplicationException("撤销授权失败.");
+                    var orId = OperationRecordBusiness.Create(new Common_OperationRecord
+                    {
+                        DataType = nameof(System_RoleMenu),
+                        DataId = null,
+                        Explain = $"撤销角色的菜单授权.",
+                        Remark = $"被撤销授权的角色: \r\n\t[名称 {role.Name}, 类型 {role.Type}]\r\n" +
+                                 $"撤销授权的菜单: \r\n\t{string.Join(",", menus.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
+                    });
+
+                    var deleteIds = menus.Select(o => o.Id).ToList();
+
+                    if (Repository_RoleMenu.Delete(o => o.RoleId == roleId && deleteIds.Contains(o.MenuId)) < 0)
+                        throw new ApplicationException("撤销授权失败.");
+                }
             }
 
             if (runTransaction)
@@ -1045,33 +1112,46 @@ namespace Business.Implementation.System
 
         public void RevocationResourcesForRole(ResourcesForRole data, bool runTransaction = true)
         {
+            if (!data.RoleIds.Any_Ex() || !data.ResourcesIds.Any_Ex())
+                return;
+
             var roles = data.RoleIds.Select(o => GetRoleWithCheck(o));
 
-            var resourcess = Repository_RoleResources.Where(o => data.RoleIds.Contains(o.RoleId) && (data.All == true || data.ResourcesIds.Contains(o.ResourcesId))).ToList(o => new
-            {
-                o.ResourcesId,
-                o.Resources.Type,
-                o.Resources.Name
-            });
-
-            if (!resourcess.Any())
+            if (!roles.Any())
                 return;
 
             void handler()
             {
-                var orId = OperationRecordBusiness.Create(new Common_OperationRecord
+                foreach (var role in roles)
                 {
-                    DataType = nameof(System_RoleResources),
-                    DataId = null,
-                    Explain = $"撤销角色的资源授权.",
-                    Remark = $"被撤销授权的角色: \r\n\t{string.Join(",", roles.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}\r\n" +
-                            $"撤销授权的资源: \r\n\t{string.Join(",", resourcess.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
-                });
+                    string roleId = role.Id;
+                    var resourcess = Repository_Resources
+                                .Where(o => (data.All == true || data.ResourcesIds.Contains(o.Id))
+                                    && o.Roles.AsSelect().Where(p => p.Id == roleId).Any())
+                                .ToList(o => new
+                                {
+                                    o.Id,
+                                    o.Type,
+                                    o.Name
+                                });
 
-                var resourcesIds = resourcess.Select(o => o.ResourcesId);
+                    if (!resourcess.Any())
+                        continue;
 
-                if (Repository_RoleResources.Delete(o => data.RoleIds.Contains(o.RoleId) && (resourcesIds.Contains(o.ResourcesId))) < 0)
-                    throw new ApplicationException("撤销授权失败.");
+                    var orId = OperationRecordBusiness.Create(new Common_OperationRecord
+                    {
+                        DataType = nameof(System_RoleResources),
+                        DataId = null,
+                        Explain = $"撤销角色的资源授权.",
+                        Remark = $"被撤销授权的角色: \r\n\t[名称 {role.Name}, 类型 {role.Type}]\r\n" +
+                                 $"撤销授权的资源: \r\n\t{string.Join(",", resourcess.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
+                    });
+
+                    var deleteIds = resourcess.Select(o => o.Id).ToList();
+
+                    if (Repository_RoleResources.Delete(o => o.RoleId == roleId && deleteIds.Contains(o.ResourcesId)) < 0)
+                        throw new ApplicationException("撤销授权失败.");
+                }
             }
 
             if (runTransaction)

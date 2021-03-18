@@ -904,8 +904,15 @@
         </member>
         <member name="P:Model.System.MenuDTO.DragSort.Append">
             <summary>
-            是否位于目标后面
+            是否排在目标之后
             </summary>
+            <remarks>默认true</remarks>
+        </member>
+        <member name="P:Model.System.MenuDTO.DragSort.Inside">
+            <summary>
+            是否移至目标内部
+            </summary>
+            <remarks>默认false</remarks>
         </member>
         <member name="T:Model.System.MenuType">
             <summary>
@@ -1063,8 +1070,15 @@
         </member>
         <member name="P:Model.System.RoleDTO.DragSort.Append">
             <summary>
-            是否位于目标后面
+            是否排在目标之后
             </summary>
+            <remarks>默认true</remarks>
+        </member>
+        <member name="P:Model.System.RoleDTO.DragSort.Inside">
+            <summary>
+            是否移至目标内部
+            </summary>
+            <remarks>默认false</remarks>
         </member>
         <member name="T:Model.System.RoleDTO.AuthorizeToUser">
             <summary>

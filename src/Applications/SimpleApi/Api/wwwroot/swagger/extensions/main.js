@@ -632,7 +632,8 @@ if (!window.showDialog) {
                         break;
                     case 'input':
                     case 'input-readonly':
-                        info += '<section class="block-tablet col-10-tablet block-desktop col-10-desktop"><input type="text" ' + (type == 'input-readonly' ? 'readonly="readonly"' : '') + ' class="swInput" id="' + _key + '" data-name="' + _key + '" value="' + _content + '"></section>';
+                    case 'password':
+                        info += '<section class="block-tablet col-10-tablet block-desktop col-10-desktop"><input type="' + (type == 'password' ? 'password' : 'text') + '" ' + (type == 'input-readonly' ? 'readonly="readonly"' : '') + ' class="swInput" id="' + _key + '" data-name="' + _key + '" value="' + _content + '"></section>';
                         break;
                     case 'iframe':
                         info += '<iframe class="swIframe" id="' + _key + '" data-name="' + _key + '" src="' + _content + '" name="' + _title + '"><p>您的浏览器不支持iframes标签.</p></iframe >';

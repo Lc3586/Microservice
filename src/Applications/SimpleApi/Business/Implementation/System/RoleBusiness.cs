@@ -85,6 +85,7 @@ namespace Business.Implementation.System
 
             var entityList = Repository.Select
                                     .Where(o => o.ParentId == paramter.ParentId)
+                                    .OrderBy(o => o.Sort)
                                     .ToList<System_Role, TreeList>(typeof(List).GetNamesWithTagAndOther(true, "_List"));
 
             var result = Mapper.Map<List<TreeList>>(entityList);
@@ -382,45 +383,43 @@ namespace Business.Implementation.System
 
             (bool success, Exception ex) = Orm.RunTransaction(() =>
             {
-                var newSort = current.Sort;
+                dynamic target;
 
                 switch (data.Type)
                 {
                     case Model.System.SortType.top:
-                        if (Repository.UpdateDiy
-                                 .Where(o => o.ParentId == current.ParentId && o.Id != current.Id)
-                                 .Set(o => o.Sort + 1)
-                                 .ExecuteAffrows() < 0)
-                            throw new ApplicationException("角色排序失败.");
-
-                        newSort = 0;
+                        target = Repository.Where(o => o.ParentId == current.ParentId)
+                                             .OrderBy(o => o.Sort)
+                                             .First(o => new
+                                             {
+                                                 o.Id,
+                                                 o.Sort
+                                             });
                         break;
                     case Model.System.SortType.up:
-                        if (Repository.UpdateDiy
-                                 .Where(o => o.ParentId == current.ParentId && o.Id != current.Id && o.Sort < current.Sort && o.Sort >= current.Sort - data.Span)
-                                 .Set(o => o.Sort + 1)
-                                 .ExecuteAffrows() < 0)
-                            throw new ApplicationException("角色排序失败.");
-
-                        newSort -= data.Span;
+                        target = Repository.Where(o => o.ParentId == current.ParentId && o.Sort == current.Sort - 1)
+                                             .First(o => new
+                                             {
+                                                 o.Id,
+                                                 o.Sort
+                                             });
                         break;
                     case Model.System.SortType.down:
-                        if (Repository.UpdateDiy
-                                 .Where(o => o.ParentId == current.ParentId && o.Id != current.Id && o.Sort > current.Sort && o.Sort <= current.Sort + data.Span)
-                                 .Set(o => o.Sort - 1)
-                                 .ExecuteAffrows() < 0)
-                            throw new ApplicationException("角色排序失败.");
-
-                        newSort += data.Span;
+                        target = Repository.Where(o => o.ParentId == current.ParentId && o.Sort == current.Sort + 1)
+                                             .First(o => new
+                                             {
+                                                 o.Id,
+                                                 o.Sort
+                                             });
                         break;
                     case Model.System.SortType.low:
-                        newSort = Repository.Select.Max(o => o.Sort);
-
-                        if (Repository.UpdateDiy
-                                 .Where(o => o.ParentId == current.ParentId && o.Id != current.Id)
-                                 .Set(o => o.Sort - 1)
-                                 .ExecuteAffrows() < 0)
-                            throw new ApplicationException("角色排序失败.");
+                        target = Repository.Where(o => o.ParentId == current.ParentId)
+                                             .OrderByDescending(o => o.Sort)
+                                             .First(o => new
+                                             {
+                                                 o.Id,
+                                                 o.Sort
+                                             });
                         break;
                     default:
                         throw new ApplicationException($"不支持的排序类型 {data.Type}.");
@@ -433,10 +432,17 @@ namespace Business.Implementation.System
                     Explain = $"角色排序[名称 {current.Name}, 类型 {current.Type}]."
                 });
 
+                string targetId = target.Id;
+                int targetSort = target.Sort;
+
                 if (Repository.UpdateDiy
-                        .Where(o => o.Id == current.Id)
-                        .Set(o => o.Sort, newSort)
-                        .ExecuteAffrows() <= 0)
+                         .Where(o => o.Id == targetId)
+                         .Set(o => o.Sort, current.Sort)
+                         .ExecuteAffrows() < 0
+                    || Repository.UpdateDiy
+                         .Where(o => o.Id == current.Id)
+                         .Set(o => o.Sort, targetSort)
+                         .ExecuteAffrows() < 0)
                     throw new ApplicationException("角色排序失败.");
             });
 
@@ -478,56 +484,68 @@ namespace Business.Implementation.System
 
             (bool success, Exception ex) = Orm.RunTransaction(() =>
             {
-                if (current.ParentId != target.ParentId)
+                if (current.ParentId == target.ParentId)
                 {
-                    if (Repository.UpdateDiy
-                             .Where(o => o.ParentId == current.ParentId && o.Id != current.Id && o.Sort > current.Sort)
-                             .Set(o => o.Sort - 1)
-                             .ExecuteAffrows() < 0)
-                        throw new ApplicationException("角色排序失败.");
+                    #region 同层级排序
 
-                    if (Repository.UpdateDiy
-                             .Where(o => o.ParentId == target.ParentId && o.Sort >= target.Sort)
-                             .Set(o => o.Sort + 1)
-                             .ExecuteAffrows() < 0)
-                        throw new ApplicationException("角色排序失败.");
+                    dynamic target_new;
 
-                    if (current.ParentId.IsNullOrWhiteSpace())
+                    if (data.Append)
                     {
-                        if (Repository.UpdateDiy
-                                .Where(o => o.Id == current.Id)
-                                .Set(o => o.Sort, target.Sort)
-                                .Set(o => o.ParentId, null)
-                                .Set(o => o.Level, 0)
-                                .Set(o => o.RootId, null)
-                                .ExecuteAffrows() <= 0)
-                            throw new ApplicationException("角色排序失败.");
+                        target_new = Repository.Where(o => o.ParentId == target.ParentId && o.Sort == target.Sort + 1)
+                                             .First(o => new
+                                             {
+                                                 o.Id,
+                                                 o.Sort
+                                             });
                     }
                     else
                     {
-                        if (Repository.UpdateDiy
-                                .Where(o => o.Id == current.Id)
-                                .Set(o => o.Sort, target.Sort)
-                                .Set(o => o.ParentId, target.ParentId)
-                                .Set(o => o.Level, target.Level)
-                                .Set(o => o.RootId, target.RootId)
-                                .ExecuteAffrows() <= 0)
-                            throw new ApplicationException("角色排序失败.");
+                        target_new = Repository.Where(o => o.ParentId == target.ParentId && o.Sort == current.Sort - 1)
+                                             .First(o => new
+                                             {
+                                                 o.Id,
+                                                 o.Sort
+                                             });
                     }
-                }
-                else
-                {
+
+                    string target_newId = target_new.Id;
+                    int target_newSort = target_new.Sort;
+
                     if (Repository.UpdateDiy
-                             .Where(o => o.ParentId == current.ParentId && o.Id != current.Id && (current.Sort > target.Sort ? (o.Sort < current.Sort && o.Sort >= target.Sort) : (o.Sort > current.Sort && o.Sort <= target.Sort)))
-                             .Set(o => current.Sort > target.Sort ? o.Sort + 1 : o.Sort - 1)
+                             .Where(o => o.Id == target_newId)
+                             .Set(o => o.Sort, current.Sort)
+                             .ExecuteAffrows() < 0
+                        || Repository.UpdateDiy
+                             .Where(o => o.Id == current.Id)
+                             .Set(o => o.Sort, target_newSort)
                              .ExecuteAffrows() < 0)
                         throw new ApplicationException("角色排序失败.");
 
+                    #endregion
+                }
+                else
+                {
+                    #region 异层级排序
+
                     if (Repository.UpdateDiy
-                            .Where(o => o.Id == current.Id)
-                            .Set(o => o.Sort, target.Sort)
-                            .ExecuteAffrows() <= 0)
+                             .Where(o => o.ParentId == current.ParentId && o.Sort > current.Sort)
+                             .Set(o => o.Sort - 1)
+                             .ExecuteAffrows() < 0
+                        || Repository.UpdateDiy
+                             .Where(o => o.ParentId == target.ParentId && o.Sort > (data.Append == true ? target.Sort : (target.Sort - 1)))
+                             .Set(o => o.Sort + 1)
+                             .ExecuteAffrows() < 0
+                        || Repository.UpdateDiy
+                                .Where(o => o.Id == current.Id)
+                                .Set(o => o.Sort, data.Inside == true ? 0 : (data.Append == true ? (target.Sort + 1) : target.Sort))
+                                .Set(o => o.ParentId, data.Inside == true ? target.Id : target.ParentId)
+                                .Set(o => o.Level, data.Inside == true ? (target.Level + 1) : target.Level)
+                                .Set(o => o.RootId, target.RootId)
+                                .ExecuteAffrows() <= 0)
                         throw new ApplicationException("角色排序失败.");
+
+                    #endregion
                 }
 
                 _ = OperationRecordBusiness.Create(new Common_OperationRecord

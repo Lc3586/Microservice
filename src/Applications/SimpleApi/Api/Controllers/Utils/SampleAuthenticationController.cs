@@ -73,17 +73,22 @@ namespace Api.Controllers.Utils
         }
 
         /// <summary>
-        /// 拒绝访问
+        /// 无权限/拒绝访问
         /// </summary>
         /// <returns></returns>
         [HttpGet("access-denied")]
         [AllowAnonymous]
         public async Task AccessDenied()
         {
+            Context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            Context.Response.ContentType = "application/json; charset=utf-8";
+
             if (Context.User.Identity.IsAuthenticated)
-                await Task.Run(() => Context.Response.Redirect("/sa/login"));
+                await Context.Response.WriteAsync("无权限");
             else
                 await Context.Response.WriteAsync("拒绝访问");
+
+            //await Task.Run(() => Context.Response.Redirect("/sa/login"));
         }
 
         /// <summary>
@@ -140,7 +145,6 @@ namespace Api.Controllers.Utils
         /// <param name="data">参数</param>
         /// <returns></returns>
         [HttpGet("logout")]
-        [Authorize(nameof(ApiAuthorizeRequirement))]
         public async Task Logout(LogoutRequest data)
         {
             if (data?.ReturnUrl?.ToLower().IndexOf("/sa/logout") >= 0)
@@ -156,7 +160,6 @@ namespace Api.Controllers.Utils
         /// </summary>
         /// <returns></returns>
         [HttpGet("getToken")]
-        [Authorize(nameof(ApiAuthorizeRequirement))]
         public async Task<string> GetToken()
         {
             return await Task.FromResult(JWTHelper.GetToken(new AuthenticationInfo

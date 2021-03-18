@@ -161,8 +161,15 @@ namespace Model.System.MenuDTO
         public string TargetId { get; set; }
 
         /// <summary>
-        /// 是否位于目标后面
+        /// 是否排在目标之后
         /// </summary>
-        public bool Append { get; set; }
+        /// <remarks>默认true</remarks>
+        public bool Append { get; set; } = true;
+
+        /// <summary>
+        /// 是否移至目标内部
+        /// </summary>
+        /// <remarks>默认false</remarks>
+        public bool Inside { get; set; } = false;
     }
 }
