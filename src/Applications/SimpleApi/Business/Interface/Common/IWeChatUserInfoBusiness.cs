@@ -29,5 +29,12 @@ namespace Business.Interface.Common
         /// <param name="data">数据</param>
         /// <returns></returns>
         string GetState(StateInfo data);
+
+        /// <summary>
+        /// 微信确认操作
+        /// </summary>
+        /// <param name="state"></param>
+        /// <returns></returns>
+        void Confirm(string state);
     }
 }

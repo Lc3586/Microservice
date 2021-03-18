@@ -4,10 +4,12 @@ using Business.Interface.Common;
 using Business.Interface.System;
 using Business.Utils.AuthorizePolicy;
 using Microservice.Library.Extension;
+using Microservice.Library.WeChat.Extension;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Model.Common.WeChatUserInfoDTO;
 using Model.Utils.Result;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net;
@@ -57,7 +59,7 @@ namespace Api.Controllers
         [AllowAnonymous]
         public void MemberLogin(string returnUrl)
         {
-            var state = WeChatUserInfoBusiness.GetState(new Model.Common.WeChatUserInfoDTO.StateInfo
+            var state = WeChatUserInfoBusiness.GetState(new StateInfo
             {
                 Type = Model.Common.WeChatStateType.会员登录,
                 RedirectUrl = returnUrl,
@@ -84,7 +86,7 @@ namespace Api.Controllers
         [AllowAnonymous]
         public void UpdateMemberWeChatUserInfo(string memberId, string returnUrl)
         {
-            var state = WeChatUserInfoBusiness.GetState(new Model.Common.WeChatUserInfoDTO.StateInfo
+            var state = WeChatUserInfoBusiness.GetState(new StateInfo
             {
                 Type = Model.Common.WeChatStateType.微信信息同步至会员信息,
                 RedirectUrl = returnUrl,
@@ -110,10 +112,10 @@ namespace Api.Controllers
         /// <param name="returnUrl">重定向地址</param>
         /// <returns></returns>
         [HttpGet("user-bind-url/{userId}/{asyncUserInfo}")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "链接地址", typeof(Model.Common.WeChatUserInfoDTO.UserBindUrl))]
+        [SwaggerResponse((int)HttpStatusCode.OK, "链接信息", typeof(UrlInfo))]
         public async Task<object> GetUserBindUrl(string userId, bool asyncUserInfo, string returnUrl)
         {
-            var state = WeChatUserInfoBusiness.GetState(new Model.Common.WeChatUserInfoDTO.StateInfo
+            var state = WeChatUserInfoBusiness.GetState(new StateInfo
             {
                 Type = Model.Common.WeChatStateType.系统用户绑定微信,
                 RedirectUrl = returnUrl,
@@ -132,7 +134,7 @@ namespace Api.Controllers
 
             var url = $"{Config.WeChatService.OAuthUserInfoUrl}?state={state}";
 
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(new Model.Common.WeChatUserInfoDTO.UserBindUrl
+            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(new UrlInfo
             {
                 Url = url,
                 S = state.ToMD5String()
@@ -140,41 +142,44 @@ namespace Api.Controllers
         }
 
         /// <summary>
-        /// 系统用户登录
+        /// 获取用于系统用户登录的链接
         /// </summary>
         /// <param name="returnUrl">重定向地址</param>
-        [HttpGet("user-login")]
+        [HttpGet("user-login-url")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "链接信息", typeof(UrlInfo))]
         [AllowAnonymous]
-        public void UserLogin(string returnUrl)
+        public async Task<object> UserLogin(string returnUrl)
         {
-            var state = WeChatUserInfoBusiness.GetState(new Model.Common.WeChatUserInfoDTO.StateInfo
+            var state = WeChatUserInfoBusiness.GetState(new StateInfo
             {
                 Type = Model.Common.WeChatStateType.系统用户登录,
                 RedirectUrl = returnUrl,
                 Data = new System.Collections.Generic.Dictionary<string, object>
                 {
-                    {
-                        "AutoCreate",
-                        true
-                    }
+
                 }
             });
 
             var url = $"{Config.WeChatService.OAuthBaseUrl}?state={state}";
 
-            HttpContextAccessor.HttpContext.Response.Redirect(url);
+            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(new UrlInfo
+            {
+                Url = url,
+                S = state.ToMD5String()
+            })));
         }
 
         /// <summary>
-        /// 更新系统用户微信用户信息
+        /// 获取用于更新系统用户微信用户信息的链接
         /// </summary>
         /// <param name="userId">用户Id</param>
         /// <param name="returnUrl">重定向地址</param>
-        [HttpGet("user-update/{userId}")]
+        [HttpGet("user-update-url/{userId}")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "链接信息", typeof(UrlInfo))]
         [AllowAnonymous]
-        public void UpdateUserWeChatUserInfo(string userId, string returnUrl)
+        public async Task<object> UpdateUserWeChatUserInfo(string userId, string returnUrl)
         {
-            var state = WeChatUserInfoBusiness.GetState(new Model.Common.WeChatUserInfoDTO.StateInfo
+            var state = WeChatUserInfoBusiness.GetState(new StateInfo
             {
                 Type = Model.Common.WeChatStateType.微信信息同步至系统用户信息,
                 RedirectUrl = returnUrl,
@@ -189,7 +194,23 @@ namespace Api.Controllers
 
             var url = $"{Config.WeChatService.OAuthUserInfoUrl}?state={state}";
 
-            HttpContextAccessor.HttpContext.Response.Redirect(url);
+            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(new UrlInfo
+            {
+                Url = url,
+                S = state.ToMD5String()
+            })));
+        }
+
+        /// <summary>
+        /// 微信确认操作
+        /// </summary>
+        /// <param name="state"></param>
+        [HttpGet("confirm/{state}")]
+        [AllowAnonymous]
+        public async Task<object> Confirm(string state)
+        {
+            WeChatUserInfoBusiness.Confirm(state);
+            return await Task.FromResult(AjaxResultFactory.Success());
         }
 
         #endregion

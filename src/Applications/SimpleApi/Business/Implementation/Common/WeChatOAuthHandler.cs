@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Business.Hub;
 using Business.Interface.Common;
 using Business.Interface.System;
 using Business.Utils;
@@ -19,10 +20,12 @@ using Microservice.Library.WeChat.Extension;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SignalR;
 using Model.Common;
 using Model.Common.WeChatUserInfoDTO;
 using Model.Utils.Pagination;
 using Model.Utils.SampleAuthentication.SampleAuthenticationDTO;
+using Model.Utils.SignalR;
 using Senparc.Weixin.MP.AdvancedAPIs.OAuth;
 using System;
 using System.Collections.Generic;
@@ -46,7 +49,8 @@ namespace Business.Implementation.Common
             IOperationRecordBusiness operationRecordBusiness,
             IMemberBusiness memberBusiness,
             IUserBusiness userBusiness,
-            IFileBusiness fileBusiness)
+            IFileBusiness fileBusiness,
+            IHubContext<WeChatServiceHub> weChatServiceHub)
         {
             Orm = freeSqlProvider.GetFreeSql();
             Repository = Orm.GetRepository<Common_WeChatUserInfo, string>();
@@ -60,6 +64,7 @@ namespace Business.Implementation.Common
             MemberBusiness = memberBusiness;
             UserBusiness = userBusiness;
             FileBusiness = fileBusiness;
+            WeChatServiceHub = weChatServiceHub;
         }
 
         #endregion
@@ -89,6 +94,8 @@ namespace Business.Implementation.Common
         readonly IUserBusiness UserBusiness;
 
         readonly IFileBusiness FileBusiness;
+
+        readonly IHubContext<WeChatServiceHub> WeChatServiceHub;
 
         /// <summary>
         /// 创建微信用户信息
@@ -425,6 +432,12 @@ namespace Business.Implementation.Common
             return state;
         }
 
+        public string UpdateState(string state, StateInfo data)
+        {
+            Cache.SetCache(state, data, TimeSpan.FromMinutes(20), ExpireType.Absolute);
+            return state;
+        }
+
         public async Task Handler(HttpContext context, string appId, string openId, string scope, string state = null)
         {
             if (string.IsNullOrWhiteSpace(state))
@@ -461,7 +474,18 @@ namespace Business.Implementation.Common
                     switch (stateInfo.Type)
                     {
                         case WeChatStateType.系统用户登录:
-                            break;
+                            var info = GetWeChatUserInfo(appId, openId);
+                            WeChatServiceHub.Clients.Group(state)?.SendAsync(WeChatServiceHubMethod.Scanned,
+                                new object[]{
+                                    new
+                                    {
+                                       OpenId = openId,
+                                       Nickname = info.nickname,
+                                       Sex = info.sex,
+                                       Face = info.headimgurl
+                                    }
+                                });
+                            goto next;
                         case WeChatStateType.会员登录:
                             await MemberLogin(context, MemberBusiness.Login(openId));
                             break;
@@ -482,7 +506,7 @@ namespace Business.Implementation.Common
                     //Console.WriteLine("输出未绑定提示.");
                     context.Response.StatusCode = StatusCodes.Status403Forbidden;
                     context.Response.ContentType = "text/plain;charset=UTF-8";
-                    await context.Response.WriteAsync("请先绑定微信.");
+                    await context.Response.WriteAsync("请先联系管理员帮助您绑定微信.");
                     return;
                 }
             }
@@ -510,12 +534,11 @@ namespace Business.Implementation.Common
             switch (stateInfo.Type)
             {
                 case WeChatStateType.系统用户绑定微信:
-                    BindUser(stateInfo.Data["UserId"].ToString(), appId, userinfo.openid);
-                    if (stateInfo.Data["AsyncUserInfo"]?.ToString() == true.ToString())
-                        UpdateUser(stateInfo.Data["UserId"].ToString(), appId, userinfo.openid);
-                    break;
                 case WeChatStateType.微信信息同步至系统用户信息:
-                    UpdateUser(stateInfo.Data["UserId"].ToString(), appId, userinfo.openid);
+                    stateInfo.Data.Add("AppId", appId);
+                    stateInfo.Data.Add("OpenId", userinfo.openid);
+                    UpdateState(state, stateInfo);
+                    SendScanned();
                     break;
                 case WeChatStateType.会员登录:
                     BindMember(appId, userinfo.openid, (bool)stateInfo.Data["AutoCreate"]);
@@ -531,6 +554,62 @@ namespace Business.Implementation.Common
 
             context.Response.Redirect(stateInfo.RedirectUrl);
             await Task.FromResult(true);
+
+            //发送通知
+            void SendScanned()
+            {
+                WeChatServiceHub.Clients.Group(state)?.SendAsync(WeChatServiceHubMethod.Scanned,
+                    new object[]{
+                            new
+                            {
+                               OpenId = userinfo.openid,
+                               Nickname = userinfo.nickname,
+                               Sex = userinfo.sex,
+                               Face = userinfo.headimgurl
+                            }
+                    });
+            }
+        }
+
+        public void Confirm(string state)
+        {
+            if (string.IsNullOrWhiteSpace(state))
+                throw new ApplicationException("state参数不可为空.");
+
+            if (!Cache.ContainsKey(state))
+                throw new ApplicationException("state参数已过期.");
+
+            var stateInfo = Cache.GetCache<StateInfo>(state);
+
+            switch (stateInfo.Type)
+            {
+                case WeChatStateType.系统用户登录:
+                    SendConfirm();
+                    break;
+                case WeChatStateType.系统用户绑定微信:
+                case WeChatStateType.微信信息同步至系统用户信息:
+                    var appId = stateInfo.Data["AppId"].ToString();
+                    var openId = stateInfo.Data["OpenId"].ToString();
+
+                    if (stateInfo.Type == WeChatStateType.系统用户绑定微信)
+                        BindUser(stateInfo.Data["UserId"].ToString(), appId, openId);
+
+                    if (stateInfo.Type == WeChatStateType.微信信息同步至系统用户信息 || stateInfo.Data["AsyncUserInfo"]?.ToString() == true.ToString())
+                        UpdateUser(stateInfo.Data["UserId"].ToString(), appId, openId);
+
+                    SendConfirm();
+                    break;
+                case WeChatStateType.会员登录:
+                case WeChatStateType.微信信息同步至会员信息:
+                default:
+                    break;
+            }
+
+            //发送通知
+            void SendConfirm()
+            {
+                WeChatServiceHub.Clients.Group(state)?.SendAsync(WeChatServiceHubMethod.Confirm);
+            }
         }
 
         #endregion

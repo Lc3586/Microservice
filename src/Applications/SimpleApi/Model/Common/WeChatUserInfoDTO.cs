@@ -62,9 +62,9 @@ namespace Model.Common.WeChatUserInfoDTO
     }
 
     /// <summary>
-    /// 系统用户绑定微信的链接
+    /// 链接信息
     /// </summary>
-    public class UserBindUrl
+    public class UrlInfo
     {
         /// <summary>
         /// 用于生成二维码的链接

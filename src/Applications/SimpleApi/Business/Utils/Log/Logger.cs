@@ -11,12 +11,42 @@ namespace Business.Utils.Log
 {
     public static class Logger
     {
-        static readonly SystemConfig Config = AutofacHelper.GetScopeService<SystemConfig>();
+        static SystemConfig Config
+        {
+            get
+            {
+                if (_Config == null)
+                    _Config = AutofacHelper.GetService<SystemConfig>();
+                return _Config;
+            }
+        }
 
-        static readonly ILogger NLogger = AutofacHelper.GetScopeService<INLoggerProvider>()
-                                                    .GetNLogger(Config.DefaultLoggerName);
+        static SystemConfig _Config;
 
-        static readonly IOperator Operator = AutofacHelper.GetScopeService<IOperator>();
+        static ILogger NLogger
+        {
+            get
+            {
+                if (_NLogger == null)
+                    _NLogger = AutofacHelper.GetScopeService<INLoggerProvider>()
+                                        .GetNLogger(Config.DefaultLoggerName);
+                return _NLogger;
+            }
+        }
+
+        static ILogger _NLogger;
+
+        static IOperator Operator
+        {
+            get
+            {
+                if (_Operator == null)
+                    _Operator = AutofacHelper.GetScopeService<IOperator>();
+                return _Operator;
+            }
+        }
+
+        static IOperator _Operator;
 
         public static void Log(LogLevel logLevel, byte logType, string message, string data, Exception exception = null, bool withOP = true)
         {

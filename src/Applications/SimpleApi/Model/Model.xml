@@ -3118,5 +3118,10 @@
             日志中心前端方法
             </summary>
         </member>
+        <member name="T:Model.Utils.SignalR.WeChatServiceHubMethod">
+            <summary>
+            微信服务中心前端方法
+            </summary>
+        </member>
     </members>
 </doc>
