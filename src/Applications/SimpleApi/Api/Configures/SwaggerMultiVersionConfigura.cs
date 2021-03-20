@@ -155,23 +155,11 @@ namespace Api.Configures
                 s.EnableFilter();//启用顶部筛选框
 
                 //注入自定义文件
-                s.InjectJavascript("/jquery/jquery-2.2.4.min.js");
-                s.InjectJavascript("/jquery/jquery-ui.min.js");
-                s.InjectStylesheet("/jquery/jquery-ui.min.css");
-                s.InjectStylesheet("/jquery/jquery-ui.theme.min.css");
-                s.InjectStylesheet("/jquery/jquery-ui.structure.min.css");
-                s.InjectStylesheet("/utils/waiting.css");
-                s.InjectJavascript("/utils/waiting.min.js");
                 var basePath = Path.GetDirectoryName(typeof(Program).Assembly.Location);
-                var dirPath = Path.Combine(basePath, "wwwroot/swagger/extensions");
+                var dirPath = Path.Combine(basePath, "wwwroot/swagger");
                 InjectFileFromDir(new DirectoryInfo(dirPath));
                 void InjectFileFromDir(DirectoryInfo dir)
                 {
-                    foreach (var innerDir in dir.GetDirectories())
-                    {
-                        InjectFileFromDir(innerDir);
-                    }
-
                     foreach (var file in dir.GetFiles())
                     {
                         if (file.Name.Contains("casLogin"))
@@ -191,6 +179,13 @@ namespace Api.Configures
                             s.InjectJavascript(file.FullName[file.FullName.IndexOf("\\swagger")..]);
                         else if (file.Extension == ".css")
                             s.InjectStylesheet(file.FullName[file.FullName.IndexOf("\\swagger")..]);
+                    }
+
+                    foreach (var innerDir in dir.GetDirectories())
+                    {
+                        if (innerDir.Name.Contains("ignore"))
+                            continue;
+                        InjectFileFromDir(innerDir);
                     }
                 }
 

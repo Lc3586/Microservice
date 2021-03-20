@@ -41,6 +41,17 @@
             closeLogFile,
             downloadFileContent,
             downloadLogFile,
+            realReceiveChange,
+            realAllLevel,
+            realLevelChange,
+            realAllType,
+            realTypeChange,
+            handleFilterClose,
+            handleFilterInputConfirm,
+            showFilterInput,
+            handleKeywordClose,
+            handleKeywordInputConfirm,
+            showKeywordInput,
             esAllLevel,
             esLevelChange,
             esAllType,
@@ -115,7 +126,7 @@
             },
             overall: {
                 state: 'el-icon-loading',
-                title: '一切正常',
+                title: '...',
                 explain: '...',
                 warn: 0,
                 error: 0
@@ -161,7 +172,25 @@
                 scrollLocked: false,
                 receive: true,
                 max: 1000,
+                connection: null,
                 list: [],
+                levels: [],
+                levels_history: [],
+                checkAllLevels: true,
+                isLevelIndeterminate: false,
+                types: [],
+                types_history: [],
+                checkAllTypes: true,
+                isTypeIndeterminate: false,
+                filters: [],
+                filters_history: [],
+                filterInputVisible: false,
+                filterInputValue: '',
+                keywords: [],
+                keywords_history: [],
+                keywordInputVisible: false,
+                keywordInputValue: '',
+                search: ''
             },
             logFile: {
                 init: false,
@@ -288,9 +317,15 @@
 
                 if (levels.data.Success) {
                     main.logConfig.levels = levels.data.Data;
+
+                    main.logReal.levels = levels.data.Data;
+                    main.logReal.checkAllLevels = true;
+                    main.logReal.isLevelIndeterminate = false;
+
                     main.logES.levels = levels.data.Data;
                     main.logES.checkAllLevels = true;
                     main.logES.isLevelIndeterminate = false;
+
                     main.logDB.levels = levels.data.Data;
                     main.logDB.checkAllLevels = true;
                     main.logDB.isLevelIndeterminate = false;
@@ -300,9 +335,15 @@
 
                 if (types.data.Success) {
                     main.logConfig.types = types.data.Data;
+
+                    main.logReal.types = types.data.Data;
+                    main.logReal.checkAllTypes = true;
+                    main.logReal.isTypeIndeterminate = false;
+
                     main.logES.types = types.data.Data;
                     main.logES.checkAllTypes = true;
                     main.logES.isTypeIndeterminate = false;
+
                     main.logDB.types = types.data.Data;
                     main.logDB.checkAllTypes = true;
                     main.logDB.isTypeIndeterminate = false;
@@ -461,13 +502,27 @@
      * */
     function connectToLogHub() {
         main.logReal.loading = true;
-        const connection = new signalR.HubConnectionBuilder()
+        main.logReal.connection = new signalR.HubConnectionBuilder()
             .withUrl(apiUrls.logHub)
             .withAutomaticReconnect()
             .configureLogging(signalR.LogLevel.Information)
             .build();
 
-        connection.on("ReceiveLog", (time, level, type, message) => {
+        main.logReal.connection.onreconnecting(error => {
+            main.overall.title = '连接已断开';
+            main.overall.explain = '正在尝试重新连接...';
+        });
+        main.logReal.connection.onreconnected(connectionId => {
+            console.info(connectionId);
+            main.overall.title = '连接已恢复';
+            main.overall.explain = '已重新连接至服务器';
+        });
+        main.logReal.connection.onclose(() => {
+            main.overall.title = '连接已关闭';
+            main.overall.explain = '...';
+        });
+
+        main.logReal.connection.on("ReceiveLog", data => {
             if (!main.logReal.receive)
                 return;
 
@@ -477,17 +532,296 @@
                 main.logReal.list.splice(0, main.logReal.list.length - main.logReal.max - 1);
 
             main.logReal.list.push({
-                content: message,
-                timestamp: time,
+                content: data.data,
+                timestamp: data.createTime,
                 size: 'large',
-                icon: getIconForlogLevel(level)
+                icon: getIconForlogLevel(data.level)
             });
 
-            changeStateFromlogLevel(level);
+            changeStateFromlogLevel(data.level);
         });
-        connection.start();
-        main.logReal.loading = false;
-        main.logReal.init = true;
+        main.logReal.connection
+            .start()
+            .then(() => {
+                main.overall.title = '已连接';
+                main.overall.explain = '...';
+
+                main.logReal.loading = false;
+                main.logReal.init = true;
+
+                startRealLog(() => {
+                    setRealLogSetting('AddLevels', main.logReal.levels, () => {
+                        main.logReal.levels_history = main.logReal.levels;
+                    }, () => {
+                        main.logReal.levels = [];
+                    });
+                    setRealLogSetting('AddTypes', main.logReal.types, () => {
+                        main.logReal.types_history = main.logReal.types;
+                    }, () => {
+                        main.logReal.types = [];
+                    });
+                });
+            });
+    }
+
+    /**
+     * Real更改接收状态
+     * @param {any} val
+     */
+    function realReceiveChange(val) {
+        val ? startRealLog() : pauseRealLog();
+    }
+
+    /**
+     * 启动实时日志
+     * @param {any} done 回调
+     */
+    function startRealLog(done) {
+        return main.logReal.connection
+            .invoke('Start')
+            .then(() => {
+                main.logReal.receive = true;
+                done && done();
+            })
+            .catch(error => {
+                ElementPlus.ElMessage('实时日志启动失败');
+            });
+    }
+
+    /**
+     * 暂停实时日志
+     * @param {any} done 回调
+     */
+    function pauseRealLog(done) {
+        return main.logReal.connection
+            .invoke('Pause')
+            .then(() => {
+                main.logReal.receive = false;
+                done && done();
+            })
+            .catch(error => {
+                ElementPlus.ElMessage('实时日志暂停失败');
+            });
+    }
+
+    /**
+     * 设置实时日志的配置
+     * */
+    function setRealLogSetting(type, value, done, error) {
+        main.logReal.connection
+            .invoke(type, value)
+            .then(done)
+            .catch(data => {
+                error && error(data);
+                ElementPlus.ElMessage('实时日志设置失败');
+            });
+    }
+
+    /**
+     * Real所有日志级别
+     * */
+    function realAllLevel(val) {
+        main.logReal.levels = val ? main.logConfig.levels : [];
+        main.logReal.isLevelIndeterminate = false;
+
+        if (main.logReal.levels.length == 0)
+            setRealLogSetting('RemoveLevels', main.logConfig.levels, () => {
+                main.logReal.levels_history = main.logConfig.levels;
+            }, () => {
+                main.logReal.levels = main.logConfig.levels;
+            });
+        else
+            setRealLogSetting('AddLevels', main.logReal.levels, () => {
+                main.logReal.levels_history = [];
+            }, () => {
+                main.logReal.levels = [];
+            });
+    }
+
+    /**
+     * Real更改日志级别
+     * */
+    function realLevelChange(val) {
+        var levels_new = main.logReal.levels.filter((item, index) => {
+            return main.logReal.levels_history.indexOf(item) < 0;
+        }),
+            levels_remove = main.logReal.levels_history.filter((item, index) => {
+                return main.logReal.levels.indexOf(item) < 0;
+            });
+
+        var remove = () => {
+            setRealLogSetting('RemoveLevels', levels_remove, () => {
+                main.logReal.levels_history = val;
+            }, () => {
+                main.logReal.levels = main.logReal.levels.filter((item, index) => {
+                    return levels_remove.indexOf(item) >= 0;
+                });
+            });
+        };
+        var add = () => {
+            setRealLogSetting('AddLevels', levels_new, () => {
+                if (levels_remove.length > 0)
+                    remove();
+            }, () => {
+                main.logReal.levels = main.logReal.levels.filter((item, index) => {
+                    return levels_new.indexOf(item) < 0;
+                });
+            });
+        };
+
+        if (levels_new.length > 0)
+            add();
+        else if (levels_remove.length > 0)
+            remove();
+    }
+
+    /**
+     * Real所有日志类型
+     * */
+    function realAllType(val) {
+        main.logReal.types = val ? main.logConfig.types : [];
+        main.logReal.isTypeIndeterminate = false;
+
+        if (main.logReal.types.length == 0)
+            setRealLogSetting('RemoveTypes', main.logConfig.types, () => {
+                main.logReal.types_history = main.logConfig.types;
+            }, () => {
+                main.logReal.types = main.logConfig.types;
+            });
+        else
+            setRealLogSetting('AddTypes', main.logReal.types, () => {
+                main.logReal.types_history = [];
+            }, () => {
+                main.logReal.types = [];
+            });
+    }
+
+    /**
+     * Real更改日志类型
+     * */
+    function realTypeChange(val) {
+        var types_new = main.logReal.types.filter((item, index) => {
+            return main.logReal.types_history.indexOf(item) < 0;
+        }),
+            types_remove = main.logReal.types_history.filter((item, index) => {
+                return main.logReal.types.indexOf(item) < 0;
+            });
+
+        var remove = () => {
+            setRealLogSetting('RemoveTypes', types_remove, () => {
+                main.logReal.types_history = val;
+            }, () => {
+                main.logReal.types = main.logReal.types.filter((item, index) => {
+                    return types_remove.indexOf(item) >= 0;
+                });
+            });
+        };
+
+        var add = () => {
+            setRealLogSetting('AddTypes', types_new, () => {
+                if (types_remove.length > 0)
+                    remove();
+            }, () => {
+                main.logReal.types = main.logReal.types.filter((item, index) => {
+                    return types_new.indexOf(item) < 0;
+                });
+            });
+        };
+
+        if (types_new.length > 0)
+            add();
+        else if (types_remove.length > 0)
+            remove();
+    }
+
+    /**
+     * Real移除过滤条件
+     * @param {any} val
+     */
+    function handleFilterClose(val) {
+        main.logReal.filters.splice(main.logReal.filters.indexOf(val), 1);
+
+        setRealLogSetting('RemoveFilters', [val], () => {
+            main.logReal.filters_history.splice(main.logReal.filters_history.indexOf(val), 1);
+        }, () => {
+            main.logReal.filters.push(val);
+        });
+    }
+
+    /**
+     * Real新增过滤条件
+     * @param {any} val
+     */
+    function handleFilterInputConfirm() {
+        if (main.logReal.filterInputValue) {
+            var val = main.logReal.filterInputValue;
+
+            main.logReal.filters.push(val);
+
+            setRealLogSetting('AddFilters', [val], () => {
+                main.logReal.filters_history.push(val);
+            }, () => {
+                main.logReal.filters.splice(main.logReal.filters.indexOf(val), 1);
+            });
+        }
+
+        main.logReal.filterInputVisible = false;
+        main.logReal.filterInputValue = '';
+    }
+
+    /**
+     * Real显示过滤条件输入框
+     * */
+    function showFilterInput() {
+        main.logReal.filterInputVisible = true;
+        this.$nextTick(_ => {
+            this.$refs.saveFilterInput.$refs.input.focus();
+        });
+    }
+
+    /**
+     * Real移除筛选条件
+     * @param {any} val
+     */
+    function handleKeywordClose(val) {
+        main.logReal.keywords.splice(main.logReal.keywords.indexOf(val), 1);
+
+        setRealLogSetting('RemoveKeywords', [val], () => {
+            main.logReal.keywords_history.splice(main.logReal.keywords_history.indexOf(val), 1);
+        }, () => {
+            main.logReal.keywords.push(val);
+        });
+    }
+
+    /**
+     * Real新增筛选条件
+     * @param {any} val
+     */
+    function handleKeywordInputConfirm() {
+        if (main.logReal.keywordInputValue) {
+            var val = main.logReal.keywordInputValue;
+
+            main.logReal.keywords.push(val);
+
+            setRealLogSetting('AddKeywords', [val], () => {
+                main.logReal.keywords_history.push(val);
+            }, () => {
+                main.logReal.keywords.splice(main.logReal.keywords.indexOf(val), 1);
+            });
+        }
+
+        main.logReal.keywordInputVisible = false;
+        main.logReal.keywordInputValue = '';
+    }
+
+    /**
+     * Real显示筛选条件输入框
+     * */
+    function showKeywordInput() {
+        main.logReal.keywordInputVisible = true;
+        this.$nextTick(_ => {
+            this.$refs.saveKeywordInput.$refs.input.focus();
+        });
     }
 
     /**

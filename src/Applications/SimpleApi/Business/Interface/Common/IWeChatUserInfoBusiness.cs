@@ -1,6 +1,7 @@
 ﻿using Model.Common.WeChatUserInfoDTO;
 using Model.Utils.Pagination;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Business.Interface.Common
 {
@@ -31,10 +32,24 @@ namespace Business.Interface.Common
         string GetState(StateInfo data);
 
         /// <summary>
+        /// 获取操作说明
+        /// </summary>
+        /// <param name="state"></param>
+        /// <returns></returns>
+        Task<string> GetExplain(string state);
+
+        /// <summary>
         /// 微信确认操作
         /// </summary>
         /// <param name="state"></param>
         /// <returns></returns>
-        void Confirm(string state);
+        Task Confirm(string state);
+
+        /// <summary>
+        /// 微信取消操作
+        /// </summary>
+        /// <param name="state"></param>
+        /// <returns></returns>
+        Task Cancel(string state);
     }
 }

@@ -54,7 +54,7 @@
         /// </summary>
         /// <param name="msg">返回的消息</param>
         /// <returns></returns>
-        public static AjaxResult<T> Success<T>(string msg)
+        public static AjaxResult SuccessWithDefaultData<T>(string msg)
         {
             AjaxResult<T> res = new AjaxResult<T>
             {

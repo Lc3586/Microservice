@@ -90,12 +90,16 @@ namespace Business.Utils.Log
 
         public List<string> GetLogLevels()
         {
-            return LogLevel.AllLoggingLevels.Select(o => o.Name).ToList();
+            var result = LogLevel.AllLoggingLevels.Select(o => o.Name).ToList();
+            result.Add("None");
+            return result;
         }
 
         public List<string> GetLogTypes()
         {
-            return LogType.AllTypes().Select(o => o.Value).ToList();
+            var result = LogType.AllTypes().Select(o => o.Value).ToList();
+            result.Add("None");
+            return result;
         }
 
         public List<FileInfo> GetFileList(DateTime start, DateTime end)

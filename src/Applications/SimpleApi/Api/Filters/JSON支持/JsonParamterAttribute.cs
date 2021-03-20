@@ -40,6 +40,9 @@ namespace Api
             if (!contentType.IsNullOrEmpty() && contentType.Contains("application/json"))
             {
                 var actionParameters = context.ActionDescriptor.Parameters;
+                if (actionParameters.Count == 0)
+                    return;
+
                 var allParamters = HttpHelper.GetAllRequestParams(context.HttpContext);
                 var actionArguments = context.ActionArguments;
                 actionParameters.ForEach(aParamter =>

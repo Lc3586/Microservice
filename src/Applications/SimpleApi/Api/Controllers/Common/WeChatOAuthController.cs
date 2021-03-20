@@ -30,13 +30,11 @@ namespace Api.Controllers
         public WeChatOAuthController(
             IHttpContextAccessor httpContextAccessor,
             IWeChatUserInfoBusiness weChatUserInfoBusiness,
-            IMemberBusiness memberBusiness,
-            IHubContext<WeChatServiceHub> weChatServiceHub)
+            IMemberBusiness memberBusiness)
         {
             HttpContextAccessor = httpContextAccessor;
             WeChatUserInfoBusiness = weChatUserInfoBusiness;
             MemberBusiness = memberBusiness;
-            WeChatServiceHub = weChatServiceHub;
         }
 
         readonly IHttpContextAccessor HttpContextAccessor;
@@ -44,8 +42,6 @@ namespace Api.Controllers
         readonly IWeChatUserInfoBusiness WeChatUserInfoBusiness;
 
         readonly IMemberBusiness MemberBusiness;
-
-        readonly IHubContext<WeChatServiceHub> WeChatServiceHub;
 
         #endregion
 
@@ -83,7 +79,6 @@ namespace Api.Controllers
         /// <param name="memberId">会员Id</param>
         /// <param name="returnUrl">重定向地址</param>
         [HttpGet("member-update/{memberId}")]
-        [AllowAnonymous]
         public void UpdateMemberWeChatUserInfo(string memberId, string returnUrl)
         {
             var state = WeChatUserInfoBusiness.GetState(new StateInfo
@@ -108,12 +103,12 @@ namespace Api.Controllers
         /// 获取用于系统用户绑定微信的链接
         /// </summary>
         /// <param name="userId">用户Id</param>
-        /// <param name="asyncUserInfo">同步微信信息至用户信息</param>
         /// <param name="returnUrl">重定向地址</param>
+        /// <param name="asyncUserInfo">同步微信信息至用户信息, 默认不同步</param>
         /// <returns></returns>
-        [HttpGet("user-bind-url/{userId}/{asyncUserInfo}")]
+        [HttpGet("user-bind-url/{userId}")]
         [SwaggerResponse((int)HttpStatusCode.OK, "链接信息", typeof(UrlInfo))]
-        public async Task<object> GetUserBindUrl(string userId, bool asyncUserInfo, string returnUrl)
+        public async Task<object> GetUserBindUrl(string userId, string returnUrl, bool asyncUserInfo = false)
         {
             var state = WeChatUserInfoBusiness.GetState(new StateInfo
             {
@@ -132,12 +127,12 @@ namespace Api.Controllers
                 }
             });
 
-            var url = $"{Config.WeChatService.OAuthUserInfoUrl}?state={state}";
+            var url = $"{Config.WebRootUrl}{Config.WeChatService.OAuthUserInfoUrl}?state={state}";
 
             return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(new UrlInfo
             {
                 Url = url,
-                S = state.ToMD5String()
+                S = state
             })));
         }
 
@@ -146,8 +141,8 @@ namespace Api.Controllers
         /// </summary>
         /// <param name="returnUrl">重定向地址</param>
         [HttpGet("user-login-url")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "链接信息", typeof(UrlInfo))]
         [AllowAnonymous]
+        [SwaggerResponse((int)HttpStatusCode.OK, "链接信息", typeof(UrlInfo))]
         public async Task<object> UserLogin(string returnUrl)
         {
             var state = WeChatUserInfoBusiness.GetState(new StateInfo
@@ -160,12 +155,12 @@ namespace Api.Controllers
                 }
             });
 
-            var url = $"{Config.WeChatService.OAuthBaseUrl}?state={state}";
+            var url = $"{Config.WebRootUrl}{Config.WeChatService.OAuthBaseUrl}?state={state}";
 
             return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(new UrlInfo
             {
                 Url = url,
-                S = state.ToMD5String()
+                S = state
             })));
         }
 
@@ -176,7 +171,6 @@ namespace Api.Controllers
         /// <param name="returnUrl">重定向地址</param>
         [HttpGet("user-update-url/{userId}")]
         [SwaggerResponse((int)HttpStatusCode.OK, "链接信息", typeof(UrlInfo))]
-        [AllowAnonymous]
         public async Task<object> UpdateUserWeChatUserInfo(string userId, string returnUrl)
         {
             var state = WeChatUserInfoBusiness.GetState(new StateInfo
@@ -192,13 +186,24 @@ namespace Api.Controllers
                 }
             });
 
-            var url = $"{Config.WeChatService.OAuthUserInfoUrl}?state={state}";
+            var url = $"{Config.WebRootUrl}{Config.WeChatService.OAuthUserInfoUrl}?state={state}";
 
             return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(new UrlInfo
             {
                 Url = url,
-                S = state.ToMD5String()
+                S = state
             })));
+        }
+
+        /// <summary>
+        /// 获取操作说明
+        /// </summary>
+        /// <param name="state"></param>
+        [HttpGet("explain/{state}")]
+        [AllowAnonymous]
+        public async Task<object> GetExplain(string state)
+        {
+            return await Task.FromResult(AjaxResultFactory.Success<string>(await WeChatUserInfoBusiness.GetExplain(state)));
         }
 
         /// <summary>
@@ -209,7 +214,19 @@ namespace Api.Controllers
         [AllowAnonymous]
         public async Task<object> Confirm(string state)
         {
-            WeChatUserInfoBusiness.Confirm(state);
+            await WeChatUserInfoBusiness.Confirm(state);
+            return await Task.FromResult(AjaxResultFactory.Success());
+        }
+
+        /// <summary>
+        /// 微信取消操作
+        /// </summary>
+        /// <param name="state"></param>
+        [HttpGet("cancel/{state}")]
+        [AllowAnonymous]
+        public async Task<object> Cancel(string state)
+        {
+            await WeChatUserInfoBusiness.Cancel(state);
             return await Task.FromResult(AjaxResultFactory.Success());
         }
 

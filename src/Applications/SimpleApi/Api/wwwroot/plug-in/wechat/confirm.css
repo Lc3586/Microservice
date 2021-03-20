@@ -1,0 +1,50 @@
+﻿
+body {
+    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Segoe UI, Arial, Roboto, 'PingFang SC', 'miui', 'Hiragino Sans GB', 'Microsoft Yahei', sans-serif;
+    min-width: 100vw;
+    text-align: center;
+}
+
+#app {
+    min-height: calc(100vh - 56px);
+    padding-bottom: 20px;
+}
+
+.row_main {
+    height: 45vh;
+    margin-bottom: 10px;
+    display: flex;
+    display: -webkit-flex;
+    align-items: center;
+}
+
+.row_title {
+    line-height: 50px;
+    margin-bottom: 10px;
+}
+
+.row_button {
+    margin-bottom: 10px;
+}
+
+.row_finish {
+    height: 30vh;
+}
+
+.explain {
+    font-size: 20pt;
+    line-height: 28px;
+    font-weight: 500;
+}
+
+.textcontent {
+    font-size: 18pt;
+    line-height: 24px;
+    font-weight: 500;
+}
+
+.message {
+    font-size: 18pt;
+    line-height: 24px;
+    font-weight: 500;
+}

@@ -318,17 +318,17 @@
             重定向地址
             </summary>
         </member>
-        <member name="T:Model.Common.WeChatUserInfoDTO.UserBindUrl">
+        <member name="T:Model.Common.WeChatUserInfoDTO.UrlInfo">
             <summary>
-            系统用户绑定微信的链接
+            链接信息
             </summary>
         </member>
-        <member name="P:Model.Common.WeChatUserInfoDTO.UserBindUrl.Url">
+        <member name="P:Model.Common.WeChatUserInfoDTO.UrlInfo.Url">
             <summary>
             用于生成二维码的链接
             </summary>
         </member>
-        <member name="P:Model.Common.WeChatUserInfoDTO.UserBindUrl.S">
+        <member name="P:Model.Common.WeChatUserInfoDTO.UrlInfo.S">
             <summary>
             用于连接Signalr的字符串
             </summary>
@@ -2754,7 +2754,7 @@
             <param name="msg">返回的消息</param>
             <returns></returns>
         </member>
-        <member name="M:Model.Utils.Result.AjaxResultFactory.Success``1(System.String)">
+        <member name="M:Model.Utils.Result.AjaxResultFactory.SuccessWithDefaultData``1(System.String)">
             <summary>
             返回成功
             </summary>
@@ -3118,9 +3118,104 @@
             日志中心前端方法
             </summary>
         </member>
+        <member name="T:Model.Utils.SignalR.LogInfo">
+            <summary>
+            日志信息
+            </summary>
+        </member>
+        <member name="P:Model.Utils.SignalR.LogInfo.CreateTime">
+            <summary>
+            创建时间
+            </summary>
+        </member>
+        <member name="P:Model.Utils.SignalR.LogInfo.Level">
+            <summary>
+            级别
+            </summary>
+        </member>
+        <member name="P:Model.Utils.SignalR.LogInfo.LogType">
+            <summary>
+            类型
+            </summary>
+        </member>
+        <member name="P:Model.Utils.SignalR.LogInfo.Data">
+            <summary>
+            数据
+            </summary>
+        </member>
+        <member name="T:Model.Utils.SignalR.LogSetting">
+            <summary>
+            客户端日志设置
+            </summary>
+        </member>
+        <member name="P:Model.Utils.SignalR.LogSetting.Push">
+            <summary>
+            推送
+            </summary>
+        </member>
+        <member name="P:Model.Utils.SignalR.LogSetting.Level">
+            <summary>
+            级别
+            </summary>
+        </member>
+        <member name="P:Model.Utils.SignalR.LogSetting.Type">
+            <summary>
+            类型
+            </summary>
+        </member>
+        <member name="P:Model.Utils.SignalR.LogSetting.Filter">
+            <summary>
+            过滤
+            </summary>
+        </member>
+        <member name="P:Model.Utils.SignalR.LogSetting.Keyword">
+            <summary>
+            关键词
+            </summary>
+        </member>
         <member name="T:Model.Utils.SignalR.WeChatServiceHubMethod">
             <summary>
             微信服务中心前端方法
+            </summary>
+        </member>
+        <member name="F:Model.Utils.SignalR.WeChatServiceHubMethod.Scanned">
+            <summary>
+            链接已被扫描
+            </summary>
+        </member>
+        <member name="F:Model.Utils.SignalR.WeChatServiceHubMethod.Confirmed">
+            <summary>
+            已执行确认操作
+            </summary>
+        </member>
+        <member name="F:Model.Utils.SignalR.WeChatServiceHubMethod.Canceled">
+            <summary>
+            已执行取消操作
+            </summary>
+        </member>
+        <member name="T:Model.Utils.SignalR.WeChatUserInfo">
+            <summary>
+            微信用户信息
+            </summary>
+        </member>
+        <member name="P:Model.Utils.SignalR.WeChatUserInfo.OpenId">
+            <summary>
+            用户公众号唯一标识
+            </summary>
+        </member>
+        <member name="P:Model.Utils.SignalR.WeChatUserInfo.Nickname">
+            <summary>
+            昵称
+            </summary>
+        </member>
+        <member name="P:Model.Utils.SignalR.WeChatUserInfo.Sex">
+            <summary>
+            性别
+            </summary>
+        </member>
+        <member name="P:Model.Utils.SignalR.WeChatUserInfo.HeadimgUrl">
+            <summary>
+            头像
             </summary>
         </member>
     </members>

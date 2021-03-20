@@ -17,6 +17,11 @@ namespace Model.Utils.SignalR
         /// <summary>
         /// 已执行确认操作
         /// </summary>
-        public const string Confirm = "Confirm";
+        public const string Confirmed = "Confirmed";
+
+        /// <summary>
+        /// 已执行取消操作
+        /// </summary>
+        public const string Canceled = "Canceled";
     }
 }

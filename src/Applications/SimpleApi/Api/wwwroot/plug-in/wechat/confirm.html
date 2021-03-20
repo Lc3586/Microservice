@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, viewport-fit=cover">
+    <title>安全确认</title>
+    <script src="../../vue/vue-2.6.min.js"></script>
+
+    <script src="../../vent/vant.min.js"></script>
+    <link href="../../vent/vant.index.css" rel="stylesheet" />
+
+    <script src="../../utils/axios.min.js"></script>
+
+    <link href="confirm.css" rel="stylesheet" />
+    <script src="confirm.js"></script>
+</head>
+<body>
+    <div id="app">
+        <van-overlay :show="loading">
+            <van-loading size="24px"
+                         vertical>请稍后...</van-loading>
+        </van-overlay>
+        <van-row class="row_main">
+            <van-col span="24">
+                <span class="explain"
+                      v-show="!loading">{{explain}}</span>
+            </van-col>
+        </van-row>
+        <van-row v-show="!finish" class="row_title">
+            <van-col span="24">
+                <span class="textcontent">请确认这是您本人的操作</span>
+            </van-col>
+        </van-row>
+        <van-row v-show="!finish" class="row_button">
+            <van-col span="10" offset="1">
+                <van-button type="danger"
+                            :loading="cancelLoading"
+                            loading-type="spinner"
+                            block
+                            @click="cancel">取消</van-button>
+            </van-col>
+            <van-col span="10" offset="1">
+                <van-button type="primary"
+                            :loading="canfirmLoading"
+                            loading-type="spinner"
+                            block
+                            @click="confirm">确认</van-button>
+            </van-col>
+        </van-row>
+        <!--<van-row v-show="!finish" class="row_title">
+            <van-col span="24">
+                <span class="textcontent">如果这不是您本人的操作</span>
+            </van-col>
+        </van-row>-->
+        <van-row v-show="finish" class="row_finish">
+            <van-col span="24">
+                <span class="message">{{message}}</span>
+            </van-col>
+        </van-row>
+    </div>
+</body>
+</html>

@@ -5,6 +5,7 @@ using Microservice.Library.WeChat.Extension;
 using Microsoft.AspNetCore.SignalR;
 using Model.Utils.SignalR;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,34 +23,11 @@ namespace Business.Hub
 
         }
 
-        #region DI
-
-        ICache Cache
-        {
-            get
-            {
-                if (_Cache == null)
-                    _Cache = AutofacHelper.GetScopeService<ICacheProvider>()
-                                        .GetCache();
-                return _Cache;
-            }
-        }
-
-        ICache _Cache;
-
-        IWeChatOAuthHandler WeChatOAuthHandler
-        {
-            get
-            {
-                if (_WeChatOAuthHandler == null)
-                    _WeChatOAuthHandler = AutofacHelper.GetScopeService<IWeChatOAuthHandler>();
-                return _WeChatOAuthHandler;
-            }
-        }
-
-        IWeChatOAuthHandler _WeChatOAuthHandler;
-
-        #endregion
+        /// <summary>
+        /// 客户端设置
+        /// </summary>
+        public static readonly ConcurrentDictionary<string, string> Settings
+            = new ConcurrentDictionary<string, string>();
 
         #region 远程方法
 
@@ -63,20 +41,12 @@ namespace Business.Hub
             if (string.IsNullOrWhiteSpace(state))
                 return await Task.FromResult(false);
 
-            if (!Cache.ContainsKey(state))
-                return await Task.FromResult(false);
-
-            await Groups.AddToGroupAsync(Context.ConnectionId, state);
+            Settings.AddOrUpdate(
+                state,
+                Context.ConnectionId,
+                (key, old) => Context.ConnectionId);
 
             return await Task.FromResult(true);
-        }
-
-        /// <summary>
-        /// 系统用户绑定微信的链接被扫描了
-        /// </summary>
-        public void Confirm()
-        {
-
         }
 
         #endregion

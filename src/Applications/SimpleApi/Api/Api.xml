@@ -411,27 +411,45 @@
             <param name="memberId">会员Id</param>
             <param name="returnUrl">重定向地址</param>
         </member>
-        <member name="M:Api.Controllers.WeChatOAuthController.GetUserBindUrl(System.String,System.Boolean,System.String)">
+        <member name="M:Api.Controllers.WeChatOAuthController.GetUserBindUrl(System.String,System.String,System.Boolean)">
             <summary>
             获取用于系统用户绑定微信的链接
             </summary>
             <param name="userId">用户Id</param>
-            <param name="asyncUserInfo">同步微信信息至用户信息</param>
             <param name="returnUrl">重定向地址</param>
+            <param name="asyncUserInfo">同步微信信息至用户信息, 默认不同步</param>
             <returns></returns>
         </member>
         <member name="M:Api.Controllers.WeChatOAuthController.UserLogin(System.String)">
             <summary>
-            系统用户登录
+            获取用于系统用户登录的链接
             </summary>
             <param name="returnUrl">重定向地址</param>
         </member>
         <member name="M:Api.Controllers.WeChatOAuthController.UpdateUserWeChatUserInfo(System.String,System.String)">
             <summary>
-            更新系统用户微信用户信息
+            获取用于更新系统用户微信用户信息的链接
             </summary>
             <param name="userId">用户Id</param>
             <param name="returnUrl">重定向地址</param>
+        </member>
+        <member name="M:Api.Controllers.WeChatOAuthController.GetExplain(System.String)">
+            <summary>
+            获取操作说明
+            </summary>
+            <param name="state"></param>
+        </member>
+        <member name="M:Api.Controllers.WeChatOAuthController.Confirm(System.String)">
+            <summary>
+            微信确认操作
+            </summary>
+            <param name="state"></param>
+        </member>
+        <member name="M:Api.Controllers.WeChatOAuthController.Cancel(System.String)">
+            <summary>
+            微信取消操作
+            </summary>
+            <param name="state"></param>
         </member>
         <member name="T:Api.Controllers.WeChatUserController">
             <summary>

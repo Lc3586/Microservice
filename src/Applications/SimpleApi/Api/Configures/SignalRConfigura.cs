@@ -39,6 +39,9 @@ namespace Api.Configures
                     option.EnableDetailedErrors = config.RunMode != RunMode.Publish && config.RunMode != RunMode.Publish_Swagger;
                 });
 
+            //日志转发
+            services.AddSingleton(new LogForward());
+
             return services;
         }
 
@@ -58,6 +61,9 @@ namespace Api.Configures
                 endpoints.MapHub<LogHub>("/loghub");
                 endpoints.MapHub<WeChatServiceHub>("/wechathub");
             });
+
+            //启动日志转发
+            app.ApplicationServices.GetService<LogForward>().Start();
 
             return app;
         }

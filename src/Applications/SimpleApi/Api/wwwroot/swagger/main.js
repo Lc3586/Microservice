@@ -317,41 +317,6 @@ if (!window.checkStartEndDate) {
     }
 }
 
-/*jQuery拓展，绑定input file并转为base64字符串
- *使用示例:
-    $('#img').bindImgBase64(function (base64) {
-        $('#img-display').attr('src', base64);
-    });
- */
-if (!$.prototype.bindImgBase64) {
-    $.prototype.bindImgBase64 = function (callback) {
-        var _callback = callback || function () { };
-        var thisElement = this[0];
-        thisElement.onchange = function () {
-            var img = event.target.files[0];
-
-            // 判断是否图片
-            if (!img) {
-                return;
-            }
-            // 判断图片格式
-            if (!(img.type.indexOf('image') == 0 && img.type && /\.(?:jpg|jpeg|png|gif|bmp)$/i.test(img.name))) {
-                throw '图片只能是jpg,jpeg,gif,png,bmp';
-            }
-            var reader = new FileReader();
-            reader.readAsDataURL(img);
-            reader.onload = function (e) {
-                var imgBase64 = e.target.result;
-                $(thisElement).attr('base64', imgBase64);
-                _callback(imgBase64);
-            }
-        };
-    };
-    $.prototype.getImgBase64 = function () {
-        return this.attr('base64');
-    };
-}
-
 //拓展FileReader的readAsBinaryString方法
 if (!FileReader.prototype.readAsBinaryString) {
     FileReader.prototype.readAsBinaryString = function (fileData) {
@@ -368,107 +333,6 @@ if (!FileReader.prototype.readAsBinaryString) {
         $(pt).trigger('onload');
         reader.readAsArrayBuffer(fileData);
     }
-}
-
-//拓展文件操作，将文件转为base64
-//回调参数为文件base64内容和文件名
-if (!$.prototype.getFileBase64) {
-    $.prototype.getFileBase64 = function (callBack) {
-        var _callBack = callBack || function () { };
-        var file = $(this)[0].files[0];
-        var reader = new FileReader();
-        reader.readAsBinaryString(file);
-        reader.onload = function (e) {
-            var bytes = e.target.result;
-            var base64 = btoa(bytes);
-            var fileName = file.name;
-            callBack(base64, fileName);
-        }
-    };
-}
-
-//获取元素中所有没有被disabled的name集合
-if (!$.prototype.getNames) {
-    $.prototype.getNames = function () {
-        var nameList = [];
-        $(this).find('[name]').not('[disabled]').each(function (index, element) {
-            var name = $(element).attr('name');
-            nameList.push(name);
-        });
-
-        return nameList;
-    };
-}
-
-//取表单域的所有值
-if (!$.fn.getValues) {
-    $.fn.getValues = function (options) {
-        var defaults = {
-            checkbox: 'array',
-            not: []
-        };
-        var $container = $(this);
-
-        options = $.extend({}, defaults, options);
-
-        function getValues() {
-            var values = {}, ckbFields = [];
-            $container.find(":input[name]").each(function () {
-                var that = $(this),
-                    type = (that.attr("type") || '').toLowerCase(),
-                    name = that.attr("name");
-                if (type == 'button' || type == 'submit') return true;
-                if (!name.length) return true;
-                if ($.inArray(name, options.not) >= 0) return true;
-
-                if (type == "checkbox") {
-                    if (values[name] != undefined) {
-                        return true;
-                    }
-                    ckbFields.push(name);
-                    values[name] = getCheckboxValues(name);
-                } else if (type == "radio") {
-                    if (values[name] != undefined) {
-                        return true;
-                    }
-                    values[name] = getRadioValue(name);
-                } else {
-                    var value = that.val();
-                    //if (!value.length) return true;
-
-                    if (values[name] == undefined) {
-                        values[name] = value;
-                    } else {
-                        var arr = [];
-                        arr.push(values[name]);
-                        arr.push(value);
-
-                        values[name] = arr.join(',');
-                    }
-                }
-            });
-
-            if (options.checkbox == 'string') {
-                $.each(ckbFields, function (i, v) {
-                    if ($.isArray(values[v])) values[v] = values[v].join(',');
-                });
-            }
-
-            return values;
-        }
-
-        function getRadioValue(name) {
-            return $container.find("input:radio[name='" + name + "']").val();
-        }
-
-        function getCheckboxValues(name) {
-            return $.map($container.find("input:checkbox[name='" + name + "']:checked"), function (n) {
-                return n.value;
-            });
-        }
-
-        return getValues();
-    };
 }
 
 //使用文件base64下载文件
@@ -531,6 +395,205 @@ if (!window.getType) {
             return type;
         }
     }
+}
+
+if (!window.importFile) {
+    var importedFile = [];
+
+    /**
+     * 导入文件(js/css)
+     * @param {any} files 文件
+     * [
+     *      {
+     *          tag: 'script', 标签
+     *          type: 'text/javascript', 类型
+     *          src: 'http://a.b.com:8080/c' 地址
+     *      },
+     *      {
+     *          tag: 'link', 标签
+     *          type: 'text/css', 类型
+     *          rel: 'stylesheet', 
+     *          href: 'http://a.b.com:8080/d' 地址
+     *      }
+     * ]
+     * @param {any} done 回调
+     */
+    window.importFile = (files, done) => {
+        var index = 0;
+
+        var handler = () => {
+            if (files.length == index) {
+                done && done();
+                return;
+            }
+
+            var next = () => {
+                index++;
+                handler();
+            };
+
+            var file = files[index];
+            if (importedFile.indexOf(file.src || file.href) >= 0) {
+                next();
+                return;
+            }
+
+            var s = this.document.createElement(file.tag);
+            for (var item in file) {
+                if (item == 'tag')
+                    continue;
+
+                s[item] = file[item];
+            }
+            s.onload = () => {
+                if (file.src && file.src.indexOf('jquery-')) {
+                    /*jQuery拓展，绑定input file并转为base64字符串
+                     *使用示例:
+                        $('#img').bindImgBase64(function (base64) {
+                            $('#img-display').attr('src', base64);
+                        });
+                     */
+                    if (!$.prototype.bindImgBase64) {
+                        $.prototype.bindImgBase64 = function (callback) {
+                            var _callback = callback || function () { };
+                            var thisElement = this[0];
+                            thisElement.onchange = function () {
+                                var img = event.target.files[0];
+
+                                // 判断是否图片
+                                if (!img) {
+                                    return;
+                                }
+                                // 判断图片格式
+                                if (!(img.type.indexOf('image') == 0 && img.type && /\.(?:jpg|jpeg|png|gif|bmp)$/i.test(img.name))) {
+                                    throw '图片只能是jpg,jpeg,gif,png,bmp';
+                                }
+                                var reader = new FileReader();
+                                reader.readAsDataURL(img);
+                                reader.onload = function (e) {
+                                    var imgBase64 = e.target.result;
+                                    $(thisElement).attr('base64', imgBase64);
+                                    _callback(imgBase64);
+                                }
+                            };
+                        };
+                        $.prototype.getImgBase64 = function () {
+                            return this.attr('base64');
+                        };
+                    }
+
+                    //拓展文件操作，将文件转为base64
+                    //回调参数为文件base64内容和文件名
+                    if (!$.prototype.getFileBase64) {
+                        $.prototype.getFileBase64 = function (callBack) {
+                            var _callBack = callBack || function () { };
+                            var file = $(this)[0].files[0];
+                            var reader = new FileReader();
+                            reader.readAsBinaryString(file);
+                            reader.onload = function (e) {
+                                var bytes = e.target.result;
+                                var base64 = btoa(bytes);
+                                var fileName = file.name;
+                                callBack(base64, fileName);
+                            }
+                        };
+                    }
+
+                    //获取元素中所有没有被disabled的name集合
+                    if (!$.prototype.getNames) {
+                        $.prototype.getNames = function () {
+                            var nameList = [];
+                            $(this).find('[name]').not('[disabled]').each(function (index, element) {
+                                var name = $(element).attr('name');
+                                nameList.push(name);
+                            });
+
+                            return nameList;
+                        };
+                    }
+
+                    //取表单域的所有值
+                    if (!$.fn.getValues) {
+                        $.fn.getValues = function (options) {
+                            var defaults = {
+                                checkbox: 'array',
+                                not: []
+                            };
+                            var $container = $(this);
+
+                            options = $.extend({}, defaults, options);
+
+                            function getValues() {
+                                var values = {}, ckbFields = [];
+                                $container.find(":input[name]").each(function () {
+                                    var that = $(this),
+                                        type = (that.attr("type") || '').toLowerCase(),
+                                        name = that.attr("name");
+                                    if (type == 'button' || type == 'submit') return true;
+                                    if (!name.length) return true;
+                                    if ($.inArray(name, options.not) >= 0) return true;
+
+                                    if (type == "checkbox") {
+                                        if (values[name] != undefined) {
+                                            return true;
+                                        }
+                                        ckbFields.push(name);
+                                        values[name] = getCheckboxValues(name);
+                                    } else if (type == "radio") {
+                                        if (values[name] != undefined) {
+                                            return true;
+                                        }
+                                        values[name] = getRadioValue(name);
+                                    } else {
+                                        var value = that.val();
+                                        //if (!value.length) return true;
+
+                                        if (values[name] == undefined) {
+                                            values[name] = value;
+                                        } else {
+                                            var arr = [];
+                                            arr.push(values[name]);
+                                            arr.push(value);
+
+                                            values[name] = arr.join(',');
+                                        }
+                                    }
+                                });
+
+                                if (options.checkbox == 'string') {
+                                    $.each(ckbFields, function (i, v) {
+                                        if ($.isArray(values[v])) values[v] = values[v].join(',');
+                                    });
+                                }
+
+                                return values;
+                            }
+
+                            function getRadioValue(name) {
+                                return $container.find("input:radio[name='" + name + "']").val();
+                            }
+
+                            function getCheckboxValues(name) {
+                                return $.map($container.find("input:checkbox[name='" + name + "']:checked"), function (n) {
+                                    return n.value;
+                                });
+                            }
+
+                            return getValues();
+                        };
+                    }
+                }
+
+                importedFile.push(file.src || file.href);
+
+                next();
+            };
+            var h = document.getElementsByTagName("head");
+            if (h && h[0]) { h[0].appendChild(s); }
+        };
+
+        handler(index);
+    };
 }
 
 if (!window.delayedEvent) {
@@ -667,6 +730,11 @@ if (!window.showDialog) {
 }
 
 if (!window.addPlugIn) {
+    var defaultSvg = {
+        main: '<svg t="1615609432254" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1514" width="80" height="80"><path d="M119.049445 308.054588a496.562 165.864 30 1 0 860.070613 496.562 496.562 165.864 30 1 0-860.070613-496.562Z" fill="#80CFF4" p-id="1515"></path><path d="M546.378 1023.114c-50.304 0-96.306-54.79-129.534-154.274-31.754-95.07-49.244-221.226-49.244-355.218s17.49-260.144 49.246-355.22c33.228-99.48 79.23-154.264 129.534-154.264 50.302 0 96.304 54.786 129.534 154.264 31.758 95.078 49.246 221.23 49.246 355.22 0 133.992-17.492 260.148-49.246 355.218-33.23 99.488-79.234 154.274-129.536 154.274z m0-993.146c-73.864 0-152.946 194.344-152.946 483.656 0 289.308 79.082 483.656 152.946 483.656 73.866 0 152.95-194.348 152.95-483.656-0.002-289.312-79.086-483.656-152.95-483.656z" p-id="1516"></path><path d="M215.344 813.43c-55.07 0-93.176-15.582-110.196-45.058-25.152-43.562-0.708-110.796 68.83-189.312 66.458-75.042 166.968-153.264 283.01-220.262 154.886-89.428 315.982-144.978 420.42-144.978 55.072 0 93.18 15.584 110.2 45.062 25.152 43.566 0.706 110.796-68.832 189.314-66.458 75.04-166.964 153.258-283.008 220.262-154.892 89.42-315.99 144.972-420.424 144.972z m662.064-573.78c-100.166 0-256.312 54.226-407.506 141.518C219.352 525.824 90.584 691.484 127.52 755.458c15.338 26.566 56.226 32.144 87.826 32.144 100.166 0 256.31-54.226 407.506-141.52 113.696-65.64 211.924-142.002 276.586-215.016 60.692-68.524 84.67-126.578 65.798-159.27-15.34-26.57-56.228-32.146-87.828-32.146z" p-id="1517"></path><path d="M877.408 813.43c-104.438 0-265.534-55.55-420.418-144.972-116.042-67.004-216.55-145.222-283.008-220.264-69.538-78.516-93.984-145.75-68.83-189.314 17.02-29.48 55.126-45.062 110.2-45.062 104.432 0 265.528 55.552 420.416 144.978 116.042 66.998 216.548 145.222 283.008 220.26 69.542 78.52 93.986 145.75 68.832 189.308-17.02 29.484-55.128 45.066-110.2 45.066z m-662.058-573.78c-31.6 0-72.488 5.576-87.83 32.146-18.874 32.692 5.106 90.744 65.796 159.274 64.664 73.014 162.89 149.372 276.588 215.016 151.192 87.29 307.332 141.516 407.502 141.516 31.6 0 72.49-5.578 87.828-32.148 18.878-32.692-5.106-90.742-65.798-159.27-64.662-73.012-162.892-149.372-276.586-215.016-151.192-87.292-307.338-141.518-407.5-141.518z" p-id="1518"></path><path d="M259.54 51.118a14.782 14.782 0 0 1-9.29-3.3 14.652 14.652 0 0 1-5.384-9.928 14.672 14.672 0 0 1 3.22-10.828 14.692 14.692 0 0 1 11.466-5.464c3.37 0 6.67 1.17 9.292 3.294 6.318 5.128 7.286 14.442 2.162 20.762a14.698 14.698 0 0 1-11.466 5.464z m0.012-26.938c-3.692 0-7.14 1.644-9.462 4.508a12.096 12.096 0 0 0-2.654 8.932 12.08 12.08 0 0 0 4.44 8.188 12.192 12.192 0 0 0 7.662 2.722 12.14 12.14 0 0 0 9.462-4.506 12.194 12.194 0 0 0-1.784-17.126 12.066 12.066 0 0 0-7.664-2.718z" fill="#F18D00" p-id="1519"></path><path d="M78.344 41.29m-40.402 0a40.402 40.402 0 1 0 80.804 0 40.402 40.402 0 1 0-80.804 0Z" fill="#36B8F2" p-id="1520"></path><path d="M74.88 106.51a48.266 48.266 0 0 1-30.302-10.752 47.854 47.854 0 0 1-17.564-32.4 47.84 47.84 0 0 1 10.494-35.328 47.974 47.974 0 0 1 37.424-17.82 48.222 48.222 0 0 1 30.298 10.754c9.99 8.098 16.226 19.606 17.562 32.4s-2.39 25.338-10.49 35.326a47.98 47.98 0 0 1-37.422 17.82z m0.052-80.8c-9.904 0-19.16 4.404-25.386 12.086a32.446 32.446 0 0 0-7.116 23.956 32.434 32.434 0 0 0 11.912 21.972 32.274 32.274 0 0 0 20.542 7.292 32.54 32.54 0 0 0 25.386-12.086 32.422 32.422 0 0 0 7.11-23.956 32.436 32.436 0 0 0-11.908-21.972 32.27 32.27 0 0 0-20.54-7.292zM173.798 45.346a5.164 5.164 0 0 1-0.778-10.27l24.936-3.824a5.168 5.168 0 0 1 1.566 10.214l-24.938 3.822a5.492 5.492 0 0 1-0.786 0.058z" p-id="1521"></path><path d="M188.176 55.902a5.17 5.17 0 0 1-5.102-4.386l-3.822-24.938a5.168 5.168 0 0 1 10.214-1.566l3.822 24.938a5.17 5.17 0 0 1-5.112 5.952z" p-id="1522"></path><path d="M828.736 933.464H761.4a7.746 7.746 0 0 1-7.748-7.75 7.748 7.748 0 0 1 7.748-7.75h67.336a7.75 7.75 0 0 1 0 15.5z" fill="#E81F1F" p-id="1523"></path><path d="M795.066 967.128a7.746 7.746 0 0 1-7.748-7.746v-67.336a7.748 7.748 0 1 1 15.498 0v67.336a7.744 7.744 0 0 1-7.75 7.746z" fill="#E81F1F" p-id="1524"></path><path d="M883.948 925.716m-21.884 0a21.884 21.884 0 1 0 43.768 0 21.884 21.884 0 1 0-43.768 0Z" fill="#58B530" p-id="1525"></path><path d="M956.786 907.106a5.138 5.138 0 0 1-3.472-1.344l-21.78-19.782a5.164 5.164 0 1 1 6.944-7.648l21.78 19.782a5.168 5.168 0 0 1-3.472 8.992z" fill="#36B8F2" p-id="1526"></path><path d="M936.004 908.11a5.168 5.168 0 0 1-3.822-8.644l19.782-21.782a5.166 5.166 0 1 1 7.646 6.944l-19.782 21.786a5.148 5.148 0 0 1-3.824 1.696z" fill="#36B8F2" p-id="1527"></path></svg>',
+        default: '<svg t="1616120565697" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3949" width="5em" height="5em"><path d="M586.8544 440.1152a47.3344 47.3344 0 0 1 50.1504-10.9824c0.4864 0.2304 0.9472 0.4864 1.5616 0.5888a10.9568 10.9568 0 0 0 10.8544-2.7392 10.496 10.496 0 0 0 2.6368-4.5312 10.5984 10.5984 0 0 0-2.6368-10.9824l-96.8192-96.8192-80 80a10.9312 10.9312 0 0 1-18.2528-10.8544c0.128-0.5888 0.3584-1.0752 0.5888-1.5616a47.5136 47.5136 0 1 0-28.544 28.288 5.632 5.632 0 0 1 2.3808-0.9472c0.2304 0 0.3584-0.128 0.5888-0.128a10.9312 10.9312 0 0 1 9.9072 18.5088l-78.7968 78.7968 92.8768 92.8768a10.9312 10.9312 0 0 1-10.8544 18.2528c-0.5888-0.128-1.0752-0.3584-1.5616-0.5888a47.5136 47.5136 0 1 0 28.288 28.544 5.632 5.632 0 0 1-0.9472-2.3808c0-0.2304-0.128-0.3584-0.128-0.5888a10.9312 10.9312 0 0 1 18.5088-9.9072l61.7216 61.7216 187.9296-187.9296 4.1728-4.1728-57.7792-57.7792a10.5984 10.5984 0 0 0-10.9824-2.6368 10.24 10.24 0 0 0-4.5312 2.6368 10.9056 10.9056 0 0 0-2.9952 9.9072c0 0.2304 0.128 0.3584 0.128 0.5888a6.1952 6.1952 0 0 0 0.9472 2.3808 47.5648 47.5648 0 0 1-78.3104 49.664 47.5392 47.5392 0 0 1-0.1024-67.2256z" fill="#8a8a8a" p-id="3950"></path><path d="M806.1696 785.0496a12.8256 12.8256 0 0 1-6.4-23.8848l49.5616-28.6208c13.7728-7.9872 22.3488-22.8096 22.3488-38.7072V330.1376c0-15.8976-8.576-30.7456-22.3488-38.7072L534.3488 109.5936a44.7488 44.7488 0 0 0-44.6976 0l-119.1168 68.7872a12.8 12.8 0 1 1-12.8-22.1696l119.1168-68.7872a70.6048 70.6048 0 0 1 70.2976 0l314.9824 181.8624a70.5536 70.5536 0 0 1 35.1488 60.8768v363.6992c0 25.0112-13.4656 48.3328-35.1488 60.8512l-49.5616 28.6208a12.6464 12.6464 0 0 1-6.4 1.7152z" fill="#8a8a8a" p-id="3951"></path><path d="M322.0224 252.288c-33.7408 0-61.2096-27.4432-61.2096-61.184s27.4432-61.184 61.2096-61.184c33.7152 0 61.184 27.4432 61.184 61.184s-27.4688 61.184-61.184 61.184z m0-96.768c-19.6352 0-35.6096 15.9744-35.6096 35.584s15.9744 35.584 35.6096 35.584 35.584-15.9744 35.584-35.584-15.9488-35.584-35.584-35.584z" fill="#8a8a8a" p-id="3952"></path><path d="M512 945.9712c-12.16 0-24.2944-3.1232-35.1488-9.3952L161.8688 754.7136a70.4768 70.4768 0 0 1-35.1488-60.8512V330.1376c0-25.0112 13.4656-48.3328 35.1488-60.8768L211.4304 240.64a12.7488 12.7488 0 0 1 17.4848 4.6848 12.7488 12.7488 0 0 1-4.6848 17.4848l-49.5616 28.6208a44.8768 44.8768 0 0 0-22.3488 38.7072v363.6992c0 15.8976 8.576 30.7456 22.3488 38.7072l314.9824 181.8624a44.8 44.8 0 0 0 44.6976 0l119.1168-68.7872a12.7232 12.7232 0 0 1 17.4848 4.6848 12.7488 12.7488 0 0 1-4.6848 17.4848l-119.1168 68.7872a70.1696 70.1696 0 0 1-35.1488 9.3952z" fill="#8a8a8a" p-id="3953"></path><path d="M701.9776 894.08a61.2608 61.2608 0 0 1-61.184-61.184 61.2608 61.2608 0 0 1 61.184-61.2096 61.2864 61.2864 0 0 1 61.2096 61.2096 61.2608 61.2608 0 0 1-61.2096 61.184z m0-96.768a35.6352 35.6352 0 0 0 0 71.1936 35.6352 35.6352 0 0 0 0-71.1936z" fill="#8a8a8a" p-id="3954"></path></svg>'
+    };
+
     /**
      * 添加插件
      * 
@@ -676,127 +744,106 @@ if (!window.addPlugIn) {
      * @param {string} svg 图标
      */
     window.addPlugIn = (name, title, fun, svg) => {
-        var $body = $('#plugInBody');
+        var $body = $('#plugInBody'),
+            $all = $('.plug-in-all');
         if ($body.length == 0) {
             $body = $('<div id="plugInBody"></div>')
                 .appendTo($('body'))
                 .draggable({ containment: $('#swagger-ui'), scroll: false });
+        }
 
-            $('<i title="展开拓展功能" class="plug-in-all"><svg t="1615609432254" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1514" width="80" height="80"><path d="M119.049445 308.054588a496.562 165.864 30 1 0 860.070613 496.562 496.562 165.864 30 1 0-860.070613-496.562Z" fill="#80CFF4" p-id="1515"></path><path d="M546.378 1023.114c-50.304 0-96.306-54.79-129.534-154.274-31.754-95.07-49.244-221.226-49.244-355.218s17.49-260.144 49.246-355.22c33.228-99.48 79.23-154.264 129.534-154.264 50.302 0 96.304 54.786 129.534 154.264 31.758 95.078 49.246 221.23 49.246 355.22 0 133.992-17.492 260.148-49.246 355.218-33.23 99.488-79.234 154.274-129.536 154.274z m0-993.146c-73.864 0-152.946 194.344-152.946 483.656 0 289.308 79.082 483.656 152.946 483.656 73.866 0 152.95-194.348 152.95-483.656-0.002-289.312-79.086-483.656-152.95-483.656z" p-id="1516"></path><path d="M215.344 813.43c-55.07 0-93.176-15.582-110.196-45.058-25.152-43.562-0.708-110.796 68.83-189.312 66.458-75.042 166.968-153.264 283.01-220.262 154.886-89.428 315.982-144.978 420.42-144.978 55.072 0 93.18 15.584 110.2 45.062 25.152 43.566 0.706 110.796-68.832 189.314-66.458 75.04-166.964 153.258-283.008 220.262-154.892 89.42-315.99 144.972-420.424 144.972z m662.064-573.78c-100.166 0-256.312 54.226-407.506 141.518C219.352 525.824 90.584 691.484 127.52 755.458c15.338 26.566 56.226 32.144 87.826 32.144 100.166 0 256.31-54.226 407.506-141.52 113.696-65.64 211.924-142.002 276.586-215.016 60.692-68.524 84.67-126.578 65.798-159.27-15.34-26.57-56.228-32.146-87.828-32.146z" p-id="1517"></path><path d="M877.408 813.43c-104.438 0-265.534-55.55-420.418-144.972-116.042-67.004-216.55-145.222-283.008-220.264-69.538-78.516-93.984-145.75-68.83-189.314 17.02-29.48 55.126-45.062 110.2-45.062 104.432 0 265.528 55.552 420.416 144.978 116.042 66.998 216.548 145.222 283.008 220.26 69.542 78.52 93.986 145.75 68.832 189.308-17.02 29.484-55.128 45.066-110.2 45.066z m-662.058-573.78c-31.6 0-72.488 5.576-87.83 32.146-18.874 32.692 5.106 90.744 65.796 159.274 64.664 73.014 162.89 149.372 276.588 215.016 151.192 87.29 307.332 141.516 407.502 141.516 31.6 0 72.49-5.578 87.828-32.148 18.878-32.692-5.106-90.742-65.798-159.27-64.662-73.012-162.892-149.372-276.586-215.016-151.192-87.292-307.338-141.518-407.5-141.518z" p-id="1518"></path><path d="M259.54 51.118a14.782 14.782 0 0 1-9.29-3.3 14.652 14.652 0 0 1-5.384-9.928 14.672 14.672 0 0 1 3.22-10.828 14.692 14.692 0 0 1 11.466-5.464c3.37 0 6.67 1.17 9.292 3.294 6.318 5.128 7.286 14.442 2.162 20.762a14.698 14.698 0 0 1-11.466 5.464z m0.012-26.938c-3.692 0-7.14 1.644-9.462 4.508a12.096 12.096 0 0 0-2.654 8.932 12.08 12.08 0 0 0 4.44 8.188 12.192 12.192 0 0 0 7.662 2.722 12.14 12.14 0 0 0 9.462-4.506 12.194 12.194 0 0 0-1.784-17.126 12.066 12.066 0 0 0-7.664-2.718z" fill="#F18D00" p-id="1519"></path><path d="M78.344 41.29m-40.402 0a40.402 40.402 0 1 0 80.804 0 40.402 40.402 0 1 0-80.804 0Z" fill="#36B8F2" p-id="1520"></path><path d="M74.88 106.51a48.266 48.266 0 0 1-30.302-10.752 47.854 47.854 0 0 1-17.564-32.4 47.84 47.84 0 0 1 10.494-35.328 47.974 47.974 0 0 1 37.424-17.82 48.222 48.222 0 0 1 30.298 10.754c9.99 8.098 16.226 19.606 17.562 32.4s-2.39 25.338-10.49 35.326a47.98 47.98 0 0 1-37.422 17.82z m0.052-80.8c-9.904 0-19.16 4.404-25.386 12.086a32.446 32.446 0 0 0-7.116 23.956 32.434 32.434 0 0 0 11.912 21.972 32.274 32.274 0 0 0 20.542 7.292 32.54 32.54 0 0 0 25.386-12.086 32.422 32.422 0 0 0 7.11-23.956 32.436 32.436 0 0 0-11.908-21.972 32.27 32.27 0 0 0-20.54-7.292zM173.798 45.346a5.164 5.164 0 0 1-0.778-10.27l24.936-3.824a5.168 5.168 0 0 1 1.566 10.214l-24.938 3.822a5.492 5.492 0 0 1-0.786 0.058z" p-id="1521"></path><path d="M188.176 55.902a5.17 5.17 0 0 1-5.102-4.386l-3.822-24.938a5.168 5.168 0 0 1 10.214-1.566l3.822 24.938a5.17 5.17 0 0 1-5.112 5.952z" p-id="1522"></path><path d="M828.736 933.464H761.4a7.746 7.746 0 0 1-7.748-7.75 7.748 7.748 0 0 1 7.748-7.75h67.336a7.75 7.75 0 0 1 0 15.5z" fill="#E81F1F" p-id="1523"></path><path d="M795.066 967.128a7.746 7.746 0 0 1-7.748-7.746v-67.336a7.748 7.748 0 1 1 15.498 0v67.336a7.744 7.744 0 0 1-7.75 7.746z" fill="#E81F1F" p-id="1524"></path><path d="M883.948 925.716m-21.884 0a21.884 21.884 0 1 0 43.768 0 21.884 21.884 0 1 0-43.768 0Z" fill="#58B530" p-id="1525"></path><path d="M956.786 907.106a5.138 5.138 0 0 1-3.472-1.344l-21.78-19.782a5.164 5.164 0 1 1 6.944-7.648l21.78 19.782a5.168 5.168 0 0 1-3.472 8.992z" fill="#36B8F2" p-id="1526"></path><path d="M936.004 908.11a5.168 5.168 0 0 1-3.822-8.644l19.782-21.782a5.166 5.166 0 1 1 7.646 6.944l-19.782 21.786a5.148 5.148 0 0 1-3.824 1.696z" fill="#36B8F2" p-id="1527"></path></svg></i>')
+        var animate = (state) => {
+            $all.find('svg').animate({
+                'height': (state == 1 ? 70 : 80) + 'px',
+                'width': (state == 1 ? 70 : 80) + 'px'
+            });
+            $body.find('.plug-in').each((index, item) => {
+                if (state == 1)
+                    $(item).animate({
+                        'opacity': 1,
+                        'top': (100 + index * 100) + 'px'
+                    });
+                else
+                    $(item).animate({
+                        'opacity': 0,
+                        'top': 0 + 'px'
+                    });
+            });
+        };
+
+        if ($all.length == 0) {
+            $all = $('<i title="展开拓展功能" class="plug-in-all">' + defaultSvg.main + '</i>')
                 .appendTo($body)
                 .on('click', (e) => {
-                    var open = $(e.currentTarget).data('open');
-                    $(e.currentTarget).data('open', open == 1 ? 0 : 1)
-                    $(e.currentTarget).attr('title', open == 1 ? '展开拓展功能' : '收起拓展功能');
-                    $(e.currentTarget.children[0]).animate({ 'height': (open == 1 ? 80 : 70) + 'px', 'width': (open == 1 ? 80 : 70) + 'px' });
-                    $(e.currentTarget.parentElement).find('.plug-in').each((index, item) => {
-                        if (open == 1)
-                            $(item).animate({ 'opacity': 0, 'top': 0 + 'px' });
-                        else
-                            $(item).animate({ 'opacity': 1, 'top': (100 + index * 100) + 'px' });
-                    });
+                    var $e = $(e.currentTarget);
+                    var state = $e.data('state');
+                    $e.data('state', state == 1 ? 0 : 1)
+                    $e.attr('title', state == 1 ? '展开拓展功能' : '收起拓展功能');
+                    animate(state == 1 ? 0 : 1);
                 });
 
             //提醒
             var attention = (s = 0) => {
                 if (s > 10)
                     return;
-                $('.plug-in-all svg').animate({ 'height': (s % 2 != 0 ? 100 : 80) + 'px', 'width': (s % 2 != 0 ? 100 : 80) + 'px' }, 390, () => { attention(++s) });
+                $all.find('svg').animate({ 'height': (s % 2 != 0 ? 100 : 80) + 'px', 'width': (s % 2 != 0 ? 100 : 80) + 'px' }, 390, () => { attention(++s) });
             }
+
             attention(1);
         }
 
-        if ($('#plug-in-' + name).length == 0)
+        if ($('#plug-in-' + name).length == 0) {
             $('<i title="{title}" class="plug-in" id="plug-in-{name}">{svg}</i>'
-                .format({ name: name, title: title, svg: svg }))
+                .format({ name: name, title: title, svg: svg || defaultSvg.default }))
                 .appendTo($body)
                 .on('click', (e) => { fun(name, e); });
+
+            if ($all.data('state') == 1) {
+                animate(1);
+            }
+        }
         else
             $('#plug-in-' + name)
                 .empty()
-                .html(svg)
+                .html(svg || defaultSvg.default)
                 .attr('title', title)
                 .off('click')
                 .on('click', (e) => { fun(name, e); });
     }
 }
 
-var callback = function () {
-    //返回顶部
-    var $scrollToTop = $('<i title="返回顶部" class="scrollToTop" ><svg t="1615613258516" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="32909" width="80" height="80"><path d="M869.477693 469.30536L554.231089 22.857856c-19.341263-27.429428-65.152883-27.397459-84.494147 0L154.522307 469.30536a51.598014 51.598014 0 0 0-3.676439 53.644033c8.919359 17.199338 26.534295 27.908963 45.939496 27.908963h185.740064v296.704567a23.976773 23.976773 0 0 0 47.953545 0v-319.6903a23.497237 23.497237 0 0 0-2.014048-9.494802 23.880865 23.880865 0 0 0-22.250445-15.47301H196.753395c-0.575443 0-2.30177 0-3.324779-2.014049-1.054978-2.046018-0.063938-3.452655 0.255752-3.932191l315.214636-446.447504a3.772346 3.772346 0 0 1 6.138054 0l315.246605 446.447504c0.31969 0.479535 1.342699 1.886173 0.255752 3.900222-1.054978 2.014049-2.749337 2.014049-3.324779 2.014049h-208.565952l-0.159845 0.031969-0.159845-0.031969a23.976773 23.976773 0 0 0-23.976773 23.976772v263.520715a23.976773 23.976773 0 0 0 47.953545 0V550.826387h184.90887c19.373232 0 36.988168-10.709625 45.907527-27.908963a51.470138 51.470138 0 0 0-3.64447-53.612064zM618.360963 893.534389a23.976773 23.976773 0 0 0-23.976773 23.976772v81.552996a23.976773 23.976773 0 0 0 47.953545 0V917.511161a23.976773 23.976773 0 0 0-23.976772-23.976772z" fill="#438CFF" p-id="32910"></path><path d="M577.24879 288.232774m-31.96903 0a31.96903 31.96903 0 1 0 63.93806 0 31.96903 31.96903 0 1 0-63.93806 0Z" fill="#438CFF" p-id="32911"></path></svg></i>')
-        .appendTo($("body"))
-        .on('click', (e) => { $(document).scrollTop(0); });
+if (!window.onDomLoaded) {
+    var isLoaded = null,
+        funs = [];
 
-    $(window).scroll(function (e) {
-        h = $(window).height();
-        t = $(document).scrollTop();
-        if (t > h) {
-            $scrollToTop.show();
-        } else {
-            $scrollToTop.hide();
-        }
-    });
+    var state = document.readyState === "complete" || (document.readyState !== "loading" && !document.documentElement.doScroll);
 
-    var loaded = () => {
-        $('.operation-filter-input').attr('placeholder', '标签名称（区分大小写）')
-            .on('change', (e) => {
-                generateTags();
-            });
+    state ? 1 : document.addEventListener("DOMContentLoaded", () => { state = 1; });
 
-        //生成左侧标签
-        var generateTags = () => {
-            var $tagBody = $('.tagsBody');
-            if ($tagBody.length == 0)
-                $tagBody = $('<div class="tagsBody"></div>')
-                    .appendTo($('body'));
+    /**
+     * 网页加载完成
+     * @param {any} done 回调
+     */
+    window.onDomLoaded = (done) => {
+        funs.push(done);
+        isLoaded != null ? 1 : (isLoaded = setInterval(() => {
+            state ? (window.clearInterval(isLoaded), isLoaded = null, funs.forEach((item, index) => { item(); }), funs = []) : 0;
+        }, 100));
+    }
+}
 
-            $('.opblock-tag').each((index, item) => {
-                var $tag = $('<span title="{1}">{0}</span>'.format(item.dataset['tag'], $(item).find('.renderedMarkdown p').text()))
-                    .css({ 'top': (item.offsetTop + 5) + 'px' })
-                    .appendTo($tagBody)
-                    .on('click', (e) => {
-                        $(document).scrollTop(item.offsetTop);
-                    });
+if (!window.onInformationLoaded) {
+    var isLoaded = null,
+        funs = [];
 
-                $(window).scroll(function (e) {
-                    var current = index * 75;
-                    var valueA = item.offsetTop - $(document).scrollTop();
-                    var valueB = valueA - current;
-                    $tag.css({
-                        'top': (valueB > 0 ? valueA : current + 10) + 'px'
-                    });
-
-                    if (valueB <= 0 && current >= window.outerHeight) {
-                        $('.tagsBody span').each((indexB, itemB) => {
-                            $(itemB).css({ 'top': (indexB - 1) * 75 - current + window.outerHeight + 'px' });
-                        });
-                    }
-                });
-            });
-        };
-
-        //监听HTML结构发生的变化
-        var mutationObserver = window.MutationObserver
-            || window.WebKitMutationObserver
-            || window.MozMutationObserver;//浏览器兼容
-
-        var observer = new mutationObserver((mutations) => {
-            for (var index in mutations) {
-                if (mutations[index].type == 'childList') {
-                    $('.tagsBody').empty();
-                    generateTags();
-                    break;
-                }
-            }
-        });
-        observer.observe($(".opblock-tag-section")[0].parentElement.parentElement, { attributes: false, childList: true });
-
-        generateTags();
-    };
-
-    var isLoaded = setInterval(() => {
-        $('.information-container').length != 0 ? (window.clearInterval(isLoaded), loaded()) : 0;
-    }, 100);
-};
-
-document.readyState === "complete" || (document.readyState !== "loading" && !document.documentElement.doScroll) ? callback() : document.addEventListener("DOMContentLoaded", callback);
+    /**
+     * Api文档加载完成
+     * @param {any} done 回调
+     */
+    window.onInformationLoaded = (done) => {
+        funs.push(done);
+        isLoaded != null ? 1 : (isLoaded = setInterval(() => {
+            $('.information-container').length != 0 ? (window.clearInterval(isLoaded), isLoaded = null, funs.forEach((item, index) => { item(); }), funs = []) : 0;
+        }, 100));
+    }
+}

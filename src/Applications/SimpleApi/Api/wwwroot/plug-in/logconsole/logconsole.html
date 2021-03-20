@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title></title>
+    <title>日志中心</title>
     <script src="../../vue/vue.global.prod.js"></script>
 
     <script src="../../utils/axios.min.js"></script>
@@ -37,32 +37,83 @@
                             </div>
                             <el-switch class="item"
                                        v-model="logReal.scroll"
-                                       @change="logReal.scrollLocked = !logReal.scrollLocked"
-                                       active-text="滚动">
+                                       active-color="#13ce66"
+                                       inactive-color="#ff4949"
+                                       active-text="滚动"
+                                       inactive-text="停留"
+                                       @change="logReal.scrollLocked = !logReal.scrollLocked">
                             </el-switch>
                             <el-switch class="item"
                                        v-model="logReal.receive"
-                                       active-text="接收数据">
+                                       active-color="#13ce66"
+                                       inactive-color="#ff4949"
+                                       active-text="启动"
+                                       inactive-text="暂停"
+                                       @change="realReceiveChange">
                             </el-switch>
                             <el-button class="item"
                                        type="danger"
                                        @click="logReal.list = []">清空</el-button>
                         </div>
                         <div class="filter">
+                            <el-collapse v-model="activeNames">
+                                <el-collapse-item title="级别 & 类型 & 过滤 & 筛选" name="1">
+                                    <el-checkbox :indeterminate="logReal.isLevelIndeterminate" v-model="logReal.checkAllLevels" @change="realAllLevel">所有日志级别</el-checkbox>
+                                    <div style="margin: 15px 0;"></div>
+                                    <el-checkbox-group v-model="logReal.levels" @change="realLevelChange">
+                                        <el-checkbox v-for="level in logConfig.levels" :label="level" :key="level">{{level}}</el-checkbox>
+                                    </el-checkbox-group>
+                                    <hr />
+                                    <el-checkbox :indeterminate="logReal.isTypeIndeterminate" v-model="logReal.checkAllTypes" @change="realAllType">所有日志类型</el-checkbox>
+                                    <div style="margin: 15px 0;"></div>
+                                    <el-checkbox-group v-model="logReal.types" @change="realTypeChange">
+                                        <el-checkbox v-for="type in logConfig.types" :label="type" :key="type">{{type}}</el-checkbox>
+                                    </el-checkbox-group>
+                                    <hr />
+                                    <el-tag :key="tag"
+                                            v-for="filter in logReal.filters"
+                                            closable
+                                            :disable-transitions="false"
+                                            @close="handleFilterClose(filter)">
+                                        {{filter}}
+                                    </el-tag>
+                                    <el-input class="input-new-tag"
+                                              title="按下回车键确认新增"
+                                              v-if="logReal.filterInputVisible"
+                                              v-model="logReal.filterInputValue"
+                                              ref="saveFilterInput"
+                                              size="small"
+                                              @keyup.enter.native="handleFilterInputConfirm">
+                                    </el-input>
+                                    <el-button v-else class="button-new-tag" size="small" @click="showFilterInput">+ 新增过滤条件</el-button>
+                                    <hr />
+                                    <el-tag :key="tag"
+                                            v-for="keyword in logReal.keywords"
+                                            closable
+                                            :disable-transitions="false"
+                                            @close="handleKeywordClose(keyword)">
+                                        {{keyword}}
+                                    </el-tag>
+                                    <el-input class="input-new-tag"
+                                              title="按下回车键确认新增"
+                                              v-if="logReal.keywordInputVisible"
+                                              v-model="logReal.keywordInputValue"
+                                              ref="saveKeywordInput"
+                                              size="small"
+                                              @keyup.enter.native="handleKeywordInputConfirm">
+                                    </el-input>
+                                    <el-button v-else class="button-new-tag" size="small" @click="showKeywordInput">+ 新增筛选条件</el-button>
+                                </el-collapse-item>
+                            </el-collapse>
                             <el-input type="textarea"
                                       :autosize="{ minRows: 1, maxRows: 6}"
-                                      placeholder="过滤输出内容"
-                                      v-model="logReal.filter">
-                            </el-input>
-                            <el-input type="textarea"
-                                      :autosize="{ minRows: 1, maxRows: 6}"
-                                      placeholder="筛选输出内容"
+                                      placeholder="搜索输出的内容"
                                       v-model="logReal.search">
                             </el-input>
                         </div>
                         <div class="block" ref="realLog" @mouseenter="mouseenterConsole" @mouseleave="mouseleaveConsole">
                             <el-timeline>
-                                <el-timeline-item v-for="(log, index) in logReal.list.filter(data => (!logReal.filter || data.content.includes(logReal.filter)) && (!logReal.search || !data.content.includes(logReal.search)))"
+                                <el-timeline-item v-for="(log, index) in logReal.list.filter(data => !logReal.search || !data.content.includes(logReal.search))"
                                                   :key="index"
                                                   :icon="log.icon"
                                                   :type="log.type"

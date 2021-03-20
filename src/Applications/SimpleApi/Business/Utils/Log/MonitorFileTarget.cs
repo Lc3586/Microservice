@@ -6,6 +6,7 @@ using Model.Utils.Config;
 using Model.Utils.SignalR;
 using NLog;
 using NLog.Targets;
+using System.Threading.Tasks;
 
 namespace Business.Utils.Log
 {
@@ -21,17 +22,17 @@ namespace Business.Utils.Log
             return formattedMessage;
         }
 
-        IHubContext<LogHub> LogHub
+        LogForward LogForward
         {
             get
             {
-                if (_LogHub == null)
-                    _LogHub = AutofacHelper.GetService<IHubContext<LogHub>>();
-                return _LogHub;
+                if (_LogForward == null)
+                    _LogForward = AutofacHelper.GetService<LogForward>();
+                return _LogForward;
             }
         }
 
-        IHubContext<LogHub> _LogHub;
+        LogForward _LogForward;
 
         /// <summary>
         /// 监听
@@ -43,12 +44,15 @@ namespace Business.Utils.Log
             try
             {
                 logEvent.Properties.TryGetValue(NLoggerConfig.LogType, out object logType);
-                await LogHub.Clients.All.SendCoreAsync(LogHubMethod.Log,
-                    new object[] {
-                        logEvent.TimeStamp,
-                        logEvent.Level.ToString(),
-                        logType,
-                        formattedMessage });
+                LogForward.Add(new LogInfo
+                {
+                    CreateTime = logEvent.TimeStamp,
+                    Level = logEvent.Level.ToString(),
+                    LogType = (string)logType,
+                    Data = formattedMessage
+                });
+
+                await Task.CompletedTask;
             }
 #pragma warning disable CA1031 // Do not catch general exception types
             catch

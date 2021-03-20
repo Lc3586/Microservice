@@ -4,15 +4,142 @@
         <name>Business</name>
     </assembly>
     <members>
+        <member name="T:Business.Hub.LogForward">
+            <summary>
+            SignalR日志转发
+            </summary>
+        </member>
+        <member name="F:Business.Hub.LogForward.LogQueue">
+            <summary>
+            数据
+            </summary>
+            <remarks>
+            </remarks>
+        </member>
+        <member name="M:Business.Hub.LogForward.Start">
+            <summary>
+            启动
+            </summary>
+        </member>
+        <member name="M:Business.Hub.LogForward.Shutdown">
+            <summary>
+            关闭
+            </summary>
+        </member>
+        <member name="M:Business.Hub.LogForward.Add(Model.Utils.SignalR.LogInfo)">
+            <summary>
+            新增转发数据
+            </summary>
+            <param name="log">日志</param>
+        </member>
+        <member name="M:Business.Hub.LogForward.Run">
+            <summary>
+            运行
+            </summary>
+        </member>
+        <member name="M:Business.Hub.LogForward.Processing">
+            <summary>
+            处理转发
+            </summary>
+        </member>
         <member name="T:Business.Hub.LogHub">
             <summary>
             日志中心
             </summary>
         </member>
+        <member name="F:Business.Hub.LogHub.Settings">
+            <summary>
+            客户端设置
+            </summary>
+        </member>
+        <member name="M:Business.Hub.LogHub.Start">
+            <summary>
+            开始接收
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Hub.LogHub.Pause">
+            <summary>
+            暂停接收
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Hub.LogHub.AddLevels(System.String[])">
+            <summary>
+            设置级别
+            </summary>
+            <param name="levels"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Hub.LogHub.RemoveLevels(System.String[])">
+            <summary>
+            移除级别
+            </summary>
+            <remarks>参数为空时清除全部</remarks>
+            <param name="levels"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Hub.LogHub.AddTypes(System.String[])">
+            <summary>
+            设置类型
+            </summary>
+            <param name="types"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Hub.LogHub.RemoveTypes(System.String[])">
+            <summary>
+            移除类型
+            </summary>
+            <remarks>参数为空时清除全部</remarks>
+            <param name="types"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Hub.LogHub.AddFilters(System.String[])">
+            <summary>
+            设置过滤
+            </summary>
+            <param name="filters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Hub.LogHub.RemoveFilters(System.String[])">
+            <summary>
+            移除过滤
+            </summary>
+            <remarks>参数为空时清除全部</remarks>
+            <param name="filters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Hub.LogHub.AddKeywords(System.String[])">
+            <summary>
+            设置关键词
+            </summary>
+            <param name="keywords"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Hub.LogHub.RemoveKeywords(System.String[])">
+            <summary>
+            移除关键词
+            </summary>
+            <remarks>参数为空时清除全部</remarks>
+            <param name="keywords"></param>
+            <returns></returns>
+        </member>
         <member name="T:Business.Hub.WeChatServiceHub">
             <summary>
             微信服务集线器
             </summary>
+        </member>
+        <member name="F:Business.Hub.WeChatServiceHub.Settings">
+            <summary>
+            客户端设置
+            </summary>
+        </member>
+        <member name="M:Business.Hub.WeChatServiceHub.SetState(System.String)">
+            <summary>
+            设置state参数
+            </summary>
+            <param name="state"></param>
+            <returns></returns>
         </member>
         <member name="T:Business.Implementation.Common.EntryLogBusiness">
             <summary>
@@ -430,6 +557,27 @@
             获取State参数
             </summary>
             <param name="data">数据</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Interface.Common.IWeChatUserInfoBusiness.GetExplain(System.String)">
+            <summary>
+            获取操作说明
+            </summary>
+            <param name="state"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Interface.Common.IWeChatUserInfoBusiness.Confirm(System.String)">
+            <summary>
+            微信确认操作
+            </summary>
+            <param name="state"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Interface.Common.IWeChatUserInfoBusiness.Cancel(System.String)">
+            <summary>
+            微信取消操作
+            </summary>
+            <param name="state"></param>
             <returns></returns>
         </member>
         <member name="T:Business.Interface.Example.ISampleBusiness">
