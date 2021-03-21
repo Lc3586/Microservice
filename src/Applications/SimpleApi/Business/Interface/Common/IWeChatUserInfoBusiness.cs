@@ -32,6 +32,14 @@ namespace Business.Interface.Common
         string GetState(StateInfo data);
 
         /// <summary>
+        /// 系统用户登录
+        /// </summary>
+        /// <param name="state"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        Task UserLogin(string state, string token);
+
+        /// <summary>
         /// 获取操作说明
         /// </summary>
         /// <param name="state"></param>

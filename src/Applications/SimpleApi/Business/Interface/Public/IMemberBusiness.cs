@@ -81,8 +81,9 @@ namespace Business.Interface.System
         /// <summary>
         /// 登录
         /// </summary>
+        /// <param name="appId"></param>
         /// <param name="openId"></param>
-        AuthenticationInfo Login(string openId);
+        AuthenticationInfo WeChatLogin(string appId, string openId);
 
         /// <summary>
         /// 获取操作者详情

@@ -1,0 +1,44 @@
+﻿body {
+    text-align: center;
+}
+
+.el-row {
+    padding: 20px;
+}
+
+.block {
+    display: inline-block;
+    background-color: ghostwhite;
+    width: 20%;
+    margin: 20px;
+    padding: 10px 20px 15px 20px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    text-align: center;
+    vertical-align: top;
+}
+
+.demonstration {
+    display: block;
+    color: #8492a6;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.headimg {
+    width: 100%;
+}
+
+.male {
+    color: #409EFF;
+}
+
+.female {
+    color: #F56C6C;
+}
+
+.el-footer span {
+    font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace !important;
+    font-size: 30px;
+    color: white;
+}

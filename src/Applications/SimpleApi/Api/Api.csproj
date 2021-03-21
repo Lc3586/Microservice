@@ -385,22 +385,13 @@
     <Content Update="wwwroot\plug-in\wechat\confirm.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\plug-in\wechat\bindqrcode.css">
+    <Content Update="wwwroot\plug-in\wechat\qrcode.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\plug-in\wechat\bindqrcode.html">
+    <Content Update="wwwroot\plug-in\wechat\qrcode.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\plug-in\wechat\bindqrcode.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="wwwroot\plug-in\wechat\loginqrcode.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="wwwroot\plug-in\wechat\loginqrcode.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="wwwroot\plug-in\wechat\loginqrcode.js">
+    <Content Update="wwwroot\plug-in\wechat\qrcode.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="wwwroot\swagger\extensions\adminSite.js">
@@ -412,7 +403,7 @@
     <Content Update="wwwroot\swagger\extensions\quickNavigation.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\swagger\extensions\webSite.js">
+    <Content Update="wwwroot\swagger\extensions\wapSite.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="wwwroot\swagger\extensions\logConsole.js">

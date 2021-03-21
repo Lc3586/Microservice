@@ -39,7 +39,7 @@ window.onDomLoaded(() => {
         ],
         () => {
             var open = (name, e) => {
-                window.showDialog(
+                var close = window.showDialog(
                     '输入参数',
                     [
                         ['input', '用户ID', ''],
@@ -49,7 +49,8 @@ window.onDomLoaded(() => {
                     {
                         '确认': {
                             'click': () => {
-                                var url = '/plug-in/wechat/bindqrcode.html?userId=' + $('#key_0').val() + '&asyncUserInfo=' + $('#key_1').val() + '&size=' + $('#key_2').val();
+                                close();
+                                var url = '/plug-in/wechat/qrcode.html?method=bind&userId=' + $('#key_0').val() + '&asyncUserInfo=' + $('#key_1').val() + '&size=' + $('#key_2').val();
                                 window.showDialog(
                                     '系统用户绑定微信',
                                     [

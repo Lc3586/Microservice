@@ -726,6 +726,8 @@ if (!window.showDialog) {
                 .draggable({ handle: ".modal-ux-header", scroll: false })
                 .find('.modal-ux-header')
                 .css({ 'cursor': 'move' });
+
+        return close;
     };
 }
 

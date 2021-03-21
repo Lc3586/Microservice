@@ -320,9 +320,9 @@ namespace Business.Implementation.Public
                 throw ex;
         }
 
-        public AuthenticationInfo Login(string openId)
+        public AuthenticationInfo WeChatLogin(string appId, string openId)
         {
-            var member = Repository.Where(o => o.WeChatUserInfos.AsSelect().Where(p => p.OpenId == openId).Any())
+            var member = Repository.Where(o => o.WeChatUserInfos.AsSelect().Where(p => p.AppId == appId && p.OpenId == openId).Any())
                 .ToOne(o => new { o.Id, o.Account, o.Name, o.Nickname, o.Sex, o.Face, o.Enable });
 
             if (member == null)

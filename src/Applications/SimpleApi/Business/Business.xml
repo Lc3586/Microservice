@@ -313,6 +313,13 @@
             <param name="authenticationInfo"></param>
             <returns></returns>
         </member>
+        <member name="M:Business.Implementation.Common.WeChatOAuthHandler.UserLogin(Model.Utils.SampleAuthentication.SampleAuthenticationDTO.AuthenticationInfo)">
+            <summary>
+            系统用户登录
+            </summary>
+            <param name="authenticationInfo"></param>
+            <returns></returns>
+        </member>
         <member name="T:Business.Implementation.Example.SampleBusiness">
             <summary>
             操作记录业务类
@@ -559,6 +566,14 @@
             <param name="data">数据</param>
             <returns></returns>
         </member>
+        <member name="M:Business.Interface.Common.IWeChatUserInfoBusiness.UserLogin(System.String,System.String)">
+            <summary>
+            系统用户登录
+            </summary>
+            <param name="state"></param>
+            <param name="token"></param>
+            <returns></returns>
+        </member>
         <member name="M:Business.Interface.Common.IWeChatUserInfoBusiness.GetExplain(System.String)">
             <summary>
             获取操作说明
@@ -700,10 +715,11 @@
             <param name="enable">设置状态</param>
             <returns></returns>
         </member>
-        <member name="M:Business.Interface.System.IMemberBusiness.Login(System.String)">
+        <member name="M:Business.Interface.System.IMemberBusiness.WeChatLogin(System.String,System.String)">
             <summary>
             登录
             </summary>
+            <param name="appId"></param>
             <param name="openId"></param>
         </member>
         <member name="M:Business.Interface.System.IMemberBusiness.GetOperatorDetail(System.String)">
@@ -1601,10 +1617,11 @@
             <param name="account"></param>
             <param name="password"></param>
         </member>
-        <member name="M:Business.Interface.System.IUserBusiness.Login(System.String)">
+        <member name="M:Business.Interface.System.IUserBusiness.WeChatLogin(System.String,System.String)">
             <summary>
             登录
             </summary>
+            <param name="appId"></param>
             <param name="openId"></param>
         </member>
         <member name="M:Business.Interface.System.IUserBusiness.GetOperatorDetail(System.String)">

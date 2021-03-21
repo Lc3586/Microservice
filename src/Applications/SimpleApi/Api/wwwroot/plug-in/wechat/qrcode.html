@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>扫码绑定账号</title>
+    <title>扫码操作</title>
     <script src="../../vue/vue.global.prod.js"></script>
 
     <script src="../../utils/axios.min.js"></script>
@@ -19,8 +19,8 @@
 
     <script src="../../utils/signalr.min.js"></script>
 
-    <link href="bindqrcode.css" rel="stylesheet" />
-    <script src="bindqrcode.js"></script>
+    <link href="qrcode.css" rel="stylesheet" />
+    <script src="qrcode.js"></script>
 </head>
 <body>
     <div id="app">
@@ -40,24 +40,23 @@
                 </el-row>
                 <el-row v-show="info.show">
                     <el-col :span="24">
-                        <div class="demo-image__placeholder">
-                            <div class="block">
-                                <span class="demonstration">
-                                    {{info.nickname}}
-                                    <i class="el-icon-user-solid"
-                                       v-bind:class="{
+                        <div class="block">
+                            <span class="demonstration">
+                                {{info.nickname}}
+                                <i class="el-icon-user-solid"
+                                   v-bind:class="{
                                        'male': info.sex=='male',
                                        'female': info.sex=='female'
                                    }"></i>
-                                </span>
-                                <el-image :src="info.headimgUrl">
-                                    <template #placeholder>
-                                        <div class="image-slot">
-                                            头像加载中<span class="dot">...</span>
-                                        </div>
-                                    </template>
-                                </el-image>
-                            </div>
+                            </span>
+                            <el-image class="headimg"
+                                      :src="info.headimgUrl">
+                                <template #placeholder>
+                                    <div class="image-slot">
+                                        头像加载中<span class="dot">...</span>
+                                    </div>
+                                </template>
+                            </el-image>
                         </div>
                     </el-col>
                 </el-row>

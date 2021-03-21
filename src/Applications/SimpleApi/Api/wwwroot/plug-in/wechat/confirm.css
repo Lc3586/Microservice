@@ -10,8 +10,16 @@ body {
     padding-bottom: 20px;
 }
 
+.row_main_icon {
+    height: 30vh;
+    margin-bottom: 10px;
+    display: flex;
+    display: -webkit-flex;
+    align-items: flex-end;
+}
+
 .row_main {
-    height: 45vh;
+    height: 30vh;
     margin-bottom: 10px;
     display: flex;
     display: -webkit-flex;

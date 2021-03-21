@@ -39,8 +39,7 @@ window.onDomLoaded(() => {
         ],
         () => {
             var open = (name, e) => {
-
-                window.showDialog(
+                var close = window.showDialog(
                     '输入参数',
                     [
                         ['input', '二维码尺寸', '500']
@@ -48,7 +47,8 @@ window.onDomLoaded(() => {
                     {
                         '确认': {
                             'click': () => {
-                                var url = '/plug-in/wechat/loginqrcode.html?size=' + $('#key_0').val();
+                                close();
+                                var url = '/plug-in/wechat/qrcode.html?method=login&size=' + $('#key_0').val();
                                 window.showDialog(
                                     '系统用户微信登录',
                                     [

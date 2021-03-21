@@ -1,13 +1,4 @@
-﻿using Microservice.Library.Cache.Gen;
-using Microservice.Library.Cache.Services;
-using Microservice.Library.Container;
-using Microservice.Library.WeChat.Extension;
-using Microsoft.AspNetCore.SignalR;
-using Model.Utils.SignalR;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using SignalrHub = Microsoft.AspNetCore.SignalR.Hub;
 

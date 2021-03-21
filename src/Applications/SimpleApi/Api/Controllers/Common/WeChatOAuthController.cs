@@ -143,7 +143,7 @@ namespace Api.Controllers
         [HttpGet("user-login-url")]
         [AllowAnonymous]
         [SwaggerResponse((int)HttpStatusCode.OK, "链接信息", typeof(UrlInfo))]
-        public async Task<object> UserLogin(string returnUrl)
+        public async Task<object> GetUserLoginUrl(string returnUrl)
         {
             var state = WeChatUserInfoBusiness.GetState(new StateInfo
             {
@@ -165,13 +165,26 @@ namespace Api.Controllers
         }
 
         /// <summary>
+        /// 系统用户登录
+        /// </summary>
+        /// <param name="state"></param>
+        /// <param name="token"></param>
+        [HttpGet("user-login/{state}/{token}")]
+        [AllowAnonymous]
+        public async Task<object> UserLogin(string state, string token)
+        {
+            await WeChatUserInfoBusiness.UserLogin(state, token);
+            return await Task.FromResult(Success());
+        }
+
+        /// <summary>
         /// 获取用于更新系统用户微信用户信息的链接
         /// </summary>
         /// <param name="userId">用户Id</param>
         /// <param name="returnUrl">重定向地址</param>
         [HttpGet("user-update-url/{userId}")]
         [SwaggerResponse((int)HttpStatusCode.OK, "链接信息", typeof(UrlInfo))]
-        public async Task<object> UpdateUserWeChatUserInfo(string userId, string returnUrl)
+        public async Task<object> GetUpdateUserWeChatUserInfoUrl(string userId, string returnUrl)
         {
             var state = WeChatUserInfoBusiness.GetState(new StateInfo
             {

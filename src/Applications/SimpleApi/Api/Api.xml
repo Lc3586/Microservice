@@ -420,13 +420,20 @@
             <param name="asyncUserInfo">同步微信信息至用户信息, 默认不同步</param>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.WeChatOAuthController.UserLogin(System.String)">
+        <member name="M:Api.Controllers.WeChatOAuthController.GetUserLoginUrl(System.String)">
             <summary>
             获取用于系统用户登录的链接
             </summary>
             <param name="returnUrl">重定向地址</param>
         </member>
-        <member name="M:Api.Controllers.WeChatOAuthController.UpdateUserWeChatUserInfo(System.String,System.String)">
+        <member name="M:Api.Controllers.WeChatOAuthController.UserLogin(System.String,System.String)">
+            <summary>
+            系统用户登录
+            </summary>
+            <param name="state"></param>
+            <param name="token"></param>
+        </member>
+        <member name="M:Api.Controllers.WeChatOAuthController.GetUpdateUserWeChatUserInfoUrl(System.String,System.String)">
             <summary>
             获取用于更新系统用户微信用户信息的链接
             </summary>

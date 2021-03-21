@@ -16,6 +16,16 @@
             main = this;
             getParam();
         },
+        beforeDestroy() {
+            if (!main.finish) {
+                cancel();
+                main.finish = true;
+            }
+        },
+        destroyed() {
+            if (!main.finish)
+                cancel();
+        },
         methods: {
             confirm: confirm,
             cancel: cancel
@@ -29,6 +39,8 @@
         return {
             loading: true,
             explain: '',
+            inform: '请确认这是您本人的操作',
+            close: false,
             finish: false,
             canfirmDisabled: true,
             cancelDisabled: true,
@@ -53,6 +65,8 @@
                 main.explain = response.data.Data;
             }
             else {
+                main.inform = '请重新扫码';
+                main.close = true;
                 vant.Dialog.alert({
                     title: '错误',
                     message: response.data.Msg,
@@ -62,6 +76,8 @@
             }
         }).catch(error => {
             main.loading = false;
+            main.inform = '请重新扫码';
+            main.close = true;
             vant.Dialog.alert({
                 title: '错误',
                 message: '获取数据失败.',

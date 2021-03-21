@@ -50,7 +50,8 @@ namespace Business.Implementation.Common
             IMemberBusiness memberBusiness,
             IUserBusiness userBusiness,
             IFileBusiness fileBusiness,
-            IHubContext<WeChatServiceHub> weChatServiceHub)
+            IHubContext<WeChatServiceHub> weChatServiceHub,
+            IHttpContextAccessor httpContextAccessor)
         {
             Orm = freeSqlProvider.GetFreeSql();
             Repository = Orm.GetRepository<Common_WeChatUserInfo, string>();
@@ -65,6 +66,7 @@ namespace Business.Implementation.Common
             UserBusiness = userBusiness;
             FileBusiness = fileBusiness;
             WeChatServiceHub = weChatServiceHub;
+            HttpContextAccessor = httpContextAccessor;
         }
 
         #endregion
@@ -96,6 +98,8 @@ namespace Business.Implementation.Common
         readonly IFileBusiness FileBusiness;
 
         readonly IHubContext<WeChatServiceHub> WeChatServiceHub;
+
+        readonly IHttpContextAccessor HttpContextAccessor;
 
         /// <summary>
         /// 创建微信用户信息
@@ -395,6 +399,51 @@ namespace Business.Implementation.Common
             await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)));
         }
 
+        /// <summary>
+        /// 系统用户登录
+        /// </summary>
+        /// <param name="authenticationInfo"></param>
+        /// <returns></returns>
+        async Task UserLogin(AuthenticationInfo authenticationInfo)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(nameof(AuthenticationInfo.Id), authenticationInfo.Id),
+
+                new Claim(ClaimTypes.Name, authenticationInfo.Account),
+
+                new Claim(nameof(AuthenticationInfo.UserType), authenticationInfo.UserType),
+
+                new Claim(ClaimTypes.GivenName, authenticationInfo.Nickname ?? string.Empty),
+                new Claim(ClaimTypes.Gender, authenticationInfo.Sex ?? string.Empty),
+
+                new Claim(nameof(AuthenticationInfo.Face), authenticationInfo.Face ?? string.Empty),
+
+                new Claim(ClaimTypes.AuthenticationMethod, "WeChatOAuth")
+            };
+
+            claims.AddRange(authenticationInfo.RoleTypes.Select(o => new Claim(ClaimTypes.Role, o)));
+
+            await HttpContextAccessor.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)));
+        }
+
+        string UpdateState(string state, StateInfo data)
+        {
+            Cache.SetCache(state, data, TimeSpan.FromMinutes(20), ExpireType.Absolute);
+            return state;
+        }
+
+        StateInfo CheckState(string state)
+        {
+            if (string.IsNullOrWhiteSpace(state))
+                throw new ApplicationException("state参数不可为空.");
+
+            if (!Cache.ContainsKey(state))
+                throw new ApplicationException("无效的state参数.");
+
+            return Cache.GetCache<StateInfo>(state);
+        }
+
         #endregion
 
         #region 外部接口
@@ -432,21 +481,9 @@ namespace Business.Implementation.Common
             return state;
         }
 
-        public string UpdateState(string state, StateInfo data)
-        {
-            Cache.SetCache(state, data, TimeSpan.FromMinutes(20), ExpireType.Absolute);
-            return state;
-        }
-
         public async Task Handler(HttpContext context, string appId, string openId, string scope, string state = null)
         {
-            if (string.IsNullOrWhiteSpace(state))
-                throw new ApplicationException("state参数不可为空.");
-
-            if (!Cache.ContainsKey(state))
-                throw new ApplicationException("无效的state参数.");
-
-            var stateInfo = Cache.GetCache<StateInfo>(state);
+            var stateInfo = CheckState(state);
 
             if (!Repository.Where(o => o.AppId == appId && o.OpenId == openId).Any())
             {
@@ -476,6 +513,9 @@ namespace Business.Implementation.Common
                     {
                         case WeChatStateType.系统用户登录:
                             var info = GetWeChatUserInfo(appId, openId);
+                            stateInfo.Data.Add("AppId", appId);
+                            stateInfo.Data.Add("OpenId", openId);
+                            UpdateState(state, stateInfo);
 
                             if (Hub.WeChatServiceHub.Settings.ContainsKey(state))
                                 await WeChatServiceHub.Clients
@@ -492,7 +532,7 @@ namespace Business.Implementation.Common
                                  });
                             goto next;
                         case WeChatStateType.会员登录:
-                            await MemberLogin(context, MemberBusiness.Login(openId));
+                            await MemberLogin(context, MemberBusiness.WeChatLogin(appId, openId));
                             Cache.RemoveCache(state);
                             break;
                         case WeChatStateType.系统用户绑定微信:
@@ -525,18 +565,12 @@ namespace Business.Implementation.Common
 
         public async Task Handler(HttpContext context, string appId, OAuthUserInfo userinfo, string state = null)
         {
+            var stateInfo = CheckState(state);
+
             if (!Repository.Where(o => o.AppId == appId && o.OpenId == userinfo.openid).Any())
                 throw new ApplicationException("微信信息不存在或已被移除.");
 
-            if (string.IsNullOrWhiteSpace(state))
-                throw new ApplicationException("state参数不可为空.");
-
-            if (!Cache.ContainsKey(state))
-                throw new ApplicationException("无效的state参数.");
-
             UpdateWeChatUserInfo(appId, userinfo);
-
-            var stateInfo = Cache.GetCache<StateInfo>(state);
 
             switch (stateInfo.Type)
             {
@@ -552,7 +586,7 @@ namespace Business.Implementation.Common
                     break;
                 case WeChatStateType.会员登录:
                     BindMember(appId, userinfo.openid, (bool)stateInfo.Data["AutoCreate"]);
-                    await MemberLogin(context, MemberBusiness.Login(userinfo.openid));
+                    await MemberLogin(context, MemberBusiness.WeChatLogin(appId, userinfo.openid));
                     break;
                 case WeChatStateType.微信信息同步至会员信息:
                     UpdateMember(stateInfo.Data["MemberId"].ToString(), appId, userinfo.openid);
@@ -588,15 +622,19 @@ namespace Business.Implementation.Common
             }
         }
 
+        public async Task UserLogin(string state, string token)
+        {
+            var stateInfo = CheckState(state);
+
+            if (stateInfo.Data["Token"].ToString() != token)
+                throw new ApplicationException("无效的token.");
+
+            await UserLogin(UserBusiness.WeChatLogin(stateInfo.Data["AppId"].ToString(), stateInfo.Data["OpenId"].ToString()));
+        }
+
         public async Task<string> GetExplain(string state)
         {
-            if (string.IsNullOrWhiteSpace(state))
-                throw new ApplicationException("state参数不可为空.");
-
-            if (!Cache.ContainsKey(state))
-                throw new ApplicationException("无效的state参数.");
-
-            var stateInfo = Cache.GetCache<StateInfo>(state);
+            var stateInfo = CheckState(state);
 
             return stateInfo.Type switch
             {
@@ -608,19 +646,15 @@ namespace Business.Implementation.Common
 
         public async Task Confirm(string state)
         {
-            if (string.IsNullOrWhiteSpace(state))
-                throw new ApplicationException("state参数不可为空.");
-
-            if (!Cache.ContainsKey(state))
-                throw new ApplicationException("无效的state参数.");
-
-            var stateInfo = Cache.GetCache<StateInfo>(state);
+            var stateInfo = CheckState(state);
 
             switch (stateInfo.Type)
             {
                 case WeChatStateType.系统用户登录:
-                    await SendConfirm();
-                    Cache.RemoveCache(state);
+                    var token = Guid.NewGuid().ToString().Replace("-", "");
+                    stateInfo.Data.Add("Token", token);
+                    UpdateState(state, stateInfo);
+                    await SendConfirm(token);
                     break;
                 case WeChatStateType.系统用户绑定微信:
                     var appId = stateInfo.Data["AppId"].ToString();
@@ -628,7 +662,7 @@ namespace Business.Implementation.Common
 
                     BindUser(stateInfo.Data["UserId"].ToString(), appId, openId);
 
-                    await SendConfirm();
+                    await SendConfirm(string.Empty);
                     Cache.RemoveCache(state);
                     break;
                 case WeChatStateType.会员登录:
@@ -639,24 +673,21 @@ namespace Business.Implementation.Common
             }
 
             //发送通知
-            async Task SendConfirm()
+            async Task SendConfirm(string token)
             {
                 if (Hub.WeChatServiceHub.Settings.ContainsKey(state))
                     await WeChatServiceHub.Clients
                      .Client(Hub.WeChatServiceHub.Settings[state])
-                     ?.SendAsync(WeChatServiceHubMethod.Confirmed);
+                     ?.SendCoreAsync(WeChatServiceHubMethod.Confirmed, new object[]
+                     {
+                         token
+                     });
             }
         }
 
         public async Task Cancel(string state)
         {
-            if (string.IsNullOrWhiteSpace(state))
-                throw new ApplicationException("state参数不可为空.");
-
-            if (!Cache.ContainsKey(state))
-                throw new ApplicationException("无效的state参数.");
-
-            var stateInfo = Cache.GetCache<StateInfo>(state);
+            var stateInfo = CheckState(state);
 
             switch (stateInfo.Type)
             {
