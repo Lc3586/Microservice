@@ -77,7 +77,7 @@ namespace Entity.System
         /// </summary>
         [OpenApiSubTag("List", "TreeList", "Create", "Edit", "Detail", "Authorities")]
         [Description("编码")]
-        [Column(StringLength = 20)]
+        [Column(StringLength = 36)]
         public string Code { get; set; }
 
         /// <summary>

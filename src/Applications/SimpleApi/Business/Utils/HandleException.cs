@@ -13,7 +13,7 @@ namespace Business.Utils
     /// </summary>
     public static class ExceptionHelper
     {
-        readonly static SystemConfig Config = AutofacHelper.GetScopeService<SystemConfig>();
+        readonly static SystemConfig Config = AutofacHelper.GetService<SystemConfig>();
 
         /// <summary>
         /// 处理系统异常
@@ -38,56 +38,57 @@ namespace Business.Utils
         public static AjaxResult HandleException(Exception exception, string url = null, string target = null, string method = null)
         {
             ExceptionWriteLog(exception, url, target, method);
-            return HandleException(exception, null);
+            return HandleException(exception);
         }
 
         /// <summary>
         /// 处理系统异常
         /// </summary>
         /// <param name="exception">当前异常</param>
-        /// <param name="base_exception">原异常</param>
         /// <returns></returns>
-        public static AjaxResult HandleException(Exception exception, Exception base_exception = null)
+        public static AjaxResult HandleException(Exception exception)
         {
-            string msg = null;
+            ErrorCode code = ErrorCode.business;
+            var message = string.Empty;
             object data = null;
-            ErrorCode code = ErrorCode.none;
-            AjaxResult result = null;
-            if (exception.InnerException != null)
-                result = HandleException(exception.InnerException, base_exception);
-            if (result == null)
+
+            HandleException(exception);
+
+            if (Config.RunMode != RunMode.Publish && Config.RunMode != RunMode.Publish_Swagger)
+                return AjaxResultFactory.Error(
+                    string.IsNullOrWhiteSpace(message) ? "系统异常" : message,
+                    exception.GetExceptionAllMsg(),
+                    data,
+                    code);
+            else
+                return data == null ?
+                    AjaxResultFactory.Error(
+                        string.IsNullOrWhiteSpace(message) ? "系统繁忙，请稍后重试" : message,
+                        code)
+                    : AjaxResultFactory.Error(
+                        string.IsNullOrWhiteSpace(message) ? "系统繁忙，请稍后重试" : message,
+                        data,
+                        code);
+
+            void HandleException(Exception ex)
             {
-                Type e_type = exception.GetType();
-                if (e_type == typeof(ApplicationException))
+                Type e_type = ex.GetType();
+                if (e_type == typeof(MessageException))
                 {
-                    var _ex = exception as ApplicationException;
-                    msg = _ex.Message;
-                    code = ErrorCode.error;
-                }
-                else if (e_type == typeof(MessageException))
-                {
-                    var _ex = exception as MessageException;
-                    msg = _ex.Msg;
+                    var _ex = ex as MessageException;
+                    message += _ex.Msg;
                     code = _ex.Code;
                 }
                 else if (e_type == typeof(ValidationException))
                 {
-                    var _ex = exception as ValidationException;
-                    msg = _ex.Msg;
+                    var _ex = ex as ValidationException;
                     data = _ex.Data;
                     code = ErrorCode.validation;
                 }
 
-                if (base_exception != null)
-                    return result;
-
-                if (Config.RunMode != RunMode.Publish && Config.RunMode != RunMode.Publish_Swagger)
-                    result = AjaxResultFactory.Error(msg ?? "系统异常", exception.GetExceptionAllMsg(), data, code);
-                else
-                    result = AjaxResultFactory.Error(msg ?? "系统繁忙，请稍后重试", data, code);
+                if (exception.InnerException != null)
+                    HandleException(exception.InnerException);
             }
-
-            return result;
         }
     }
 }

@@ -207,7 +207,7 @@ namespace Business.Implementation.Public
                 (bool success, Exception ex) = Orm.RunTransaction(handler);
 
                 if (!success)
-                    throw new ApplicationException("创建会员失败.", ex);
+                    throw new MessageException("创建会员失败.", ex);
             }
             else
                 handler();
@@ -248,7 +248,7 @@ namespace Business.Implementation.Public
                       .SetSource(editData.ModifyEntity())
                       .UpdateColumns(typeof(Edit).GetNamesWithTagAndOther(false, "_Edit").ToArray())
                       .ExecuteAffrows() <= 0)
-                    throw new ApplicationException("修改会员失败.");
+                    throw new MessageException("修改会员失败.");
             }
 
             if (runTransaction)
@@ -256,7 +256,7 @@ namespace Business.Implementation.Public
                 (bool success, Exception ex) = Orm.RunTransaction(handler);
 
                 if (!success)
-                    throw new ApplicationException("修改会员失败.", ex);
+                    throw new MessageException("修改会员失败.", ex);
             }
             else
                 handler();
@@ -285,11 +285,11 @@ namespace Business.Implementation.Public
                 var orIds = OperationRecordBusiness.Create(orList);
 
                 if (Repository.Delete(o => ids.Contains(o.Id)) <= 0)
-                    throw new ApplicationException("未删除任何数据.");
+                    throw new MessageException("未删除任何数据.");
             });
 
             if (!success)
-                throw new ApplicationException("删除会员失败.", ex);
+                throw new MessageException("删除会员失败.", ex);
         }
 
         #endregion
@@ -326,10 +326,10 @@ namespace Business.Implementation.Public
                 .ToOne(o => new { o.Id, o.Account, o.Name, o.Nickname, o.Sex, o.Face, o.Enable });
 
             if (member == null)
-                throw new ApplicationException("账号还未绑定微信.");
+                throw new MessageException("账号还未绑定微信.");
 
             if (!member.Enable)
-                throw new ApplicationException("账号已被禁用.");
+                throw new MessageException("账号已被禁用.");
 
             EntryLogBusiness.Create(new Common_EntryLog
             {

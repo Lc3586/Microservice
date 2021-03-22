@@ -67,7 +67,7 @@ namespace Business.Implementation.Common
                 .GetAndCheckNull();
 
             if (!Operator.IsAdmin && entity.CreatorId != Operator.AuthenticationInfo.Id)
-                throw new ApplicationException("没有权限.");
+                throw new MessageException("没有权限.");
 
             var result = Mapper.Map<Detail>(entity);
 

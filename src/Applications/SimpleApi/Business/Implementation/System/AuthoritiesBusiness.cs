@@ -2,6 +2,7 @@
 using Business.Interface.Common;
 using Business.Interface.System;
 using Business.Utils;
+using Business.Utils.Pagination;
 using Entity.Common;
 using Entity.Public;
 using Entity.System;
@@ -12,6 +13,7 @@ using Microservice.Library.FreeSql.Extention;
 using Microservice.Library.FreeSql.Gen;
 using Model.System;
 using Model.System.AuthorizeDTO;
+using Model.Utils.Pagination;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -89,13 +91,13 @@ namespace Business.Implementation.System
             });
 
             if (user == null)
-                throw new ApplicationException("用户不存在或已被移除.");
+                throw new MessageException("用户不存在或已被移除.");
 
             if (!user.Enable)
-                throw new ApplicationException("用户账号已禁用.");
+                throw new MessageException("用户账号已禁用.");
 
             if (Repository_UserRole.Where(o => o.UserId == userId && o.Role.Type == $"{RoleType.超级管理员}").Any())
-                throw new ApplicationException($"拥有{RoleType.超级管理员}角色的用户无需进行相关授权操作.");
+                throw new MessageException($"拥有{RoleType.超级管理员}角色的用户无需进行相关授权操作.");
 
             return user;
         }
@@ -107,14 +109,15 @@ namespace Business.Implementation.System
                 o.Id,
                 o.Enable,
                 o.Account,
+                o.Nickname,
                 o.Name
             });
 
             if (user == null)
-                throw new ApplicationException("会员不存在或已被移除.");
+                throw new MessageException("会员不存在或已被移除.");
 
             if (!user.Enable)
-                throw new ApplicationException("会员账号已禁用.");
+                throw new MessageException("会员账号已禁用.");
 
             return user;
         }
@@ -130,13 +133,13 @@ namespace Business.Implementation.System
             });
 
             if (role == null)
-                throw new ApplicationException("角色不存在或已被移除.");
+                throw new MessageException("角色不存在或已被移除.");
 
             if (role.Type == RoleType.超级管理员)
-                throw new ApplicationException($"{RoleType.超级管理员}角色无需进行相关授权操作.");
+                throw new MessageException($"{RoleType.超级管理员}角色无需进行相关授权操作.");
 
             if (!role.Enable)
-                throw new ApplicationException("角色账号已禁用.");
+                throw new MessageException("角色账号已禁用.");
 
             return role;
         }
@@ -151,7 +154,12 @@ namespace Business.Implementation.System
         {
             if (data.UserIds.Any_Ex())
             {
-                var roleIds = Repository_Role.Where(o => o.AutoAuthorizeRoleForUser == true && o.Enable == true).ToList(o => o.Id);
+                var roleIds = Repository_Role.Where(o => o.AutoAuthorizeRoleForUser == true
+                                                        && o.Enable == true
+                                                        && o.Type != $"{RoleType.超级管理员}"
+                                                        && o.Type != $"{RoleType.会员}")
+                                            .ToList(o => o.Id);
+
                 if (roleIds.Any())
                     AuthorizeRoleForUser(new RoleForUser
                     {
@@ -161,7 +169,11 @@ namespace Business.Implementation.System
             }
             else if (data.RoleIds.Any_Ex())
             {
-                var userIds = Repository_User.Select.ToList(o => o.Id);
+                var userIds = Repository_User.Select.Where(o => !o.Roles.AsSelect()
+                                                            .Where(p => data.RoleIds.Contains(p.Id)
+                                                                        || p.Type == $"{RoleType.超级管理员}")
+                                                            .Any())
+                                                    .ToList(o => o.Id);
                 if (userIds.Any())
                     AuthorizeRoleForUser(new RoleForUser
                     {
@@ -170,14 +182,17 @@ namespace Business.Implementation.System
                     }, runTransaction);
             }
             else
-                throw new ApplicationException("参数不可为空.");
+                throw new MessageException("参数不可为空.");
         }
 
         public void AutoAuthorizeRoleForMember(RoleForMember data, bool runTransaction = true)
         {
             if (data.MemberIds.Any_Ex())
             {
-                var roleIds = Repository_Role.Where(o => o.AutoAuthorizeRoleForUser == true && o.Enable == true).ToList(o => o.Id);
+                var roleIds = Repository_Role.Where(o => o.AutoAuthorizeRoleForUser == true
+                                                        && o.Enable == true
+                                                        && o.Type == $"{RoleType.会员}")
+                                            .ToList(o => o.Id);
                 if (roleIds.Any())
                     AuthorizeRoleForMember(new RoleForMember
                     {
@@ -187,7 +202,10 @@ namespace Business.Implementation.System
             }
             else if (data.RoleIds.Any_Ex())
             {
-                var memberIds = Repository_Member.Select.ToList(o => o.Id);
+                var memberIds = Repository_Member.Select.Where(o => !o.Roles.AsSelect()
+                                                            .Where(p => data.RoleIds.Contains(p.Id))
+                                                            .Any())
+                                                        .ToList(o => o.Id);
                 if (memberIds.Any())
                     AuthorizeRoleForMember(new RoleForMember
                     {
@@ -196,7 +214,7 @@ namespace Business.Implementation.System
                     }, runTransaction);
             }
             else
-                throw new ApplicationException("参数不可为空.");
+                throw new MessageException("参数不可为空.");
         }
 
         public void AuthorizeRoleForUser(RoleForUser data, bool runTransaction = true)
@@ -265,7 +283,7 @@ namespace Business.Implementation.System
                 (bool success, Exception ex) = Orm.RunTransaction(handler);
 
                 if (!success)
-                    throw new ApplicationException("授权失败.", ex);
+                    throw new MessageException("授权失败.", ex);
             }
             else
                 handler();
@@ -303,7 +321,7 @@ namespace Business.Implementation.System
                 return;
 
             if (Repository_Role.Where(o => data.RoleIds.Contains(o.Id) && o.Type != $"{RoleType.会员}").Any())
-                throw new ApplicationException($"只允许将类型为 {RoleType.会员}的角色授权给会员.");
+                throw new MessageException($"只允许将类型为 {RoleType.会员}的角色授权给会员.");
 
             var members = data.MemberIds.Select(o => GetMemberWithCheck(o));
 
@@ -366,7 +384,7 @@ namespace Business.Implementation.System
                 (bool success, Exception ex) = Orm.RunTransaction(handler);
 
                 if (!success)
-                    throw new ApplicationException("授权失败.", ex);
+                    throw new MessageException("授权失败.", ex);
             }
             else
                 handler();
@@ -453,7 +471,7 @@ namespace Business.Implementation.System
                 (bool success, Exception ex) = Orm.RunTransaction(handler);
 
                 if (!success)
-                    throw new ApplicationException("授权失败.", ex);
+                    throw new MessageException("授权失败.", ex);
             }
             else
                 handler();
@@ -536,7 +554,7 @@ namespace Business.Implementation.System
             });
 
             if (!success)
-                throw new ApplicationException("授权失败.", ex);
+                throw new MessageException("授权失败.", ex);
         }
 
         public void AuthorizeMenuForRole(MenuForRole data, bool runTransaction = true)
@@ -595,7 +613,7 @@ namespace Business.Implementation.System
                 (bool success, Exception ex) = Orm.RunTransaction(handler);
 
                 if (!success)
-                    throw new ApplicationException("授权失败.", ex);
+                    throw new MessageException("授权失败.", ex);
             }
             else
                 handler();
@@ -678,7 +696,7 @@ namespace Business.Implementation.System
             });
 
             if (!success)
-                throw new ApplicationException("授权失败.", ex);
+                throw new MessageException("授权失败.", ex);
         }
 
         #endregion
@@ -802,7 +820,7 @@ namespace Business.Implementation.System
                     var deleteIds = roles.Select(o => o.Id).ToList();
 
                     if (Repository_UserRole.Delete(o => o.UserId == userId && deleteIds.Contains(o.RoleId)) < 0)
-                        throw new ApplicationException("撤销授权失败.");
+                        throw new MessageException("撤销授权失败.");
                 }
             }
 
@@ -811,7 +829,7 @@ namespace Business.Implementation.System
                 (bool success, Exception ex) = Orm.RunTransaction(handler);
 
                 if (!success)
-                    throw new ApplicationException("撤销授权失败.", ex);
+                    throw new MessageException("撤销授权失败.", ex);
             }
             else
                 handler();
@@ -876,7 +894,7 @@ namespace Business.Implementation.System
                     var deleteIds = roles.Select(o => o.Id).ToList();
 
                     if (Repository_MemberRole.Delete(o => o.MemberId == memberId && deleteIds.Contains(o.RoleId)) < 0)
-                        throw new ApplicationException("撤销授权失败.");
+                        throw new MessageException("撤销授权失败.");
                 }
             }
 
@@ -885,7 +903,7 @@ namespace Business.Implementation.System
                 (bool success, Exception ex) = Orm.RunTransaction(handler);
 
                 if (!success)
-                    throw new ApplicationException("撤销授权失败.", ex);
+                    throw new MessageException("撤销授权失败.", ex);
             }
             else
                 handler();
@@ -949,7 +967,7 @@ namespace Business.Implementation.System
                     var deleteIds = menus.Select(o => o.Id).ToList();
 
                     if (Repository_UserMenu.Delete(o => o.UserId == userId && deleteIds.Contains(o.MenuId)) < 0)
-                        throw new ApplicationException("撤销授权失败.");
+                        throw new MessageException("撤销授权失败.");
                 }
             }
 
@@ -958,7 +976,7 @@ namespace Business.Implementation.System
                 (bool success, Exception ex) = Orm.RunTransaction(handler);
 
                 if (!success)
-                    throw new ApplicationException("撤销授权失败.", ex);
+                    throw new MessageException("撤销授权失败.", ex);
             }
             else
                 handler();
@@ -1022,7 +1040,7 @@ namespace Business.Implementation.System
                     var deleteIds = resourcess.Select(o => o.Id).ToList();
 
                     if (Repository_UserResources.Delete(o => o.UserId == userId && deleteIds.Contains(o.ResourcesId)) < 0)
-                        throw new ApplicationException("撤销授权失败.");
+                        throw new MessageException("撤销授权失败.");
                 }
             }
 
@@ -1031,7 +1049,7 @@ namespace Business.Implementation.System
                 (bool success, Exception ex) = Orm.RunTransaction(handler);
 
                 if (!success)
-                    throw new ApplicationException("撤销授权失败.", ex);
+                    throw new MessageException("撤销授权失败.", ex);
             }
             else
                 handler();
@@ -1077,7 +1095,7 @@ namespace Business.Implementation.System
                     var deleteIds = menus.Select(o => o.Id).ToList();
 
                     if (Repository_RoleMenu.Delete(o => o.RoleId == roleId && deleteIds.Contains(o.MenuId)) < 0)
-                        throw new ApplicationException("撤销授权失败.");
+                        throw new MessageException("撤销授权失败.");
                 }
             }
 
@@ -1086,7 +1104,7 @@ namespace Business.Implementation.System
                 (bool success, Exception ex) = Orm.RunTransaction(handler);
 
                 if (!success)
-                    throw new ApplicationException("撤销授权失败.", ex);
+                    throw new MessageException("撤销授权失败.", ex);
             }
             else
                 handler();
@@ -1150,7 +1168,7 @@ namespace Business.Implementation.System
                     var deleteIds = resourcess.Select(o => o.Id).ToList();
 
                     if (Repository_RoleResources.Delete(o => o.RoleId == roleId && deleteIds.Contains(o.ResourcesId)) < 0)
-                        throw new ApplicationException("撤销授权失败.");
+                        throw new MessageException("撤销授权失败.");
                 }
             }
 
@@ -1159,7 +1177,7 @@ namespace Business.Implementation.System
                 (bool success, Exception ex) = Orm.RunTransaction(handler);
 
                 if (!success)
-                    throw new ApplicationException("撤销授权失败.", ex);
+                    throw new MessageException("撤销授权失败.", ex);
             }
             else
                 handler();
@@ -1187,10 +1205,10 @@ namespace Business.Implementation.System
                 });
 
                 if (Repository_UserMenu.Delete(o => (menuIds.Contains(o.MenuId))) < 0)
-                    throw new ApplicationException("撤销用户的菜单授权失败.");
+                    throw new MessageException("撤销用户的菜单授权失败.");
 
                 if (Repository_RoleMenu.Delete(o => (menuIds.Contains(o.MenuId))) < 0)
-                    throw new ApplicationException("撤销角色的菜单授权失败.");
+                    throw new MessageException("撤销角色的菜单授权失败.");
             }
 
             if (runTransaction)
@@ -1198,7 +1216,7 @@ namespace Business.Implementation.System
                 (bool success, Exception ex) = Orm.RunTransaction(handler);
 
                 if (!success)
-                    throw new ApplicationException("撤销授权失败.", ex);
+                    throw new MessageException("撤销授权失败.", ex);
             }
             else
                 handler();
@@ -1226,10 +1244,10 @@ namespace Business.Implementation.System
                 });
 
                 if (Repository_UserResources.Delete(o => (resourcesIds.Contains(o.ResourcesId))) < 0)
-                    throw new ApplicationException("撤销用户的资源授权失败.");
+                    throw new MessageException("撤销用户的资源授权失败.");
 
                 if (Repository_RoleResources.Delete(o => (resourcesIds.Contains(o.ResourcesId))) < 0)
-                    throw new ApplicationException("撤销角色的资源授权失败.");
+                    throw new MessageException("撤销角色的资源授权失败.");
             }
 
             if (runTransaction)
@@ -1237,7 +1255,7 @@ namespace Business.Implementation.System
                 (bool success, Exception ex) = Orm.RunTransaction(handler);
 
                 if (!success)
-                    throw new ApplicationException("撤销授权失败.", ex);
+                    throw new MessageException("撤销授权失败.", ex);
             }
             else
                 handler();
@@ -1258,10 +1276,10 @@ namespace Business.Implementation.System
                                     });
 
             if (user == null)
-                throw new ApplicationException("用户不存在或已被移除.");
+                throw new MessageException("用户不存在或已被移除.");
 
             if (!user.Enable)
-                throw new ApplicationException("用户账号已禁用.");
+                throw new MessageException("用户账号已禁用.");
 
             if (includeRole)
                 user._Roles = GetUserRole(userId, includeMenu && !mergeRoleMenu, includeResources && !mergeRoleResources);
@@ -1286,10 +1304,10 @@ namespace Business.Implementation.System
                                     });
 
             if (member == null)
-                throw new ApplicationException("会员用户不存在或已被移除.");
+                throw new MessageException("会员用户不存在或已被移除.");
 
             if (!member.Enable)
-                throw new ApplicationException("会员账号已禁用.");
+                throw new MessageException("会员账号已禁用.");
 
             if (includeRole)
                 member._Roles = GetMemberRole(memberId, includeMenu, includeResources);
@@ -1459,10 +1477,10 @@ namespace Business.Implementation.System
                                     });
 
             if (role == null)
-                throw new ApplicationException("角色不存在或已被移除.");
+                throw new MessageException("角色不存在或已被移除.");
 
             if (!role.Enable)
-                throw new ApplicationException("角色已禁用.");
+                throw new MessageException("角色已禁用.");
 
             if (includeMenu)
                 role._Menus = GetRoleMenu(role.Id);
@@ -1679,7 +1697,8 @@ namespace Business.Implementation.System
                                             Name = o.Name,
                                             Type = o.Type,
                                             Code = o.Code,
-                                            Authorized = o.Users.AsSelect().Any(p => p.Id == userId) ? true : false
+                                            Authorized = (Operator.IsSuperAdmin == true
+                                                        || o.Users.AsSelect().Any(p => p.Id == userId)) ? true : false
                                         });
 
                 if (result.Any())
@@ -1722,7 +1741,8 @@ namespace Business.Implementation.System
                                             Name = o.Name,
                                             Type = o.Type,
                                             Code = o.Code,
-                                            Authorized = o.Members.AsSelect().Any(p => p.Id == memberId) ? true : false
+                                            Authorized = (Operator.IsSuperAdmin == true
+                                                        || o.Members.AsSelect().Any(p => p.Id == memberId)) ? true : false
                                         });
 
                 if (result.Any())
@@ -1767,8 +1787,9 @@ namespace Business.Implementation.System
                                             Code = o.Code,
                                             Uri = o.Uri,
                                             Method = o.Method,
-                                            Authorized = o.Users.AsSelect().Any(p => p.Id == userId)
-                                                || o.Roles.AsSelect().Any(p => p.Users.AsSelect().Any(q => q.Id == userId)) ? true : false
+                                            Authorized = (Operator.IsSuperAdmin == true
+                                                || o.Users.AsSelect().Any(p => p.Id == userId)
+                                                || o.Roles.AsSelect().Any(p => p.Users.AsSelect().Any(q => q.Id == userId))) ? true : false
                                         });
 
                 if (result.Any())
@@ -1787,6 +1808,44 @@ namespace Business.Implementation.System
 
                 return result;
             }
+        }
+
+        public List<Model.System.ResourcesDTO.Authorities> GetRoleResourcesList(string roleId, PaginationDTO pagination)
+        {
+            return Repository_Resources.Where(o => !o.Roles.AsSelect()
+                                .Where(p => p.Id == roleId)
+                                .Any() && o.Enable == true)
+                    .Filter(pagination)
+                    .OrderBy(pagination)
+                    .ToList(o => new Model.System.ResourcesDTO.Authorities
+                    {
+                        Id = o.Id,
+                        Name = o.Name,
+                        Type = o.Type,
+                        Code = o.Code,
+                        Uri = o.Uri
+                    });
+        }
+
+        public List<Model.System.ResourcesDTO.Authorities> GetUserResourcesList(string userId, PaginationDTO pagination)
+        {
+            return Repository_Resources.Where(o => !o.Users.AsSelect()
+                                                    .Where(p => p.Id == userId)
+                                                    .Any()
+                                                && !o.Roles.AsSelect()
+                                                    .Where(p => p.Users.AsSelect().Where(q => q.Id == userId).Any())
+                                                    .Any()
+                                                && o.Enable == true)
+                    .Filter(pagination)
+                    .OrderBy(pagination)
+                    .ToList(o => new Model.System.ResourcesDTO.Authorities
+                    {
+                        Id = o.Id,
+                        Name = o.Name,
+                        Type = o.Type,
+                        Code = o.Code,
+                        Uri = o.Uri
+                    });
         }
 
         #endregion

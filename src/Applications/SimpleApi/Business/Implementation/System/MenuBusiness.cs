@@ -115,10 +115,10 @@ namespace Business.Implementation.System
             var newData = Mapper.Map<System_Menu>(data).InitEntity();
 
             if (Repository.Where(o => o.ParentId == newData.ParentId && o.Code == newData.Code).Any())
-                throw new ApplicationException($"当前层级已存在编码为{newData.Code}的菜单.");
+                throw new MessageException($"当前层级已存在编码为{newData.Code}的菜单.");
 
             if (Repository.Where(o => o.ParentId == newData.ParentId && o.Type == newData.Type && o.Name == newData.Name).Any())
-                throw new ApplicationException($"当前层级已存在类型为{newData.Type},且名称为{newData.Name}的菜单.");
+                throw new MessageException($"当前层级已存在类型为{newData.Type},且名称为{newData.Name}的菜单.");
 
             newData.Uri = newData.Uri?.ToLower();
 
@@ -150,7 +150,7 @@ namespace Business.Implementation.System
             });
 
             if (!success)
-                throw new ApplicationException("创建菜单失败", ex);
+                throw new MessageException("创建菜单失败", ex);
         }
 
         [AdministratorOnly]
@@ -169,10 +169,10 @@ namespace Business.Implementation.System
             var editData = Mapper.Map<System_Menu>(data).ModifyEntity();
 
             if (Repository.Where(o => o.ParentId == editData.ParentId && o.Code == editData.Code && o.Id != editData.Id).Any())
-                throw new ApplicationException($"当前层级已存在编码为{editData.Code}的菜单.");
+                throw new MessageException($"当前层级已存在编码为{editData.Code}的菜单.");
 
             if (Repository.Where(o => o.ParentId == editData.ParentId && o.Type == editData.Type && o.Name == editData.Name && o.Id != editData.Id).Any())
-                throw new ApplicationException($"当前层级已存在类型为{editData.Type},且名称为{editData.Name}的菜单.");
+                throw new MessageException($"当前层级已存在类型为{editData.Type},且名称为{editData.Name}的菜单.");
 
             editData.Uri = editData.Uri?.ToLower();
 
@@ -206,7 +206,7 @@ namespace Business.Implementation.System
                          .Where(o => o.ParentId == entity.ParentId && o.Id != entity.Id && o.Sort > editData.Sort)
                          .Set(o => o.Sort - 1)
                          .ExecuteAffrows() < 0)
-                    throw new ApplicationException("重新排序失败.");
+                    throw new MessageException("重新排序失败.");
 
                 var orId = OperationRecordBusiness.Create(new Common_OperationRecord
                 {
@@ -220,7 +220,7 @@ namespace Business.Implementation.System
                       .SetSource(editData.ModifyEntity())
                       .UpdateColumns(typeof(Edit).GetNamesWithTagAndOther(false, "_Edit").ToArray())
                       .ExecuteAffrows() <= 0)
-                    throw new ApplicationException("修改菜单失败");
+                    throw new MessageException("修改菜单失败");
             });
 
             if (!success)
@@ -249,13 +249,13 @@ namespace Business.Implementation.System
                 AuthoritiesBusiness.RevocationMenuForAll(ids, false);
 
                 if (Repository.Delete(o => ids.Contains(o.Id)) <= 0)
-                    throw new ApplicationException("未删除任何数据");
+                    throw new MessageException("未删除任何数据");
 
                 var orIds = OperationRecordBusiness.Create(orList);
             });
 
             if (!success)
-                throw new ApplicationException("删除菜单失败", ex);
+                throw new MessageException("删除菜单失败", ex);
         }
 
         #endregion
@@ -279,7 +279,7 @@ namespace Business.Implementation.System
                 });
 
                 if (Repository.Update(entity) <= 0)
-                    throw new ApplicationException($"{(enable ? "启用" : "禁用")}菜单失败");
+                    throw new MessageException($"{(enable ? "启用" : "禁用")}菜单失败");
             });
 
             if (!success)
@@ -303,7 +303,7 @@ namespace Business.Implementation.System
                                     });
 
             if (current.Id == null)
-                throw new ApplicationException("数据不存在或已被移除.");
+                throw new MessageException("数据不存在或已被移除.");
 
             (bool success, Exception ex) = Orm.RunTransaction(() =>
             {
@@ -346,7 +346,7 @@ namespace Business.Implementation.System
                                              });
                         break;
                     default:
-                        throw new ApplicationException($"不支持的排序类型 {data.Type}.");
+                        throw new MessageException($"不支持的排序类型 {data.Type}.");
                 }
 
                 var orId = OperationRecordBusiness.Create(new Common_OperationRecord
@@ -367,7 +367,7 @@ namespace Business.Implementation.System
                          .Where(o => o.Id == current.Id)
                          .Set(o => o.Sort, targetSort)
                          .ExecuteAffrows() < 0)
-                    throw new ApplicationException("菜单排序失败.");
+                    throw new MessageException("菜单排序失败.");
             });
 
             if (!success)
@@ -391,7 +391,7 @@ namespace Business.Implementation.System
                                     });
 
             if (current.Id == null)
-                throw new ApplicationException("数据不存在或已被移除.");
+                throw new MessageException("数据不存在或已被移除.");
 
             var target = Repository.Where(o => o.Id == data.TargetId)
                                     .ToOne(o => new
@@ -404,7 +404,7 @@ namespace Business.Implementation.System
                                     });
 
             if (target.Id == null)
-                throw new ApplicationException("目标数据不存在.");
+                throw new MessageException("目标数据不存在.");
 
             (bool success, Exception ex) = Orm.RunTransaction(() =>
             {
@@ -444,7 +444,7 @@ namespace Business.Implementation.System
                              .Where(o => o.Id == current.Id)
                              .Set(o => o.Sort, target_newSort)
                              .ExecuteAffrows() < 0)
-                        throw new ApplicationException("菜单排序失败.");
+                        throw new MessageException("菜单排序失败.");
 
                     #endregion
                 }
@@ -467,7 +467,7 @@ namespace Business.Implementation.System
                                 .Set(o => o.Level, data.Inside == true ? (target.Level + 1) : target.Level)
                                 .Set(o => o.RootId, target.RootId)
                                 .ExecuteAffrows() <= 0)
-                        throw new ApplicationException("菜单排序失败.");
+                        throw new MessageException("菜单排序失败.");
 
                     #endregion
                 }

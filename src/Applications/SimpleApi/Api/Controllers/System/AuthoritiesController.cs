@@ -5,6 +5,7 @@ using Microservice.Library.Extension;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model.System.AuthorizeDTO;
+using Model.Utils.Pagination;
 using Model.Utils.Result;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
@@ -287,7 +288,7 @@ namespace Api.Controllers
         /// <returns></returns>
         [HttpPost("revocation-role-for-user")]
         [SwaggerOperation(Tags = new[] { "撤销授权" })]
-        public async Task<object> RevocationRoleForUser(RoleForUser data)
+        public async Task<object> RevocationRoleForUser([FromBody] RoleForUser data)
         {
             AuthoritiesBusiness.RevocationRoleForUser(data);
             return await Task.FromResult(Success());
@@ -315,7 +316,7 @@ namespace Api.Controllers
         /// <returns></returns>
         [HttpPost("revocation-role-for-member")]
         [SwaggerOperation(Tags = new[] { "撤销授权" })]
-        public async Task<object> RevocationRoleForMember(RoleForMember data)
+        public async Task<object> RevocationRoleForMember([FromBody] RoleForMember data)
         {
             AuthoritiesBusiness.RevocationRoleForMember(data);
             return await Task.FromResult(Success());
@@ -343,7 +344,7 @@ namespace Api.Controllers
         /// <returns></returns>
         [HttpPost("revocation-menu-for-user")]
         [SwaggerOperation(Tags = new[] { "撤销授权" })]
-        public async Task<object> RevocationMenuForUser(MenuForUser data)
+        public async Task<object> RevocationMenuForUser([FromBody] MenuForUser data)
         {
             AuthoritiesBusiness.RevocationMenuForUser(data);
             return await Task.FromResult(Success());
@@ -371,7 +372,7 @@ namespace Api.Controllers
         /// <returns></returns>
         [HttpPost("revocation-resources-for-user")]
         [SwaggerOperation(Tags = new[] { "撤销授权" })]
-        public async Task<object> RevocationResourcesForUser(ResourcesForUser data)
+        public async Task<object> RevocationResourcesForUser([FromBody] ResourcesForUser data)
         {
             AuthoritiesBusiness.RevocationResourcesForUser(data);
             return await Task.FromResult(Success());
@@ -384,7 +385,7 @@ namespace Api.Controllers
         /// <returns></returns>
         [HttpPost("revocation-menu-for-role")]
         [SwaggerOperation(Tags = new[] { "撤销授权" })]
-        public async Task<object> RevocationMenuForRole(MenuForRole data)
+        public async Task<object> RevocationMenuForRole([FromBody] MenuForRole data)
         {
             AuthoritiesBusiness.RevocationMenuForRole(data);
             return await Task.FromResult(Success());
@@ -412,7 +413,7 @@ namespace Api.Controllers
         /// <returns></returns>
         [HttpPost("revocation-resources-for-role")]
         [SwaggerOperation(Tags = new[] { "撤销授权" })]
-        public async Task<object> RevocationResourcesForRole(ResourcesForRole data)
+        public async Task<object> RevocationResourcesForRole([FromBody] ResourcesForRole data)
         {
             AuthoritiesBusiness.RevocationResourcesForRole(data);
             return await Task.FromResult(Success());
@@ -830,7 +831,7 @@ namespace Api.Controllers
         [HttpPost("role-data-menu-tree/{roleId}")]
         [SwaggerOperation(Tags = new[] { "权限相关拓展接口" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.MenuDTO.AuthoritiesTree))]
-        public async Task<object> GetRoleMenuTree(string roleId, Model.System.MenuDTO.TreeListParamter paramter)
+        public async Task<object> GetRoleMenuTree(string roleId, [FromBody] Model.System.MenuDTO.TreeListParamter paramter)
         {
             return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.GetRoleMenuTree(roleId, paramter))));
         }
@@ -844,7 +845,7 @@ namespace Api.Controllers
         [HttpPost("user-data-role-tree/{userId}")]
         [SwaggerOperation(Tags = new[] { "权限相关拓展接口" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.RoleDTO.AuthoritiesTree))]
-        public async Task<object> GetUserRoleTree(string userId, Model.System.RoleDTO.TreeListParamter paramter)
+        public async Task<object> GetUserRoleTree(string userId, [FromBody] Model.System.RoleDTO.TreeListParamter paramter)
         {
             return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.GetUserRoleTree(userId, paramter))));
         }
@@ -858,7 +859,7 @@ namespace Api.Controllers
         [HttpPost("member-data-role-tree/{memberId}")]
         [SwaggerOperation(Tags = new[] { "权限相关拓展接口" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.RoleDTO.AuthoritiesTree))]
-        public async Task<object> GetMemberRoleTree(string memberId, Model.System.RoleDTO.TreeListParamter paramter)
+        public async Task<object> GetMemberRoleTree(string memberId, [FromBody] Model.System.RoleDTO.TreeListParamter paramter)
         {
             return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.GetMemberRoleTree(memberId, paramter))));
         }
@@ -872,9 +873,37 @@ namespace Api.Controllers
         [HttpPost("user-data-menu-tree/{userId}")]
         [SwaggerOperation(Tags = new[] { "权限相关拓展接口" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.MenuDTO.AuthoritiesTree))]
-        public async Task<object> GetUserMenuTree(string userId, Model.System.MenuDTO.TreeListParamter paramter)
+        public async Task<object> GetUserMenuTree(string userId, [FromBody] Model.System.MenuDTO.TreeListParamter paramter)
         {
             return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.GetUserMenuTree(userId, paramter))));
+        }
+
+        /// <summary>
+        /// 获取能授权给角色的资源列表数据
+        /// </summary>
+        /// <param name="roleId">角色Id</param>
+        /// <param name="pagination">分页设置</param>
+        /// <returns></returns>
+        [HttpPost("role-data-resources-list/{roleId}")]
+        [SwaggerOperation(Tags = new[] { "权限相关拓展接口" })]
+        [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.ResourcesDTO.Authorities))]
+        public async Task<object> GetRoleResourcesList(string roleId, [FromBody] PaginationDTO pagination)
+        {
+            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.GetRoleResourcesList(roleId, pagination))));
+        }
+
+        /// <summary>
+        /// 获取能授权给用户的资源列表数据
+        /// </summary>
+        /// <param name="userId">用户Id</param>
+        /// <param name="pagination">分页设置</param>
+        /// <returns></returns>
+        [HttpPost("user-data-resources-list/{userId}")]
+        [SwaggerOperation(Tags = new[] { "权限相关拓展接口" })]
+        [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.ResourcesDTO.Authorities))]
+        public async Task<object> GetUserResourcesList(string userId, [FromBody] PaginationDTO pagination)
+        {
+            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.GetUserResourcesList(userId, pagination))));
         }
 
         #endregion

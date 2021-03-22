@@ -190,7 +190,7 @@ namespace Business.Implementation.Common
         private void ResponseFile(HttpResponse response, string path)
         {
             if (!File.Exists(path))
-                throw new ApplicationException("文件不存在或已被删除");
+                throw new MessageException("文件不存在或已被删除");
 
             //response.SendFileAsync(path);
             using var fs = new FileStream(path, FileMode.Open, FileAccess.Read);
@@ -418,7 +418,7 @@ namespace Business.Implementation.Common
             {
                 if (option.Download)
                 {
-                    throw new ApplicationException("暂不支持下载外链文件.");
+                    throw new MessageException("暂不支持下载外链文件.");
                 }
 
                 result = new FileInfo
@@ -458,7 +458,7 @@ namespace Business.Implementation.Common
 
             if (option.IsCompress)
             {
-                throw new ApplicationException("暂不支持文件在线压缩");
+                throw new MessageException("暂不支持文件在线压缩");
             }
 
             //Ignore:
@@ -615,7 +615,7 @@ namespace Business.Implementation.Common
             }
 
             if (Repository.Delete(o => ids.Contains(o.Id)) <= 0)
-                throw new ApplicationException("未删除任何数据");
+                throw new MessageException("未删除任何数据");
         }
 
         public CheckMD5Response CheckMD5(string md5)

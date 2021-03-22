@@ -1928,12 +1928,11 @@
             <param name="method">方法</param>
             <returns></returns>
         </member>
-        <member name="M:Business.Utils.ExceptionHelper.HandleException(System.Exception,System.Exception)">
+        <member name="M:Business.Utils.ExceptionHelper.HandleException(System.Exception)">
             <summary>
             处理系统异常
             </summary>
             <param name="exception">当前异常</param>
-            <param name="base_exception">原异常</param>
             <returns></returns>
         </member>
         <member name="T:Business.Utils.IdHelper">
@@ -2163,6 +2162,13 @@
             </summary>
             <param name="msg">消息</param>
             <param name="code">错误代码</param>
+            <param name="innerException">内部异常</param>
+        </member>
+        <member name="M:Business.Utils.MessageException.#ctor(System.String,System.Exception)">
+            <summary>
+            
+            </summary>
+            <param name="msg">消息</param>
             <param name="innerException">内部异常</param>
         </member>
         <member name="P:Business.Utils.MessageException.Msg">

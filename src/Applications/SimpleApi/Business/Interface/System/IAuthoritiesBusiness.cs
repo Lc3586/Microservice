@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Model.Utils.Pagination;
+using System.Collections.Generic;
 
 namespace Business.Interface.System
 {
@@ -579,6 +580,22 @@ namespace Business.Interface.System
         /// <param name="paramter">参数</param>
         /// <returns></returns>
         List<Model.System.MenuDTO.AuthoritiesTree> GetUserMenuTree(string userId, Model.System.MenuDTO.TreeListParamter paramter);
+
+        /// <summary>
+        /// 获取能授权给角色的资源列表数据
+        /// </summary>
+        /// <param name="roleId">角色Id</param>
+        /// <param name="pagination">分页设置</param>
+        /// <returns></returns>
+        List<Model.System.ResourcesDTO.Authorities> GetRoleResourcesList(string roleId, PaginationDTO pagination);
+
+        /// <summary>
+        /// 获取能授权给用户的资源列表数据
+        /// </summary>
+        /// <param name="userId">用户Id</param>
+        /// <param name="pagination">分页设置</param>
+        /// <returns></returns>
+        List<Model.System.ResourcesDTO.Authorities> GetUserResourcesList(string userId, PaginationDTO pagination);
 
         #endregion
     }

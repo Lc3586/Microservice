@@ -156,10 +156,10 @@ namespace Business.Implementation.System
             var newData = Mapper.Map<System_Resources>(data).InitEntity();
 
             if (Repository.Where(o => o.Code == newData.Code).Any())
-                throw new ApplicationException($"已存在编码为{newData.Code}的资源.");
+                throw new MessageException($"已存在编码为{newData.Code}的资源.");
 
             if (Repository.Where(o => o.Type == newData.Type && o.Name == newData.Name).Any())
-                throw new ApplicationException($"已存在类型为{newData.Type},且名称为{newData.Name}的资源.");
+                throw new MessageException($"已存在类型为{newData.Type},且名称为{newData.Name}的资源.");
 
             newData.Uri = newData.Uri?.ToLower();
 
@@ -176,7 +176,7 @@ namespace Business.Implementation.System
             });
 
             if (!success)
-                throw new ApplicationException("创建资源失败", ex);
+                throw new MessageException("创建资源失败", ex);
         }
 
         [AdministratorOnly]
@@ -195,10 +195,10 @@ namespace Business.Implementation.System
             var editData = Mapper.Map<System_Resources>(data).ModifyEntity();
 
             if (Repository.Where(o => o.Code == editData.Code && o.Id != editData.Id).Any())
-                throw new ApplicationException($"已存在编码为{editData.Code}的资源.");
+                throw new MessageException($"已存在编码为{editData.Code}的资源.");
 
             if (Repository.Where(o => o.Type == editData.Type && o.Name == editData.Name && o.Id != editData.Id).Any())
-                throw new ApplicationException($"已存在类型为{editData.Type},且名称为{editData.Name}的资源.");
+                throw new MessageException($"已存在类型为{editData.Type},且名称为{editData.Name}的资源.");
 
             editData.Uri = editData.Uri?.ToLower();
 
@@ -222,7 +222,7 @@ namespace Business.Implementation.System
                       .SetSource(editData.ModifyEntity())
                       .UpdateColumns(typeof(Edit).GetNamesWithTagAndOther(false, "_Edit").ToArray())
                       .ExecuteAffrows() <= 0)
-                    throw new ApplicationException("修改资源失败");
+                    throw new MessageException("修改资源失败");
             });
 
             if (!success)
@@ -251,13 +251,13 @@ namespace Business.Implementation.System
                 AuthoritiesBusiness.RevocationResourcesForAll(ids, false);
 
                 if (Repository.Delete(o => ids.Contains(o.Id)) <= 0)
-                    throw new ApplicationException("未删除任何数据");
+                    throw new MessageException("未删除任何数据");
 
                 var orIds = OperationRecordBusiness.Create(orList);
             });
 
             if (!success)
-                throw new ApplicationException("删除资源失败", ex);
+                throw new MessageException("删除资源失败", ex);
         }
 
         #endregion
@@ -281,7 +281,7 @@ namespace Business.Implementation.System
                 });
 
                 if (Repository.Update(entity) <= 0)
-                    throw new ApplicationException($"{(enable ? "启用" : "禁用")}资源失败");
+                    throw new MessageException($"{(enable ? "启用" : "禁用")}资源失败");
             });
 
             if (!success)

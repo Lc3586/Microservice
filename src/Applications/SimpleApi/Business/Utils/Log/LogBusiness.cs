@@ -70,7 +70,7 @@ namespace Business.Utils.Log
         ElasticsearchClient GetElasticsearchClient()
         {
             if (!Config.EnableElasticsearch)
-                throw new ApplicationException("未启用Elasticsearch.");
+                throw new MessageException("未启用Elasticsearch.");
 
             if (ESClient == null)
                 ESClient = AutofacHelper.GetScopeService<IElasticsearchProvider>()
@@ -107,7 +107,7 @@ namespace Business.Utils.Log
             var result = new List<FileInfo>();
 
             if (!Directory.Exists(FileDir))
-                throw new ApplicationException("根目录不存在或已被移除.");
+                throw new MessageException("根目录不存在或已被移除.");
 
             start = start.AddDays(-1).Date;
 
@@ -146,7 +146,7 @@ namespace Business.Utils.Log
             var path = Path.Combine(FileDir, filename);
 
             if (!File.Exists(path))
-                throw new ApplicationException("文件不存在或已被移除.");
+                throw new MessageException("文件不存在或已被移除.");
 
             var response = HttpContextAccessor.HttpContext.Response;
             response.ContentType = "text/plain";
@@ -161,7 +161,7 @@ namespace Business.Utils.Log
             var path = Path.Combine(FileDir, filename);
 
             if (!File.Exists(path))
-                throw new ApplicationException("文件不存在或已被移除.");
+                throw new MessageException("文件不存在或已被移除.");
 
             var response = HttpContextAccessor.HttpContext.Response;
             response.ContentType = "text/plain";
@@ -175,10 +175,10 @@ namespace Business.Utils.Log
             var sql = string.Empty;
 
             if (!pagination.FilterToSql(ref sql))
-                throw new ApplicationException("搜索条件不支持");
+                throw new MessageException("搜索条件不支持");
 
             if (!pagination.OrderByToSql(ref sql, null, true))
-                throw new ApplicationException("排序条件不支持");
+                throw new MessageException("排序条件不支持");
 
             var list = GetElasticsearchClient().SearchWithSql<System_Log>(
                 out long recordCount,

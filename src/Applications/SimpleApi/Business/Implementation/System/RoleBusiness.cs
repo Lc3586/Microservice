@@ -122,18 +122,18 @@ namespace Business.Implementation.System
             var newData = Mapper.Map<System_Role>(data).InitEntity();
 
             if (newData.Type == RoleType.会员 && newData.AutoAuthorizeRoleForUser)
-                throw new ApplicationException($"类型为{RoleType.会员}的角色禁止配置[自动授权角色给系统用户]设置.");
+                throw new MessageException($"类型为{RoleType.会员}的角色禁止配置[自动授权角色给系统用户]设置.");
             else if (newData.Type != RoleType.会员 && newData.AutoAuthorizeRoleForMember)
-                throw new ApplicationException($"类型不为{RoleType.会员}的角色禁止配置[自动授权角色给会员]设置.");
+                throw new MessageException($"类型不为{RoleType.会员}的角色禁止配置[自动授权角色给会员]设置.");
 
             if (newData.Type == RoleType.超级管理员 && Repository.Where(o => o.Type == $"{RoleType.超级管理员}").Any())
-                throw new ApplicationException($"系统中已存在{RoleType.超级管理员}角色.");
+                throw new MessageException($"系统中已存在{RoleType.超级管理员}角色.");
 
             if (Repository.Where(o => o.ParentId == newData.ParentId && o.Code == newData.Code).Any())
-                throw new ApplicationException($"当前层级已存在编码为{newData.Code}的角色.");
+                throw new MessageException($"当前层级已存在编码为{newData.Code}的角色.");
 
             if (Repository.Where(o => o.ParentId == newData.ParentId && o.Type == newData.Type && o.Name == newData.Name).Any())
-                throw new ApplicationException($"当前层级已存在类型为{newData.Type},且名称为{newData.Name}的角色.");
+                throw new MessageException($"当前层级已存在类型为{newData.Type},且名称为{newData.Name}的角色.");
 
             void handler()
             {
@@ -178,7 +178,7 @@ namespace Business.Implementation.System
                 (bool success, Exception ex) = Orm.RunTransaction(handler);
 
                 if (!success)
-                    throw new ApplicationException("创建角色失败", ex);
+                    throw new MessageException("创建角色失败", ex);
             }
             else
                 handler();
@@ -200,24 +200,24 @@ namespace Business.Implementation.System
             var editData = Mapper.Map<System_Role>(data).ModifyEntity();
 
             if (editData.Type == RoleType.会员 && editData.AutoAuthorizeRoleForUser)
-                throw new ApplicationException($"类型为{RoleType.会员}的角色禁止配置[自动授权角色给系统用户]设置.");
+                throw new MessageException($"类型为{RoleType.会员}的角色禁止配置[自动授权角色给系统用户]设置.");
             else if (editData.Type != RoleType.会员 && editData.AutoAuthorizeRoleForMember)
-                throw new ApplicationException($"类型不为{RoleType.会员}的角色禁止配置[自动授权角色给会员]设置.");
+                throw new MessageException($"类型不为{RoleType.会员}的角色禁止配置[自动授权角色给会员]设置.");
 
             if (Repository.Where(o => o.ParentId == editData.ParentId && o.Code == editData.Code && o.Id != editData.Id).Any())
-                throw new ApplicationException($"当前层级已存在编码为{editData.Code}的角色.");
+                throw new MessageException($"当前层级已存在编码为{editData.Code}的角色.");
 
             if (Repository.Where(o => o.ParentId == editData.ParentId && o.Type == editData.Type && o.Name == editData.Name && o.Id != editData.Id).Any())
-                throw new ApplicationException($"当前层级已存在类型为{editData.Type},且名称为{editData.Name}的角色.");
+                throw new MessageException($"当前层级已存在类型为{editData.Type},且名称为{editData.Name}的角色.");
 
             var entity = Repository.GetAndCheckNull(editData.Id);
 
             if (editData.Type == RoleType.超级管理员)
             {
                 if (editData.ParentId != entity.ParentId)
-                    throw new ApplicationException($"禁止编辑此{RoleType.超级管理员}角色的层级结构.");
+                    throw new MessageException($"禁止编辑此{RoleType.超级管理员}角色的层级结构.");
                 else if (editData.Code != entity.Code)
-                    throw new ApplicationException($"禁止编辑此{RoleType.超级管理员}角色的编码信息.");
+                    throw new MessageException($"禁止编辑此{RoleType.超级管理员}角色的编码信息.");
             }
 
             var changed_ = string.Join(",",
@@ -247,7 +247,7 @@ namespace Business.Implementation.System
                              .Where(o => o.ParentId == entity.ParentId && o.Id != entity.Id && o.Sort > editData.Sort)
                              .Set(o => o.Sort - 1)
                              .ExecuteAffrows() < 0)
-                        throw new ApplicationException("重新排序失败.");
+                        throw new MessageException("重新排序失败.");
                 }
 
                 var orId = OperationRecordBusiness.Create(new Common_OperationRecord
@@ -262,7 +262,7 @@ namespace Business.Implementation.System
                       .SetSource(editData)
                       .UpdateColumns(typeof(Edit).GetNamesWithTagAndOther(false, "_Edit").ToArray())
                       .ExecuteAffrows() <= 0)
-                    throw new ApplicationException("修改角色失败");
+                    throw new MessageException("修改角色失败");
 
                 if (!entity.AutoAuthorizeRoleForUser && editData.AutoAuthorizeRoleForUser)
                     AuthoritiesBusiness.AutoAuthorizeRoleForUser(new Model.System.AuthorizeDTO.RoleForUser
@@ -295,7 +295,7 @@ namespace Business.Implementation.System
         public void Delete(List<string> ids)
         {
             if (Repository.Select.Where(c => ids.Contains(c.Id) && c.Type == $"RoleType.超级管理员").Any())
-                throw new ApplicationException($"禁止删除{RoleType.超级管理员}角色.");
+                throw new MessageException($"禁止删除{RoleType.超级管理员}角色.");
 
             var entityList = Repository.Select.Where(c => ids.Contains(c.Id)).ToList(c => new { c.Id, c.Name, c.Type });
 
@@ -322,13 +322,13 @@ namespace Business.Implementation.System
                 AuthoritiesBusiness.RevocationResourcesForRole(ids, false);
 
                 if (Repository.Delete(o => ids.Contains(o.Id)) <= 0)
-                    throw new ApplicationException("未删除任何数据");
+                    throw new MessageException("未删除任何数据");
 
                 var orIds = OperationRecordBusiness.Create(orList);
             });
 
             if (!success)
-                throw new ApplicationException("删除角色失败", ex);
+                throw new MessageException("删除角色失败", ex);
         }
 
         #endregion
@@ -341,7 +341,7 @@ namespace Business.Implementation.System
             var entity = Repository.GetAndCheckNull(id);
 
             if (entity.Type == RoleType.超级管理员)
-                throw new ApplicationException($"禁止操作{RoleType.超级管理员}角色.");
+                throw new MessageException($"禁止操作{RoleType.超级管理员}角色.");
 
             entity.Enable = enable;
 
@@ -355,7 +355,7 @@ namespace Business.Implementation.System
                 });
 
                 if (Repository.Update(entity) <= 0)
-                    throw new ApplicationException($"{(enable ? "启用" : "禁用")}角色失败");
+                    throw new MessageException($"{(enable ? "启用" : "禁用")}角色失败");
             });
 
             if (!success)
@@ -379,7 +379,7 @@ namespace Business.Implementation.System
                                     });
 
             if (current.Id == null)
-                throw new ApplicationException("数据不存在或已被移除.");
+                throw new MessageException("数据不存在或已被移除.");
 
             (bool success, Exception ex) = Orm.RunTransaction(() =>
             {
@@ -422,7 +422,7 @@ namespace Business.Implementation.System
                                              });
                         break;
                     default:
-                        throw new ApplicationException($"不支持的排序类型 {data.Type}.");
+                        throw new MessageException($"不支持的排序类型 {data.Type}.");
                 }
 
                 var orId = OperationRecordBusiness.Create(new Common_OperationRecord
@@ -443,7 +443,7 @@ namespace Business.Implementation.System
                          .Where(o => o.Id == current.Id)
                          .Set(o => o.Sort, targetSort)
                          .ExecuteAffrows() < 0)
-                    throw new ApplicationException("角色排序失败.");
+                    throw new MessageException("角色排序失败.");
             });
 
             if (!success)
@@ -467,7 +467,7 @@ namespace Business.Implementation.System
                                     });
 
             if (current.Id == null)
-                throw new ApplicationException("数据不存在或已被移除.");
+                throw new MessageException("数据不存在或已被移除.");
 
             var target = Repository.Where(o => o.Id == data.TargetId)
                                     .ToOne(o => new
@@ -480,7 +480,7 @@ namespace Business.Implementation.System
                                     });
 
             if (target.Id == null)
-                throw new ApplicationException("目标数据不存在.");
+                throw new MessageException("目标数据不存在.");
 
             (bool success, Exception ex) = Orm.RunTransaction(() =>
             {
@@ -520,7 +520,7 @@ namespace Business.Implementation.System
                              .Where(o => o.Id == current.Id)
                              .Set(o => o.Sort, target_newSort)
                              .ExecuteAffrows() < 0)
-                        throw new ApplicationException("角色排序失败.");
+                        throw new MessageException("角色排序失败.");
 
                     #endregion
                 }
@@ -543,7 +543,7 @@ namespace Business.Implementation.System
                                 .Set(o => o.Level, data.Inside == true ? (target.Level + 1) : target.Level)
                                 .Set(o => o.RootId, target.RootId)
                                 .ExecuteAffrows() <= 0)
-                        throw new ApplicationException("角色排序失败.");
+                        throw new MessageException("角色排序失败.");
 
                     #endregion
                 }

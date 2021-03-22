@@ -29,7 +29,7 @@ namespace Business.Utils.Kafka
                      LogType.系统跟踪,
                      $"Kafka, Name[{producer.Name}]: producer exception.",
                      null,
-                     new ApplicationException($"Code: {error.Code}, Reason: {error.Reason}."));
+                     new MessageException($"Code: {error.Code}, Reason: {error.Reason}."));
              })
              .Build();
 
@@ -66,10 +66,10 @@ namespace Business.Utils.Kafka
         public async Task Produce(string topic, object key, TValue messageValue, TimeSpan timeout = default)
         {
             if (messageValue == null)
-                throw new ApplicationException("消息不能为空");
+                throw new MessageException("消息不能为空");
 
             if (CTS.ContainsKey(key))
-                throw new ApplicationException("消息不可重复");
+                throw new MessageException("消息不可重复");
 
             CTS.Add(key, new CancellationTokenSource());
 

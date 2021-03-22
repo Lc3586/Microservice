@@ -89,7 +89,7 @@ namespace Business.Utils.Pagination
 
             string where = string.Empty;
             if (!pagination.FilterToSql(ref where, alias))
-                throw new ApplicationException("搜索条件不支持");
+                throw new MessageException("搜索条件不支持");
 
             if (!string.IsNullOrWhiteSpace(where))
                 source.Where(where);
@@ -109,7 +109,7 @@ namespace Business.Utils.Pagination
         {
             string orderby = string.Empty;
             if (!pagination.OrderByToSql(ref orderby, alias))
-                throw new ApplicationException("排序条件不支持");
+                throw new MessageException("排序条件不支持");
 
             if (!string.IsNullOrWhiteSpace(orderby))
                 source.OrderBy(orderby);
@@ -129,14 +129,14 @@ namespace Business.Utils.Pagination
         public static ISelectGrouping<TKey, TReturn> Filter<TKey, TReturn>(this ISelectGrouping<TKey, TReturn> source, PaginationDTO pagination, string alias = "a")
         {
             //if (DynamicFilterInfo != null && DynamicFilterInfo.Any())
-            //    throw new ApplicationException("分组查询时不支持DynamicFilterInfo条件.");
+            //    throw new MessageException("分组查询时不支持DynamicFilterInfo条件.");
 
             //string where = string.Empty;
             //if (!FilterToSql(ref where, "a"))
-            //    throw new ApplicationException("搜索条件不支持");
+            //    throw new MessageException("搜索条件不支持");
 
             //if (!string.IsNullOrWhiteSpace(where))
-            //    throw new ApplicationException("分组查询时不支持Filter条件.");
+            //    throw new MessageException("分组查询时不支持Filter条件.");
 
             return source;
         }
@@ -154,10 +154,10 @@ namespace Business.Utils.Pagination
         {
             //string orderby = string.Empty;
             //if (!OrderByToSql(ref orderby, "a"))
-            //    throw new ApplicationException("排序条件不支持");
+            //    throw new MessageException("排序条件不支持");
 
             //if (!string.IsNullOrWhiteSpace(orderby))
-            //    throw new ApplicationException("分组查询时不支持AdvancedSort条件.");
+            //    throw new MessageException("分组查询时不支持AdvancedSort条件.");
 
             return source;
         }

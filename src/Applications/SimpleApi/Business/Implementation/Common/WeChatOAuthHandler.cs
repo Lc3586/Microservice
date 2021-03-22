@@ -130,7 +130,7 @@ namespace Business.Implementation.Common
             });
 
             if (!success)
-                throw new ApplicationException("创建微信用户信息失败.", ex);
+                throw new MessageException("创建微信用户信息失败.", ex);
         }
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace Business.Implementation.Common
                  .Set(o => o.Enable, true)
                  .Set(o => o.ModifyTime, DateTime.Now)
                  .ExecuteAffrows() <= 0)
-                throw new ApplicationException($"更新微信用户信息失败, \r\n\tAppId: {appId}, \r\n\tOpenId: {userinfo.openid}.");
+                throw new MessageException($"更新微信用户信息失败, \r\n\tAppId: {appId}, \r\n\tOpenId: {userinfo.openid}.");
         }
 
         /// <summary>
@@ -170,7 +170,7 @@ namespace Business.Implementation.Common
             });
 
             if (info == null)
-                throw new ApplicationException("微信信息不存在或已被移除.");
+                throw new MessageException("微信信息不存在或已被移除.");
 
             return info;
         }
@@ -245,7 +245,7 @@ namespace Business.Implementation.Common
             });
 
             if (user == null)
-                throw new ApplicationException("绑定微信失败, 用户不存在或已被移除.");
+                throw new MessageException("绑定微信失败, 用户不存在或已被移除.");
 
             (bool success, Exception ex) = Orm.RunTransaction(() =>
             {
@@ -266,7 +266,7 @@ namespace Business.Implementation.Common
             });
 
             if (!success)
-                throw new ApplicationException("绑定微信失败.", ex);
+                throw new MessageException("绑定微信失败.", ex);
         }
 
         /// <summary>
@@ -303,7 +303,7 @@ namespace Business.Implementation.Common
                 if (member == null)
                 {
                     if (!autoCreate)
-                        throw new ApplicationException("绑定微信失败, 会员不存在或已被移除.");
+                        throw new MessageException("绑定微信失败, 会员不存在或已被移除.");
 
                     var memberId = CreateMember(appId, openId, false);
                     member = GetMember(memberId);
@@ -326,7 +326,7 @@ namespace Business.Implementation.Common
             });
 
             if (!success)
-                throw new ApplicationException($"绑定微信失败, AppId[{appId}], OpenId[{openId}].", ex);
+                throw new MessageException($"绑定微信失败, AppId[{appId}], OpenId[{openId}].", ex);
         }
 
         /// <summary>
@@ -436,10 +436,10 @@ namespace Business.Implementation.Common
         StateInfo CheckState(string state)
         {
             if (string.IsNullOrWhiteSpace(state))
-                throw new ApplicationException("state参数不可为空.");
+                throw new MessageException("state参数不可为空.");
 
             if (!Cache.ContainsKey(state))
-                throw new ApplicationException("无效的state参数.");
+                throw new MessageException("无效的state参数.");
 
             return Cache.GetCache<StateInfo>(state);
         }
@@ -568,7 +568,7 @@ namespace Business.Implementation.Common
             var stateInfo = CheckState(state);
 
             if (!Repository.Where(o => o.AppId == appId && o.OpenId == userinfo.openid).Any())
-                throw new ApplicationException("微信信息不存在或已被移除.");
+                throw new MessageException("微信信息不存在或已被移除.");
 
             UpdateWeChatUserInfo(appId, userinfo);
 
@@ -627,7 +627,7 @@ namespace Business.Implementation.Common
             var stateInfo = CheckState(state);
 
             if (stateInfo.Data["Token"].ToString() != token)
-                throw new ApplicationException("无效的token.");
+                throw new MessageException("无效的token.");
 
             await UserLogin(UserBusiness.WeChatLogin(stateInfo.Data["AppId"].ToString(), stateInfo.Data["OpenId"].ToString()));
         }

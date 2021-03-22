@@ -39,7 +39,7 @@ namespace Entity.System
         /// </summary>
         [OpenApiSubTag("List", "Create", "Edit", "Detail", "Authorities")]
         [Description("名称")]
-        [Column(StringLength = 50)]
+        [Column(StringLength = 256)]
         public string Name { get; set; }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace Entity.System
         /// </summary>
         [OpenApiSubTag("List", "Create", "Edit", "Detail", "Authorities")]
         [Description("编码")]
-        [Column(StringLength = 20)]
+        [Column(StringLength = 36)]
         public string Code { get; set; }
 
         /// <summary>

@@ -120,7 +120,7 @@ namespace Business.Implementation.System
             }
             catch (ApplicationException ex)
             {
-                throw new ApplicationException("初始化超级管理员账号失败.", ex);
+                throw new MessageException("初始化超级管理员账号失败.", ex);
             }
         }
 
@@ -236,7 +236,7 @@ namespace Business.Implementation.System
             var newData = Mapper.Map<System_User>(data).InitEntity();
 
             if (Repository.Select.Where(c => c.Account == newData.Account).Any())
-                throw new ApplicationException($"已存在账号为{newData.Account}的用户.");
+                throw new MessageException($"已存在账号为{newData.Account}的用户.");
 
             newData.Password = $"{newData.Account}{newData.Password}".ToMD5String();
 
@@ -265,7 +265,7 @@ namespace Business.Implementation.System
                 (bool success, Exception ex) = Orm.RunTransaction(handler);
 
                 if (!success)
-                    throw new ApplicationException("创建用户失败.", ex);
+                    throw new MessageException("创建用户失败.", ex);
             }
             else
                 handler();
@@ -305,7 +305,7 @@ namespace Business.Implementation.System
                       .SetSource(editData.ModifyEntity())
                       .UpdateColumns(typeof(Edit).GetNamesWithTagAndOther(false, "_Edit").ToArray())
                       .ExecuteAffrows() <= 0)
-                    throw new ApplicationException("未修改任何数据.");
+                    throw new MessageException("未修改任何数据.");
             }
 
             if (runTransaction)
@@ -313,7 +313,7 @@ namespace Business.Implementation.System
                 (bool success, Exception ex) = Orm.RunTransaction(handler);
 
                 if (!success)
-                    throw new ApplicationException("修改用户失败.", ex);
+                    throw new MessageException("修改用户失败.", ex);
             }
             else
                 handler();
@@ -323,7 +323,7 @@ namespace Business.Implementation.System
         public void Delete(List<string> ids)
         {
             if (Repository.Select.Where(c => ids.Contains(c.Id) && c.Account == Config.AdminAccount).Any())
-                throw new ApplicationException($"禁止删除账号为{Config.AdminAccount}的用户.");
+                throw new MessageException($"禁止删除账号为{Config.AdminAccount}的用户.");
 
             var entityList = Repository.Select.Where(c => ids.Contains(c.Id)).ToList(c => new { c.Id, c.Account, c.Name });
 
@@ -350,11 +350,11 @@ namespace Business.Implementation.System
                 var orIds = OperationRecordBusiness.Create(orList);
 
                 if (Repository.Delete(o => ids.Contains(o.Id)) <= 0)
-                    throw new ApplicationException("未删除任何数据.");
+                    throw new MessageException("未删除任何数据.");
             });
 
             if (!success)
-                throw new ApplicationException("删除用户失败.", ex);
+                throw new MessageException("删除用户失败.", ex);
         }
 
         #endregion
@@ -367,7 +367,7 @@ namespace Business.Implementation.System
             var entity = Repository.GetAndCheckNull(id);
 
             if (entity.Account == Config.AdminAccount)
-                throw new ApplicationException($"禁止操作账号为{Config.AdminAccount}的用户.");
+                throw new MessageException($"禁止操作账号为{Config.AdminAccount}的用户.");
 
             entity.Enable = enable;
 
@@ -381,7 +381,7 @@ namespace Business.Implementation.System
                 });
 
                 if (Repository.Update(entity) <= 0)
-                    throw new ApplicationException($"{(enable ? "启用" : "禁用")}用户失败");
+                    throw new MessageException($"{(enable ? "启用" : "禁用")}用户失败");
             });
 
             if (!success)
@@ -397,7 +397,7 @@ namespace Business.Implementation.System
             editData.Password = $"{entity.Account}{data.OldPassword}".ToMD5String();
 
             if (!Operator.IsSuperAdmin && !entity.Password.Equals(editData.Password))
-                throw new ApplicationException("原密码有误.");
+                throw new MessageException("原密码有误.");
 
             editData.Password = $"{entity.Account}{data.NewPassword}".ToMD5String();
 
@@ -414,7 +414,7 @@ namespace Business.Implementation.System
                       .SetSource(editData.ModifyEntity())
                       .UpdateColumns(typeof(UpdatePassword).GetNamesWithTagAndOther(false, "_Edit").ToArray())
                       .ExecuteAffrows() <= 0)
-                    throw new ApplicationException("更新密码失败");
+                    throw new MessageException("更新密码失败");
             });
 
             if (!success)
@@ -432,17 +432,17 @@ namespace Business.Implementation.System
                 {
                     InitAdmin();
 
-                    throw new ApplicationException("账号已初始化, 请重新登录.");
+                    throw new MessageException("账号已初始化, 请重新登录.");
                 }
 
-                throw new ApplicationException("账号不存在或已被移除.");
+                throw new MessageException("账号不存在或已被移除.");
             }
 
             if (!user.Enable)
-                throw new ApplicationException("账号已被禁用.");
+                throw new MessageException("账号已被禁用.");
 
             if (!$"{account}{password}".ToMD5String().Equals(user.Password))
-                throw new ApplicationException("密码错误.");
+                throw new MessageException("密码错误.");
 
             EntryLogBusiness.Create(new Common_EntryLog
             {
@@ -473,10 +473,10 @@ namespace Business.Implementation.System
                 .ToOne(o => new { o.Id, o.Account, o.Name, o.Nickname, o.Sex, o.Face, o.Enable, o.Password });
 
             if (user == null)
-                throw new ApplicationException("账号还未绑定微信.");
+                throw new MessageException("账号还未绑定微信.");
 
             if (!user.Enable)
-                throw new ApplicationException("账号已被禁用.");
+                throw new MessageException("账号已被禁用.");
 
             EntryLogBusiness.Create(new Common_EntryLog
             {

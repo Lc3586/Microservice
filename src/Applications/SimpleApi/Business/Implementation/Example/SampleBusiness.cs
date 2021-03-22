@@ -93,7 +93,7 @@ namespace Business.Implementation.Example
             });
 
             if (!success)
-                throw new ApplicationException("创建示例数据失败", ex);
+                throw new MessageException("创建示例数据失败", ex);
         }
 
         public Edit GetEdit(string id)
@@ -129,7 +129,7 @@ namespace Business.Implementation.Example
                       .SetSource(editData.ModifyEntity())
                       .UpdateColumns(typeof(Edit).GetNamesWithTagAndOther(false, "_Edit").ToArray())
                       .ExecuteAffrows() <= 0)
-                    throw new ApplicationException("修改示例数据失败");
+                    throw new MessageException("修改示例数据失败");
             });
 
             if (!success)
@@ -156,13 +156,13 @@ namespace Business.Implementation.Example
             (bool success, Exception ex) = Orm.RunTransaction(() =>
             {
                 if (Repository.Delete(o => ids.Contains(o.Id)) <= 0)
-                    throw new ApplicationException("未删除任何数据");
+                    throw new MessageException("未删除任何数据");
 
                 var orIds = OperationRecordBusiness.Create(orList);
             });
 
             if (!success)
-                throw new ApplicationException("删除示例数据失败", ex);
+                throw new MessageException("删除示例数据失败", ex);
         }
 
         #endregion

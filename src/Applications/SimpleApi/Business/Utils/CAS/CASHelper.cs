@@ -18,7 +18,7 @@ namespace Business.Utils.CAS
     /// </summary>
     public static class CASHelper
     {
-        static readonly SystemConfig Config = AutofacHelper.GetScopeService<SystemConfig>();
+        static readonly SystemConfig Config = AutofacHelper.GetService<SystemConfig>();
 
         /// <summary>
         /// 获取TGT

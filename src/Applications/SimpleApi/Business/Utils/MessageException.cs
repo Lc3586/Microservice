@@ -14,10 +14,23 @@ namespace Business.Utils
         /// <param name="msg">消息</param>
         /// <param name="code">错误代码</param>
         /// <param name="innerException">内部异常</param>
-        public MessageException(string msg, ErrorCode code = ErrorCode.error, Exception innerException = null)
+        public MessageException(string msg, ErrorCode code = ErrorCode.business, Exception innerException = null)
         {
             Msg = msg;
             Code = code;
+            if (innerException != null)
+                InnerException = innerException;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="msg">消息</param>
+        /// <param name="innerException">内部异常</param>
+        public MessageException(string msg, Exception innerException)
+        {
+            Msg = msg;
+            Code = ErrorCode.business;
             if (innerException != null)
                 InnerException = innerException;
         }

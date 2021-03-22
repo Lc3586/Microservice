@@ -33,7 +33,7 @@ namespace Business.Utils.Filter
         public override void OnActionExecuting(IInvocation invocation)
         {
             if (Operator.IsAuthenticated && !Operator.IsAdmin)
-                throw new ApplicationException("无权限");
+                throw new MessageException("无权限");
         }
 
         /// <summary>

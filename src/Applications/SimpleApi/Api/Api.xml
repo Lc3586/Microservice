@@ -1963,6 +1963,11 @@
             </summary>
             <remarks>LCTR 2021-02-21</remarks>
         </member>
+        <member name="M:Api.DocumentFilter.InitResourcesData(Microsoft.OpenApi.Models.OpenApiDocument)">
+            <summary>
+            初始化资源数据
+            </summary>
+        </member>
         <member name="T:Api.OpenApiSchemaFilter">
             <summary>
             接口架构过滤器

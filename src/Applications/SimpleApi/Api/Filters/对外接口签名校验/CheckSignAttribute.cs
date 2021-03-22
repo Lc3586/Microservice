@@ -54,9 +54,9 @@ HttpHelper.SafeSignRequest
     /// </summary>
     public class CheckSignAttribute : Attribute, IActionFilter
     {
-        readonly SystemConfig Config = AutofacHelper.GetScopeService<SystemConfig>();
+        readonly SystemConfig Config = AutofacHelper.GetService<SystemConfig>();
 
-        readonly ICache Cache = AutofacHelper.GetScopeService<ICacheProvider>().GetCache();
+        readonly ICache Cache = AutofacHelper.GetService<ICacheProvider>().GetCache();
 
         /// <summary>
         /// Action执行之前执行

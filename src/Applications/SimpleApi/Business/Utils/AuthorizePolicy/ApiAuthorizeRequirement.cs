@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Model.System;
 using Model.Utils.Config;
-using Model.Utils.Result;
 using System.Threading.Tasks;
 
 namespace Business.Utils.AuthorizePolicy
@@ -29,17 +29,23 @@ namespace Business.Utils.AuthorizePolicy
             if (Operator.IsSuperAdmin)
                 goto success;
 
-            var defaultContext = (DefaultHttpContext)context.Resource;
+            string uri;
+            if (context.Resource.GetType() == typeof(DefaultHttpContext))
+                uri = ((DefaultHttpContext)context.Resource).Request.Path.Value?.ToLower();
+            else if (context.Resource.GetType() == typeof(AuthorizationFilterContext))
+                uri = ((AuthorizationFilterContext)context.Resource).HttpContext.Request.Path.Value?.ToLower();
+            else
+                goto success;
 
             //验证权限
             switch (Operator.AuthenticationInfo.UserType)
             {
                 case UserType.系统用户:
-                    if (!AuthoritiesBusiness.UserHasMenuUri(Operator.AuthenticationInfo.Id, defaultContext.Request.Path.Value?.ToLower()))
+                    if (!AuthoritiesBusiness.UserHasResourcesUri(Operator.AuthenticationInfo.Id, uri))
                         goto error;
                     break;
                 case UserType.会员:
-                    if (!AuthoritiesBusiness.MemberHasMenuUri(Operator.AuthenticationInfo.Id, defaultContext.Request.Path.Value?.ToLower()))
+                    if (!AuthoritiesBusiness.MemberHasResourcesUri(Operator.AuthenticationInfo.Id, uri))
                         goto error;
                     break;
                 default:
@@ -53,6 +59,9 @@ namespace Business.Utils.AuthorizePolicy
             error:
             //context.Fail();
             //return ResponseError(context, "无权限");
+            return Task.CompletedTask;
+
+            end:
             return Task.CompletedTask;
         }
     }

@@ -11,7 +11,7 @@
             AjaxResult res = new AjaxResult
             {
                 Success = true,
-                Msg = "成功！"
+                Msg = "操作成功！"
             };
 
             return res;
@@ -26,7 +26,7 @@
             AjaxResult<T> res = new AjaxResult<T>
             {
                 Success = true,
-                Msg = "成功！",
+                Msg = "操作成功！",
                 Data = default
             };
 
@@ -76,7 +76,7 @@
             AjaxResult<T> res = new AjaxResult<T>
             {
                 Success = true,
-                Msg = "成功！",
+                Msg = "操作成功！",
                 Data = data
             };
 
@@ -110,7 +110,7 @@
             AjaxResult res = new AjaxResult
             {
                 Success = false,
-                Msg = "失败！"
+                Msg = "操作失败！"
             };
 
             return res;
@@ -125,7 +125,7 @@
             AjaxResult<T> res = new AjaxResult<T>
             {
                 Success = false,
-                Msg = "失败！",
+                Msg = "操作失败！",
                 Data = default
             };
 
@@ -180,7 +180,7 @@
             AjaxResult<T> res = new AjaxResult<T>
             {
                 Success = false,
-                Msg = "失败！",
+                Msg = "操作失败！",
                 Data = data,
                 ErrorCode = (int)errorCode
             };
