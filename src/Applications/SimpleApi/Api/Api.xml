@@ -1155,6 +1155,22 @@
             <param name="paramter">参数</param>
             <returns></returns>
         </member>
+        <member name="M:Api.Controllers.AuthoritiesController.GetRoleResourcesList(System.String,Model.Utils.Pagination.PaginationDTO)">
+            <summary>
+            获取能授权给角色的资源列表数据
+            </summary>
+            <param name="roleId">角色Id</param>
+            <param name="pagination">分页设置</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.AuthoritiesController.GetUserResourcesList(System.String,Model.Utils.Pagination.PaginationDTO)">
+            <summary>
+            获取能授权给用户的资源列表数据
+            </summary>
+            <param name="userId">用户Id</param>
+            <param name="pagination">分页设置</param>
+            <returns></returns>
+        </member>
         <member name="T:Api.Controllers.MenuController">
             <summary>
             菜单接口

@@ -25,7 +25,7 @@ namespace Api.Configures
         {
             services.AddControllers(options =>
             {
-                // Global Authorize Filter
+                //全局身份（登录）验证, 除非添加AllowAnonymousAttribute特性忽略验证
                 var policy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
                 .Build();
@@ -34,11 +34,6 @@ namespace Api.Configures
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy(nameof(AllowAuthenticatedRequirement), policy =>
-                {
-                    policy.Requirements.Add(new AllowAuthenticatedRequirement());
-                });
-
                 options.AddPolicy(nameof(ApiAuthorizeRequirement), policy =>
                 {
                     policy.Requirements.Add(new ApiAuthorizeRequirement());

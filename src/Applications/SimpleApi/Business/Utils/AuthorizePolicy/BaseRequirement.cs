@@ -1,11 +1,8 @@
 ﻿using Business.Interface.System;
 using Microservice.Library.Container;
-using Microservice.Library.Extension;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Model.Utils.Config;
-using Model.Utils.Result;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Business.Utils.AuthorizePolicy

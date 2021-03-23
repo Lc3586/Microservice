@@ -12,6 +12,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Api
 {
@@ -65,10 +66,21 @@ namespace Api
                 var newData = new List<System_Resources>();
                 swaggerDoc.Paths.ForEach(p =>
                 {
-                    if (orm.Select<System_Resources>()
+                    var resources = orm.Select<System_Resources>()
                             .Where(o => o.Uri == p.Key && o.Type == ResourcesType.接口)
-                            .Any())
-                        return;
+                            .ToOne(o => new { o.Id, o.Uri });
+                    if (resources != null)
+                        if (resources.Uri.Contains("{"))
+                        {
+                            var id = resources.Id;
+                            var uri = Regex.Replace(resources.Uri, @"{(.*?)}", "%");
+                            orm.Update<System_Resources>()
+                                .Where(o => o.Id == id)
+                                .Set(o => o.Uri, $"{uri}/")
+                                .ExecuteAffrows();
+                        }
+                        else
+                            return;
 
                     p.Value.Operations.ForEach(o =>
                     {

@@ -145,7 +145,7 @@ namespace Api.Controllers
         /// <param name="data">数据</param>
         /// <returns></returns>
         [HttpPost("update-password")]
-        public async Task<object> UpdatePassword(UpdatePassword data)
+        public async Task<object> UpdatePassword([FromBody] UpdatePassword data)
         {
             UserBusiness.UpdatePassword(data);
             return await Task.FromResult(Success());

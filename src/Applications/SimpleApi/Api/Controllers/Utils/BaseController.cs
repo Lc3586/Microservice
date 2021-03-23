@@ -13,7 +13,6 @@ namespace Api.Controllers.Utils
     /// <summary>
     /// 基控制器
     /// </summary>
-    [Authorize(nameof(AllowAuthenticatedRequirement))]//登录校验
     [CheckModel]//检查模型
     [JsonParamter(true)]//Json参数转模型
     public class BaseController : ControllerBase

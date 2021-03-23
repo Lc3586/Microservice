@@ -1576,7 +1576,7 @@ namespace Business.Implementation.System
 
         public bool UserHasMenuUri(string userId, string menuUri, bool checkEnable = true)
         {
-            return Repository_Menu.Where(o => o.Uri == menuUri && (checkEnable == false || o.Enable == true)
+            return Repository_Menu.Where(o => menuUri.Contains(o.Uri) && (checkEnable == false || o.Enable == true)
                                             && (o.Users.AsSelect().Where(p => p.Id == userId).Any()
                                                 || o.Roles.AsSelect().Where(p => p.Users.AsSelect().Where(q => q.Id == userId).Any()).Any()))
                                 .Any();
@@ -1591,7 +1591,7 @@ namespace Business.Implementation.System
 
         public bool MemberHasMenuUri(string userId, string menuUri, bool checkEnable = true)
         {
-            return Repository_Menu.Where(o => o.Uri == menuUri && (checkEnable == false || o.Enable == true)
+            return Repository_Menu.Where(o => menuUri.Contains(o.Uri) && (checkEnable == false || o.Enable == true)
                                             && o.Roles.AsSelect().Where(p => p.Users.AsSelect().Where(q => q.Id == userId).Any()).Any())
                                 .Any();
         }
@@ -1606,7 +1606,7 @@ namespace Business.Implementation.System
 
         public bool UserHasResourcesUri(string userId, string resourcesUri, bool checkEnable = true)
         {
-            return Repository_Resources.Where(o => o.Uri == resourcesUri && (checkEnable == false || o.Enable == true)
+            return Repository_Resources.Where(o => resourcesUri.Contains(o.Uri) && (checkEnable == false || o.Enable == true)
                                             && (o.Users.AsSelect().Where(p => p.Id == userId).Any()
                                                 || o.Roles.AsSelect().Where(p => p.Users.AsSelect().Where(q => q.Id == userId).Any()).Any()))
                                 .Any();
@@ -1621,7 +1621,7 @@ namespace Business.Implementation.System
 
         public bool MemberHasResourcesUri(string userId, string resourcesUri, bool checkEnable = true)
         {
-            return Repository_Resources.Where(o => o.Uri == resourcesUri && (checkEnable == false || o.Enable == true)
+            return Repository_Resources.Where(o => resourcesUri.Contains(o.Uri) && (checkEnable == false || o.Enable == true)
                                             && o.Roles.AsSelect().Where(p => p.Users.AsSelect().Where(q => q.Id == userId).Any()).Any())
                                 .Any();
         }

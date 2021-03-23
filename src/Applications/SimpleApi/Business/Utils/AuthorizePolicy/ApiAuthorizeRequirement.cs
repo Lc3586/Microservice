@@ -13,6 +13,9 @@ namespace Business.Utils.AuthorizePolicy
     public class ApiAuthorizeRequirement :
         BaseRequirement<ApiAuthorizeRequirement>
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public ApiAuthorizeRequirement()
         {
 
@@ -29,10 +32,12 @@ namespace Business.Utils.AuthorizePolicy
             if (Operator.IsSuperAdmin)
                 goto success;
 
+            var type = context.Resource.GetType();
+
             string uri;
-            if (context.Resource.GetType() == typeof(DefaultHttpContext))
+            if (type == typeof(DefaultHttpContext))
                 uri = ((DefaultHttpContext)context.Resource).Request.Path.Value?.ToLower();
-            else if (context.Resource.GetType() == typeof(AuthorizationFilterContext))
+            else if (type.IsAssignableTo(typeof(AuthorizationFilterContext)))
                 uri = ((AuthorizationFilterContext)context.Resource).HttpContext.Request.Path.Value?.ToLower();
             else
                 goto success;
