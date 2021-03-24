@@ -568,7 +568,11 @@ namespace Business.Implementation.Common
             var stateInfo = CheckState(state);
 
             if (!Repository.Where(o => o.AppId == appId && o.OpenId == userinfo.openid).Any())
-                throw new MessageException("微信信息不存在或已被移除.");
+            {
+                //throw new MessageException("微信信息不存在或已被移除.");
+                context.Response.Redirect($"{Config.WeChatService.OAuthBaseUrl}?state={state}");
+                return;
+            }
 
             UpdateWeChatUserInfo(appId, userinfo);
 

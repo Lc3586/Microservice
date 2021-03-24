@@ -502,18 +502,29 @@ namespace Business.Implementation.Common
         public void Preview(string id)
         {
             var file = Repository.GetAndCheckNull(id, "文件不存在或已被删除");
-            var path = PathHelper.GetAbsolutePath($"~{file.ThumbnailPath}");
 
             var response = HttpContextAccessor.HttpContext.Response;
             response.StatusCode = StatusCodes.Status200OK;
 
-            var type = file.ThumbnailPath[file.ThumbnailPath.LastIndexOf('.')..];
-            if (type == "jpg")
-                type = "jpeg";
+            response.ContentType = file.MimeType;
 
-            response.ContentType = $"image/{type.TrimStart('.')}";
-            //response.Headers.Add("Content-Disposition", $"attachment; filename=\"{file.FullName}\"");
-            ResponseFile(response, path);
+            switch (file.StorageType)
+            {
+                case StorageType.Base64Url:
+                    ResponseImage(response, ImgHelper.GetImgFromBase64Url(file.ThumbnailPath));
+                    break;
+                case StorageType.Base64:
+                    ResponseImage(response, ImgHelper.GetImgFromBase64(file.ThumbnailPath));
+                    break;
+                case StorageType.Uri:
+                    response.Redirect(file.ThumbnailPath);
+                    break;
+                case StorageType.Path:
+                    ResponseFile(response, PathHelper.GetAbsolutePath($"~{file.ThumbnailPath}"));
+                    break;
+                default:
+                    throw new MessageException("文件信息有误.");
+            }
         }
 
         public void Browse(string id)
@@ -524,7 +535,6 @@ namespace Business.Implementation.Common
             response.StatusCode = StatusCodes.Status200OK;
 
             response.ContentType = file.MimeType;
-            //response.Headers.Add("Content-Disposition", $"attachment; filename=\"{file.FullName}\"");
 
             switch (file.StorageType)
             {
@@ -541,7 +551,7 @@ namespace Business.Implementation.Common
                     ResponseFile(response, PathHelper.GetAbsolutePath($"~{file.Path}"));
                     break;
                 default:
-                    break;
+                    throw new MessageException("文件信息有误.");
             }
         }
 

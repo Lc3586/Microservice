@@ -1,14 +1,10 @@
 ﻿using Api.Controllers.Utils;
-using Business.Hub;
 using Business.Interface.Common;
 using Business.Interface.System;
 using Business.Utils.AuthorizePolicy;
-using Microservice.Library.Extension;
-using Microservice.Library.WeChat.Extension;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using Model.Common.WeChatUserInfoDTO;
 using Model.Utils.Result;
 using Swashbuckle.AspNetCore.Annotations;
