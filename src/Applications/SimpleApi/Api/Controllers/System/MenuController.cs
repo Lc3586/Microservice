@@ -1,8 +1,7 @@
 ﻿using Api.Controllers.Utils;
 using Business.Interface.System;
-using Business.Utils.AuthorizePolicy;
+using Business.Utils.Authorization;
 using Microservice.Library.Extension;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model.System.MenuDTO;
 using Model.Utils.Pagination;
@@ -19,7 +18,7 @@ namespace Api.Controllers
     /// 菜单接口
     /// </summary>
     [Route("/menu")]
-    [Authorize(nameof(ApiAuthorizeRequirement))]
+    [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
     [SwaggerTag("菜单接口")]
     public class MenuController : BaseApiController
     {

@@ -1,8 +1,7 @@
 ﻿using Api.Controllers.Utils;
 using Business.Interface.System;
-using Business.Utils.AuthorizePolicy;
+using Business.Utils.Authorization;
 using Microservice.Library.Extension;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model.System.AuthorizeDTO;
 using Model.Utils.Pagination;
@@ -19,7 +18,7 @@ namespace Api.Controllers
     /// 权限接口
     /// </summary>
     [Route("/authorities")]
-    [Authorize(nameof(ApiAuthorizeRequirement))]
+    [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
     public class AuthoritiesController : BaseApiController
     {
         #region DI

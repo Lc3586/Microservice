@@ -1,5 +1,7 @@
-﻿using Model.Common.FileDTO;
+﻿using Microsoft.AspNetCore.Http;
+using Model.Common.FileDTO;
 using Model.Utils.Pagination;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -45,48 +47,117 @@ namespace Business.Interface.Common
         #region 文件操作
 
         /// <summary>
-        /// MD5校验
+        /// 文件MD5值校验
         /// </summary>
-        /// <param name="md5"></param>
+        /// <param name="md5">文件MD5值</param>
+        /// <param name="filename">文件重命名</param>
         /// <returns></returns>
-        CheckMD5Response CheckMD5(string md5);
+        ValidationMD5Response ValidationFileMD5(string md5, string filename = null);
 
         /// <summary>
-        /// 单图上传
+        /// 预备上传分片文件
         /// </summary>
-        /// <remarks>单个上传</remarks>
-        /// <param name="option">分页设置</param>
-        /// <returns></returns>
-        FileInfo SingleImage(ImageUploadParams option);
+        /// <param name="file_md5">文件MD5值</param>
+        /// <param name="md5">分片文件MD5值</param>
+        /// <param name="index">分片文件索引</param>
+        /// <param name="specs">分片文件规格</param>
+        /// <returns><see cref="Model.Common.FileState"/>文件状态</returns>
+        PreUploadChunkFileResponse PreUploadChunkFile(string file_md5, string md5, int index, int specs);
 
         /// <summary>
-        /// 文件上传
+        /// 单分片文件上传
         /// </summary>
         /// <remarks>单个上传</remarks>
-        /// <param name="option">分页设置</param>
+        /// <param name="key">上传标识</param>
+        /// <param name="md5">分片文件MD5值</param>
+        /// <param name="file">分片文件</param>
         /// <returns></returns>
-        Task<FileInfo> SingleFile(FileUploadParams option);
+        Task SingleChunkFile(string key, string md5, IFormFile file);
+
+        /// <summary>
+        /// 分片文件全部上传完毕
+        /// </summary>
+        /// <param name="file_md5">文件MD5值</param>
+        /// <param name="specs">分片文件规格</param>
+        /// <param name="total">分片文件总数</param>
+        /// <param name="filename">文件重命名</param>
+        /// <returns></returns>
+        FileInfo UploadChunkFileFinished(string file_md5, int specs, int total, string filename = null);
+
+        /// <summary>
+        /// 通过外链上传单个图片
+        /// </summary>
+        /// <param name="url">外链地址</param>
+        /// <param name="download">是否下载资源</param>
+        /// <param name="filename">文件重命名</param>
+        /// <returns></returns>
+        Task<FileInfo> SingleImageFromUrl(string url, bool download = false, string filename = null);
+
+        /// <summary>
+        /// 通过外链上传单个文件
+        /// </summary>
+        /// <param name="url">外链地址</param>
+        /// <param name="download">是否下载资源</param>
+        /// <param name="filename">文件重命名</param>
+        /// <returns></returns>
+        Task<FileInfo> SingleFileFromUrl(string url, bool download = false, string filename = null);
+
+        /// <summary>
+        /// 通过Base64字符串上传单个图片
+        /// </summary>
+        /// <param name="base64">Base64字符串</param>
+        /// <param name="filename">文件重命名</param>
+        /// <returns></returns>
+        FileInfo SingleImageFromBase64(string base64, string filename = null);
+
+        /// <summary>
+        /// 上传单个文件
+        /// </summary>
+        /// <param name="file">文件</param>
+        /// <param name="filename">文件重命名</param>
+        /// <returns></returns>
+        Task<FileInfo> SingleFile(IFormFile file, string filename = null);
+
+        ///// <summary>
+        ///// 单图上传
+        ///// </summary>
+        ///// <remarks>单个上传</remarks>
+        ///// <param name="option">图片上传参数</param>
+        ///// <returns></returns>
+        //FileInfo SingleImage(ImageUploadParams option);
+
+        ///// <summary>
+        ///// 文件上传
+        ///// </summary>
+        ///// <remarks>单个上传</remarks>
+        ///// <param name="option">文件上传参数</param>
+        ///// <returns></returns>
+        //Task<FileInfo> SingleFile(FileUploadParams option);
 
         /// <summary>
         /// 预览
         /// </summary>
+        /// <remarks>用于查看文件缩略图或视频截图</remarks>
         /// <param name="id">文件Id</param>
+        /// <param name="width">指定宽度</param>
+        /// <param name="height">指定高度</param>
+        /// <param name="time">视频的时间轴位置</param>
         /// <returns></returns>
-        void Preview(string id);
+        Task Preview(string id, int width, int height, TimeSpan? time = null);
 
         /// <summary>
         /// 浏览
         /// </summary>
         /// <param name="id">文件Id</param>
         /// <returns></returns>
-        void Browse(string id);
+        Task Browse(string id);
 
         /// <summary>
         /// 下载
         /// </summary>
         /// <param name="id">文件Id</param>
         /// <returns></returns>
-        void Download(string id);
+        Task Download(string id);
 
         /// <summary>
         /// 删除

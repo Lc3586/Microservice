@@ -22,7 +22,7 @@ namespace Api
     /// <remarks>LCTR 2021-02-21</remarks>
     public class DocumentFilter : IDocumentFilter
     {
-        SystemConfig Config => AutofacHelper.GetService<SystemConfig>();
+        static SystemConfig Config => AutofacHelper.GetService<SystemConfig>();
 
         public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
         {
@@ -56,7 +56,7 @@ namespace Api
         /// <summary>
         /// 初始化资源数据
         /// </summary>
-        async void InitResourcesData(OpenApiDocument swaggerDoc)
+        static async void InitResourcesData(OpenApiDocument swaggerDoc)
         {
             try
             {
@@ -67,7 +67,7 @@ namespace Api
                 swaggerDoc.Paths.ForEach(p =>
                 {
                     var resources = orm.Select<System_Resources>()
-                            .Where(o => o.Uri == p.Key && o.Type == ResourcesType.接口)
+                            .Where(o => p.Key.Contains(o.Uri) && o.Type == ResourcesType.接口)
                             .ToOne(o => new { o.Id, o.Uri });
                     if (resources != null)
                         if (resources.Uri.Contains("{"))
@@ -91,6 +91,7 @@ namespace Api
                             Type = ResourcesType.接口,
                             Uri = p.Key,
                             Enable = true,
+                            Remark = "通过Swagger接口文档自动生成."
                         }.InitEntity());
 
                     });

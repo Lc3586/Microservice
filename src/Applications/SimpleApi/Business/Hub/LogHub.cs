@@ -1,6 +1,5 @@
-﻿using Business.Utils.AuthorizePolicy;
+﻿using Business.Utils.Authorization;
 using Microservice.Library.Extension;
-using Microsoft.AspNetCore.Authorization;
 using Model.Utils.SignalR;
 using System.Collections.Concurrent;
 using SignalrHub = Microsoft.AspNetCore.SignalR.Hub;
@@ -10,7 +9,7 @@ namespace Business.Hub
     /// <summary>
     /// 日志中心
     /// </summary>
-    [Authorize(nameof(ApiAuthorizeRequirement))]
+    [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
     public class LogHub : SignalrHub
     {
         public LogHub()

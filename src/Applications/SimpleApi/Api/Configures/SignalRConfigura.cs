@@ -1,5 +1,6 @@
 ﻿using Business.Hub;
-using Business.Utils.AuthorizePolicy;
+using Business.Utils.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Model.Utils.Config;
@@ -21,26 +22,27 @@ namespace Api.Configures
         public static IServiceCollection RegisterSignalR(this IServiceCollection services, SystemConfig config)
         {
             services.AddAuthorization(options =>
+            {
+                options.AddPolicy(nameof(SignalRHubRequirement), policy =>
                 {
-                    options.AddPolicy(nameof(HubMethodAuthorizeRequirement), policy =>
-                    {
-                        policy.Requirements.Add(new HubMethodAuthorizeRequirement());
-                    });
-                })
-                .AddSignalR()
-                .AddHubOptions<LogHub>(option =>
-                {
-                    option.ClientTimeoutInterval = TimeSpan.FromSeconds(30);
-                    option.EnableDetailedErrors = config.RunMode != RunMode.Publish && config.RunMode != RunMode.Publish_Swagger;
-                })
-                .AddHubOptions<WeChatServiceHub>(option =>
-                {
-                    option.ClientTimeoutInterval = TimeSpan.FromSeconds(30);
-                    option.EnableDetailedErrors = config.RunMode != RunMode.Publish && config.RunMode != RunMode.Publish_Swagger;
+                    policy.Requirements.Add(new SignalRHubRequirement());
                 });
+            })
+            .AddScoped<IAuthorizationHandler, SignalRHubHandler<SignalRHubRequirement>>()
+            .AddSignalR()
+            .AddHubOptions<LogHub>(option =>
+            {
+                option.ClientTimeoutInterval = TimeSpan.FromSeconds(30);
+                option.EnableDetailedErrors = config.RunMode != RunMode.Publish && config.RunMode != RunMode.Publish_Swagger;
+            })
+            .AddHubOptions<WeChatServiceHub>(option =>
+            {
+                option.ClientTimeoutInterval = TimeSpan.FromSeconds(30);
+                option.EnableDetailedErrors = config.RunMode != RunMode.Publish && config.RunMode != RunMode.Publish_Swagger;
+            });
 
             //日志转发
-            services.AddSingleton(new LogForward());
+            services.AddSingleton(new LogForwardHandler());
 
             return services;
         }
@@ -63,7 +65,7 @@ namespace Api.Configures
             });
 
             //启动日志转发
-            app.ApplicationServices.GetService<LogForward>().Start();
+            app.ApplicationServices.GetService<LogForwardHandler>().Start();
 
             return app;
         }

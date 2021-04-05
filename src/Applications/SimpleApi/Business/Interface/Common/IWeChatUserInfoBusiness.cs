@@ -44,7 +44,7 @@ namespace Business.Interface.Common
         /// </summary>
         /// <param name="state"></param>
         /// <returns></returns>
-        Task<string> GetExplain(string state);
+        string GetExplain(string state);
 
         /// <summary>
         /// 微信确认操作

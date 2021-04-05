@@ -1,4 +1,4 @@
-﻿using Business.Utils.AuthorizePolicy;
+﻿using Business.Utils.Authorization;
 using Microservice.Library.Container;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -36,11 +36,13 @@ namespace Api.Configures
             {
                 options.AddPolicy(nameof(ApiAuthorizeRequirement), policy =>
                 {
+                    policy.AuthenticationSchemes.Add(CookieAuthenticationDefaults.AuthenticationScheme);
                     policy.Requirements.Add(new ApiAuthorizeRequirement());
                 });
-
-                options.InvokeHandlersAfterFailure = true;
             })
+            .AddScoped<IAuthorizationHandler, ApiPermissionHandlerr<ApiAuthorizeRequirement>>()
+            .AddScoped<IAuthorizationHandler, ApiPermissionDefaultHttpContextHandlerr<ApiAuthorizeRequirement>>()
+            .AddScoped<IAuthorizationHandler, ApiPermissionAuthorizationFilterContextHandlerr<ApiAuthorizeRequirement>>()
             .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(options =>
             {

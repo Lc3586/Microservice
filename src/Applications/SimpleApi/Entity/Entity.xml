@@ -4,68 +4,184 @@
         <name>Entity</name>
     </assembly>
     <members>
-        <member name="T:Entity.Common.Common_ChunkMergeTask">
+        <member name="T:Entity.Common.Common_ChunkFile">
             <summary>
-            分片合并任务
+            分片文件信息
             </summary>
         </member>
-        <member name="P:Entity.Common.Common_ChunkMergeTask.Id">
+        <member name="P:Entity.Common.Common_ChunkFile.Id">
             <summary>
             Id
             </summary>
         </member>
-        <member name="P:Entity.Common.Common_ChunkMergeTask.ServerKey">
+        <member name="P:Entity.Common.Common_ChunkFile.ServerKey">
             <summary>
             服务器标识
             </summary>
         </member>
-        <member name="P:Entity.Common.Common_ChunkMergeTask.MD5">
+        <member name="P:Entity.Common.Common_ChunkFile.TaskKey">
             <summary>
-            MD5校验值
+            任务标识
             </summary>
         </member>
-        <member name="P:Entity.Common.Common_ChunkMergeTask.TotalChunk">
+        <member name="P:Entity.Common.Common_ChunkFile.FileMD5">
             <summary>
-            分片总数
+            文件MD5校验值
             </summary>
         </member>
-        <member name="P:Entity.Common.Common_ChunkMergeTask.CurrentChunkIndex">
+        <member name="P:Entity.Common.Common_ChunkFile.MD5">
             <summary>
-            当前处理分片的索引
+            分片MD5校验值
             </summary>
         </member>
-        <member name="P:Entity.Common.Common_ChunkMergeTask.Compress">
+        <member name="P:Entity.Common.Common_ChunkFile.Index">
             <summary>
-            是否压缩
-            </summary>
-            <remarks>
-            <para>文件为图片时，压缩生成缩略图，原始图片将会保留</para>
-            <para></para>
-            </remarks>
-        </member>
-        <member name="P:Entity.Common.Common_ChunkMergeTask.SaveOriginalFile">
-            <summary>
-            保存原始文件
+            分片索引
             </summary>
         </member>
-        <member name="P:Entity.Common.Common_ChunkMergeTask.State">
+        <member name="P:Entity.Common.Common_ChunkFile.Specs">
+            <summary>
+            分片规格
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_ChunkFile.Bytes">
+            <summary>
+            字节数
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_ChunkFile.Size">
+            <summary>
+            文件大小
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_ChunkFile.ContentType">
+            <summary>
+            内容类型
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_ChunkFile.Extension">
+            <summary>
+            文件扩展名
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_ChunkFile.Path">
+            <summary>
+            文件路径
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_ChunkFile.State">
             <summary>
             状态
             </summary>
         </member>
-        <member name="P:Entity.Common.Common_ChunkMergeTask.CreatorId">
+        <member name="P:Entity.Common.Common_ChunkFile.CreatorId">
             <summary>
             创建者
             </summary>
         </member>
-        <member name="P:Entity.Common.Common_ChunkMergeTask.CreatorName">
+        <member name="P:Entity.Common.Common_ChunkFile.CreatorName">
             <summary>
             创建者名称
             </summary>
         </member>
-        <member name="P:Entity.Common.Common_ChunkMergeTask.CreateTime">
+        <member name="P:Entity.Common.Common_ChunkFile.CreateTime">
             <summary>
             创建时间
+            </summary>
+        </member>
+        <member name="T:Entity.Common.Common_ChunkFileMergeTask">
+            <summary>
+            分片文件合并任务
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_ChunkFileMergeTask.Id">
+            <summary>
+            Id
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_ChunkFileMergeTask.ServerKey">
+            <summary>
+            服务器标识
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_ChunkFileMergeTask.MD5">
+            <summary>
+            文件MD5校验值
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_ChunkFileMergeTask.Name">
+            <summary>
+            名称
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_ChunkFileMergeTask.FullName">
+            <summary>
+            完整名称
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_ChunkFileMergeTask.Specs">
+            <summary>
+            分片规格
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_ChunkFileMergeTask.Total">
+            <summary>
+            分片总数
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_ChunkFileMergeTask.CurrentChunkIndex">
+            <summary>
+            当前处理分片的索引
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_ChunkFileMergeTask.State">
+            <summary>
+            状态
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_ChunkFileMergeTask.Info">
+            <summary>
+            信息
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_ChunkFileMergeTask.ContentType">
+            <summary>
+            内容类型
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_ChunkFileMergeTask.Extension">
+            <summary>
+            文件扩展名
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_ChunkFileMergeTask.Bytes">
+            <summary>
+            字节数
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_ChunkFileMergeTask.Size">
+            <summary>
+            文件大小
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_ChunkFileMergeTask.Path">
+            <summary>
+            合并后的文件路径
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_ChunkFileMergeTask.CreateTime">
+            <summary>
+            创建时间
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_ChunkFileMergeTask.ModifyTime">
+            <summary>
+            最近更新时间
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_ChunkFileMergeTask.CompletedTime">
+            <summary>
+            完成时间
             </summary>
         </member>
         <member name="T:Entity.Common.Common_EntryLog">
@@ -159,24 +275,19 @@
             <para>压缩包</para>
             </summary>
         </member>
-        <member name="P:Entity.Common.Common_File.MimeType">
+        <member name="P:Entity.Common.Common_File.ContentType">
             <summary>
             内容类型
             </summary>
         </member>
-        <member name="P:Entity.Common.Common_File.Suffix">
+        <member name="P:Entity.Common.Common_File.Extension">
             <summary>
-            文件后缀
+            文件扩展名
             </summary>
         </member>
         <member name="P:Entity.Common.Common_File.MD5">
             <summary>
             MD5校验值
-            </summary>
-        </member>
-        <member name="P:Entity.Common.Common_File.State">
-            <summary>
-            状态
             </summary>
         </member>
         <member name="P:Entity.Common.Common_File.ServerKey">
@@ -198,11 +309,6 @@
             文件路径
             </summary>
         </member>
-        <member name="P:Entity.Common.Common_File.ThumbnailPath">
-            <summary>
-            预览图路径
-            </summary>
-        </member>
         <member name="P:Entity.Common.Common_File.Bytes">
             <summary>
             字节数
@@ -211,6 +317,11 @@
         <member name="P:Entity.Common.Common_File.Size">
             <summary>
             文件大小
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_File.State">
+            <summary>
+            状态
             </summary>
         </member>
         <member name="P:Entity.Common.Common_File.CreatorId">
@@ -224,51 +335,6 @@
             </summary>
         </member>
         <member name="P:Entity.Common.Common_File.CreateTime">
-            <summary>
-            创建时间
-            </summary>
-        </member>
-        <member name="T:Entity.Common.Common_FileChunk">
-            <summary>
-            文件分片信息
-            </summary>
-        </member>
-        <member name="P:Entity.Common.Common_FileChunk.Id">
-            <summary>
-            Id
-            </summary>
-        </member>
-        <member name="P:Entity.Common.Common_FileChunk.ServerKey">
-            <summary>
-            服务器标识
-            </summary>
-        </member>
-        <member name="P:Entity.Common.Common_FileChunk.MD5">
-            <summary>
-            MD5校验值
-            </summary>
-        </member>
-        <member name="P:Entity.Common.Common_FileChunk.Index">
-            <summary>
-            分片索引
-            </summary>
-        </member>
-        <member name="P:Entity.Common.Common_FileChunk.Path">
-            <summary>
-            文件路径
-            </summary>
-        </member>
-        <member name="P:Entity.Common.Common_FileChunk.CreatorId">
-            <summary>
-            创建者
-            </summary>
-        </member>
-        <member name="P:Entity.Common.Common_FileChunk.CreatorName">
-            <summary>
-            创建者名称
-            </summary>
-        </member>
-        <member name="P:Entity.Common.Common_FileChunk.CreateTime">
             <summary>
             创建时间
             </summary>

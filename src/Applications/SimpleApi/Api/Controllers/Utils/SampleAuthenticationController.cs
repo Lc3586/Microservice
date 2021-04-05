@@ -1,5 +1,5 @@
 ﻿using Business.Interface.System;
-using Business.Utils.AuthorizePolicy;
+using Business.Utils.Authorization;
 using Microservice.Library.Extension;
 using Microservice.Library.Http;
 using Microsoft.AspNetCore.Authentication;

@@ -4,40 +4,40 @@
         <name>Business</name>
     </assembly>
     <members>
-        <member name="T:Business.Hub.LogForward">
+        <member name="T:Business.Hub.LogForwardHandler">
             <summary>
             SignalR日志转发
             </summary>
         </member>
-        <member name="F:Business.Hub.LogForward.LogQueue">
+        <member name="F:Business.Hub.LogForwardHandler.LogQueue">
             <summary>
-            数据
+            数据队列
             </summary>
             <remarks>
             </remarks>
         </member>
-        <member name="M:Business.Hub.LogForward.Start">
+        <member name="M:Business.Hub.LogForwardHandler.Start">
             <summary>
             启动
             </summary>
         </member>
-        <member name="M:Business.Hub.LogForward.Shutdown">
+        <member name="M:Business.Hub.LogForwardHandler.Shutdown">
             <summary>
             关闭
             </summary>
         </member>
-        <member name="M:Business.Hub.LogForward.Add(Model.Utils.SignalR.LogInfo)">
+        <member name="M:Business.Hub.LogForwardHandler.Add(Model.Utils.SignalR.LogInfo)">
             <summary>
             新增转发数据
             </summary>
             <param name="log">日志</param>
         </member>
-        <member name="M:Business.Hub.LogForward.Run">
+        <member name="M:Business.Hub.LogForwardHandler.Run">
             <summary>
             运行
             </summary>
         </member>
-        <member name="M:Business.Hub.LogForward.Processing">
+        <member name="M:Business.Hub.LogForwardHandler.Processing">
             <summary>
             处理转发
             </summary>
@@ -141,9 +141,99 @@
             <param name="state"></param>
             <returns></returns>
         </member>
+        <member name="T:Business.Implementation.Common.ChunkFileMergeHandler">
+            <summary>
+            合并分片文件
+            </summary>
+        </member>
+        <member name="F:Business.Implementation.Common.ChunkFileMergeHandler.IdQueue">
+            <summary>
+            数据队列
+            </summary>
+            <remarks>
+            </remarks>
+        </member>
+        <member name="P:Business.Implementation.Common.ChunkFileMergeHandler.BaseDir">
+            <summary>
+            存储路径根目录相对路径
+            </summary>
+        </member>
+        <member name="M:Business.Implementation.Common.ChunkFileMergeHandler.GetTask(System.String,Entity.Common.Common_ChunkFileMergeTask@)">
+            <summary>
+            获取任务
+            </summary>
+            <param name="id">任务Id</param>
+            <param name="task">任务</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Implementation.Common.ChunkFileMergeHandler.IsFileAlready(Entity.Common.Common_ChunkFileMergeTask)">
+            <summary>
+            是否文件早已存在
+            </summary>
+            <param name="task">任务</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Implementation.Common.ChunkFileMergeHandler.GetChunkFiles(Entity.Common.Common_ChunkFileMergeTask,System.Collections.Generic.List{System.ValueTuple{System.String,System.String}}@,System.Collections.Generic.List{System.ValueTuple{System.String,System.Int32,System.Int64,System.String}}@)">
+            <summary>
+            获取分片文件
+            </summary>
+            <param name="task">任务</param>
+            <param name="allChunkFiles">全部分片文件</param>
+            <param name="needChunkFiles">合并所需的分片文件</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Implementation.Common.ChunkFileMergeHandler.Merge(Entity.Common.Common_ChunkFileMergeTask,System.Collections.Generic.List{System.ValueTuple{System.String,System.Int32,System.Int64,System.String}})">
+            <summary>
+            合并分片文件
+            </summary>
+            <param name="task">任务</param>
+            <param name="needChunkFiles">合并所需的分片文件</param>
+        </member>
+        <member name="M:Business.Implementation.Common.ChunkFileMergeHandler.Completed(Entity.Common.Common_ChunkFileMergeTask)">
+            <summary>
+            已完成
+            </summary>
+            <param name="task">任务</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Implementation.Common.ChunkFileMergeHandler.Clear(System.Collections.Generic.List{System.ValueTuple{System.String,System.String}})">
+            <summary>
+            清理
+            </summary>
+            <param name="chunkFiles">分片文件</param>
+        </member>
+        <member name="M:Business.Implementation.Common.ChunkFileMergeHandler.Start">
+            <summary>
+            启动
+            </summary>
+        </member>
+        <member name="M:Business.Implementation.Common.ChunkFileMergeHandler.Shutdown">
+            <summary>
+            关闭
+            </summary>
+        </member>
+        <member name="M:Business.Implementation.Common.ChunkFileMergeHandler.Add(System.String,System.String,System.Int32,System.Int32)">
+            <summary>
+            新增合并任务
+            </summary>
+            <param name="md5">文件MD5值</param>
+            <param name="name">文件名(不包括拓展名)</param>
+            <param name="specs">分片文件规格</param>
+            <param name="total">分片文件总数</param>
+        </member>
+        <member name="M:Business.Implementation.Common.ChunkFileMergeHandler.Run">
+            <summary>
+            运行
+            </summary>
+        </member>
+        <member name="M:Business.Implementation.Common.ChunkFileMergeHandler.Processing">
+            <summary>
+            处理
+            </summary>
+        </member>
         <member name="T:Business.Implementation.Common.EntryLogBusiness">
             <summary>
-            档案操作记录业务类
+            登录日志记录业务类
             </summary>
         </member>
         <member name="T:Business.Implementation.Common.FileBusiness">
@@ -161,7 +251,7 @@
             存储路径根目录相对路径
             </summary>
         </member>
-        <member name="M:Business.Implementation.Common.FileBusiness.Save(System.Drawing.Image,System.String)">
+        <member name="M:Business.Implementation.Common.FileBusiness.Save(ImageProcessorCore.Image,System.String)">
             <summary>
             保存
             </summary>
@@ -175,6 +265,13 @@
             <param name="bytes">文件</param>
             <param name="path">绝对路径</param>
         </member>
+        <member name="M:Business.Implementation.Common.FileBusiness.Save(System.IO.Stream,System.String)">
+            <summary>
+            保存
+            </summary>
+            <param name="stream">流</param>
+            <param name="path">绝对路径</param>
+        </member>
         <member name="M:Business.Implementation.Common.FileBusiness.GetPreviewImage(System.String)">
             <summary>
             获取预览图
@@ -182,19 +279,19 @@
             <param name="suffix">文件后缀</param>
             <returns></returns>
         </member>
-        <member name="M:Business.Implementation.Common.FileBusiness.GetFileType(System.String)">
-            <summary>
-            获取文件类型
-            </summary>
-            <param name="suffix">文件后缀(.jpg)</param>
-            <returns></returns>
-        </member>
-        <member name="M:Business.Implementation.Common.FileBusiness.ResponseImage(Microsoft.AspNetCore.Http.HttpResponse,System.Drawing.Image)">
+        <member name="M:Business.Implementation.Common.FileBusiness.ResponseImage(Microsoft.AspNetCore.Http.HttpResponse,ImageProcessorCore.Image)">
             <summary>
             输出图片
             </summary>
             <param name="response"></param>
             <param name="img"></param>
+        </member>
+        <member name="M:Business.Implementation.Common.FileBusiness.ResponseImage(Microsoft.AspNetCore.Http.HttpResponse,System.IO.Stream)">
+            <summary>
+            输出图片
+            </summary>
+            <param name="response"></param>
+            <param name="stream">流</param>
         </member>
         <member name="M:Business.Implementation.Common.FileBusiness.ResponseFile(Microsoft.AspNetCore.Http.HttpResponse,System.String)">
             <summary>
@@ -208,6 +305,60 @@
             删除文件
             </summary>
             <param name="path"></param>
+        </member>
+        <member name="M:Business.Implementation.Common.FileBusiness.GetMD5(System.IO.Stream)">
+            <summary>
+            获取MD5
+            </summary>
+            <param name="stream"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Implementation.Common.FileBusiness.GetFileState(System.String,System.Boolean,System.Nullable{System.Int32})">
+            <summary>
+            获取文件状态
+            </summary>
+            <param name="md5">文件MD5值</param>
+            <param name="chunk">是否为文件分片</param>
+            <param name="specs">分片文件规格</param>
+            <returns><see cref="T:Model.Common.FileState"/></returns>
+        </member>
+        <member name="M:Business.Implementation.Common.FileBusiness.GetFile(System.String,System.String)">
+            <summary>
+            获取文件信息
+            </summary>
+            <param name="md5">文件MD5值</param>
+            <param name="state">状态<see cref="T:Model.Common.FileState"/></param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Implementation.Common.FileBusiness.GetFileInfo(System.String,System.String)">
+            <summary>
+            获取文件信息
+            </summary>
+            <param name="md5">文件MD5值</param>
+            <param name="state">状态<see cref="T:Model.Common.FileState"/></param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Implementation.Common.FileBusiness.AddChunkFile(System.String,System.String,System.String,System.Int32,System.Int32,System.String)">
+            <summary>
+            新增分片文件信息
+            </summary>
+            <param name="taskKey">任务标识</param>
+            <param name="file_md5">文件MD5值</param>
+            <param name="md5">分片文件MD5值</param>
+            <param name="index">分片文件索引</param>
+            <param name="specs">分片文件规格</param>
+            <param name="path">路径</param>
+        </member>
+        <member name="M:Business.Implementation.Common.FileBusiness.UpdateChunkFile(System.String,System.String,System.Int64,System.String,System.String,System.String)">
+            <summary>
+            更新分片文件信息
+            </summary>
+            <param name="taskKey">任务标识</param>
+            <param name="md5">分片MD5值</param>
+            <param name="bytes">字节数</param>
+            <param name="contentType">文件内容类型</param>
+            <param name="extension">文件扩展名</param>
+            <param name="path">路径</param>
         </member>
         <member name="T:Business.Implementation.Common.OperationRecordBusiness">
             <summary>
@@ -257,12 +408,12 @@
             <param name="memberId">会员Id</param>
             <returns></returns>
         </member>
-        <member name="M:Business.Implementation.Common.WeChatOAuthHandler.SaveFile(System.String,System.String@)">
+        <member name="M:Business.Implementation.Common.WeChatOAuthHandler.SaveFile(System.String)">
             <summary>
             保存外链文件
             </summary>
             <param name="uri">资源连接</param>
-            <param name="fileId">文件Id</param>
+            <returns>文件Id</returns>
         </member>
         <member name="M:Business.Implementation.Common.WeChatOAuthHandler.BindUser(System.String,System.String,System.String)">
             <summary>
@@ -456,34 +607,87 @@
             <param name="ids">id集合</param>
             <returns></returns>
         </member>
-        <member name="M:Business.Interface.Common.IFileBusiness.CheckMD5(System.String)">
+        <member name="M:Business.Interface.Common.IFileBusiness.ValidationFileMD5(System.String,System.String)">
             <summary>
-            MD5校验
+            文件MD5值校验
             </summary>
-            <param name="md5"></param>
+            <param name="md5">文件MD5值</param>
+            <param name="filename">文件重命名</param>
             <returns></returns>
         </member>
-        <member name="M:Business.Interface.Common.IFileBusiness.SingleImage(Model.Common.FileDTO.ImageUploadParams)">
+        <member name="M:Business.Interface.Common.IFileBusiness.PreUploadChunkFile(System.String,System.String,System.Int32,System.Int32)">
             <summary>
-            单图上传
+            预备上传分片文件
+            </summary>
+            <param name="file_md5">文件MD5值</param>
+            <param name="md5">分片文件MD5值</param>
+            <param name="index">分片文件索引</param>
+            <param name="specs">分片文件规格</param>
+            <returns><see cref="T:Model.Common.FileState"/>文件状态</returns>
+        </member>
+        <member name="M:Business.Interface.Common.IFileBusiness.SingleChunkFile(System.String,System.String,Microsoft.AspNetCore.Http.IFormFile)">
+            <summary>
+            单分片文件上传
             </summary>
             <remarks>单个上传</remarks>
-            <param name="option">分页设置</param>
+            <param name="key">上传标识</param>
+            <param name="md5">分片文件MD5值</param>
+            <param name="file">分片文件</param>
             <returns></returns>
         </member>
-        <member name="M:Business.Interface.Common.IFileBusiness.SingleFile(Model.Common.FileDTO.FileUploadParams)">
+        <member name="M:Business.Interface.Common.IFileBusiness.UploadChunkFileFinished(System.String,System.Int32,System.Int32,System.String)">
             <summary>
-            文件上传
+            分片文件全部上传完毕
             </summary>
-            <remarks>单个上传</remarks>
-            <param name="option">分页设置</param>
+            <param name="file_md5">文件MD5值</param>
+            <param name="specs">分片文件规格</param>
+            <param name="total">分片文件总数</param>
+            <param name="filename">文件重命名</param>
             <returns></returns>
         </member>
-        <member name="M:Business.Interface.Common.IFileBusiness.Preview(System.String)">
+        <member name="M:Business.Interface.Common.IFileBusiness.SingleImageFromUrl(System.String,System.Boolean,System.String)">
+            <summary>
+            通过外链上传单个图片
+            </summary>
+            <param name="url">外链地址</param>
+            <param name="download">是否下载资源</param>
+            <param name="filename">文件重命名</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Interface.Common.IFileBusiness.SingleFileFromUrl(System.String,System.Boolean,System.String)">
+            <summary>
+            通过外链上传单个文件
+            </summary>
+            <param name="url">外链地址</param>
+            <param name="download">是否下载资源</param>
+            <param name="filename">文件重命名</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Interface.Common.IFileBusiness.SingleImageFromBase64(System.String,System.String)">
+            <summary>
+            通过Base64字符串上传单个图片
+            </summary>
+            <param name="base64">Base64字符串</param>
+            <param name="filename">文件重命名</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Interface.Common.IFileBusiness.SingleFile(Microsoft.AspNetCore.Http.IFormFile,System.String)">
+            <summary>
+            上传单个文件
+            </summary>
+            <param name="file">文件</param>
+            <param name="filename">文件重命名</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Interface.Common.IFileBusiness.Preview(System.String,System.Int32,System.Int32,System.Nullable{System.TimeSpan})">
             <summary>
             预览
             </summary>
+            <remarks>用于查看文件缩略图或视频截图</remarks>
             <param name="id">文件Id</param>
+            <param name="width">指定宽度</param>
+            <param name="height">指定高度</param>
+            <param name="time">视频的时间轴位置</param>
             <returns></returns>
         </member>
         <member name="M:Business.Interface.Common.IFileBusiness.Browse(System.String)">
@@ -721,6 +925,12 @@
             </summary>
             <param name="appId"></param>
             <param name="openId"></param>
+        </member>
+        <member name="M:Business.Interface.System.IMemberBusiness.Login(System.String)">
+            <summary>
+            登录
+            </summary>
+            <param name="memberId">会员Id</param>
         </member>
         <member name="M:Business.Interface.System.IMemberBusiness.GetOperatorDetail(System.String)">
             <summary>
@@ -1652,67 +1862,120 @@
             示例Soap服务接口类
             </summary>
         </member>
-        <member name="T:Business.Utils.AuthorizePolicy.AllowAuthenticatedRequirement">
+        <member name="T:Business.Utils.Authorization.ApiAuthorizeRequirement">
             <summary>
-            允许登录的用户访问，而不判断有没有授权
+            接口权限身份验证策略
             </summary>
         </member>
-        <member name="T:Business.Utils.AuthorizePolicy.ApiAuthorizeRequirement">
+        <member name="T:Business.Utils.Authorization.ApiPermissionHandlerr`1">
             <summary>
-            接口权限校验
+            接口权限验证处理类
             </summary>
         </member>
-        <member name="M:Business.Utils.AuthorizePolicy.ApiAuthorizeRequirement.#ctor">
+        <member name="T:Business.Utils.Authorization.ApiPermissionDefaultHttpContextHandlerr`1">
             <summary>
-            
+            接口权限验证处理类
             </summary>
         </member>
-        <member name="T:Business.Utils.AuthorizePolicy.BaseRequirement`1">
+        <member name="T:Business.Utils.Authorization.ApiPermissionAuthorizationFilterContextHandlerr`1">
+            <summary>
+            接口权限验证处理类
+            </summary>
+        </member>
+        <member name="T:Business.Utils.Authorization.BaseAuthorizationHandler`1">
             <summary>
             自定义授权处理程序基类
             </summary>
             <typeparam name="TRequirement"></typeparam>
         </member>
-        <member name="P:Business.Utils.AuthorizePolicy.BaseRequirement`1.Config">
+        <member name="P:Business.Utils.Authorization.BaseAuthorizationHandler`1.Config">
             <summary>
             系统配置
             </summary>
         </member>
-        <member name="P:Business.Utils.AuthorizePolicy.BaseRequirement`1.Operator">
+        <member name="P:Business.Utils.Authorization.BaseAuthorizationHandler`1.Operator">
             <summary>
             当前操作者
             </summary>
         </member>
-        <member name="P:Business.Utils.AuthorizePolicy.BaseRequirement`1.AuthoritiesBusiness">
+        <member name="P:Business.Utils.Authorization.BaseAuthorizationHandler`1.AuthoritiesBusiness">
             <summary>
             授权中心
             </summary>
         </member>
-        <member name="T:Business.Utils.AuthorizePolicy.BaseRequirement`2">
+        <member name="T:Business.Utils.Authorization.BaseAuthorizationHandler`2">
             <summary>
             自定义授权处理程序基类
             </summary>
             <typeparam name="TRequirement"></typeparam>
             <typeparam name="TResource"></typeparam>
         </member>
-        <member name="P:Business.Utils.AuthorizePolicy.BaseRequirement`2.Config">
+        <member name="P:Business.Utils.Authorization.BaseAuthorizationHandler`2.Config">
             <summary>
             系统配置
             </summary>
         </member>
-        <member name="P:Business.Utils.AuthorizePolicy.BaseRequirement`2.Operator">
+        <member name="P:Business.Utils.Authorization.BaseAuthorizationHandler`2.Operator">
             <summary>
             当前操作者
             </summary>
         </member>
-        <member name="P:Business.Utils.AuthorizePolicy.BaseRequirement`2.AuthoritiesBusiness">
+        <member name="P:Business.Utils.Authorization.BaseAuthorizationHandler`2.AuthoritiesBusiness">
             <summary>
             授权中心
             </summary>
         </member>
-        <member name="T:Business.Utils.AuthorizePolicy.HubMethodAuthorizeRequirement">
+        <member name="M:Business.Utils.Authorization.BaseAuthorizationHandler`2.BaseAuthorization(System.Security.Claims.ClaimsPrincipal)">
             <summary>
-            SignalR Hub方法权限校验
+            基础验证
+            </summary>
+            <param name="user">用户</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Utils.Authorization.BaseAuthorizationHandler`2.UriAuthorization(System.String)">
+            <summary>
+            路径验证
+            </summary>
+            <param name="uri"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Business.Utils.Authorization.SampleAuthorizeAttribute">
+            <summary>
+            简易权限验证
+            </summary>
+        </member>
+        <member name="M:Business.Utils.Authorization.SampleAuthorizeAttribute.#ctor(System.String[])">
+            <summary>
+            简易权限验证
+            </summary>
+            <param name="policys">授权策略</param>
+        </member>
+        <member name="P:Business.Utils.Authorization.SampleAuthorizeAttribute.Policys">
+            <summary>
+            授权策略
+            </summary>
+        </member>
+        <member name="P:Business.Utils.Authorization.SampleAuthorizeAttribute.MustAll">
+            <summary>
+            必须满足全部授权策略
+            </summary>
+            <remarks>默认true</remarks>
+        </member>
+        <member name="M:Business.Utils.Authorization.SampleAuthorizeAttribute.OnAuthorizationAsync(Microsoft.AspNetCore.Mvc.Filters.AuthorizationFilterContext)">
+            <summary>
+            验证权限
+            </summary>
+            <param name="context"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Business.Utils.Authorization.SignalRHubHandler`1">
+            <summary>
+            SignalR 集线器权限处理类
+            </summary>
+        </member>
+        <member name="T:Business.Utils.Authorization.SignalRHubRequirement">
+            <summary>
+            SignalR 集线器身份验证策略
             </summary>
         </member>
         <member name="T:Business.Utils.BaseBusiness">

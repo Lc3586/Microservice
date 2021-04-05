@@ -5,7 +5,7 @@ using System;
 namespace Model.Utils.Log.LogDTO
 {
     /// <summary>
-    /// 文件信息
+    /// 日志文件信息
     /// </summary>
     public class FileInfo
     {

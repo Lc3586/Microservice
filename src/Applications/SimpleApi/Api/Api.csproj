@@ -32,6 +32,9 @@
     <Content Remove="jsonconfig\database.json" />
     <Content Remove="jsonconfig\soap.json" />
     <Content Remove="jsonconfig\wechatservice.json" />
+    <Content Remove="wwwroot\ffmpeg\ffmpeg.exe" />
+    <Content Remove="wwwroot\ffmpeg\ffplay.exe" />
+    <Content Remove="wwwroot\ffmpeg\ffprobe.exe" />
     <Content Remove="wwwroot\filetypes\7z.png" />
     <Content Remove="wwwroot\filetypes\accdb.png" />
     <Content Remove="wwwroot\filetypes\ai.png" />
@@ -98,6 +101,7 @@
     <Content Remove="wwwroot\swagger\casLogin.js" />
     <Content Remove="wwwroot\swagger\custom-javascript.js" />
     <Content Remove="wwwroot\swagger\custom-stylesheet.css" />
+    <Content Remove="wwwroot\swagger\Ignore\swagger-ui-bundle-debug.js" />
     <Content Remove="wwwroot\swagger\jquery-1.8.3.min.js" />
     <Content Remove="wwwroot\swagger\saLogin.js" />
     <Content Remove="wwwroot\swagger\waiting.css" />
@@ -117,6 +121,9 @@
     <None Include="jsonconfig\soap.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="wwwroot\ffmpeg\ffmpeg.exe" />
+    <None Include="wwwroot\ffmpeg\ffplay.exe" />
+    <None Include="wwwroot\ffmpeg\ffprobe.exe" />
     <None Include="wwwroot\filetypes\7z.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -309,6 +316,9 @@
     <None Include="wwwroot\swagger\extensions\casLogin.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="wwwroot\swagger\Ignore\swagger-ui-bundle-debug.js">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
     <None Include="wwwroot\swagger\main.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -414,9 +424,6 @@
     </Content>
     <Content Update="wwwroot\swagger\extensions\wechatUserLogin.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="wwwroot\swagger\Ignore\swagger-ui-bundle-debug.js">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
     <Content Update="wwwroot\utils\awesome-qr.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

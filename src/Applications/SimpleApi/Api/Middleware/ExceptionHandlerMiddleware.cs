@@ -31,7 +31,7 @@ namespace Api
         {
             try
             {
-                await Next(context).ConfigureAwait(true);
+                await Next.Invoke(context).ConfigureAwait(false);
             }
             catch (Exception ex)
             {

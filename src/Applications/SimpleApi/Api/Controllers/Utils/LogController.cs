@@ -1,6 +1,5 @@
-﻿using Business.Utils.AuthorizePolicy;
+﻿using Business.Utils.Authorization;
 using Business.Utils.Log;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model.System.LogDTO;
 using Model.Utils.Log.LogDTO;
@@ -17,7 +16,7 @@ namespace Api.Controllers.Utils
     /// 日志接口
     /// </summary>
     [Route("/log")]
-    [Authorize(nameof(ApiAuthorizeRequirement))]
+    [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
     [SwaggerTag("日志接口")]
     public class LogController : BaseApiController
     {

@@ -216,17 +216,12 @@ namespace Business.Implementation.Common
         /// 保存外链文件
         /// </summary>
         /// <param name="uri">资源连接</param>
-        /// <param name="fileId">文件Id</param>
-        void SaveFile(string uri, out string fileId)
+        /// <returns>文件Id</returns>
+        async Task<string> SaveFile(string uri)
         {
-            var file = FileBusiness.SingleImage(new Model.Common.FileDTO.ImageUploadParams
-            {
-                UrlOrBase64 = $"{uri.Substring(0, uri.LastIndexOf('/'))}/0",
-                Download = true,
-                IsCompress = true
-            });
+            var file = await FileBusiness.SingleFileFromUrl($"{uri.Substring(0, uri.LastIndexOf('/'))}/0", true);
 
-            fileId = file.Id;
+            return file.Id;
         }
 
         /// <summary>
@@ -275,10 +270,10 @@ namespace Business.Implementation.Common
         /// <param name="userId">用户ID</param>
         /// <param name="appId"></param>
         /// <param name="openId"></param>
-        void UpdateUser(string userId, string appId, string openId)
+        async Task UpdateUser(string userId, string appId, string openId)
         {
             var info = GetWeChatUserInfo(appId, openId);
-            SaveFile(info.HeadimgUrl, out string imgId);
+            var imgId = await SaveFile(info.HeadimgUrl);
             UserBusiness.Edit(new Model.System.UserDTO.Edit
             {
                 Id = userId,
@@ -305,7 +300,7 @@ namespace Business.Implementation.Common
                     if (!autoCreate)
                         throw new MessageException("绑定微信失败, 会员不存在或已被移除.");
 
-                    var memberId = CreateMember(appId, openId, false);
+                    var memberId = CreateMember(appId, openId, false).GetAwaiter().GetResult();
                     member = GetMember(memberId);
                 }
 
@@ -336,10 +331,10 @@ namespace Business.Implementation.Common
         /// <param name="openId"></param>
         /// <param name="runTransaction">运行事务（默认运行）</param>
         /// <returns>返回会员Id</returns>
-        string CreateMember(string appId, string openId, bool runTransaction = true)
+        async Task<string> CreateMember(string appId, string openId, bool runTransaction = true)
         {
             var info = GetWeChatUserInfo(appId, openId);
-            SaveFile(info.HeadimgUrl, out string imgId);
+            var imgId = await SaveFile(info.HeadimgUrl);
             return MemberBusiness.Create(new Model.Public.MemberDTO.Create
             {
                 Account = $"member_{Repository_User.Select.Count():000000000}",
@@ -357,10 +352,10 @@ namespace Business.Implementation.Common
         /// <param name="memberId">会员ID</param>
         /// <param name="appId"></param>
         /// <param name="openId"></param>
-        void UpdateMember(string memberId, string appId, string openId)
+        async Task UpdateMember(string memberId, string appId, string openId)
         {
             var info = GetWeChatUserInfo(appId, openId);
-            SaveFile(info.HeadimgUrl, out string imgId);
+            var imgId = await SaveFile(info.HeadimgUrl);
             MemberBusiness.Edit(new Model.Public.MemberDTO.Edit
             {
                 Id = memberId,
@@ -586,14 +581,14 @@ namespace Business.Implementation.Common
                     context.Response.Redirect($"{stateInfo.RedirectUrl}?state={state}");
                     return;
                 case WeChatStateType.微信信息同步至系统用户信息:
-                    UpdateUser(stateInfo.Data["UserId"].ToString(), appId, userinfo.openid);
+                    await UpdateUser(stateInfo.Data["UserId"].ToString(), appId, userinfo.openid);
                     break;
                 case WeChatStateType.会员登录:
                     BindMember(appId, userinfo.openid, (bool)stateInfo.Data["AutoCreate"]);
                     await MemberLogin(context, MemberBusiness.WeChatLogin(appId, userinfo.openid));
                     break;
                 case WeChatStateType.微信信息同步至会员信息:
-                    UpdateMember(stateInfo.Data["MemberId"].ToString(), appId, userinfo.openid);
+                    await UpdateMember(stateInfo.Data["MemberId"].ToString(), appId, userinfo.openid);
                     break;
                 case WeChatStateType.系统用户登录:
                     context.Response.Redirect($"{stateInfo.RedirectUrl}?state={state}");
@@ -636,7 +631,7 @@ namespace Business.Implementation.Common
             await UserLogin(UserBusiness.WeChatLogin(stateInfo.Data["AppId"].ToString(), stateInfo.Data["OpenId"].ToString()));
         }
 
-        public async Task<string> GetExplain(string state)
+        public string GetExplain(string state)
         {
             var stateInfo = CheckState(state);
 

@@ -13,8 +13,8 @@ namespace Entity.Common
     [OraclePrimaryKeyName("pk_SPAA_" + nameof(Common_File) + "_01")]
     [Index(nameof(Common_File) + "_idx_" + nameof(Name), nameof(Name) + " ASC")]
     [Index(nameof(Common_File) + "_idx_" + nameof(FileType), nameof(FileType) + " ASC")]
-    [Index(nameof(Common_File) + "_idx_" + nameof(MimeType), nameof(MimeType) + " ASC")]
-    [Index(nameof(Common_File) + "_idx_" + nameof(Suffix), nameof(Suffix) + " ASC")]
+    [Index(nameof(Common_File) + "_idx_" + nameof(ContentType), nameof(ContentType) + " ASC")]
+    [Index(nameof(Common_File) + "_idx_" + nameof(Extension), nameof(Extension) + " ASC")]
     [Index(nameof(Common_File) + "_idx_" + nameof(ServerKey), nameof(ServerKey) + " ASC")]
     [Index(nameof(Common_File) + "_idx_" + nameof(MD5), nameof(MD5) + " ASC")]
     [Index(nameof(Common_File) + "_idx_" + nameof(CreatorId), nameof(CreatorId) + " ASC")]
@@ -59,15 +59,15 @@ namespace Entity.Common
         /// 内容类型
         /// </summary>
         [OpenApiSubTag("List", "Detail", "FileInfo")]
-        [Column(StringLength = 100)]
-        public string MimeType { get; set; }
+        [Column(StringLength = 50)]
+        public string ContentType { get; set; }
 
         /// <summary>
-        /// 文件后缀
+        /// 文件扩展名
         /// </summary>
         [OpenApiSubTag("List", "Detail", "FileInfo")]
         [Column(StringLength = 30)]
-        public string Suffix { get; set; }
+        public string Extension { get; set; }
 
         /// <summary>
         /// MD5校验值
@@ -75,13 +75,6 @@ namespace Entity.Common
         [OpenApiSubTag("List", "Detail", "FileInfo")]
         [Column(StringLength = 36)]
         public string MD5 { get; set; }
-
-        /// <summary>
-        /// 状态
-        /// </summary>
-        [OpenApiSubTag("List", "Detail", "FileInfo")]
-        [Column(StringLength = 10)]
-        public string State { get; set; }
 
         /// <summary>
         /// 服务器标识
@@ -109,13 +102,6 @@ namespace Entity.Common
         public string Path { get; set; }
 
         /// <summary>
-        /// 预览图路径
-        /// </summary>
-        [OpenApiSubTag("_List")]
-        [Column(StringLength = -1)]
-        public string ThumbnailPath { get; set; }
-
-        /// <summary>
         /// 字节数
         /// </summary>
         [OpenApiSubTag("_List")]
@@ -128,6 +114,13 @@ namespace Entity.Common
         [OpenApiSubTag("List", "Detail", "FileInfo")]
         [Column(IsNullable = true)]
         public string Size { get; set; }
+
+        /// <summary>
+        /// 状态
+        /// </summary>
+        [OpenApiSubTag("List", "Detail", "FileInfo")]
+        [Column(StringLength = 10)]
+        public string State { get; set; }
 
         /// <summary>
         /// 创建者

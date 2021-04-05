@@ -85,6 +85,12 @@ namespace Business.Utils
                     data = _ex.Data;
                     code = ErrorCode.validation;
                 }
+                else if (e_type == typeof(ApplicationException))
+                {
+                    var _ex = ex as ApplicationException;
+                    message += _ex.Message;
+                    data = _ex.Data;
+                }
 
                 if (exception.InnerException != null)
                     HandleException(exception.InnerException);

@@ -12,13 +12,13 @@ namespace Model.Common.FileDTO
     /// <summary>
     /// MD5校验输出信息
     /// </summary>
-    public class CheckMD5Response
+    public class ValidationMD5Response
     {
         /// <summary>
         /// 是否已上传过了
         /// </summary>
         /// <remarks>
-        /// <para>如已上传则返回文件信息<see cref="FileInfo"/></para>
+        /// <para>如已上传,则返回文件信息<see cref="FileInfo"/></para>
         /// </remarks>
         public bool Uploaded { get; set; }
 
@@ -26,6 +26,52 @@ namespace Model.Common.FileDTO
         /// 文件信息
         /// </summary>
         public FileInfo FileInfo { get; set; }
+    }
+
+    /// <summary>
+    /// 预备上传分片文件输出信息
+    /// </summary>
+    public class PreUploadChunkFileResponse
+    {
+        /// <summary>
+        /// 状态
+        /// </summary>
+        /// <remarks><see cref="Model.Common.PUCFRState"/></remarks>
+        public string State { get; set; }
+
+        /// <summary>
+        /// 上传标识
+        /// </summary>
+        public string Key { get; set; }
+    }
+
+    /// <summary>
+    /// 分片文件上传参数
+    /// </summary>
+    public class ChunkFileUploadParams
+    {
+        /// <summary>
+        /// 分片文件
+        /// </summary>
+        public IFormFile File { get; set; }
+
+        /// <summary>
+        /// 上传标识
+        /// </summary>
+        public string Key { get; set; }
+    }
+
+    /// <summary>
+    /// 分片文件全部上传完毕参数
+    /// </summary>
+    public class UploadChunkFileFinishedParams
+    {
+        /// <summary>
+        /// 上传标识
+        /// </summary>
+        public string Key { get; set; }
+
+
     }
 
     /// <summary>
@@ -54,10 +100,10 @@ namespace Model.Common.FileDTO
         /// </summary>
         public bool Download { get; set; } = false;
 
-        /// <summary>
-        /// 保存至数据库
-        /// </summary>
-        public bool Save2Db { get; set; } = true;
+        ///// <summary>
+        ///// 保存至数据库
+        ///// </summary>
+        //public bool Save2Db { get; set; } = true;
 
         /// <summary>
         /// 图片转Base64链接
@@ -130,10 +176,10 @@ namespace Model.Common.FileDTO
         /// </summary>
         public bool Download { get; set; } = false;
 
-        /// <summary>
-        /// 保存至数据库
-        /// </summary>
-        public bool Save2Db { get; set; } = true;
+        ///// <summary>
+        ///// 保存至数据库
+        ///// </summary>
+        //public bool Save2Db { get; set; } = true;
 
         /// <summary>
         /// 压缩文件

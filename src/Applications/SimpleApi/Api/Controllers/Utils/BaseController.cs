@@ -1,7 +1,5 @@
-﻿using Business.Utils.AuthorizePolicy;
-using Microservice.Library.Extension;
+﻿using Microservice.Library.Extension;
 using Microservice.Library.OpenApi.Extention;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model.Utils.Pagination;
 using Model.Utils.Result;

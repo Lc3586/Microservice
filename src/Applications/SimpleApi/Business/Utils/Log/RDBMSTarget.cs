@@ -66,17 +66,17 @@ namespace Business.Utils.Log
             await Repository.InsertAsync(log);
         }
 
-        LogForward LogForward
+        LogForwardHandler LogForward
         {
             get
             {
                 if (_LogForward == null)
-                    _LogForward = AutofacHelper.GetService<LogForward>();
+                    _LogForward = AutofacHelper.GetService<LogForwardHandler>();
                 return _LogForward;
             }
         }
 
-        LogForward _LogForward;
+        LogForwardHandler _LogForward;
 
         /// <summary>
         /// 监听

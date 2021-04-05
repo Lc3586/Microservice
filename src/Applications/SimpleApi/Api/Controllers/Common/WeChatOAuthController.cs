@@ -1,7 +1,7 @@
 ﻿using Api.Controllers.Utils;
 using Business.Interface.Common;
 using Business.Interface.System;
-using Business.Utils.AuthorizePolicy;
+using Business.Utils.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +17,7 @@ namespace Api.Controllers
     /// 微信认证接口
     /// </summary>
     [Route("/wechat-oath")]
-    [Authorize(nameof(ApiAuthorizeRequirement))]
+    [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
     [SwaggerTag("微信认证接口")]
     public class WeChatOAuthController : BaseApiController
     {
@@ -212,7 +212,7 @@ namespace Api.Controllers
         [AllowAnonymous]
         public async Task<object> GetExplain(string state)
         {
-            return await Task.FromResult(AjaxResultFactory.Success<string>(await WeChatUserInfoBusiness.GetExplain(state)));
+            return await Task.FromResult(AjaxResultFactory.Success<string>(WeChatUserInfoBusiness.GetExplain(state)));
         }
 
         /// <summary>

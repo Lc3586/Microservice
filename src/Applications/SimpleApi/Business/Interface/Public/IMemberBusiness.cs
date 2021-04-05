@@ -86,6 +86,12 @@ namespace Business.Interface.System
         AuthenticationInfo WeChatLogin(string appId, string openId);
 
         /// <summary>
+        /// 登录
+        /// </summary>
+        /// <param name="memberId">会员Id</param>
+        AuthenticationInfo Login(string memberId);
+
+        /// <summary>
         /// 获取操作者详情
         /// </summary>
         /// <param name="id"></param>

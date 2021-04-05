@@ -3,6 +3,7 @@ using Api.Middleware;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Autofac.Extras.DynamicProxy;
+using Business.Implementation.Common;
 using IocServiceDemo;
 using Microservice.Library.Configuration;
 using Microservice.Library.Container;
@@ -149,6 +150,9 @@ namespace Api
                 services.RegisterSignalR(Config);
 
             services.RegisterNLog(Config);
+
+            //上传功能-合并分片文件
+            services.AddSingleton(new ChunkFileMergeHandler());
         }
 
         /// <summary>
@@ -263,6 +267,9 @@ namespace Api
 
             if (Config.EnableSignalr)
                 app.ConfiguraSignalR(Config);
+
+            //上传功能-合并分片文件
+            app.ApplicationServices.GetService<ChunkFileMergeHandler>().Start();
 
             //获取AutofacIOC容器
             AutofacHelper.Container = app.ApplicationServices.GetAutofacRoot();

@@ -325,32 +325,86 @@
             <param name="ids">id集合</param>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.FileController.CheckMD5(System.String)">
+        <member name="M:Api.Controllers.FileController.ValidationFileMD5(System.String,System.String)">
             <summary>
-            MD5校验
+            文件MD5值校验
             </summary>
             <param name="md5"></param>
+            <param name="filename">文件重命名</param>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.FileController.UploadSingleImage(Model.Common.FileDTO.ImageUploadParams)">
+        <member name="M:Api.Controllers.FileController.PreUploadChunkFile(System.String,System.String,System.Int32,System.Int32)">
             <summary>
-            单图上传
+            分片MD5值校验
             </summary>
-            <param name="option">选项</param>
+            <param name="file_md5">文件MD5值</param>
+            <param name="md5">分片文件MD5值</param>
+            <param name="index">分片文件索引</param>
+            <param name="specs">分片文件规格</param>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.FileController.UploadSingleFile(Model.Common.FileDTO.FileUploadParams)">
+        <member name="M:Api.Controllers.FileController.SingleChunkFile(System.String,System.String,Microsoft.AspNetCore.Http.IFormFile)">
             <summary>
-            单文件上传
+            单分片文件上传
             </summary>
-            <param name="option">选项</param>
+            <param name="key">上传标识</param>
+            <param name="md5">分片文件MD5值</param>
+            <param name="file">分片文件</param>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.FileController.Preview(System.String)">
+        <member name="M:Api.Controllers.FileController.UploadChunkFileFinished(System.String,System.Int32,System.Int32,System.String)">
+            <summary>
+            分片文件全部上传完毕
+            </summary>
+            <param name="file_md5">文件MD5值</param>
+            <param name="specs">分片文件规格</param>
+            <param name="total">分片文件总数</param>
+            <param name="filename">文件重命名</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.FileController.SingleImageFromUrl(System.String,System.Boolean,System.String)">
+            <summary>
+            通过外链上传单个图片
+            </summary>
+            <param name="url">外链地址</param>
+            <param name="download">是否下载资源</param>
+            <param name="filename">文件重命名</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.FileController.SingleFileFromUrl(System.String,System.Boolean,System.String)">
+            <summary>
+            通过外链上传单个文件
+            </summary>
+            <param name="url">外链地址</param>
+            <param name="download">是否下载资源</param>
+            <param name="filename">文件重命名</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.FileController.SingleImageFromBase64(System.String,System.String)">
+            <summary>
+            通过Base64字符串上传单个图片
+            </summary>
+            <param name="base64">Base64字符串</param>
+            <param name="filename">文件重命名</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.FileController.SingleFile(Microsoft.AspNetCore.Http.IFormFile,System.String)">
+            <summary>
+            上传单个文件
+            </summary>
+            <param name="file">分片文件</param>
+            <param name="filename">文件重命名</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.FileController.Preview(System.String,System.Int32,System.Int32,System.Nullable{System.TimeSpan})">
             <summary>
             预览
             </summary>
+            <remarks>用于查看文件缩略图或视频截图</remarks>
             <param name="id">文件Id</param>
+            <param name="width">指定宽度</param>
+            <param name="height">指定高度</param>
+            <param name="time">视频的时间轴位置</param>
             <returns></returns>
         </member>
         <member name="M:Api.Controllers.FileController.Browse(System.String)">
@@ -675,6 +729,14 @@
             </summary>
             <param name="id">数据</param>
             <param name="enable">设置状态</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.MemberController.Login(System.String)">
+            <summary>
+            登录
+            </summary>
+            <remarks>仅限开发使用</remarks>
+            <param name="memberId">会员Id</param>
             <returns></returns>
         </member>
         <member name="T:Api.Controllers.AuthoritiesController">

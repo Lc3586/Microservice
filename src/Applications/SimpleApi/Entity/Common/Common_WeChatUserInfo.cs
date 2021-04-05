@@ -15,18 +15,18 @@ namespace Entity.Common
     /// 微信用户信息
     /// </summary>
     [Table]
-    [OraclePrimaryKeyName("pk_SPAA_" + nameof(Common_FileChunk) + "_01")]
-    [Index(nameof(Common_FileChunk) + "_idx_" + nameof(AppId), nameof(AppId) + " ASC")]
-    [Index(nameof(Common_FileChunk) + "_idx_" + nameof(OpenId), nameof(OpenId) + " ASC")]
-    [Index(nameof(Common_FileChunk) + "_idx_" + nameof(UnionId), nameof(UnionId) + " ASC")]
-    [Index(nameof(Common_FileChunk) + "_idx_" + nameof(GroupId), nameof(GroupId) + " ASC")]
-    [Index(nameof(Common_FileChunk) + "_idx_" + nameof(Nickname), nameof(Nickname) + " ASC")]
-    [Index(nameof(Common_FileChunk) + "_idx_" + nameof(Sex), nameof(Sex) + " ASC")]
-    [Index(nameof(Common_FileChunk) + "_idx_" + nameof(Language), nameof(Language) + " ASC")]
-    [Index(nameof(Common_FileChunk) + "_idx_" + nameof(City), nameof(City) + " ASC")]
-    [Index(nameof(Common_FileChunk) + "_idx_" + nameof(Province), nameof(Province) + " ASC")]
-    [Index(nameof(Common_FileChunk) + "_idx_" + nameof(Country), nameof(Country) + " ASC")]
-    [Index(nameof(Common_FileChunk) + "_idx_" + nameof(Enable), nameof(Enable) + " ASC")]
+    [OraclePrimaryKeyName("pk_SPAA_" + nameof(Common_ChunkFile) + "_01")]
+    [Index(nameof(Common_ChunkFile) + "_idx_" + nameof(AppId), nameof(AppId) + " ASC")]
+    [Index(nameof(Common_ChunkFile) + "_idx_" + nameof(OpenId), nameof(OpenId) + " ASC")]
+    [Index(nameof(Common_ChunkFile) + "_idx_" + nameof(UnionId), nameof(UnionId) + " ASC")]
+    [Index(nameof(Common_ChunkFile) + "_idx_" + nameof(GroupId), nameof(GroupId) + " ASC")]
+    [Index(nameof(Common_ChunkFile) + "_idx_" + nameof(Nickname), nameof(Nickname) + " ASC")]
+    [Index(nameof(Common_ChunkFile) + "_idx_" + nameof(Sex), nameof(Sex) + " ASC")]
+    [Index(nameof(Common_ChunkFile) + "_idx_" + nameof(Language), nameof(Language) + " ASC")]
+    [Index(nameof(Common_ChunkFile) + "_idx_" + nameof(City), nameof(City) + " ASC")]
+    [Index(nameof(Common_ChunkFile) + "_idx_" + nameof(Province), nameof(Province) + " ASC")]
+    [Index(nameof(Common_ChunkFile) + "_idx_" + nameof(Country), nameof(Country) + " ASC")]
+    [Index(nameof(Common_ChunkFile) + "_idx_" + nameof(Enable), nameof(Enable) + " ASC")]
     public class Common_WeChatUserInfo
     {
         /// <summary>

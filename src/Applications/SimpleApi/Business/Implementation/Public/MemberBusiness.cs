@@ -354,6 +354,40 @@ namespace Business.Implementation.Public
             };
         }
 
+        public AuthenticationInfo Login(string memberId)
+        {
+            var member = Repository.Where(o => o.Id == memberId)
+                            .ToOne(o => new { o.Id, o.Account, o.Name, o.Nickname, o.Sex, o.Face, o.Enable });
+
+            if (member == null)
+                throw new MessageException("账号还未绑定微信.");
+
+            if (!member.Enable)
+                throw new MessageException("账号已被禁用.");
+
+            EntryLogBusiness.Create(new Common_EntryLog
+            {
+                UserType = UserType.会员,
+                Account = member.Account,
+                Name = member.Nickname,
+                Face = member.Face,
+                IsAdmin = false,
+                Remark = "使用开发功能登录系统.",
+                CreatorId = member.Id
+            });
+
+            return new AuthenticationInfo
+            {
+                Id = member.Id,
+                UserType = UserType.会员,
+                RoleTypes = AuthoritiesBusiness.GetMemberRoleTypes(member.Id),
+                Account = member.Account,
+                Nickname = member.Nickname,
+                Sex = member.Sex,
+                Face = member.Face
+            };
+        }
+
         public OperatorUserInfo GetOperatorDetail(string id)
         {
             if (string.IsNullOrWhiteSpace(id))

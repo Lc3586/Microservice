@@ -1,8 +1,7 @@
 ﻿using Api.Controllers.Utils;
 using Business.Interface.Example;
-using Business.Utils.AuthorizePolicy;
+using Business.Utils.Authorization;
 using Microservice.Library.Extension;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model.Example.DBDTO;
 using Model.Utils.Pagination;
@@ -19,7 +18,7 @@ namespace Api.Controllers
     /// 示例接口
     /// </summary>
     [Route("/sample")]//路由模板
-    [Authorize(nameof(ApiAuthorizeRequirement))]
+    [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
     [SwaggerTag("示例接口，包含列表、增、删、改、查等接口")]//swagger标签
     public class SampleController : BaseApiController//继承接口基本控制器
     {

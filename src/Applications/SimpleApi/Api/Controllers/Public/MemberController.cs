@@ -1,17 +1,23 @@
 ﻿using Api.Controllers.Utils;
 using Business.Interface.System;
-using Business.Utils.AuthorizePolicy;
+using Business.Utils;
+using Business.Utils.Authorization;
 using Microservice.Library.Extension;
 using Microservice.Library.SelectOption;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Model.Public.MemberDTO;
 using Model.Utils.Pagination;
 using Model.Utils.Result;
+using Model.Utils.SampleAuthentication.SampleAuthenticationDTO;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Api.Controllers
@@ -21,17 +27,22 @@ namespace Api.Controllers
     /// </summary>
     [Route("/member")]
     [SwaggerTag("会员接口")]
-    [Authorize(nameof(ApiAuthorizeRequirement))]
+    [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
     public class MemberController : BaseApiController
     {
         #region DI
 
-        public MemberController(IMemberBusiness memberBusiness)
+        public MemberController(
+            IHttpContextAccessor accessor,
+            IMemberBusiness memberBusiness)
         {
+            Context = accessor.HttpContext;
             MemberBusiness = memberBusiness;
         }
 
         readonly IMemberBusiness MemberBusiness;
+
+        readonly HttpContext Context;
 
         #endregion
 
@@ -125,6 +136,44 @@ namespace Api.Controllers
         {
             MemberBusiness.Enable(id, enable);
             return await Task.FromResult(Success());
+        }
+
+        /// <summary>
+        /// 登录
+        /// </summary>
+        /// <remarks>仅限开发使用</remarks>
+        /// <param name="memberId">会员Id</param>
+        /// <returns></returns>
+        [HttpPost("login")]
+        [AllowAnonymous]
+        public async Task<object> Login(string memberId)
+        {
+            if (Config.RunMode == Model.Utils.Config.RunMode.Publish)
+                throw new MessageException("仅限开发使用.");
+
+            var authenticationInfo = MemberBusiness.Login(memberId);
+
+            var claims = new List<Claim>
+            {
+                new Claim(nameof(AuthenticationInfo.Id), authenticationInfo.Id),
+
+                new Claim(ClaimTypes.Name, authenticationInfo.Account),
+
+                new Claim(nameof(AuthenticationInfo.UserType), authenticationInfo.UserType),
+
+                new Claim(ClaimTypes.GivenName, authenticationInfo.Nickname ?? string.Empty),
+                new Claim(ClaimTypes.Gender, authenticationInfo.Sex ?? string.Empty),
+
+                new Claim(nameof(AuthenticationInfo.Face), authenticationInfo.Face ?? string.Empty),
+
+                new Claim(ClaimTypes.AuthenticationMethod, "DevLogin")
+            };
+
+            claims.AddRange(authenticationInfo.RoleTypes.Select(o => new Claim(ClaimTypes.Role, o)));
+
+            await Context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)));
+
+            return Success("登录成功");
         }
 
         #endregion        

@@ -18,7 +18,7 @@ using System.Collections.Generic;
 namespace Business.Implementation.Common
 {
     /// <summary>
-    /// 档案操作记录业务类
+    /// 登录日志记录业务类
     /// </summary>
     public class EntryLogBusiness : BaseBusiness, IEntryLogBusiness
     {
