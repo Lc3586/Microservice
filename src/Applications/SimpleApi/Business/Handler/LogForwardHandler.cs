@@ -1,4 +1,5 @@
-﻿using Business.Utils.Log;
+﻿using Business.Hub;
+using Business.Utils.Log;
 using Microservice.Library.Container;
 using Microservice.Library.Extension;
 using Microsoft.AspNetCore.SignalR;
@@ -9,7 +10,7 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Business.Hub
+namespace Business.Handler
 {
     /// <summary>
     /// SignalR日志转发
@@ -44,10 +45,20 @@ namespace Business.Hub
         #region 公共部分
 
         /// <summary>
+        /// 当前状态
+        /// </summary>
+        /// <returns></returns>
+        public bool? State()
+        {
+            return TCS?.Task.Status == TaskStatus.RanToCompletion ? TCS?.Task.Result : null;
+        }
+
+        /// <summary>
         /// 启动
         /// </summary>
         public void Start()
         {
+            TCS = new TaskCompletionSource<bool>();
             Run();
         }
 

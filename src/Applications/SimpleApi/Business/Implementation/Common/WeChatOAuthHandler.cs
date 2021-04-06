@@ -169,7 +169,7 @@ namespace Business.Implementation.Common
                 o.HeadimgUrl
             });
 
-            if (info == null)
+            if (info == default)
                 throw new MessageException("微信信息不存在或已被移除.");
 
             return info;
@@ -239,7 +239,7 @@ namespace Business.Implementation.Common
                 o.Name
             });
 
-            if (user == null)
+            if (user == default)
                 throw new MessageException("绑定微信失败, 用户不存在或已被移除.");
 
             (bool success, Exception ex) = Orm.RunTransaction(() =>
@@ -337,7 +337,7 @@ namespace Business.Implementation.Common
             var imgId = await SaveFile(info.HeadimgUrl);
             return MemberBusiness.Create(new Model.Public.MemberDTO.Create
             {
-                Account = $"member_{Repository_User.Select.Count():000000000}",
+                Account = $"member_{Repository_Member.Select.Count():000000000}",
                 Nickname = info.Nickname,
                 Face = imgId,
                 Sex = info.Sex == 1 ? "男" : info.Sex == 2 ? "女" : null,

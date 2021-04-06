@@ -4,40 +4,142 @@
         <name>Business</name>
     </assembly>
     <members>
-        <member name="T:Business.Hub.LogForwardHandler">
+        <member name="T:Business.Handler.ChunkFileMergeHandler">
             <summary>
-            SignalR日志转发
+            合并分片文件
             </summary>
         </member>
-        <member name="F:Business.Hub.LogForwardHandler.LogQueue">
+        <member name="F:Business.Handler.ChunkFileMergeHandler.IdQueue">
             <summary>
             数据队列
             </summary>
             <remarks>
             </remarks>
         </member>
-        <member name="M:Business.Hub.LogForwardHandler.Start">
+        <member name="P:Business.Handler.ChunkFileMergeHandler.BaseDir">
+            <summary>
+            存储路径根目录相对路径
+            </summary>
+        </member>
+        <member name="M:Business.Handler.ChunkFileMergeHandler.GetTask(System.String,Entity.Common.Common_ChunkFileMergeTask@)">
+            <summary>
+            获取任务
+            </summary>
+            <param name="id">任务Id</param>
+            <param name="task">任务</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Handler.ChunkFileMergeHandler.IsFileAlready(Entity.Common.Common_ChunkFileMergeTask)">
+            <summary>
+            是否文件早已存在
+            </summary>
+            <param name="task">任务</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Handler.ChunkFileMergeHandler.GetChunkFiles(Entity.Common.Common_ChunkFileMergeTask,System.Collections.Generic.List{System.ValueTuple{System.String,System.String}}@,System.Collections.Generic.List{System.ValueTuple{System.String,System.Int32,System.Int64,System.String}}@)">
+            <summary>
+            获取分片文件
+            </summary>
+            <param name="task">任务</param>
+            <param name="allChunkFiles">全部分片文件</param>
+            <param name="needChunkFiles">合并所需的分片文件</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Handler.ChunkFileMergeHandler.Merge(Entity.Common.Common_ChunkFileMergeTask,System.Collections.Generic.List{System.ValueTuple{System.String,System.Int32,System.Int64,System.String}})">
+            <summary>
+            合并分片文件
+            </summary>
+            <param name="task">任务</param>
+            <param name="needChunkFiles">合并所需的分片文件</param>
+        </member>
+        <member name="M:Business.Handler.ChunkFileMergeHandler.Completed(Entity.Common.Common_ChunkFileMergeTask)">
+            <summary>
+            已完成
+            </summary>
+            <param name="task">任务</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Handler.ChunkFileMergeHandler.Clear(System.Collections.Generic.List{System.ValueTuple{System.String,System.String}})">
+            <summary>
+            清理
+            </summary>
+            <param name="chunkFiles">分片文件</param>
+        </member>
+        <member name="M:Business.Handler.ChunkFileMergeHandler.State">
+            <summary>
+            当前状态
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Handler.ChunkFileMergeHandler.Start">
             <summary>
             启动
             </summary>
         </member>
-        <member name="M:Business.Hub.LogForwardHandler.Shutdown">
+        <member name="M:Business.Handler.ChunkFileMergeHandler.Shutdown">
             <summary>
             关闭
             </summary>
         </member>
-        <member name="M:Business.Hub.LogForwardHandler.Add(Model.Utils.SignalR.LogInfo)">
+        <member name="M:Business.Handler.ChunkFileMergeHandler.Add(System.String,System.String,System.Int32,System.Int32)">
+            <summary>
+            新增合并任务
+            </summary>
+            <param name="md5">文件MD5值</param>
+            <param name="name">文件名(不包括拓展名)</param>
+            <param name="specs">分片文件规格</param>
+            <param name="total">分片文件总数</param>
+        </member>
+        <member name="M:Business.Handler.ChunkFileMergeHandler.Run">
+            <summary>
+            运行
+            </summary>
+        </member>
+        <member name="M:Business.Handler.ChunkFileMergeHandler.Processing">
+            <summary>
+            处理
+            </summary>
+        </member>
+        <member name="T:Business.Handler.LogForwardHandler">
+            <summary>
+            SignalR日志转发
+            </summary>
+        </member>
+        <member name="F:Business.Handler.LogForwardHandler.LogQueue">
+            <summary>
+            数据队列
+            </summary>
+            <remarks>
+            </remarks>
+        </member>
+        <member name="M:Business.Handler.LogForwardHandler.State">
+            <summary>
+            当前状态
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Handler.LogForwardHandler.Start">
+            <summary>
+            启动
+            </summary>
+        </member>
+        <member name="M:Business.Handler.LogForwardHandler.Shutdown">
+            <summary>
+            关闭
+            </summary>
+        </member>
+        <member name="M:Business.Handler.LogForwardHandler.Add(Model.Utils.SignalR.LogInfo)">
             <summary>
             新增转发数据
             </summary>
             <param name="log">日志</param>
         </member>
-        <member name="M:Business.Hub.LogForwardHandler.Run">
+        <member name="M:Business.Handler.LogForwardHandler.Run">
             <summary>
             运行
             </summary>
         </member>
-        <member name="M:Business.Hub.LogForwardHandler.Processing">
+        <member name="M:Business.Handler.LogForwardHandler.Processing">
             <summary>
             处理转发
             </summary>
@@ -141,96 +243,6 @@
             <param name="state"></param>
             <returns></returns>
         </member>
-        <member name="T:Business.Implementation.Common.ChunkFileMergeHandler">
-            <summary>
-            合并分片文件
-            </summary>
-        </member>
-        <member name="F:Business.Implementation.Common.ChunkFileMergeHandler.IdQueue">
-            <summary>
-            数据队列
-            </summary>
-            <remarks>
-            </remarks>
-        </member>
-        <member name="P:Business.Implementation.Common.ChunkFileMergeHandler.BaseDir">
-            <summary>
-            存储路径根目录相对路径
-            </summary>
-        </member>
-        <member name="M:Business.Implementation.Common.ChunkFileMergeHandler.GetTask(System.String,Entity.Common.Common_ChunkFileMergeTask@)">
-            <summary>
-            获取任务
-            </summary>
-            <param name="id">任务Id</param>
-            <param name="task">任务</param>
-            <returns></returns>
-        </member>
-        <member name="M:Business.Implementation.Common.ChunkFileMergeHandler.IsFileAlready(Entity.Common.Common_ChunkFileMergeTask)">
-            <summary>
-            是否文件早已存在
-            </summary>
-            <param name="task">任务</param>
-            <returns></returns>
-        </member>
-        <member name="M:Business.Implementation.Common.ChunkFileMergeHandler.GetChunkFiles(Entity.Common.Common_ChunkFileMergeTask,System.Collections.Generic.List{System.ValueTuple{System.String,System.String}}@,System.Collections.Generic.List{System.ValueTuple{System.String,System.Int32,System.Int64,System.String}}@)">
-            <summary>
-            获取分片文件
-            </summary>
-            <param name="task">任务</param>
-            <param name="allChunkFiles">全部分片文件</param>
-            <param name="needChunkFiles">合并所需的分片文件</param>
-            <returns></returns>
-        </member>
-        <member name="M:Business.Implementation.Common.ChunkFileMergeHandler.Merge(Entity.Common.Common_ChunkFileMergeTask,System.Collections.Generic.List{System.ValueTuple{System.String,System.Int32,System.Int64,System.String}})">
-            <summary>
-            合并分片文件
-            </summary>
-            <param name="task">任务</param>
-            <param name="needChunkFiles">合并所需的分片文件</param>
-        </member>
-        <member name="M:Business.Implementation.Common.ChunkFileMergeHandler.Completed(Entity.Common.Common_ChunkFileMergeTask)">
-            <summary>
-            已完成
-            </summary>
-            <param name="task">任务</param>
-            <returns></returns>
-        </member>
-        <member name="M:Business.Implementation.Common.ChunkFileMergeHandler.Clear(System.Collections.Generic.List{System.ValueTuple{System.String,System.String}})">
-            <summary>
-            清理
-            </summary>
-            <param name="chunkFiles">分片文件</param>
-        </member>
-        <member name="M:Business.Implementation.Common.ChunkFileMergeHandler.Start">
-            <summary>
-            启动
-            </summary>
-        </member>
-        <member name="M:Business.Implementation.Common.ChunkFileMergeHandler.Shutdown">
-            <summary>
-            关闭
-            </summary>
-        </member>
-        <member name="M:Business.Implementation.Common.ChunkFileMergeHandler.Add(System.String,System.String,System.Int32,System.Int32)">
-            <summary>
-            新增合并任务
-            </summary>
-            <param name="md5">文件MD5值</param>
-            <param name="name">文件名(不包括拓展名)</param>
-            <param name="specs">分片文件规格</param>
-            <param name="total">分片文件总数</param>
-        </member>
-        <member name="M:Business.Implementation.Common.ChunkFileMergeHandler.Run">
-            <summary>
-            运行
-            </summary>
-        </member>
-        <member name="M:Business.Implementation.Common.ChunkFileMergeHandler.Processing">
-            <summary>
-            处理
-            </summary>
-        </member>
         <member name="T:Business.Implementation.Common.EntryLogBusiness">
             <summary>
             登录日志记录业务类
@@ -241,7 +253,12 @@
             文件处理业务类
             </summary>
         </member>
-        <member name="F:Business.Implementation.Common.FileBusiness.PreviewDir">
+        <member name="P:Business.Implementation.Common.FileBusiness.FileStateDir">
+            <summary>
+            文件状态图存储路径根目录相对路径
+            </summary>
+        </member>
+        <member name="P:Business.Implementation.Common.FileBusiness.PreviewDir">
             <summary>
             文件类型预览图存储路径根目录相对路径
             </summary>
@@ -299,6 +316,14 @@
             </summary>
             <param name="response"></param>
             <param name="path"></param>
+        </member>
+        <member name="M:Business.Implementation.Common.FileBusiness.CheckFileStateResponseWhenError(Microsoft.AspNetCore.Http.HttpResponse,System.String)">
+            <summary>
+            输出错误
+            </summary>
+            <param name="response"></param>
+            <param name="fileState"></param>
+            <returns></returns>
         </member>
         <member name="M:Business.Implementation.Common.FileBusiness.DeleteFile(System.String)">
             <summary>

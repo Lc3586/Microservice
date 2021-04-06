@@ -35,6 +35,9 @@
     <Content Remove="wwwroot\ffmpeg\ffmpeg.exe" />
     <Content Remove="wwwroot\ffmpeg\ffplay.exe" />
     <Content Remove="wwwroot\ffmpeg\ffprobe.exe" />
+    <Content Remove="wwwroot\filestate\不可用.jpg" />
+    <Content Remove="wwwroot\filestate\处理中.jpg" />
+    <Content Remove="wwwroot\filestate\已删除.jpg" />
     <Content Remove="wwwroot\filetypes\7z.png" />
     <Content Remove="wwwroot\filetypes\accdb.png" />
     <Content Remove="wwwroot\filetypes\ai.png" />
@@ -121,9 +124,24 @@
     <None Include="jsonconfig\soap.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="wwwroot\ffmpeg\ffmpeg.exe" />
-    <None Include="wwwroot\ffmpeg\ffplay.exe" />
-    <None Include="wwwroot\ffmpeg\ffprobe.exe" />
+    <None Include="wwwroot\ffmpeg\ffmpeg.exe">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\ffmpeg\ffplay.exe">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\ffmpeg\ffprobe.exe">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filestate\不可用.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filestate\处理中.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filestate\已删除.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="wwwroot\filetypes\7z.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

@@ -90,7 +90,7 @@ namespace Business.Implementation.System
                 o.Name
             });
 
-            if (user == null)
+            if (user == default)
                 throw new MessageException("用户不存在或已被移除.");
 
             if (!user.Enable)
@@ -113,7 +113,7 @@ namespace Business.Implementation.System
                 o.Name
             });
 
-            if (user == null)
+            if (user == default)
                 throw new MessageException("会员不存在或已被移除.");
 
             if (!user.Enable)
@@ -132,7 +132,7 @@ namespace Business.Implementation.System
                 o.Name
             });
 
-            if (role == null)
+            if (role == default)
                 throw new MessageException("角色不存在或已被移除.");
 
             if (role.Type == RoleType.超级管理员)
@@ -219,7 +219,7 @@ namespace Business.Implementation.System
 
         public void AuthorizeRoleForUser(RoleForUser data, bool runTransaction = true)
         {
-            if (!data.UserIds.Any_Ex() || !data.RoleIds.Any_Ex())
+            if (!data.UserIds.Any_Ex())
                 return;
 
             var users = data.UserIds.Select(o => GetUserWithCheck(o));
@@ -417,7 +417,7 @@ namespace Business.Implementation.System
 
         public void AuthorizeMenuForUser(MenuForUser data, bool runTransaction = true)
         {
-            if (!data.UserIds.Any_Ex() || !data.MenuIds.Any_Ex())
+            if (!data.UserIds.Any_Ex())
                 return;
 
             var users = data.UserIds.Select(o => GetUserWithCheck(o));
@@ -504,7 +504,7 @@ namespace Business.Implementation.System
 
         public void AuthorizeResourcesForUser(ResourcesForUser data)
         {
-            if (!data.UserIds.Any_Ex() || !data.ResourcesIds.Any_Ex())
+            if (!data.UserIds.Any_Ex())
                 return;
 
             var users = data.UserIds.Select(o => GetUserWithCheck(o));
@@ -559,7 +559,7 @@ namespace Business.Implementation.System
 
         public void AuthorizeMenuForRole(MenuForRole data, bool runTransaction = true)
         {
-            if (!data.RoleIds.Any_Ex() || !data.MenuIds.Any_Ex())
+            if (!data.RoleIds.Any_Ex())
                 return;
 
             var roles = data.RoleIds.Select(o => GetRoleWithCheck(o));
@@ -646,7 +646,7 @@ namespace Business.Implementation.System
 
         public void AuthorizeResourcesForRole(ResourcesForRole data)
         {
-            if (!data.RoleIds.Any_Ex() || !data.ResourcesIds.Any_Ex())
+            if (!data.RoleIds.Any_Ex())
                 return;
 
             var roles = data.RoleIds.Select(o => GetRoleWithCheck(o));
@@ -781,7 +781,7 @@ namespace Business.Implementation.System
 
         public void RevocationRoleForUser(RoleForUser data, bool runTransaction = true)
         {
-            if (!data.UserIds.Any_Ex() || !data.RoleIds.Any_Ex())
+            if (!data.UserIds.Any_Ex())
                 return;
 
             var users = data.UserIds.Select(o => GetUserWithCheck(o));
@@ -855,7 +855,7 @@ namespace Business.Implementation.System
 
         public void RevocationRoleForMember(RoleForMember data, bool runTransaction = true)
         {
-            if (!data.MemberIds.Any_Ex() || !data.RoleIds.Any_Ex())
+            if (!data.MemberIds.Any_Ex())
                 return;
 
             var members = data.MemberIds.Select(o => GetMemberWithCheck(o));
@@ -929,7 +929,7 @@ namespace Business.Implementation.System
 
         public void RevocationMenuForUser(MenuForUser data, bool runTransaction = true)
         {
-            if (!data.UserIds.Any_Ex() || !data.MenuIds.Any_Ex())
+            if (!data.UserIds.Any_Ex())
                 return;
 
             var users = data.UserIds.Select(o => GetUserWithCheck(o));
@@ -1002,7 +1002,7 @@ namespace Business.Implementation.System
 
         public void RevocationResourcesForUser(ResourcesForUser data, bool runTransaction = true)
         {
-            if (!data.UserIds.Any_Ex() || !data.ResourcesIds.Any_Ex())
+            if (!data.UserIds.Any_Ex())
                 return;
 
             var users = data.UserIds.Select(o => GetUserWithCheck(o));
@@ -1057,7 +1057,7 @@ namespace Business.Implementation.System
 
         public void RevocationMenuForRole(MenuForRole data, bool runTransaction = true)
         {
-            if (!data.RoleIds.Any_Ex() || !data.MenuIds.Any_Ex())
+            if (!data.RoleIds.Any_Ex())
                 return;
 
             var roles = data.RoleIds.Select(o => GetRoleWithCheck(o));
@@ -1130,7 +1130,7 @@ namespace Business.Implementation.System
 
         public void RevocationResourcesForRole(ResourcesForRole data, bool runTransaction = true)
         {
-            if (!data.RoleIds.Any_Ex() || !data.ResourcesIds.Any_Ex())
+            if (!data.RoleIds.Any_Ex())
                 return;
 
             var roles = data.RoleIds.Select(o => GetRoleWithCheck(o));
@@ -1275,7 +1275,7 @@ namespace Business.Implementation.System
                                         Enable = o.Enable
                                     });
 
-            if (user == null)
+            if (user == default)
                 throw new MessageException("用户不存在或已被移除.");
 
             if (!user.Enable)
@@ -1303,7 +1303,7 @@ namespace Business.Implementation.System
                                         Enable = o.Enable
                                     });
 
-            if (member == null)
+            if (member == default)
                 throw new MessageException("会员用户不存在或已被移除.");
 
             if (!member.Enable)
@@ -1476,7 +1476,7 @@ namespace Business.Implementation.System
                                         Code = o.Code
                                     });
 
-            if (role == null)
+            if (role == default)
                 throw new MessageException("角色不存在或已被移除.");
 
             if (!role.Enable)

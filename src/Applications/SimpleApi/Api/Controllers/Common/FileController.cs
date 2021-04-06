@@ -209,30 +209,6 @@ namespace Api.Controllers
             return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(FileBusiness.SingleFile(file, filename))));
         }
 
-        ///// <summary>
-        ///// 单图上传
-        ///// </summary>
-        ///// <param name="option">选项</param>
-        ///// <returns></returns>
-        //[HttpPost("upload-single-image")]
-        //[SwaggerResponse((int)HttpStatusCode.OK, "文件信息", typeof(FileInfo))]
-        //public async Task<object> UploadSingleImage(ImageUploadParams option)
-        //{
-        //    return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(FileBusiness.SingleImage(option))));
-        //}
-
-        ///// <summary>
-        ///// 单文件上传
-        ///// </summary>
-        ///// <param name="option">选项</param>
-        ///// <returns></returns>
-        //[HttpPost("upload-single-file")]
-        //[SwaggerResponse((int)HttpStatusCode.OK, "文件信息", typeof(FileInfo))]
-        //public async Task<object> UploadSingleFile(FileUploadParams option)
-        //{
-        //    return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(FileBusiness.SingleFile(option))));
-        //}
-
         /// <summary>
         /// 预览
         /// </summary>

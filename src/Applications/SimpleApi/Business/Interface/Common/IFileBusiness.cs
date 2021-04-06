@@ -118,22 +118,6 @@ namespace Business.Interface.Common
         /// <returns></returns>
         Task<FileInfo> SingleFile(IFormFile file, string filename = null);
 
-        ///// <summary>
-        ///// 单图上传
-        ///// </summary>
-        ///// <remarks>单个上传</remarks>
-        ///// <param name="option">图片上传参数</param>
-        ///// <returns></returns>
-        //FileInfo SingleImage(ImageUploadParams option);
-
-        ///// <summary>
-        ///// 文件上传
-        ///// </summary>
-        ///// <remarks>单个上传</remarks>
-        ///// <param name="option">文件上传参数</param>
-        ///// <returns></returns>
-        //Task<FileInfo> SingleFile(FileUploadParams option);
-
         /// <summary>
         /// 预览
         /// </summary>

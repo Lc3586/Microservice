@@ -302,7 +302,7 @@ namespace Business.Implementation.System
                                         o.Sort
                                     });
 
-            if (current.Id == null)
+            if (current == default)
                 throw new MessageException("数据不存在或已被移除.");
 
             (bool success, Exception ex) = Orm.RunTransaction(() =>
@@ -390,7 +390,7 @@ namespace Business.Implementation.System
                                         o.Sort
                                     });
 
-            if (current.Id == null)
+            if (current == default)
                 throw new MessageException("数据不存在或已被移除.");
 
             var target = Repository.Where(o => o.Id == data.TargetId)
@@ -403,7 +403,7 @@ namespace Business.Implementation.System
                                         o.RootId
                                     });
 
-            if (target.Id == null)
+            if (target == default)
                 throw new MessageException("目标数据不存在.");
 
             (bool success, Exception ex) = Orm.RunTransaction(() =>

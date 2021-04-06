@@ -1893,6 +1893,42 @@
             <param name="procedure">存储过程</param>
             <returns></returns>
         </member>
+        <member name="T:Api.Controllers.SystemConsoleController">
+            <summary>
+            系统中控台
+            </summary>
+        </member>
+        <member name="F:Api.Controllers.SystemConsoleController.LogForward">
+            <summary>
+            日志转发
+            </summary>
+        </member>
+        <member name="F:Api.Controllers.SystemConsoleController.ChunkFileMerge">
+            <summary>
+            合并分片文件
+            </summary>
+        </member>
+        <member name="M:Api.Controllers.SystemConsoleController.Shutdown(System.String)">
+            <summary>
+            关停
+            </summary>
+            <param name="name">名称，为null时全部关停</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.SystemConsoleController.Reboot(System.String)">
+            <summary>
+            重启
+            </summary>
+            <param name="name">名称，为null时全部重启</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.SystemConsoleController.GetState(System.String)">
+            <summary>
+            获取状态
+            </summary>
+            <param name="name">名称，为null时获取全部</param>
+            <returns></returns>
+        </member>
         <member name="T:Api.BaseActionFilter">
             <summary>
             拦截类基类

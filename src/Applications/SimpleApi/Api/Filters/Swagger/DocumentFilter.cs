@@ -66,21 +66,13 @@ namespace Api
                 var newData = new List<System_Resources>();
                 swaggerDoc.Paths.ForEach(p =>
                 {
+                    var uri = Regex.Replace(p.Key, @"{(.*?)}", "%");
                     var resources = orm.Select<System_Resources>()
-                            .Where(o => p.Key.Contains(o.Uri) && o.Type == ResourcesType.接口)
+                            .Where(o => o.Uri == uri && o.Type == ResourcesType.接口)
                             .ToOne(o => new { o.Id, o.Uri });
-                    if (resources != null)
-                        if (resources.Uri.Contains("{"))
-                        {
-                            var id = resources.Id;
-                            var uri = Regex.Replace(resources.Uri, @"{(.*?)}", "%");
-                            orm.Update<System_Resources>()
-                                .Where(o => o.Id == id)
-                                .Set(o => o.Uri, $"{uri}/")
-                                .ExecuteAffrows();
-                        }
-                        else
-                            return;
+
+                    if (resources != default)
+                        return;
 
                     p.Value.Operations.ForEach(o =>
                     {
@@ -89,7 +81,7 @@ namespace Api
                             Name = $"{string.Join("", o.Value.Tags.Select(t => $"[{t.Name}]"))}<{o.Key}>{o.Value.Summary}",
                             Code = p.Key.ToMD5String(),
                             Type = ResourcesType.接口,
-                            Uri = p.Key,
+                            Uri = uri,
                             Enable = true,
                             Remark = "通过Swagger接口文档自动生成."
                         }.InitEntity());

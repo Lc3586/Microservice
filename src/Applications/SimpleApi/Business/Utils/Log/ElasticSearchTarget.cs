@@ -1,9 +1,8 @@
-﻿using Business.Hub;
+﻿using Business.Handler;
 using Entity.System;
 using Microservice.Library.Container;
 using Microservice.Library.Elasticsearch;
 using Microservice.Library.Elasticsearch.Gen;
-using Microsoft.AspNetCore.SignalR;
 using Model.Utils.Config;
 using Model.Utils.SignalR;
 using NLog;
@@ -38,7 +37,7 @@ namespace Business.Utils.Log
             }
         }
 
-        System_Log GetBase_SysLogInfo(LogEventInfo logEventInfo)
+        static System_Log GetBase_SysLogInfo(LogEventInfo logEventInfo)
         {
             logEventInfo.Properties.TryGetValue(NLoggerConfig.Data, out object data);
             logEventInfo.Properties.TryGetValue(NLoggerConfig.LogType, out object logType);

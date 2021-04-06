@@ -325,7 +325,7 @@ namespace Business.Implementation.Public
             var member = Repository.Where(o => o.WeChatUserInfos.AsSelect().Where(p => p.AppId == appId && p.OpenId == openId).Any())
                 .ToOne(o => new { o.Id, o.Account, o.Name, o.Nickname, o.Sex, o.Face, o.Enable });
 
-            if (member == null)
+            if (member == default)
                 throw new MessageException("账号还未绑定微信.");
 
             if (!member.Enable)
@@ -359,7 +359,7 @@ namespace Business.Implementation.Public
             var member = Repository.Where(o => o.Id == memberId)
                             .ToOne(o => new { o.Id, o.Account, o.Name, o.Nickname, o.Sex, o.Face, o.Enable });
 
-            if (member == null)
+            if (member == default)
                 throw new MessageException("账号还未绑定微信.");
 
             if (!member.Enable)

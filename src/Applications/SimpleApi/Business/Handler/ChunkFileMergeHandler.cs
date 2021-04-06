@@ -17,7 +17,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Business.Implementation.Common
+namespace Business.Handler
 {
     /// <summary>
     /// 合并分片文件
@@ -175,16 +175,18 @@ namespace Business.Implementation.Common
 
             if (select.GroupBy(o => o.Index).Count() != task.Total)
             {
-                IdQueue.Enqueue(task.Id);
+                //IdQueue.Enqueue(task.Id);
 
-                task.Info = "合并分片文件失败, 分片文件还未全部上传完毕, 已将任务移至队尾.";
+                task.Info = "合并分片文件失败, 分片文件还未全部上传完毕.";
+                //task.Info = "合并分片文件失败, 分片文件还未全部上传完毕, 已将任务移至队尾.";
                 task.ModifyTime = DateTime.Now;
                 Repository_ChunkFileMergeTask.Update(task);
 
                 Logger.Log(
                     NLog.LogLevel.Warn,
                     LogType.警告信息,
-                    $"合并分片文件失败, 分片文件还未全部上传完毕, 已将任务移至队尾[ID: {task.Id}].");
+                    $"合并分片文件失败, 分片文件还未全部上传完毕[ID: {task.Id}].");
+                //$"合并分片文件失败, 分片文件还未全部上传完毕, 已将任务移至队尾[ID: {task.Id}].");
 
                 allChunkFiles = null;
                 needChunkFiles = null;
@@ -203,13 +205,10 @@ namespace Business.Implementation.Common
                 return false;
             });
 
-            needChunkFiles = _allChunkFiles.GroupBy(o => o.Index)
-                                        .OrderBy(o => o.Key)
-                                        .Select(o => o.First())
-                                        .Select(o => (o.Id, o.Index, o.Bytes.Value, o.Path))
-                                        .ToList();
+            var _needChunkFiles = _allChunkFiles.GroupBy(o => o.Index)
+                                         .OrderBy(o => o.Key);
 
-            if (needChunkFiles.Count != task.Total)
+            if (_needChunkFiles.Count() != task.Total)
             {
                 task.State = CFMTState.失败;
                 task.Info = "合并分片文件失败, 部分分片文件已损坏.";
@@ -222,15 +221,21 @@ namespace Business.Implementation.Common
                     $"合并分片文件失败, 部分分片文件已损坏[ID: {task.Id}].");
 
                 allChunkFiles = null;
+                needChunkFiles = null;
                 return false;
             }
 
             allChunkFiles = _allChunkFiles.Select(o => (o.Id, o.Path))
                                         .ToList();
 
+            needChunkFiles = _needChunkFiles.Select(o => o.First())
+                                            .Select(o => (o.Id, o.Index, o.Bytes.Value, o.Path))
+                                            .ToList();
+
             //获取文件信息
             var id = needChunkFiles.First().Id;
-            var fileInfo = Repository_FileChunk.Where(o => o.Id == id).ToOne(o => new { o.ContentType, o.Extension });
+            var fileInfo = Repository_FileChunk.Where(o => o.Id == id)
+                                            .ToOne(o => new { o.ContentType, o.Extension });
             task.ContentType = fileInfo.ContentType;
             task.Extension = fileInfo.Extension;
             task.FullName = $"{task.Name}{task.Extension}";
@@ -339,10 +344,21 @@ namespace Business.Implementation.Common
         #region 公共部分
 
         /// <summary>
+        /// 当前状态
+        /// </summary>
+        /// <returns></returns>
+        public bool? State()
+        {
+            return TCS?.Task.Status == TaskStatus.RanToCompletion ? TCS?.Task.Result : null;
+        }
+
+        /// <summary>
         /// 启动
         /// </summary>
         public void Start()
         {
+            TCS = new TaskCompletionSource<bool>();
+
             //将未完成的任务添加至队列
             Repository_ChunkFileMergeTask.Where(o => o.State != $"{CFMTState.已完成}" && o.ServerKey == Config.ServerKey)
                 .ToList(o => o.Id)

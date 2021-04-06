@@ -92,8 +92,8 @@ namespace Business.Utils
                     data = _ex.Data;
                 }
 
-                if (exception.InnerException != null)
-                    HandleException(exception.InnerException);
+                if (ex.InnerException != null)
+                    HandleException(ex.InnerException);
             }
         }
     }

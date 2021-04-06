@@ -426,7 +426,7 @@ namespace Business.Implementation.System
             var user = Repository.Where(o => o.Account == account)
                 .ToOne(o => new { o.Id, o.Account, o.Name, o.Nickname, o.Sex, o.Face, o.Enable, o.Password });
 
-            if (user == null)
+            if (user == default)
             {
                 if (account.Equals(Config.AdminAccount) && password.Equals(Config.AdminInitPassword) && Repository.Select.Count() == 0)
                 {
@@ -472,7 +472,7 @@ namespace Business.Implementation.System
             var user = Repository.Where(o => o.WeChatUserInfos.AsSelect().Where(p => p.AppId == appId && p.OpenId == openId).Any())
                 .ToOne(o => new { o.Id, o.Account, o.Name, o.Nickname, o.Sex, o.Face, o.Enable, o.Password });
 
-            if (user == null)
+            if (user == default)
                 throw new MessageException("账号还未绑定微信.");
 
             if (!user.Enable)

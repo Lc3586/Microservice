@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Business.Handler;
 using Business.Interface.Common;
 using Business.Utils;
 using Business.Utils.Pagination;
@@ -20,11 +21,9 @@ using Model.Utils.Pagination;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 using FileInfo = Model.Common.FileDTO.FileInfo;
 
@@ -47,10 +46,8 @@ namespace Business.Implementation.Common
             Mapper = autoMapperProvider.GetMapper();
             Repository = Orm.GetRepository<Common_File, string>();
             Repository_FileChunk = Orm.GetRepository<Common_ChunkFile, string>();
-            Repository_ChunkMergeTask = Orm.GetRepository<Common_ChunkFileMergeTask, string>();
             HttpContextAccessor = httpContextAccessor;
             MergeHandler = mergeHandler;
-            PreviewDir = Path.GetDirectoryName("\\filetypes\\");
         }
 
         #endregion
@@ -65,16 +62,19 @@ namespace Business.Implementation.Common
 
         readonly IBaseRepository<Common_ChunkFile, string> Repository_FileChunk;
 
-        readonly IBaseRepository<Common_ChunkFileMergeTask, string> Repository_ChunkMergeTask;
-
         readonly IHttpContextAccessor HttpContextAccessor;
 
         readonly ChunkFileMergeHandler MergeHandler;
 
         /// <summary>
+        /// 文件状态图存储路径根目录相对路径
+        /// </summary>
+        static string FileStateDir => Path.GetDirectoryName("\\filestate\\");
+
+        /// <summary>
         /// 文件类型预览图存储路径根目录相对路径
         /// </summary>
-        readonly string PreviewDir;
+        static string PreviewDir => Path.GetDirectoryName("\\filetypes\\");
 
         /// <summary>
         /// 存储路径根目录相对路径
@@ -194,6 +194,32 @@ namespace Business.Implementation.Common
             using var fs = new FileStream(path, FileMode.Open, FileAccess.Read);
             response.ContentLength = fs.Length;
             await fs.CopyToAsync(response.Body);
+        }
+
+        /// <summary>
+        /// 输出错误
+        /// </summary>
+        /// <param name="response"></param>
+        /// <param name="fileState"></param>
+        /// <returns></returns>
+        static async Task<bool> CheckFileStateResponseWhenError(HttpResponse response, string fileState)
+        {
+            if (fileState == FileState.处理中)
+            {
+                await ResponseFile(response, PathHelper.GetAbsolutePath($"~{FileStateDir}\\{FileState.处理中}.jpg"));
+            }
+            else if (fileState == FileState.已删除)
+            {
+                await ResponseFile(response, PathHelper.GetAbsolutePath($"~{FileStateDir}\\{FileState.已删除}.jpg"));
+            }
+            else if (fileState != FileState.可用)
+            {
+                await ResponseFile(response, PathHelper.GetAbsolutePath($"~{FileStateDir}\\不可用.jpg"));
+            }
+            else
+                return true;
+
+            return false;
         }
 
         /// <summary>
@@ -348,7 +374,7 @@ namespace Business.Implementation.Common
         public List<FileInfo> GetList(PaginationDTO pagination)
         {
             var list = Orm.Select<Common_File>()
-                        .Where(o => Operator.IsAdmin || o.CreatorId == Operator.AuthenticationInfo.Id)
+                        .Where(o => Operator.IsAdmin == true || o.CreatorId == Operator.AuthenticationInfo.Id)
                         .GetPagination(pagination)
                         .ToDtoList<Common_File, FileInfo>(typeof(FileInfo).GetNamesWithTagAndOther(true, "_List"));
 
@@ -611,288 +637,14 @@ namespace Business.Implementation.Common
             return newData;
         }
 
-        //public FileInfo SingleImage(ImageUploadParams option)
-        //{
-        //    FileInfo result;
-        //    Image image = null;
-        //    var baseDir = BaseDir;
-        //    var baseDirPath = PathHelper.GetAbsolutePath($"~{baseDir}\\");
-
-        //    if (!option.UrlOrBase64.IsNullOrEmpty())
-        //    {
-        //        if (option.Download)
-        //        {
-        //            using (var client = new WebClient())
-        //            {
-        //                result = new FileInfo
-        //                {
-        //                    Name = option.Name ?? Guid.NewGuid().ToString(),
-        //                    FileType = FileType.图片
-        //                };
-
-        //                result.FullName = $"{result.Name}.jpg";
-        //                result.Extension = ".jpg";
-        //                result.ContentType = "image/jpg";
-
-        //                using MemoryStream ms = new MemoryStream();
-        //                {
-        //                    var buffer = client.DownloadData(option.UrlOrBase64);
-        //                    ms.Write(buffer, 0, buffer.Length);
-        //                    image = new Image(ms);
-        //                }
-        //                goto next;
-        //            }
-        //        }
-
-        //        var o = option.UrlOrBase64;
-
-        //        result = new FileInfo
-        //        {
-        //            Name = option.Name ?? Guid.NewGuid().ToString(),
-        //            FileType = FileType.图片
-        //        };
-
-        //        if (o.Contains("data:image"))
-        //        {
-        //            result.FullName = $"{result.Name}.jpg";
-        //            result.Extension = ".jpg";
-        //            result.ContentType = "image/jpg";
-
-        //            image = ImgHelper.GetImgFromBase64Url(o);
-        //        }
-        //        else
-        //        {
-        //            result.FullName = $"{result.Name}";
-
-        //            result.StorageType = StorageType.Uri;
-        //            result.Path = o;
-        //            result.ThumbnailPath = result.Path;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        var fullName = option.File.FileName;
-        //        if (!string.IsNullOrWhiteSpace(option.Name))
-        //            fullName = $"{option.Name}.{option.File.FileName[option.File.FileName.LastIndexOf('.')..]}";
-
-        //        result = new FileInfo
-        //        {
-        //            FullName = fullName,
-        //            Name = fullName.Substring(0, fullName.LastIndexOf('.'))
-        //        };
-
-        //        result.Extension = option.File.FileName.Replace(result.Name, "").ToLower();
-        //        result.ContentType = option.File.ContentType;
-        //        result.FileType = GetFileType(result.Extension);
-
-        //        using MemoryStream ms = new MemoryStream();
-        //        {
-        //            option.File.CopyTo(ms);
-        //            image = new Image(ms);
-        //        }
-        //    }
-
-        //    next:
-        //    if (option.ToBase64 || option.ToBase64Url)
-        //    {
-        //        if (option.ToBase64)
-        //        {
-        //            result.StorageType = StorageType.Base64;
-        //            if (!option.IsCompress)
-        //                result.Path = ImgHelper.ToBase64String(image);
-        //        }
-
-        //        if (option.ToBase64Url)
-        //        {
-        //            result.StorageType = StorageType.Base64Url;
-        //            if (!option.IsCompress)
-        //                result.Path = ImgHelper.ToBase64StringUrl(image);
-        //        }
-        //    }
-
-        //    //路径是网络链接时不进行处理
-        //    if (!result.ThumbnailPath.IsNullOrEmpty())
-        //        goto success;
-
-        //    if (option.IsCompress)
-        //    {
-        //        if (image.Width <= option.CompressOption.Width && (option.CompressOption.Height == 0 || image.Height <= option.CompressOption.Height))
-        //            goto Ignore;
-
-        //        Image image_compress;
-        //        if (option.CompressOption.Height <= 0)
-        //            image_compress = ImgHelper.CompressImg(image, option.CompressOption.Width);
-        //        else
-        //            image_compress = ImgHelper.CompressImg(image, option.CompressOption.Width, option.CompressOption.Height);
-
-        //        if (option.ToBase64 || option.ToBase64Url)
-        //        {
-        //            if (option.ToBase64)
-        //                result.ThumbnailPath = ImgHelper.ToBase64String(image_compress);
-
-        //            if (option.ToBase64Url)
-        //                result.ThumbnailPath = ImgHelper.ToBase64StringUrl(image_compress);
-        //        }
-        //        else
-        //        {
-        //            var thumbnailDir = Path.GetDirectoryName($"{baseDir}\\Thumbnail\\");
-        //            var thumbnailDirPath = PathHelper.GetAbsolutePath($"~{thumbnailDir}\\");
-        //            var thumbnailPath = Path.Combine(thumbnailDir, result.FullName);
-
-        //            if (!Directory.Exists(thumbnailDirPath))
-        //                Directory.CreateDirectory(thumbnailDirPath);
-
-        //            Save(image_compress, Path.Combine(thumbnailDirPath, result.FullName));
-
-        //            result.ThumbnailPath = thumbnailPath;
-        //            //result.ThumbnailPath = $"{SystemConfig.systemConfig.WebRootUrl}{thumbnailPath}";
-
-        //            if (!option.CompressOption.SaveOriginal)
-        //                result.Path = result.ThumbnailPath;
-        //        }
-        //    }
-
-        //    Ignore:
-
-        //    if (!result.Path.IsNullOrEmpty())
-        //        goto success;
-
-        //    result.Path = Path.Combine(baseDir, result.FullName);
-        //    //result.Path = $"{SystemConfig.systemConfig.WebRootUrl}{Path.Combine(baseDir, result.FullName)}";
-
-        //    if (result.ThumbnailPath.IsNullOrEmpty())
-        //        result.ThumbnailPath = result.Path;
-
-        //    if (!Directory.Exists(baseDirPath))
-        //        Directory.CreateDirectory(baseDirPath);
-
-        //    Save(image, Path.Combine(baseDirPath, result.FullName));
-
-        //    result.ServerKey = Config.ServerKey;
-        //    result.Path = result.Path?.Replace('\\', '/');
-        //    result.ThumbnailPath = result.ThumbnailPath?.Replace('\\', '/');
-        //    result.StorageType = StorageType.Path;
-
-        //    success:
-
-        //    if (result.StorageType == StorageType.Path)
-        //    {
-        //        result.Bytes = FileHelper.GetFileBytes(Path.Combine(baseDirPath, result.FullName));
-        //    }
-        //    else if (result.StorageType == StorageType.Base64)
-        //    {
-        //        result.Bytes = Encoding.Default.GetBytes(result.Path).Length;
-        //    }
-        //    else if (result.StorageType == StorageType.Base64Url)
-        //    {
-        //        result.Bytes = Encoding.Default.GetBytes(result.Path.Replace("data:image/jpg;base64,", "")).Length;
-        //    }
-
-        //    if (result.Bytes.HasValue)
-        //        result.Size = FileHelper.GetFileSize(result.Bytes.Value);
-
-        //    var entity = Mapper.Map<Common_File>(result).InitEntity();
-        //    Repository.Insert(entity);
-        //    result = Mapper.Map<FileInfo>(entity);
-
-        //    return result;
-        //}
-
-        //public async Task<FileInfo> SingleFile(FileUploadParams option)
-        //{
-        //    FileInfo result;
-        //    var baseDir = BaseDir;
-        //    var baseDirPath = PathHelper.GetAbsolutePath($"~{baseDir}\\");
-
-        //    byte[] bytes = null;
-
-        //    if (!option.Url.IsNullOrEmpty())
-        //    {
-        //        if (option.Download)
-        //        {
-        //            throw new MessageException("暂不支持下载外链文件.");
-        //        }
-
-        //        result = new FileInfo
-        //        {
-        //            Name = option.Name ?? Guid.NewGuid().ToString(),
-        //            FileType = FileType.外链资源
-        //        };
-
-        //        result.FullName = $"{result.Name}";
-
-        //        result.StorageType = StorageType.Uri;
-        //        result.Path = option.Url;
-        //        result.ThumbnailPath = GetPreviewImage();
-        //    }
-        //    else
-        //    {
-        //        result = new FileInfo
-        //        {
-        //            FullName = option.File.FileName,
-        //            Name = option.File.FileName.Substring(0, option.File.FileName.LastIndexOf('.'))
-        //        };
-
-        //        result.Extension = option.File.FileName.Replace(result.Name, "").ToLower();
-        //        result.ContentType = option.File.ContentType;
-
-        //        using MemoryStream ms = new MemoryStream();
-        //        {
-        //            option.File.CopyTo(ms);
-        //            bytes = new byte[ms.Length];
-        //            ms.Read(bytes, 0, bytes.Length);
-        //        }
-        //    }
-
-        //    //路径是网络链接时不进行处理
-        //    if (!result.ThumbnailPath.IsNullOrEmpty())
-        //        goto success;
-
-        //    if (option.IsCompress)
-        //    {
-        //        throw new MessageException("暂不支持文件在线压缩");
-        //    }
-
-        //    //Ignore:
-
-        //    if (!result.Path.IsNullOrEmpty())
-        //        goto success;
-
-        //    result.Path = Path.Combine(baseDir, result.FullName);
-
-        //    if (!Directory.Exists(baseDirPath))
-        //        Directory.CreateDirectory(baseDirPath);
-
-        //    await Save(bytes, Path.Combine(baseDirPath, result.FullName));
-
-        //    result.ServerKey = Config.ServerKey;
-        //    result.Path = result.Path?.Replace('\\', '/');
-        //    result.FileType = GetFileType(result.Extension);
-        //    result.ThumbnailPath = GetPreviewImage(result.Extension);
-        //    result.StorageType = StorageType.Path;
-
-        //    success:
-
-        //    if (result.StorageType == StorageType.Path)
-        //    {
-        //        result.Bytes = FileHelper.GetFileBytes(Path.Combine(baseDirPath, result.FullName));
-        //    }
-
-        //    if (result.Bytes.HasValue)
-        //        result.Size = FileHelper.GetFileSize(result.Bytes.Value);
-
-        //    var entity = Mapper.Map<Common_File>(result).InitEntity();
-        //    Repository.Insert(entity);
-        //    result = Mapper.Map<FileInfo>(entity);
-
-        //    return result;
-        //}
-
         public async Task Preview(string id, int width, int height, TimeSpan? time = null)
         {
             var file = Repository.GetAndCheckNull(id, "文件不存在或已被删除.");
 
             var response = HttpContextAccessor.HttpContext.Response;
+
+            if (!await CheckFileStateResponseWhenError(response, file.State))
+                return;
 
             if (file.StorageType == StorageType.Uri)
             {
@@ -922,33 +674,19 @@ namespace Business.Implementation.Common
                 response.StatusCode = StatusCodes.Status200OK;
                 response.ContentType = file.ContentType;
 
-                var imagePath = $"{file.Path.Substring(0, file.Path.LastIndexOf('.'))}.{width}x{height}.jpg";
+                var imagePath = $"{file.Path.Substring(0, file.Path.LastIndexOf('.'))}-Screenshot\\{width}x{height}.jpg";
 
                 if (!imagePath.Exists())
+                {
+                    if (!Directory.Exists(imagePath))
+                        Directory.CreateDirectory(imagePath);
                     await file.Path.Screenshot(imagePath, time ?? TimeSpan.FromSeconds(1), 31, width, height);
+                }
 
                 await ResponseFile(response, imagePath);
             }
             else
                 throw new MessageException("此文件不支持预览.");
-
-            //switch (file.StorageType)
-            //{
-            //    //case StorageType.Base64Url:
-            //    //    ResponseImage(response, ImgHelper.GetImgFromBase64Url(file.ThumbnailPath));
-            //    //    break;
-            //    //case StorageType.Base64:
-            //    //    ResponseImage(response, ImgHelper.GetImgFromBase64(file.ThumbnailPath));
-            //    //    break;
-            //    case StorageType.Uri:
-            //        response.Redirect(file.Path);
-            //        break;
-            //    case StorageType.Path:
-            //        ResponseFile(response, PathHelper.GetAbsolutePath($"~{file.Path}"));
-            //        break;
-            //    default:
-            //        throw new MessageException("该存储类型的文件无法预览.");
-            //}
         }
 
         public async Task Browse(string id)
@@ -956,6 +694,9 @@ namespace Business.Implementation.Common
             var file = Repository.GetAndCheckNull(id, "文件不存在或已被删除.");
 
             var response = HttpContextAccessor.HttpContext.Response;
+
+            if (!await CheckFileStateResponseWhenError(response, file.State))
+                return;
 
             if (file.StorageType == StorageType.Uri)
             {
@@ -969,24 +710,6 @@ namespace Business.Implementation.Common
             response.ContentType = file.ContentType;
 
             await ResponseFile(response, file.Path);
-
-            //switch (file.StorageType)
-            //{
-            //    case StorageType.Base64Url:
-            //        ResponseImage(response, ImgHelper.GetImgFromBase64Url(file.Path));
-            //        break;
-            //    case StorageType.Base64:
-            //        ResponseImage(response, ImgHelper.GetImgFromBase64(file.Path));
-            //        break;
-            //    case StorageType.Uri:
-            //        response.Redirect(file.Path);
-            //        break;
-            //    case StorageType.Path:
-            //        ResponseFile(response, PathHelper.GetAbsolutePath($"~{file.Path}"));
-            //        break;
-            //    default:
-            //        throw new MessageException("文件信息有误.");
-            //}
         }
 
         public async Task Download(string id)
@@ -994,6 +717,9 @@ namespace Business.Implementation.Common
             var file = Repository.GetAndCheckNull(id, "文件不存在或已被删除.");
 
             var response = HttpContextAccessor.HttpContext.Response;
+
+            if (!await CheckFileStateResponseWhenError(response, file.State))
+                return;
 
             if (file.StorageType == StorageType.Uri)
             {
@@ -1009,24 +735,6 @@ namespace Business.Implementation.Common
             response.Headers.Add("Content-Disposition", $"attachment; filename=\"{file.FullName}\"");
 
             await ResponseFile(response, file.Path);
-
-            //switch (file.StorageType)
-            //{
-            //    case StorageType.Base64Url:
-            //        ResponseImage(response, ImgHelper.GetImgFromBase64Url(file.Path));
-            //        break;
-            //    case StorageType.Base64:
-            //        ResponseImage(response, ImgHelper.GetImgFromBase64(file.Path));
-            //        break;
-            //    case StorageType.Uri:
-            //        response.Redirect(file.Path);
-            //        break;
-            //    case StorageType.Path:
-            //        ResponseFile(response, PathHelper.GetAbsolutePath($"~{file.Path}"));
-            //        break;
-            //    default:
-            //        break;
-            //}
         }
 
         public void Delete(List<string> ids)

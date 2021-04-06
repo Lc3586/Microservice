@@ -3261,5 +3261,10 @@
             头像
             </summary>
         </member>
+        <member name="T:Model.Utils.SystemConsole.State">
+            <summary>
+            状态
+            </summary>
+        </member>
     </members>
 </doc>
