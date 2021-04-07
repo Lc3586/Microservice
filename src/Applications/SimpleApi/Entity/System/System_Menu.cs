@@ -228,6 +228,15 @@ namespace Entity.System
         [XmlIgnore]
         public virtual ICollection<System_Role> Roles { get; set; }
 
+        /// <summary>
+        /// 此菜单关联的资源
+        /// </summary>
+        [Navigate(ManyToMany = typeof(System_MenuResources))]
+        [OpenApiIgnore]
+        [JsonIgnore]
+        [XmlIgnore]
+        public virtual ICollection<System_Resources> Resources { get; set; }
+
         #endregion
     }
 }

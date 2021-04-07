@@ -74,6 +74,24 @@ namespace Business.Interface.System
         /// <returns></returns>
         void Enable(string id, bool enable);
 
+        /// <summary>
+        /// 关联菜单
+        /// </summary>
+        /// <param name="id">数据</param>
+        /// <param name="menuIds">菜单Id集合</param>
+        /// <param name="runTransaction">运行事务（默认运行）</param>
+        /// <returns></returns>
+        void AssociateMenus(string id, List<string> menuIds, bool runTransaction = true);
+
+        /// <summary>
+        /// 解除关联菜单
+        /// </summary>
+        /// <param name="id">数据</param>
+        /// <param name="menuIds">菜单Id集合</param>
+        /// <param name="runTransaction">运行事务（默认运行）</param>
+        /// <returns></returns>
+        void DisassociateMenus(string id, List<string> menuIds, bool runTransaction = true);
+
         #endregion
     }
 }

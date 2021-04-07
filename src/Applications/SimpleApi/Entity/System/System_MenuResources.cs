@@ -6,16 +6,16 @@ using System.Xml.Serialization;
 namespace Entity.System
 {
     /// <summary>
-    /// 角色授权资源
+    /// 菜单相关资源
     /// </summary>
     [Table]
-    public class System_RoleResources
+    public class System_MenuResources
     {
         /// <summary>
         /// 角色Id
         /// </summary>
         [Column(IsPrimary = true, StringLength = 36)]
-        public string RoleId { get; set; }
+        public string MenuId { get; set; }
 
         /// <summary>
         /// 资源Id
@@ -26,13 +26,13 @@ namespace Entity.System
         #region 关联
 
         /// <summary>
-        /// 角色
+        /// 菜单
         /// </summary>
-        [Navigate(nameof(RoleId))]
+        [Navigate(nameof(MenuId))]
         [OpenApiIgnore]
         [JsonIgnore]
         [XmlIgnore]
-        public virtual System_Role Role { get; set; }
+        public virtual System_Menu Menu { get; set; }
 
         /// <summary>
         /// 资源

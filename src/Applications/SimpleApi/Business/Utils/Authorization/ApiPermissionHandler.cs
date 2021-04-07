@@ -36,7 +36,7 @@ namespace Business.Utils.Authorization
 
             string uri = resource.Request.Path.Value?.ToLower();
 
-            if (!UriAuthorization(uri))
+            if (!ResourcesUriAuthorization(uri))
                 goto fail;
 
             success:
@@ -64,7 +64,7 @@ namespace Business.Utils.Authorization
 
             string uri = resource.HttpContext.Request.Path.Value?.ToLower();
 
-            if (!UriAuthorization(uri))
+            if (!ResourcesUriAuthorization(uri))
                 goto fail;
 
             success:

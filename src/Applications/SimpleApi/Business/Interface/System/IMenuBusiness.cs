@@ -87,6 +87,24 @@ namespace Business.Interface.System
         /// <returns></returns>
         void DragSort(DragSort data);
 
+        /// <summary>
+        /// 关联资源
+        /// </summary>
+        /// <param name="id">数据</param>
+        /// <param name="resourcesIds">资源Id集合</param>
+        /// <param name="runTransaction">运行事务（默认运行）</param>
+        /// <returns></returns>
+        void AssociateResources(string id, List<string> resourcesIds, bool runTransaction = true);
+
+        /// <summary>
+        /// 解除关联资源
+        /// </summary>
+        /// <param name="id">数据</param>
+        /// <param name="resourcesIds">资源Id集合</param>
+        /// <param name="runTransaction">运行事务（默认运行）</param>
+        /// <returns></returns>
+        void DisassociateResources(string id, List<string> resourcesIds, bool runTransaction = true);
+
         #endregion
     }
 }

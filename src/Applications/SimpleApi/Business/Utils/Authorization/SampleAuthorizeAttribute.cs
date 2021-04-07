@@ -12,6 +12,7 @@ namespace Business.Utils.Authorization
     /// <summary>
     /// 简易权限验证
     /// </summary>
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class SampleAuthorizeAttribute :
         Attribute, IAsyncAuthorizationFilter
     {

@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using Business.Utils.Filter;
 using Business.Interface.Common;
 using Business.Interface.System;
 using Business.Utils;
+using Business.Utils.Filter;
 using Business.Utils.Pagination;
 using Entity.Common;
 using Entity.System;
@@ -36,6 +36,8 @@ namespace Business.Implementation.System
         {
             Orm = freeSqlProvider.GetFreeSql();
             Repository = Orm.GetRepository<System_Resources, string>();
+            Repository_Menu = Orm.GetRepository<System_Menu, string>();
+            Repository_MenuResources = Orm.GetRepository<System_MenuResources, string>();
             Mapper = autoMapperProvider.GetMapper();
             OperationRecordBusiness = operationRecordBusiness;
             AuthoritiesBusiness = authoritiesBusiness;
@@ -48,6 +50,10 @@ namespace Business.Implementation.System
         IFreeSql Orm { get; set; }
 
         IBaseRepository<System_Resources, string> Repository { get; set; }
+
+        IBaseRepository<System_Menu, string> Repository_Menu { get; set; }
+
+        IBaseRepository<System_MenuResources, string> Repository_MenuResources { get; set; }
 
         IMapper Mapper { get; set; }
 
@@ -286,6 +292,111 @@ namespace Business.Implementation.System
 
             if (!success)
                 throw ex;
+        }
+
+        public void AssociateMenus(string id, List<string> menuIds, bool runTransaction = true)
+        {
+            if (!menuIds.Any_Ex())
+                return;
+
+            var menu = Repository.GetAndCheckNull(id);
+
+            void handler()
+            {
+                var newData = new List<System_MenuResources>();
+
+                var menus = Repository_Menu
+                            .Where(o => menuIds.Contains(o.Id)
+                                && o.Enable == true
+                                && !o.Resources.AsSelect().Where(p => p.Id == id).Any())
+                            .ToList(o => new
+                            {
+                                o.Id,
+                                o.Type,
+                                o.Name
+                            });
+
+                if (!menus.Any())
+                    return;
+
+                newData.AddRange(menus.Select(o => new System_MenuResources
+                {
+                    ResourcesId = o.Id,
+                    MenuId = id
+                }));
+
+                var orId = OperationRecordBusiness.Create(new Common_OperationRecord
+                {
+                    DataType = nameof(System_MenuResources),
+                    DataId = null,
+                    Explain = $"资源关联菜单.",
+                    Remark = $"资源: \r\n\t[名称 {menu.Name}, 类型 {menu.Type}]\r\n" +
+                            $"关联的菜单: \r\n\t{string.Join(",", menus.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
+                });
+
+                if (newData.Any())
+                    Repository_MenuResources.Insert(newData);
+            }
+
+            if (runTransaction)
+            {
+                (bool success, Exception ex) = Orm.RunTransaction(handler);
+
+                if (!success)
+                    throw new MessageException("关联失败.", ex);
+            }
+            else
+                handler();
+        }
+
+        public void DisassociateMenus(string id, List<string> menuIds, bool runTransaction = true)
+        {
+            if (!menuIds.Any_Ex())
+                return;
+
+            var menu = Repository.GetAndCheckNull(id);
+
+            void handler()
+            {
+                var newData = new List<System_MenuResources>();
+
+                var menus = Repository_Menu
+                            .Where(o => menuIds.Contains(o.Id)
+                                && o.Resources.AsSelect().Where(p => p.Id == id).Any())
+                            .ToList(o => new
+                            {
+                                o.Id,
+                                o.Type,
+                                o.Name
+                            });
+
+                if (!menus.Any())
+                    return;
+
+                var orId = OperationRecordBusiness.Create(new Common_OperationRecord
+                {
+                    DataType = nameof(System_MenuResources),
+                    DataId = null,
+                    Explain = $"资源解除关联菜单.",
+                    Remark = $"资源: \r\n\t[名称 {menu.Name}, 类型 {menu.Type}]\r\n" +
+                            $"解除关联的菜单: \r\n\t{string.Join(",", menus.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
+                });
+
+                var deleteIds = menus.Select(o => o.Id).ToList();
+
+                if (Repository_MenuResources.Delete(o => o.ResourcesId == id && deleteIds.Contains(o.MenuId)) < 0)
+                    throw new MessageException("解除关联失败.");
+            }
+
+            if (runTransaction)
+            {
+                (bool success, Exception ex) = Orm.RunTransaction(handler);
+
+                if (!success)
+                    throw new MessageException("操作失败.", ex);
+            }
+            else
+                handler();
         }
 
         #endregion

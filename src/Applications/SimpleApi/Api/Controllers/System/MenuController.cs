@@ -160,6 +160,32 @@ namespace Api.Controllers
             return await Task.FromResult(Success());
         }
 
+        /// <summary>
+        /// 添加关联资源
+        /// </summary>
+        /// <param name="id">数据</param>
+        /// <param name="resourcesIds">资源Id集合</param>
+        /// <returns></returns>
+        [HttpPost("associate-resources/{id}")]
+        public async Task<object> AssociateResources(string id, IEnumerable<string> resourcesIds)
+        {
+            MenuBusiness.AssociateResources(id, resourcesIds?.ToList());
+            return await Task.FromResult(Success());
+        }
+
+        /// <summary>
+        /// 移除关联资源
+        /// </summary>
+        /// <param name="id">数据</param>
+        /// <param name="resourcesIds">资源Id集合</param>
+        /// <returns></returns>
+        [HttpPost("disassociate-resources/{id}")]
+        public async Task<object> DisassociateResources(string id, IEnumerable<string> resourcesIds)
+        {
+            MenuBusiness.DisassociateResources(id, resourcesIds?.ToList());
+            return await Task.FromResult(Success());
+        }
+
         #endregion        
     }
 }

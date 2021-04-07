@@ -1617,6 +1617,24 @@
             <param name="data">数据</param>
             <returns></returns>
         </member>
+        <member name="M:Business.Interface.System.IMenuBusiness.AssociateResources(System.String,System.Collections.Generic.List{System.String},System.Boolean)">
+            <summary>
+            关联资源
+            </summary>
+            <param name="id">数据</param>
+            <param name="resourcesIds">资源Id集合</param>
+            <param name="runTransaction">运行事务（默认运行）</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Interface.System.IMenuBusiness.DisassociateResources(System.String,System.Collections.Generic.List{System.String},System.Boolean)">
+            <summary>
+            解除关联资源
+            </summary>
+            <param name="id">数据</param>
+            <param name="resourcesIds">资源Id集合</param>
+            <param name="runTransaction">运行事务（默认运行）</param>
+            <returns></returns>
+        </member>
         <member name="T:Business.Interface.System.IOperator">
             <summary>
             操作者
@@ -1710,6 +1728,24 @@
             </summary>
             <param name="id">数据</param>
             <param name="enable">设置状态</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Interface.System.IResourcesBusiness.AssociateMenus(System.String,System.Collections.Generic.List{System.String},System.Boolean)">
+            <summary>
+            关联菜单
+            </summary>
+            <param name="id">数据</param>
+            <param name="menuIds">菜单Id集合</param>
+            <param name="runTransaction">运行事务（默认运行）</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Interface.System.IResourcesBusiness.DisassociateMenus(System.String,System.Collections.Generic.List{System.String},System.Boolean)">
+            <summary>
+            解除关联菜单
+            </summary>
+            <param name="id">数据</param>
+            <param name="menuIds">菜单Id集合</param>
+            <param name="runTransaction">运行事务（默认运行）</param>
             <returns></returns>
         </member>
         <member name="T:Business.Interface.System.IRoleBusiness">
@@ -1957,9 +1993,23 @@
             <param name="user">用户</param>
             <returns></returns>
         </member>
-        <member name="M:Business.Utils.Authorization.BaseAuthorizationHandler`2.UriAuthorization(System.String)">
+        <member name="M:Business.Utils.Authorization.BaseAuthorizationHandler`2.RoleTypeAuthorization(System.String[])">
             <summary>
-            路径验证
+            角色类型验证
+            </summary>
+            <param name="roleType">角色类型</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Utils.Authorization.BaseAuthorizationHandler`2.MenuUriAuthorization(System.String)">
+            <summary>
+            菜单路径验证
+            </summary>
+            <param name="uri"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Utils.Authorization.BaseAuthorizationHandler`2.ResourcesUriAuthorization(System.String)">
+            <summary>
+            资源路径验证
             </summary>
             <param name="uri"></param>
             <returns></returns>

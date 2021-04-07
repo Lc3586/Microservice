@@ -1309,6 +1309,22 @@
             <param name="data">数据</param>
             <returns></returns>
         </member>
+        <member name="M:Api.Controllers.MenuController.AssociateResources(System.String,System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            添加关联资源
+            </summary>
+            <param name="id">数据</param>
+            <param name="resourcesIds">资源Id集合</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.MenuController.DisassociateResources(System.String,System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            移除关联资源
+            </summary>
+            <param name="id">数据</param>
+            <param name="resourcesIds">资源Id集合</param>
+            <returns></returns>
+        </member>
         <member name="T:Api.Controllers.ResourcesController">
             <summary>
             资源接口
@@ -1362,6 +1378,22 @@
             </summary>
             <param name="id">数据</param>
             <param name="enable">设置状态</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.ResourcesController.AssociateMenus(System.String,System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            关联菜单
+            </summary>
+            <param name="id">数据</param>
+            <param name="menuIds">菜单Id集合</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.ResourcesController.DisassociateMenus(System.String,System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            移除关联菜单
+            </summary>
+            <param name="id">数据</param>
+            <param name="menuIds">菜单Id集合</param>
             <returns></returns>
         </member>
         <member name="T:Api.Controllers.RoleController">

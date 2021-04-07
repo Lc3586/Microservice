@@ -158,6 +158,15 @@ namespace Entity.System
         [XmlIgnore]
         public virtual ICollection<System_User> Users { get; set; }
 
+        /// <summary>
+        /// 关联此资源的菜单
+        /// </summary>
+        [Navigate(ManyToMany = typeof(System_MenuResources))]
+        [OpenApiIgnore]
+        [JsonIgnore]
+        [XmlIgnore]
+        public virtual ICollection<System_Menu> Menus { get; set; }
+
         #endregion
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Model.System;
 using Model.Utils.Config;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -83,11 +84,35 @@ namespace Business.Utils.Authorization
         }
 
         /// <summary>
-        /// 路径验证
+        /// 菜单路径验证
         /// </summary>
         /// <param name="uri"></param>
         /// <returns></returns>
-        protected bool UriAuthorization(string uri)
+        protected bool MenuUriAuthorization(string uri)
+        {
+            switch (Operator.AuthenticationInfo.UserType)
+            {
+                case UserType.系统用户:
+                    if (!AuthoritiesBusiness.UserHasMenuUri(Operator.AuthenticationInfo.Id, uri))
+                        return false;
+                    break;
+                case UserType.会员:
+                    if (!AuthoritiesBusiness.MemberHasMenuUri(Operator.AuthenticationInfo.Id, uri))
+                        return false;
+                    break;
+                default:
+                    return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 资源路径验证
+        /// </summary>
+        /// <param name="uri"></param>
+        /// <returns></returns>
+        protected bool ResourcesUriAuthorization(string uri)
         {
             switch (Operator.AuthenticationInfo.UserType)
             {

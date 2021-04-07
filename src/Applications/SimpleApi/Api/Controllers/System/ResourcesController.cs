@@ -124,6 +124,32 @@ namespace Api.Controllers
             return await Task.FromResult(Success());
         }
 
+        /// <summary>
+        /// 关联菜单
+        /// </summary>
+        /// <param name="id">数据</param>
+        /// <param name="menuIds">菜单Id集合</param>
+        /// <returns></returns>
+        [HttpPost("associate-menus/{id}")]
+        public async Task<object> AssociateMenus(string id, IEnumerable<string> menuIds)
+        {
+            ResourcesBusiness.AssociateMenus(id, menuIds?.ToList());
+            return await Task.FromResult(Success());
+        }
+
+        /// <summary>
+        /// 移除关联菜单
+        /// </summary>
+        /// <param name="id">数据</param>
+        /// <param name="menuIds">菜单Id集合</param>
+        /// <returns></returns>
+        [HttpPost("disassociate-menus/{id}")]
+        public async Task<object> DisassociateMenus(string id, IEnumerable<string> menuIds)
+        {
+            ResourcesBusiness.DisassociateMenus(id, menuIds?.ToList());
+            return await Task.FromResult(Success());
+        }
+
         #endregion        
     }
 }
