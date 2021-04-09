@@ -1993,13 +1993,6 @@
             <param name="user">用户</param>
             <returns></returns>
         </member>
-        <member name="M:Business.Utils.Authorization.BaseAuthorizationHandler`2.RoleTypeAuthorization(System.String[])">
-            <summary>
-            角色类型验证
-            </summary>
-            <param name="roleType">角色类型</param>
-            <returns></returns>
-        </member>
         <member name="M:Business.Utils.Authorization.BaseAuthorizationHandler`2.MenuUriAuthorization(System.String)">
             <summary>
             菜单路径验证
