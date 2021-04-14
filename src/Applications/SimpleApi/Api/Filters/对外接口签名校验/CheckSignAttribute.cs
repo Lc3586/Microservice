@@ -144,10 +144,10 @@ body:{body}
 
             void ReturnError(string msg)
             {
-                AjaxResult res = new AjaxResult
+                ResponseData res = new ResponseData
                 {
                     Success = false,
-                    Msg = msg
+                    Message = msg
                 };
 
                 filterContext.Result = new ContentResult { Content = res.ToJson(), ContentType = "application/json;charset=utf-8" };

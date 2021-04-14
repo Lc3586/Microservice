@@ -71,7 +71,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "详情数据", typeof(Detail))]
         public async Task<object> GetDetail(string id)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(UserBusiness.GetDetail(id))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(UserBusiness.GetDetail(id))));
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "编辑数据", typeof(Edit))]
         public async Task<object> GetEdit(string id)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(UserBusiness.GetEdit(id))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(UserBusiness.GetEdit(id))));
         }
 
         /// <summary>

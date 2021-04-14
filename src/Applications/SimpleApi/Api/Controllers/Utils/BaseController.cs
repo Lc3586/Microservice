@@ -116,10 +116,10 @@ namespace Api.Controllers.Utils
         /// <returns></returns>
         protected ContentResult Success()
         {
-            AjaxResult res = new AjaxResult
+            ResponseData res = new ResponseData
             {
                 Success = true,
-                Msg = "请求成功！",
+                Message = "请求成功！",
             };
 
             return JsonContent(res.ToJson());
@@ -132,10 +132,10 @@ namespace Api.Controllers.Utils
         /// <returns></returns>
         protected ContentResult Success(string msg)
         {
-            AjaxResult res = new AjaxResult
+            ResponseData res = new ResponseData
             {
                 Success = true,
-                Msg = msg,
+                Message = msg,
             };
 
             return JsonContent(res.ToJson());
@@ -148,10 +148,10 @@ namespace Api.Controllers.Utils
         /// <returns></returns>
         protected ContentResult Success<T>(T data)
         {
-            AjaxResult<T> res = new AjaxResult<T>
+            ResponseData<T> res = new ResponseData<T>
             {
                 Success = true,
-                Msg = "请求成功！",
+                Message = "请求成功！",
                 Data = data
             };
 
@@ -166,10 +166,10 @@ namespace Api.Controllers.Utils
         /// <returns></returns>
         protected ContentResult Success<T>(T data, string msg)
         {
-            AjaxResult<T> res = new AjaxResult<T>
+            ResponseData<T> res = new ResponseData<T>
             {
                 Success = true,
-                Msg = msg,
+                Message = msg,
                 Data = data
             };
 
@@ -185,10 +185,10 @@ namespace Api.Controllers.Utils
         /// <returns></returns>
         protected ContentResult SuccessOpenApiSchema<TOpenApiSchema>(TOpenApiSchema data, string msg = "请求成功")
         {
-            return base.Content(new AjaxResult<object>
+            return base.Content(new ResponseData<object>
             {
                 Success = true,
-                Msg = msg,
+                Message = msg,
                 Data = data.ToOpenApiJson().ToObject<object>()
             }.ToJson(), "application/json", Encoding.UTF8);
         }
@@ -199,10 +199,10 @@ namespace Api.Controllers.Utils
         /// <returns></returns>
         protected ContentResult Error()
         {
-            AjaxResult res = new AjaxResult
+            ResponseData res = new ResponseData
             {
                 Success = false,
-                Msg = "请求失败！",
+                Message = "请求失败！",
             };
 
             return JsonContent(res.ToJson());
@@ -215,10 +215,10 @@ namespace Api.Controllers.Utils
         /// <returns></returns>
         protected ContentResult Error(string msg)
         {
-            AjaxResult res = new AjaxResult
+            ResponseData res = new ResponseData
             {
                 Success = false,
-                Msg = msg,
+                Message = msg,
             };
 
             return JsonContent(res.ToJson());
@@ -233,10 +233,10 @@ namespace Api.Controllers.Utils
         /// <returns></returns>
         protected ContentResult ErrorOpenApiSchema<TOpenApiSchema>(TOpenApiSchema data, string msg = "请求失败")
         {
-            return base.Content(new AjaxResult<object>
+            return base.Content(new ResponseData<object>
             {
                 Success = false,
-                Msg = msg,
+                Message = msg,
                 Data = data.ToOpenApiJson().ToObject<object>()
             }.ToJson(), "application/json", Encoding.UTF8);
         }

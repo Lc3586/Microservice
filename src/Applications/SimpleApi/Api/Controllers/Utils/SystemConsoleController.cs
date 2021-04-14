@@ -125,7 +125,7 @@ namespace Api.Controllers
                 }
             }
 
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(result)));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(result)));
         }
 
         #endregion     

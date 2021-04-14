@@ -125,7 +125,7 @@ namespace Api.Controllers
 
             var url = $"{Config.WebRootUrl}{Config.WeChatService.OAuthUserInfoUrl}?state={state}";
 
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(new UrlInfo
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(new UrlInfo
             {
                 Url = url,
                 S = state
@@ -153,7 +153,7 @@ namespace Api.Controllers
 
             var url = $"{Config.WebRootUrl}{Config.WeChatService.OAuthBaseUrl}?state={state}";
 
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(new UrlInfo
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(new UrlInfo
             {
                 Url = url,
                 S = state
@@ -197,7 +197,7 @@ namespace Api.Controllers
 
             var url = $"{Config.WebRootUrl}{Config.WeChatService.OAuthUserInfoUrl}?state={state}";
 
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(new UrlInfo
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(new UrlInfo
             {
                 Url = url,
                 S = state
@@ -212,7 +212,7 @@ namespace Api.Controllers
         [AllowAnonymous]
         public async Task<object> GetExplain(string state)
         {
-            return await Task.FromResult(AjaxResultFactory.Success<string>(WeChatUserInfoBusiness.GetExplain(state)));
+            return await Task.FromResult(ResponseDataFactory.Success<string>(WeChatUserInfoBusiness.GetExplain(state)));
         }
 
         /// <summary>
@@ -224,7 +224,7 @@ namespace Api.Controllers
         public async Task<object> Confirm(string state)
         {
             await WeChatUserInfoBusiness.Confirm(state);
-            return await Task.FromResult(AjaxResultFactory.Success());
+            return await Task.FromResult(ResponseDataFactory.Success());
         }
 
         /// <summary>
@@ -236,7 +236,7 @@ namespace Api.Controllers
         public async Task<object> Cancel(string state)
         {
             await WeChatUserInfoBusiness.Cancel(state);
-            return await Task.FromResult(AjaxResultFactory.Success());
+            return await Task.FromResult(ResponseDataFactory.Success());
         }
 
         #endregion

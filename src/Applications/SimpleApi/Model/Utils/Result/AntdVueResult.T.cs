@@ -14,9 +14,9 @@ namespace Model.Utils.Result
         public bool Success { get; set; }
 
         /// <summary>
-        /// 信息
+        /// 消息
         /// </summary>
-        public string Msg { get; set; }
+        public string Message { get; set; }
 
         /// <summary>
         /// 总记录数

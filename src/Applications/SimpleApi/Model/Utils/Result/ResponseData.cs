@@ -3,12 +3,12 @@
 namespace Model.Utils.Result
 {
     /// <summary>
-    /// Ajax请求结果
+    /// 接口输出数据
     /// </summary>
-    public class AjaxResult
+    public class ResponseData
     {
         /// <summary>
-        /// 是否成功
+        /// 操作结果
         /// </summary>
         public bool Success { get; set; }
 
@@ -19,8 +19,8 @@ namespace Model.Utils.Result
         public int ErrorCode { get; set; }
 
         /// <summary>
-        /// 返回消息
+        /// 消息
         /// </summary>
-        public string Msg { get; set; }
+        public string Message { get; set; }
     }
 }

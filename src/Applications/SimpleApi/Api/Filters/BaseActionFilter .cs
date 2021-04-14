@@ -50,10 +50,10 @@ namespace Api
         /// <returns></returns>
         public ContentResult Success()
         {
-            AjaxResult res = new AjaxResult
+            ResponseData res = new ResponseData
             {
                 Success = true,
-                Msg = "请求成功！"
+                Message = "请求成功！"
             };
 
             return JsonContent(res.ToJson());
@@ -66,10 +66,10 @@ namespace Api
         /// <returns></returns>
         public ContentResult Success(string msg)
         {
-            AjaxResult res = new AjaxResult
+            ResponseData res = new ResponseData
             {
                 Success = true,
-                Msg = msg
+                Message = msg
             };
 
             return JsonContent(res.ToJson());
@@ -82,10 +82,10 @@ namespace Api
         /// <returns></returns>
         public ContentResult Success<T>(T data)
         {
-            AjaxResult<T> res = new AjaxResult<T>
+            ResponseData<T> res = new ResponseData<T>
             {
                 Success = true,
-                Msg = "请求成功！",
+                Message = "请求成功！",
                 Data = data
             };
 
@@ -98,10 +98,10 @@ namespace Api
         /// <returns></returns>
         public ContentResult Error()
         {
-            AjaxResult res = new AjaxResult
+            ResponseData res = new ResponseData
             {
                 Success = false,
-                Msg = "请求失败！"
+                Message = "请求失败！"
             };
 
             return JsonContent(res.ToJson());
@@ -114,10 +114,10 @@ namespace Api
         /// <returns></returns>
         public ContentResult Error(string msg)
         {
-            AjaxResult res = new AjaxResult
+            ResponseData res = new ResponseData
             {
                 Success = false,
-                Msg = msg,
+                Message = msg,
             };
 
             return JsonContent(res.ToJson());
@@ -131,10 +131,10 @@ namespace Api
         /// <returns></returns>
         public ContentResult Error(string msg, ErrorCode errorCode)
         {
-            AjaxResult res = new AjaxResult
+            ResponseData res = new ResponseData
             {
                 Success = false,
-                Msg = msg,
+                Message = msg,
                 ErrorCode = (int)errorCode
             };
 

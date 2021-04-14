@@ -83,7 +83,7 @@ namespace Api
                     .ToList() : null;
 
             if (ModelErrors.Any_Ex())
-                context.Result = new ContentResult { Content = AjaxResultFactory.Error("数据验证失败", ModelErrors).ToJson(), ContentType = "application/json;charset=utf-8" };
+                context.Result = new ContentResult { Content = ResponseDataFactory.Error("数据验证失败", ModelErrors).ToJson(), ContentType = "application/json;charset=utf-8" };
         }
 
         /// <summary>

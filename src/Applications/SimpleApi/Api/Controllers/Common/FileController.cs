@@ -63,7 +63,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "详情数据", typeof(FileInfo))]
         public async Task<object> GetDetail(string id)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(FileBusiness.GetDetail(id))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(FileBusiness.GetDetail(id))));
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "详情数据", typeof(FileInfo))]
         public async Task<object> GetDetails(string ids)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(FileBusiness.GetDetails(ids))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(FileBusiness.GetDetails(ids))));
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "详情数据", typeof(FileInfo))]
         public async Task<object> GetDetails(List<string> ids)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(FileBusiness.GetDetails(ids))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(FileBusiness.GetDetails(ids))));
         }
 
         #endregion
@@ -108,7 +108,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "输出信息", typeof(ValidationMD5Response))]
         public async Task<object> ValidationFileMD5(string md5, string filename = null)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(FileBusiness.ValidationFileMD5(md5, filename))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(FileBusiness.ValidationFileMD5(md5, filename))));
         }
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "输出信息", typeof(PreUploadChunkFileResponse))]
         public async Task<object> PreUploadChunkFile(string file_md5, string md5, int index, int specs)
         {
-            return await Task.FromResult(AjaxResultFactory.Success(FileBusiness.PreUploadChunkFile(file_md5, md5, index, specs)));
+            return await Task.FromResult(ResponseDataFactory.Success(FileBusiness.PreUploadChunkFile(file_md5, md5, index, specs)));
         }
 
         /// <summary>
@@ -152,7 +152,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "文件信息", typeof(FileInfo))]
         public async Task<object> UploadChunkFileFinished(string file_md5, int specs, int total, string filename = null)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(FileBusiness.UploadChunkFileFinished(file_md5, specs, total, filename))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(FileBusiness.UploadChunkFileFinished(file_md5, specs, total, filename))));
         }
 
         /// <summary>
@@ -166,7 +166,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "文件信息", typeof(FileInfo))]
         public async Task<object> SingleImageFromUrl([FromBody] string url, bool download = false, string filename = null)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(FileBusiness.SingleImageFromUrl(url, download, filename))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(FileBusiness.SingleImageFromUrl(url, download, filename))));
         }
 
         /// <summary>
@@ -180,7 +180,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "文件信息", typeof(FileInfo))]
         public async Task<object> SingleFileFromUrl([FromBody] string url, bool download = false, string filename = null)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(FileBusiness.SingleFileFromUrl(url, download, filename))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(FileBusiness.SingleFileFromUrl(url, download, filename))));
         }
 
         /// <summary>
@@ -193,7 +193,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "文件信息", typeof(FileInfo))]
         public async Task<object> SingleImageFromBase64([FromBody] string base64, string filename = null)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(FileBusiness.SingleImageFromBase64(base64, filename))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(FileBusiness.SingleImageFromBase64(base64, filename))));
         }
 
         /// <summary>
@@ -206,7 +206,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "文件信息", typeof(FileInfo))]
         public async Task<object> SingleFile([FromForm] IFormFile file, string filename = null)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(FileBusiness.SingleFile(file, filename))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(FileBusiness.SingleFile(file, filename))));
         }
 
         /// <summary>

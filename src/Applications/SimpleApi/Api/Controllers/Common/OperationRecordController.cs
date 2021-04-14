@@ -53,7 +53,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "详情数据", typeof(Detail))]
         public async Task<object> GetDetail(string id)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(OperationRecordBusiness.GetDetail(id))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(OperationRecordBusiness.GetDetail(id))));
         }
 
         #endregion

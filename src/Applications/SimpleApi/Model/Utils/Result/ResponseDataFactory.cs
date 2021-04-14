@@ -1,17 +1,20 @@
 ﻿namespace Model.Utils.Result
 {
-    public static class AjaxResultFactory
+    /// <summary>
+    /// 接口输出数据工厂类
+    /// </summary>
+    public static class ResponseDataFactory
     {
         /// <summary>
         /// 返回成功
         /// </summary>
         /// <returns></returns>
-        public static AjaxResult Success()
+        public static ResponseData Success()
         {
-            AjaxResult res = new AjaxResult
+            ResponseData res = new ResponseData
             {
                 Success = true,
-                Msg = "操作成功！"
+                Message = "操作成功！"
             };
 
             return res;
@@ -21,12 +24,12 @@
         /// 返回成功
         /// </summary>
         /// <returns></returns>
-        public static AjaxResult<T> Success<T>()
+        public static ResponseData<T> Success<T>()
         {
-            AjaxResult<T> res = new AjaxResult<T>
+            ResponseData<T> res = new ResponseData<T>
             {
                 Success = true,
-                Msg = "操作成功！",
+                Message = "操作成功！",
                 Data = default
             };
 
@@ -38,12 +41,12 @@
         /// </summary>
         /// <param name="msg">返回的消息</param>
         /// <returns></returns>
-        public static AjaxResult Success(string msg)
+        public static ResponseData Success(string msg)
         {
-            AjaxResult res = new AjaxResult
+            ResponseData res = new ResponseData
             {
                 Success = true,
-                Msg = msg
+                Message = msg
             };
 
             return res;
@@ -54,12 +57,12 @@
         /// </summary>
         /// <param name="msg">返回的消息</param>
         /// <returns></returns>
-        public static AjaxResult SuccessWithDefaultData<T>(string msg)
+        public static ResponseData SuccessWithDefaultData<T>(string msg)
         {
-            AjaxResult<T> res = new AjaxResult<T>
+            ResponseData<T> res = new ResponseData<T>
             {
                 Success = true,
-                Msg = msg,
+                Message = msg,
                 Data = default
             };
 
@@ -71,12 +74,12 @@
         /// </summary>
         /// <param name="data">返回的数据</param>
         /// <returns></returns>
-        public static AjaxResult<T> Success<T>(T data)
+        public static ResponseData<T> Success<T>(T data)
         {
-            AjaxResult<T> res = new AjaxResult<T>
+            ResponseData<T> res = new ResponseData<T>
             {
                 Success = true,
-                Msg = "操作成功！",
+                Message = "操作成功！",
                 Data = data
             };
 
@@ -89,12 +92,12 @@
         /// <param name="msg">返回的消息</param>
         /// <param name="data">返回的数据</param>
         /// <returns></returns>
-        public static AjaxResult<T> Success<T>(string msg, T data)
+        public static ResponseData<T> Success<T>(string msg, T data)
         {
-            AjaxResult<T> res = new AjaxResult<T>
+            ResponseData<T> res = new ResponseData<T>
             {
                 Success = true,
-                Msg = msg,
+                Message = msg,
                 Data = data
             };
 
@@ -105,12 +108,12 @@
         /// 返回错误
         /// </summary>
         /// <returns></returns>
-        public static AjaxResult Error()
+        public static ResponseData Error()
         {
-            AjaxResult res = new AjaxResult
+            ResponseData res = new ResponseData
             {
                 Success = false,
-                Msg = "操作失败！"
+                Message = "操作失败！"
             };
 
             return res;
@@ -120,12 +123,12 @@
         /// 返回错误
         /// </summary>
         /// <returns></returns>
-        public static AjaxResult<T> Error<T>()
+        public static ResponseData<T> Error<T>()
         {
-            AjaxResult<T> res = new AjaxResult<T>
+            ResponseData<T> res = new ResponseData<T>
             {
                 Success = false,
-                Msg = "操作失败！",
+                Message = "操作失败！",
                 Data = default
             };
 
@@ -138,12 +141,12 @@
         /// <param name="msg">返回的消息</param>
         /// <param name="errorCode">错误代码<see cref="ErrorCode"/></param>
         /// <returns></returns>
-        public static AjaxResult Error(string msg, ErrorCode errorCode = ErrorCode.none)
+        public static ResponseData Error(string msg, ErrorCode errorCode = ErrorCode.none)
         {
-            AjaxResult res = new AjaxResult
+            ResponseData res = new ResponseData
             {
                 Success = false,
-                Msg = msg,
+                Message = msg,
                 ErrorCode = (int)errorCode
             };
 
@@ -156,12 +159,12 @@
         /// <param name="msg">返回的消息</param>
         /// <param name="errorCode">错误代码<see cref="ErrorCode"/></param>
         /// <returns></returns>
-        public static AjaxResult<T> Error<T>(string msg, ErrorCode errorCode = ErrorCode.none)
+        public static ResponseData<T> Error<T>(string msg, ErrorCode errorCode = ErrorCode.none)
         {
-            AjaxResult<T> res = new AjaxResult<T>
+            ResponseData<T> res = new ResponseData<T>
             {
                 Success = false,
-                Msg = msg,
+                Message = msg,
                 Data = default,
                 ErrorCode = (int)errorCode
             };
@@ -175,12 +178,12 @@
         /// <param name="data">返回的数据</param>
         /// <param name="errorCode">错误代码<see cref="ErrorCode"/></param>
         /// <returns></returns>
-        public static AjaxResult<T> Error<T>(T data, ErrorCode errorCode = ErrorCode.none)
+        public static ResponseData<T> Error<T>(T data, ErrorCode errorCode = ErrorCode.none)
         {
-            AjaxResult<T> res = new AjaxResult<T>
+            ResponseData<T> res = new ResponseData<T>
             {
                 Success = false,
-                Msg = "操作失败！",
+                Message = "操作失败！",
                 Data = data,
                 ErrorCode = (int)errorCode
             };
@@ -195,12 +198,12 @@
         /// <param name="data">返回的数据</param>
         /// <param name="errorCode">错误代码<see cref="ErrorCode"/></param>
         /// <returns></returns>
-        public static AjaxResult<T> Error<T>(string msg, T data, ErrorCode errorCode = ErrorCode.none)
+        public static ResponseData<T> Error<T>(string msg, T data, ErrorCode errorCode = ErrorCode.none)
         {
-            AjaxResult<T> res = new AjaxResult<T>
+            ResponseData<T> res = new ResponseData<T>
             {
                 Success = false,
-                Msg = msg,
+                Message = msg,
                 Data = data,
                 ErrorCode = (int)errorCode
             };
@@ -216,14 +219,14 @@
         /// <param name="data">返回的数据</param>
         /// <param name="errorCode">错误代码<see cref="ErrorCode"/></param>
         /// <returns></returns>
-        public static AjaxDevelopmentResult<T> Error<T>(string msg, string exMsg, T data, ErrorCode errorCode = ErrorCode.none)
+        public static DevelopmentResponseData<T> Error<T>(string msg, string exMsg, T data, ErrorCode errorCode = ErrorCode.none)
         {
-            AjaxDevelopmentResult<T> res = new AjaxDevelopmentResult<T>
+            DevelopmentResponseData<T> res = new DevelopmentResponseData<T>
             {
                 Success = false,
-                Msg = msg,
+                Message = msg,
                 Data = data,
-                ExMsg = exMsg,
+                ExceptionInfo = exMsg,
                 ErrorCode = (int)errorCode
             };
 

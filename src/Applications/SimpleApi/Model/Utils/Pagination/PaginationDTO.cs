@@ -257,7 +257,7 @@ namespace Model.Utils.Pagination
                     {
                         Success = success,
                         ErrorCode = (int)(success ? ErrorCode.none : ErrorCode.error),
-                        Msg = error,
+                        Message = error,
                         Data = new ElementVueResultData<T>()
                         {
                             PageTotal = PageCount,
@@ -271,7 +271,7 @@ namespace Model.Utils.Pagination
                     return new AntdVueResult<T>()
                     {
                         Success = success,
-                        Msg = error,
+                        Message = error,
                         Total = RecordCount,
                         Data = data
                     };

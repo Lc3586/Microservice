@@ -19,9 +19,9 @@ namespace Model.Utils.Result
         public int ErrorCode { get; set; }
 
         /// <summary>
-        /// 信息
+        /// 消息
         /// </summary>
-        public string Msg { get; set; }
+        public string Message { get; set; }
 
         /// <summary>
         /// 数据

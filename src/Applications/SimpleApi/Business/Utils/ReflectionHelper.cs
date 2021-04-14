@@ -24,7 +24,7 @@ namespace Business.Utils
         /// <param name="Method">方法</param>
         /// <param name="parameters">参数</param>
         /// <returns></returns>
-        public static AjaxResult Invoke<Class>(Class obj, string Method, object[] parameters)
+        public static ResponseData Invoke<Class>(Class obj, string Method, object[] parameters)
         {
             return Invoke_Real(obj, Method, parameters, null, null, false);
         }
@@ -38,7 +38,7 @@ namespace Business.Utils
         /// <param name="parameters">参数</param>
         /// <param name="modelStateErrors">模型验证信息</param>
         /// <returns></returns>
-        public static AjaxResult Invoke<Class>(Class obj, string Method, object[] parameters, List<ModelErrorsInfo> modelStateErrors)
+        public static ResponseData Invoke<Class>(Class obj, string Method, object[] parameters, List<ModelErrorsInfo> modelStateErrors)
         {
             return Invoke_Real(obj, Method, parameters, modelStateErrors, null, false);
         }
@@ -53,7 +53,7 @@ namespace Business.Utils
         /// <param name="modelStateErrors">模型验证信息</param>
         /// <param name="request">请求信息</param>
         /// <returns></returns>
-        public static AjaxResult Invoke<Class>(Class obj, string Method, object[] parameters, List<ModelErrorsInfo> modelStateErrors, HttpRequest request)
+        public static ResponseData Invoke<Class>(Class obj, string Method, object[] parameters, List<ModelErrorsInfo> modelStateErrors, HttpRequest request)
         {
             return Invoke_Real(obj, Method, parameters, modelStateErrors, request, false);
         }
@@ -67,7 +67,7 @@ namespace Business.Utils
         /// <param name="parameters">参数</param>
         /// <param name="request">请求信息</param>
         /// <returns></returns>
-        public static AjaxResult Invoke<Class>(Class obj, string Method, object[] parameters, HttpRequest request)
+        public static ResponseData Invoke<Class>(Class obj, string Method, object[] parameters, HttpRequest request)
         {
             return Invoke_Real(obj, Method, parameters, null, request, false);
         }
@@ -80,7 +80,7 @@ namespace Business.Utils
         /// <param name="Method">方法</param>
         /// <param name="parameters">参数</param>
         /// <returns></returns>
-        public static AjaxResult InvokeAsync<Class>(Class obj, string Method, object[] parameters)
+        public static ResponseData InvokeAsync<Class>(Class obj, string Method, object[] parameters)
         {
             return Invoke_Real(obj, Method, parameters, null, null, true);
         }
@@ -94,7 +94,7 @@ namespace Business.Utils
         /// <param name="parameters">参数</param>
         /// <param name="modelStateErrors">模型验证信息</param>
         /// <returns></returns>
-        public static AjaxResult InvokeAsync<Class>(Class obj, string Method, object[] parameters, List<ModelErrorsInfo> modelStateErrors)
+        public static ResponseData InvokeAsync<Class>(Class obj, string Method, object[] parameters, List<ModelErrorsInfo> modelStateErrors)
         {
             return Invoke_Real(obj, Method, parameters, modelStateErrors, null, true);
         }
@@ -109,7 +109,7 @@ namespace Business.Utils
         /// <param name="modelStateErrors">模型验证信息</param>
         /// <param name="request">请求信息</param>
         /// <returns></returns>
-        public static AjaxResult InvokeAsync<Class>(Class obj, string Method, object[] parameters, List<ModelErrorsInfo> modelStateErrors, HttpRequest request)
+        public static ResponseData InvokeAsync<Class>(Class obj, string Method, object[] parameters, List<ModelErrorsInfo> modelStateErrors, HttpRequest request)
         {
             return Invoke_Real(obj, Method, parameters, modelStateErrors, request, true);
         }
@@ -123,7 +123,7 @@ namespace Business.Utils
         /// <param name="parameters">参数</param>
         /// <param name="request">请求信息</param>
         /// <returns></returns>
-        public static AjaxResult InvokeAsync<Class>(Class obj, string Method, object[] parameters, HttpRequest request)
+        public static ResponseData InvokeAsync<Class>(Class obj, string Method, object[] parameters, HttpRequest request)
         {
             return Invoke_Real(obj, Method, parameters, null, request, true);
         }
@@ -135,7 +135,7 @@ namespace Business.Utils
         /// <param name="Method">方法</param>
         /// <param name="parameters">参数</param>
         /// <returns></returns>
-        public static AjaxResult InvokeStatic(Type type, string Method, object[] parameters)
+        public static ResponseData InvokeStatic(Type type, string Method, object[] parameters)
         {
             return InvokeStatic_Real(type, Method, parameters, null, null);
         }
@@ -148,7 +148,7 @@ namespace Business.Utils
         /// <param name="parameters">参数</param>
         /// <param name="modelStateErrors">模型验证信息</param>
         /// <returns></returns>
-        public static AjaxResult InvokeStatic(Type type, string Method, object[] parameters, List<ModelErrorsInfo> modelStateErrors)
+        public static ResponseData InvokeStatic(Type type, string Method, object[] parameters, List<ModelErrorsInfo> modelStateErrors)
         {
             return InvokeStatic_Real(type, Method, parameters, modelStateErrors, null);
         }
@@ -162,7 +162,7 @@ namespace Business.Utils
         /// <param name="modelStateErrors">模型验证信息</param>
         /// <param name="request">请求信息</param>
         /// <returns></returns>
-        public static AjaxResult InvokeStatic(Type type, string Method, object[] parameters, List<ModelErrorsInfo> modelStateErrors, HttpRequest request)
+        public static ResponseData InvokeStatic(Type type, string Method, object[] parameters, List<ModelErrorsInfo> modelStateErrors, HttpRequest request)
         {
             return InvokeStatic_Real(type, Method, parameters, modelStateErrors, request);
         }
@@ -175,7 +175,7 @@ namespace Business.Utils
         /// <param name="parameters">参数</param>
         /// <param name="request">请求信息</param>
         /// <returns></returns>
-        public static AjaxResult InvokeStatic(Type type, string Method, object[] parameters, HttpRequest request)
+        public static ResponseData InvokeStatic(Type type, string Method, object[] parameters, HttpRequest request)
         {
             return InvokeStatic_Real(type, Method, parameters, null, request);
         }
@@ -195,7 +195,7 @@ namespace Business.Utils
         /// <param name="request">请求信息</param>
         /// <param name="async">异步方法</param>
         /// <returns></returns>
-        private static AjaxResult Invoke_Real<Class>(Class obj, string Method, object[] parameters, List<ModelErrorsInfo> modelStateErrors, HttpRequest request, bool async)
+        private static ResponseData Invoke_Real<Class>(Class obj, string Method, object[] parameters, List<ModelErrorsInfo> modelStateErrors, HttpRequest request, bool async)
         {
             Type type = obj.GetType();
             try
@@ -209,14 +209,14 @@ namespace Business.Utils
                     var task = method.Invoke(obj, parameters) as Task;
                     task.Wait();
                     if (hasResult)
-                        return AjaxResultFactory.Success(task.GetType().GetProperty("Result").GetValue(task, null));
+                        return ResponseDataFactory.Success(task.GetType().GetProperty("Result").GetValue(task, null));
                 }
                 else
                 {
                     if (hasResult)
-                        return AjaxResultFactory.Success(method.Invoke(obj, parameters));
+                        return ResponseDataFactory.Success(method.Invoke(obj, parameters));
                 }
-                return AjaxResultFactory.Success();
+                return ResponseDataFactory.Success();
             }
             catch (Exception e)
             {
@@ -233,7 +233,7 @@ namespace Business.Utils
         /// <param name="modelStateErrors">模型验证信息</param>
         /// <param name="request">请求信息</param>
         /// <returns></returns>
-        private static AjaxResult InvokeStatic_Real(Type type, string Method, object[] parameters, List<ModelErrorsInfo> modelStateErrors = null, HttpRequest request = null)
+        private static ResponseData InvokeStatic_Real(Type type, string Method, object[] parameters, List<ModelErrorsInfo> modelStateErrors = null, HttpRequest request = null)
         {
             try
             {
@@ -241,9 +241,9 @@ namespace Business.Utils
                     throw new ValidationException("数据验证失败", modelStateErrors);
                 var method = type.GetMethod(Method);
                 if (method.ReturnType.FullName != "System.Void")
-                    return AjaxResultFactory.Success(method.Invoke(null, parameters));
+                    return ResponseDataFactory.Success(method.Invoke(null, parameters));
                 else
-                    return AjaxResultFactory.Success();
+                    return ResponseDataFactory.Success();
             }
             catch (Exception e)
             {

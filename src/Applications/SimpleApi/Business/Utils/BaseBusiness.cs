@@ -150,12 +150,12 @@ namespace Business.Utils
         /// 返回成功
         /// </summary>
         /// <returns></returns>
-        public AjaxResult Success()
+        public ResponseData Success()
         {
-            AjaxResult res = new AjaxResult
+            ResponseData res = new ResponseData
             {
                 Success = true,
-                Msg = "操作成功！",
+                Message = "操作成功！",
             };
 
             return res;
@@ -166,12 +166,12 @@ namespace Business.Utils
         /// </summary>
         /// <param name="data">返回数据</param>
         /// <returns></returns>
-        public AjaxResult<U> Success<U>(U data)
+        public ResponseData<U> Success<U>(U data)
         {
-            AjaxResult<U> res = new AjaxResult<U>
+            ResponseData<U> res = new ResponseData<U>
             {
                 Success = true,
-                Msg = "操作成功",
+                Message = "操作成功",
                 Data = data
             };
 
@@ -184,12 +184,12 @@ namespace Business.Utils
         /// <param name="data">返回数据</param>
         /// <param name="msg">返回消息</param>
         /// <returns></returns>
-        public AjaxResult<U> Success<U>(U data, string msg)
+        public ResponseData<U> Success<U>(U data, string msg)
         {
-            AjaxResult<U> res = new AjaxResult<U>
+            ResponseData<U> res = new ResponseData<U>
             {
                 Success = true,
-                Msg = msg,
+                Message = msg,
                 Data = data
             };
 
@@ -200,12 +200,12 @@ namespace Business.Utils
         /// 返回错误
         /// </summary>
         /// <returns></returns>
-        public AjaxResult Error()
+        public ResponseData Error()
         {
-            AjaxResult res = new AjaxResult
+            ResponseData res = new ResponseData
             {
                 Success = false,
-                Msg = "操作失败！",
+                Message = "操作失败！",
             };
 
             return res;
@@ -216,12 +216,12 @@ namespace Business.Utils
         /// </summary>
         /// <param name="msg">错误提示</param>
         /// <returns></returns>
-        public AjaxResult Error(string msg)
+        public ResponseData Error(string msg)
         {
-            AjaxResult res = new AjaxResult
+            ResponseData res = new ResponseData
             {
                 Success = false,
-                Msg = msg,
+                Message = msg,
             };
 
             return res;

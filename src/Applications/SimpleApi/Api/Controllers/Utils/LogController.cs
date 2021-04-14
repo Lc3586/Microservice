@@ -119,7 +119,7 @@ namespace Api.Controllers.Utils
         [SwaggerResponse((int)HttpStatusCode.OK, "详情数据", typeof(Detail))]
         public async Task<object> GetESDetail(string id)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(LogBusiness.GetESDetail(id))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(LogBusiness.GetESDetail(id))));
         }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace Api.Controllers.Utils
         [SwaggerResponse((int)HttpStatusCode.OK, "详情数据", typeof(Detail))]
         public async Task<object> GetDBDetail(string id)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(LogBusiness.GetDBDetail(id))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(LogBusiness.GetDBDetail(id))));
         }
     }
 }

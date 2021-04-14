@@ -3,12 +3,12 @@
 namespace Model.Utils.Result
 {
     /// <summary>
-    /// Ajax请求结果
+    /// 接口输出数据
     /// </summary>
-    public class AjaxResult<T> : AjaxResult
+    public class ResponseData<T> : ResponseData
     {
         /// <summary>
-        /// 返回数据
+        /// 数据
         /// </summary>
         [OpenApiSchema(OpenApiSchemaType.model)]
         public T Data { get; set; }

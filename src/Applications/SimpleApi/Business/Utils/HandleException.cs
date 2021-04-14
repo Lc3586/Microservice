@@ -35,7 +35,7 @@ namespace Business.Utils
         /// <param name="target">目标</param>
         /// <param name="method">方法</param>
         /// <returns></returns>
-        public static AjaxResult HandleException(Exception exception, string url = null, string target = null, string method = null)
+        public static ResponseData HandleException(Exception exception, string url = null, string target = null, string method = null)
         {
             ExceptionWriteLog(exception, url, target, method);
             return HandleException(exception);
@@ -46,7 +46,7 @@ namespace Business.Utils
         /// </summary>
         /// <param name="exception">当前异常</param>
         /// <returns></returns>
-        public static AjaxResult HandleException(Exception exception)
+        public static ResponseData HandleException(Exception exception)
         {
             ErrorCode code = ErrorCode.business;
             var message = string.Empty;

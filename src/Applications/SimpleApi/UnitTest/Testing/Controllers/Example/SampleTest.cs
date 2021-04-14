@@ -151,14 +151,14 @@ namespace Tests.Testing.Controllers
                 statusCode,
                 $"{Controller.Server}{action.Path} 接口请求失败\r\n参数 : {string.Join("\r\n", action.Paramters ?? new Dictionary<string, object>())}\r\n输出 : {responseData}.");
 
-            var response = responseData.ToObject<AjaxResult>();
+            var response = responseData.ToObject<ResponseData>();
 
             Assert.AreEqual(
                 false,
                 response.Success,
-                $"{Controller.Server}{action.Path} 接口返回状态有误\r\n返回信息 : {response.Msg}.");
+                $"{Controller.Server}{action.Path} 接口返回状态有误\r\n返回信息 : {response.Message}.");
 
-            Assert.Pass($"{Controller.Server}{action.Path} 接口调用成功\r\n返回信息 : {response.Msg}.");
+            Assert.Pass($"{Controller.Server}{action.Path} 接口调用成功\r\n返回信息 : {response.Message}.");
         }
 
         [Test(Author = "LCTR", Description = "测试S201")]

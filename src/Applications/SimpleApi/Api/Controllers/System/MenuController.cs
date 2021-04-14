@@ -56,7 +56,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "树状列表数据", typeof(TreeList))]
         public async Task<object> GetTreeList([FromBody] TreeListParamter paramter)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(MenuBusiness.GetTreeList(paramter))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(MenuBusiness.GetTreeList(paramter))));
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "详情数据", typeof(Detail))]
         public async Task<object> GetDetail(string id)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(MenuBusiness.GetDetail(id))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(MenuBusiness.GetDetail(id))));
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "编辑数据", typeof(Edit))]
         public async Task<object> GetEdit(string id)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(MenuBusiness.GetEdit(id))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(MenuBusiness.GetEdit(id))));
         }
 
         /// <summary>

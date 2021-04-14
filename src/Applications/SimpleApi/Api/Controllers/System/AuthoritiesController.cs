@@ -463,7 +463,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.UserDTO.Authorities))]
         public async Task<object> GetUser(string userId, bool includeRole, bool includeMenu, bool includeResources, bool mergeRoleMenu = true, bool mergeRoleResources = true)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.GetUser(userId, includeRole, includeMenu, includeResources, mergeRoleMenu, mergeRoleResources))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetUser(userId, includeRole, includeMenu, includeResources, mergeRoleMenu, mergeRoleResources))));
         }
 
         /// <summary>
@@ -479,7 +479,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.Public.MemberDTO.Authorities))]
         public async Task<object> GetMember(string memberId, bool includeRole, bool includeMenu, bool includeResources)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.GetMember(memberId, includeRole, includeMenu, includeResources))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetMember(memberId, includeRole, includeMenu, includeResources))));
         }
 
         /// <summary>
@@ -494,7 +494,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.RoleDTO.Authorities))]
         public async Task<object> GetUserRole(string userId, bool includeMenu, bool includeResources)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.GetUserRole(userId, includeMenu, includeResources))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetUserRole(userId, includeMenu, includeResources))));
         }
 
         /// <summary>
@@ -509,7 +509,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.RoleDTO.Authorities))]
         public async Task<object> GetMemberRole(string memberId, bool includeMenu, bool includeResources)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.GetMemberRole(memberId, includeMenu, includeResources))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetMemberRole(memberId, includeMenu, includeResources))));
         }
 
         /// <summary>
@@ -523,7 +523,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.MenuDTO.Authorities))]
         public async Task<object> GetUserMenu(string userId, bool mergeRoleMenu)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.GetUserMenu(userId, mergeRoleMenu))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetUserMenu(userId, mergeRoleMenu))));
         }
 
         /// <summary>
@@ -536,7 +536,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.MenuDTO.Authorities))]
         public async Task<object> GetMemberMenu(string memberId)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.GetMemberMenu(memberId))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetMemberMenu(memberId))));
         }
 
         /// <summary>
@@ -550,7 +550,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.ResourcesDTO.Authorities))]
         public async Task<object> GetUserResources(string userId, bool mergeRoleResources)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.GetUserResources(userId, mergeRoleResources))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetUserResources(userId, mergeRoleResources))));
         }
 
         /// <summary>
@@ -563,7 +563,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.ResourcesDTO.Authorities))]
         public async Task<object> GetMemberResources(string memberId)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.GetMemberResources(memberId))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetMemberResources(memberId))));
         }
 
         /// <summary>
@@ -578,7 +578,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.RoleDTO.Authorities))]
         public async Task<object> GetRole(string roleId, bool includeMenu, bool includeResources)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.GetRole(roleId, includeMenu, includeResources))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetRole(roleId, includeMenu, includeResources))));
         }
 
         /// <summary>
@@ -591,7 +591,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.MenuDTO.Authorities))]
         public async Task<object> GetRoleMenu(string roleId)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.GetRoleMenu(roleId))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetRoleMenu(roleId))));
         }
 
         /// <summary>
@@ -604,7 +604,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.ResourcesDTO.Authorities))]
         public async Task<object> GetRoleResources(string roleId)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.GetRoleResources(roleId))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetRoleResources(roleId))));
         }
 
         #endregion
@@ -622,7 +622,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
         public async Task<object> IsSuperAdminUser(string userId, bool checkEnable = true)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.IsSuperAdminUser(userId, checkEnable))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.IsSuperAdminUser(userId, checkEnable))));
         }
 
         /// <summary>
@@ -636,7 +636,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
         public async Task<object> IsSuperAdminRole(string roleId, bool checkEnable = true)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.IsSuperAdminRole(roleId, checkEnable))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.IsSuperAdminRole(roleId, checkEnable))));
         }
 
         /// <summary>
@@ -650,7 +650,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
         public async Task<object> IsAdminUser(string userId, bool checkEnable = true)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.IsAdminUser(userId, checkEnable))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.IsAdminUser(userId, checkEnable))));
         }
 
         /// <summary>
@@ -664,7 +664,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
         public async Task<object> IsAdminRole(string roleId, bool checkEnable = true)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.IsAdminRole(roleId, checkEnable))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.IsAdminRole(roleId, checkEnable))));
         }
 
         /// <summary>
@@ -679,7 +679,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
         public async Task<object> UserHasRole(string userId, string roleId, bool checkEnable = true)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.UserHasRole(userId, roleId, checkEnable))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.UserHasRole(userId, roleId, checkEnable))));
         }
 
         /// <summary>
@@ -694,7 +694,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
         public async Task<object> MemberHasRole(string memberId, string roleId, bool checkEnable = true)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.MemberHasRole(memberId, roleId, checkEnable))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.MemberHasRole(memberId, roleId, checkEnable))));
         }
 
         /// <summary>
@@ -709,7 +709,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
         public async Task<object> UserHasMenu(string userId, string menuId, bool checkEnable = true)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.UserHasMenu(userId, menuId, checkEnable))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.UserHasMenu(userId, menuId, checkEnable))));
         }
 
         /// <summary>
@@ -724,7 +724,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
         public async Task<object> UserHasMenuUri(string userId, string menuUri, bool checkEnable = true)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.UserHasMenuUri(userId, menuUri, checkEnable))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.UserHasMenuUri(userId, menuUri, checkEnable))));
         }
 
         /// <summary>
@@ -739,7 +739,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
         public async Task<object> MemberHasMenu(string userId, string menuId, bool checkEnable = true)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.MemberHasMenu(userId, menuId, checkEnable))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.MemberHasMenu(userId, menuId, checkEnable))));
         }
 
         /// <summary>
@@ -754,7 +754,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
         public async Task<object> MemberHasMenuUri(string userId, string menuUri, bool checkEnable = true)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.MemberHasMenuUri(userId, menuUri, checkEnable))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.MemberHasMenuUri(userId, menuUri, checkEnable))));
         }
 
         /// <summary>
@@ -769,7 +769,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
         public async Task<object> UserHasResources(string userId, string resourcesId, bool checkEnable = true)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.UserHasResources(userId, resourcesId, checkEnable))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.UserHasResources(userId, resourcesId, checkEnable))));
         }
 
         /// <summary>
@@ -784,7 +784,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
         public async Task<object> UserHasResourcesUri(string userId, string resourcesUri, bool checkEnable = true)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.UserHasResourcesUri(userId, resourcesUri, checkEnable))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.UserHasResourcesUri(userId, resourcesUri, checkEnable))));
         }
 
         /// <summary>
@@ -799,7 +799,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
         public async Task<object> MemberHasResources(string memberId, string resourcesId, bool checkEnable = true)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.MemberHasResources(memberId, resourcesId, checkEnable))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.MemberHasResources(memberId, resourcesId, checkEnable))));
         }
 
         /// <summary>
@@ -814,7 +814,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
         public async Task<object> MemberHasResourcesUri(string memberId, string resourcesUri, bool checkEnable = true)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.MemberHasResourcesUri(memberId, resourcesUri, checkEnable))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.MemberHasResourcesUri(memberId, resourcesUri, checkEnable))));
         }
 
         #endregion
@@ -832,7 +832,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.MenuDTO.AuthoritiesTree))]
         public async Task<object> GetRoleMenuTree(string roleId, [FromBody] Model.System.MenuDTO.TreeListParamter paramter)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.GetRoleMenuTree(roleId, paramter))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetRoleMenuTree(roleId, paramter))));
         }
 
         /// <summary>
@@ -846,7 +846,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.RoleDTO.AuthoritiesTree))]
         public async Task<object> GetUserRoleTree(string userId, [FromBody] Model.System.RoleDTO.TreeListParamter paramter)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.GetUserRoleTree(userId, paramter))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetUserRoleTree(userId, paramter))));
         }
 
         /// <summary>
@@ -860,7 +860,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.RoleDTO.AuthoritiesTree))]
         public async Task<object> GetMemberRoleTree(string memberId, [FromBody] Model.System.RoleDTO.TreeListParamter paramter)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.GetMemberRoleTree(memberId, paramter))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetMemberRoleTree(memberId, paramter))));
         }
 
         /// <summary>
@@ -874,7 +874,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.MenuDTO.AuthoritiesTree))]
         public async Task<object> GetUserMenuTree(string userId, [FromBody] Model.System.MenuDTO.TreeListParamter paramter)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.GetUserMenuTree(userId, paramter))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetUserMenuTree(userId, paramter))));
         }
 
         /// <summary>
@@ -888,7 +888,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.ResourcesDTO.Authorities))]
         public async Task<object> GetRoleResourcesList(string roleId, [FromBody] PaginationDTO pagination)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.GetRoleResourcesList(roleId, pagination))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetRoleResourcesList(roleId, pagination))));
         }
 
         /// <summary>
@@ -902,7 +902,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.ResourcesDTO.Authorities))]
         public async Task<object> GetUserResourcesList(string userId, [FromBody] PaginationDTO pagination)
         {
-            return await Task.FromResult(OpenApiJsonContent(AjaxResultFactory.Success(AuthoritiesBusiness.GetUserResourcesList(userId, pagination))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetUserResourcesList(userId, pagination))));
         }
 
         #endregion

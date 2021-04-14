@@ -36,10 +36,10 @@ namespace Api
             }).ToList();
             if (needParamters.Count != 0)
             {
-                AjaxResult res = new AjaxResult
+                ResponseData res = new ResponseData
                 {
                     Success = false,
-                    Msg = $"参数:{string.Join(",", needParamters)}不能为空！"
+                    Message = $"参数:{string.Join(",", needParamters)}不能为空！"
                 };
                 filterContext.Result = new ContentResult { Content = res.ToJson(), ContentType = "application/json;charset=utf-8" };
             }

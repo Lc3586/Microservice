@@ -1,9 +1,9 @@
 ﻿namespace Model.Utils.Result
 {
     /// <summary>
-    /// Ajax请求结果（开发模式）
+    /// 开发环境接口输出数据
     /// </summary>
-    public class AjaxDevelopmentResult<T> : AjaxResult
+    public class DevelopmentResponseData<T> : ResponseData
     {
         /// <summary>
         /// 返回数据
@@ -13,6 +13,6 @@
         /// <summary>
         /// 异常信息
         /// </summary>
-        public string ExMsg { get; set; }
+        public string ExceptionInfo { get; set; }
     }
 }

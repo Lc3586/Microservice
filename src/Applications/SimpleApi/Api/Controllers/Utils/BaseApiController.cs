@@ -13,7 +13,7 @@ namespace Api.Controllers.Utils
     /// </summary>
     [Consumes("application/json", "application/x-www-form-urlencoded")]//接收数据类型
     [Produces("application/json", "text/plain", "text/json", "application/octet-stream")]//生产数据类型
-    [SwaggerResponse((int)HttpStatusCode.OK, "请求结果", typeof(AjaxResult))]//指定类下所有接口的输出架构，优先使用方法上指定的输出架构
+    [SwaggerResponse((int)HttpStatusCode.OK, "请求结果", typeof(ResponseData))]//指定类下所有接口的输出架构，优先使用方法上指定的输出架构
     public class BaseApiController : BaseController
     {
         /// <summary>
