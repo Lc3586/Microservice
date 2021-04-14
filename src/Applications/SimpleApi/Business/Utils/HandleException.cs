@@ -55,17 +55,17 @@ namespace Business.Utils
             HandleException(exception);
 
             if (Config.RunMode != RunMode.Publish && Config.RunMode != RunMode.Publish_Swagger)
-                return AjaxResultFactory.Error(
+                return ResponseDataFactory.Error(
                     string.IsNullOrWhiteSpace(message) ? "系统异常" : message,
                     exception.GetExceptionAllMsg(),
                     data,
                     code);
             else
                 return data == null ?
-                    AjaxResultFactory.Error(
+                    ResponseDataFactory.Error(
                         string.IsNullOrWhiteSpace(message) ? "系统繁忙，请稍后重试" : message,
                         code)
-                    : AjaxResultFactory.Error(
+                    : ResponseDataFactory.Error(
                         string.IsNullOrWhiteSpace(message) ? "系统繁忙，请稍后重试" : message,
                         data,
                         code);
