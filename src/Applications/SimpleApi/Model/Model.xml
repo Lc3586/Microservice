@@ -2732,148 +2732,6 @@
             倒序
             </summary>
         </member>
-        <member name="T:Model.Utils.Result.AjaxDevelopmentResult`1">
-            <summary>
-            Ajax请求结果（开发模式）
-            </summary>
-        </member>
-        <member name="P:Model.Utils.Result.AjaxDevelopmentResult`1.Data">
-            <summary>
-            返回数据
-            </summary>
-        </member>
-        <member name="P:Model.Utils.Result.AjaxDevelopmentResult`1.ExMsg">
-            <summary>
-            异常信息
-            </summary>
-        </member>
-        <member name="T:Model.Utils.Result.AjaxResult">
-            <summary>
-            Ajax请求结果
-            </summary>
-        </member>
-        <member name="P:Model.Utils.Result.AjaxResult.Success">
-            <summary>
-            是否成功
-            </summary>
-        </member>
-        <member name="P:Model.Utils.Result.AjaxResult.ErrorCode">
-            <summary>
-            错误代码
-            <see cref="T:Model.Utils.Result.ErrorCode"/>
-            </summary>
-        </member>
-        <member name="P:Model.Utils.Result.AjaxResult.Msg">
-            <summary>
-            返回消息
-            </summary>
-        </member>
-        <member name="T:Model.Utils.Result.AjaxResult`1">
-            <summary>
-            Ajax请求结果
-            </summary>
-        </member>
-        <member name="P:Model.Utils.Result.AjaxResult`1.Data">
-            <summary>
-            返回数据
-            </summary>
-        </member>
-        <member name="M:Model.Utils.Result.AjaxResultFactory.Success">
-            <summary>
-            返回成功
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Model.Utils.Result.AjaxResultFactory.Success``1">
-            <summary>
-            返回成功
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Model.Utils.Result.AjaxResultFactory.Success(System.String)">
-            <summary>
-            返回成功
-            </summary>
-            <param name="msg">返回的消息</param>
-            <returns></returns>
-        </member>
-        <member name="M:Model.Utils.Result.AjaxResultFactory.SuccessWithDefaultData``1(System.String)">
-            <summary>
-            返回成功
-            </summary>
-            <param name="msg">返回的消息</param>
-            <returns></returns>
-        </member>
-        <member name="M:Model.Utils.Result.AjaxResultFactory.Success``1(``0)">
-            <summary>
-            返回成功
-            </summary>
-            <param name="data">返回的数据</param>
-            <returns></returns>
-        </member>
-        <member name="M:Model.Utils.Result.AjaxResultFactory.Success``1(System.String,``0)">
-            <summary>
-            返回成功
-            </summary>
-            <param name="msg">返回的消息</param>
-            <param name="data">返回的数据</param>
-            <returns></returns>
-        </member>
-        <member name="M:Model.Utils.Result.AjaxResultFactory.Error">
-            <summary>
-            返回错误
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Model.Utils.Result.AjaxResultFactory.Error``1">
-            <summary>
-            返回错误
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Model.Utils.Result.AjaxResultFactory.Error(System.String,Model.Utils.Result.ErrorCode)">
-            <summary>
-            返回错误
-            </summary>
-            <param name="msg">返回的消息</param>
-            <param name="errorCode">错误代码<see cref="T:Model.Utils.Result.ErrorCode"/></param>
-            <returns></returns>
-        </member>
-        <member name="M:Model.Utils.Result.AjaxResultFactory.Error``1(System.String,Model.Utils.Result.ErrorCode)">
-            <summary>
-            返回错误
-            </summary>
-            <param name="msg">返回的消息</param>
-            <param name="errorCode">错误代码<see cref="T:Model.Utils.Result.ErrorCode"/></param>
-            <returns></returns>
-        </member>
-        <member name="M:Model.Utils.Result.AjaxResultFactory.Error``1(``0,Model.Utils.Result.ErrorCode)">
-            <summary>
-            返回错误
-            </summary>
-            <param name="data">返回的数据</param>
-            <param name="errorCode">错误代码<see cref="T:Model.Utils.Result.ErrorCode"/></param>
-            <returns></returns>
-        </member>
-        <member name="M:Model.Utils.Result.AjaxResultFactory.Error``1(System.String,``0,Model.Utils.Result.ErrorCode)">
-            <summary>
-            返回成功
-            </summary>
-            <param name="msg">返回的消息</param>
-            <param name="data">返回的数据</param>
-            <param name="errorCode">错误代码<see cref="T:Model.Utils.Result.ErrorCode"/></param>
-            <returns></returns>
-        </member>
-        <member name="M:Model.Utils.Result.AjaxResultFactory.Error``1(System.String,System.String,``0,Model.Utils.Result.ErrorCode)">
-            <summary>
-            返回错误（开发模式）
-            </summary>
-            <param name="msg">返回的消息</param>
-            <param name="exMsg">异常信息</param>
-            <param name="data">返回的数据</param>
-            <param name="errorCode">错误代码<see cref="T:Model.Utils.Result.ErrorCode"/></param>
-            <returns></returns>
-        </member>
         <member name="T:Model.Utils.Result.AntdVueResult`1">
             <summary>
             AntdVue方案
@@ -2884,9 +2742,9 @@
             成功与否
             </summary>
         </member>
-        <member name="P:Model.Utils.Result.AntdVueResult`1.Msg">
+        <member name="P:Model.Utils.Result.AntdVueResult`1.Message">
             <summary>
-            信息
+            消息
             </summary>
         </member>
         <member name="P:Model.Utils.Result.AntdVueResult`1.Total">
@@ -2897,6 +2755,21 @@
         <member name="P:Model.Utils.Result.AntdVueResult`1.Data">
             <summary>
             数据
+            </summary>
+        </member>
+        <member name="T:Model.Utils.Result.DevelopmentResponseData`1">
+            <summary>
+            开发环境接口输出数据
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Result.DevelopmentResponseData`1.Data">
+            <summary>
+            返回数据
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Result.DevelopmentResponseData`1.ExceptionInfo">
+            <summary>
+            异常信息
             </summary>
         </member>
         <member name="T:Model.Utils.Result.EasyuiResult`1">
@@ -2945,9 +2818,9 @@
             </summary>
             <remarks><see cref="T:Model.Utils.Result.ErrorCode"/></remarks>
         </member>
-        <member name="P:Model.Utils.Result.ElementVueResult`1.Msg">
+        <member name="P:Model.Utils.Result.ElementVueResult`1.Message">
             <summary>
-            信息
+            消息
             </summary>
         </member>
         <member name="P:Model.Utils.Result.ElementVueResult`1.Data">
@@ -3085,6 +2958,138 @@
             <summary>
             耗时（毫秒）
             </summary>
+        </member>
+        <member name="T:Model.Utils.Result.ResponseData">
+            <summary>
+            接口输出数据
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Result.ResponseData.Success">
+            <summary>
+            操作结果
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Result.ResponseData.ErrorCode">
+            <summary>
+            错误代码
+            <see cref="T:Model.Utils.Result.ErrorCode"/>
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Result.ResponseData.Message">
+            <summary>
+            消息
+            </summary>
+        </member>
+        <member name="T:Model.Utils.Result.ResponseData`1">
+            <summary>
+            接口输出数据
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Result.ResponseData`1.Data">
+            <summary>
+            数据
+            </summary>
+        </member>
+        <member name="T:Model.Utils.Result.ResponseDataFactory">
+            <summary>
+            接口输出数据工厂类
+            </summary>
+        </member>
+        <member name="M:Model.Utils.Result.ResponseDataFactory.Success">
+            <summary>
+            返回成功
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Model.Utils.Result.ResponseDataFactory.Success``1">
+            <summary>
+            返回成功
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Model.Utils.Result.ResponseDataFactory.Success(System.String)">
+            <summary>
+            返回成功
+            </summary>
+            <param name="msg">返回的消息</param>
+            <returns></returns>
+        </member>
+        <member name="M:Model.Utils.Result.ResponseDataFactory.SuccessWithDefaultData``1(System.String)">
+            <summary>
+            返回成功
+            </summary>
+            <param name="msg">返回的消息</param>
+            <returns></returns>
+        </member>
+        <member name="M:Model.Utils.Result.ResponseDataFactory.Success``1(``0)">
+            <summary>
+            返回成功
+            </summary>
+            <param name="data">返回的数据</param>
+            <returns></returns>
+        </member>
+        <member name="M:Model.Utils.Result.ResponseDataFactory.Success``1(System.String,``0)">
+            <summary>
+            返回成功
+            </summary>
+            <param name="msg">返回的消息</param>
+            <param name="data">返回的数据</param>
+            <returns></returns>
+        </member>
+        <member name="M:Model.Utils.Result.ResponseDataFactory.Error">
+            <summary>
+            返回错误
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Model.Utils.Result.ResponseDataFactory.Error``1">
+            <summary>
+            返回错误
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Model.Utils.Result.ResponseDataFactory.Error(System.String,Model.Utils.Result.ErrorCode)">
+            <summary>
+            返回错误
+            </summary>
+            <param name="msg">返回的消息</param>
+            <param name="errorCode">错误代码<see cref="T:Model.Utils.Result.ErrorCode"/></param>
+            <returns></returns>
+        </member>
+        <member name="M:Model.Utils.Result.ResponseDataFactory.Error``1(System.String,Model.Utils.Result.ErrorCode)">
+            <summary>
+            返回错误
+            </summary>
+            <param name="msg">返回的消息</param>
+            <param name="errorCode">错误代码<see cref="T:Model.Utils.Result.ErrorCode"/></param>
+            <returns></returns>
+        </member>
+        <member name="M:Model.Utils.Result.ResponseDataFactory.Error``1(``0,Model.Utils.Result.ErrorCode)">
+            <summary>
+            返回错误
+            </summary>
+            <param name="data">返回的数据</param>
+            <param name="errorCode">错误代码<see cref="T:Model.Utils.Result.ErrorCode"/></param>
+            <returns></returns>
+        </member>
+        <member name="M:Model.Utils.Result.ResponseDataFactory.Error``1(System.String,``0,Model.Utils.Result.ErrorCode)">
+            <summary>
+            返回成功
+            </summary>
+            <param name="msg">返回的消息</param>
+            <param name="data">返回的数据</param>
+            <param name="errorCode">错误代码<see cref="T:Model.Utils.Result.ErrorCode"/></param>
+            <returns></returns>
+        </member>
+        <member name="M:Model.Utils.Result.ResponseDataFactory.Error``1(System.String,System.String,``0,Model.Utils.Result.ErrorCode)">
+            <summary>
+            返回错误（开发模式）
+            </summary>
+            <param name="msg">返回的消息</param>
+            <param name="exMsg">异常信息</param>
+            <param name="data">返回的数据</param>
+            <param name="errorCode">错误代码<see cref="T:Model.Utils.Result.ErrorCode"/></param>
+            <returns></returns>
         </member>
         <member name="T:Model.Utils.SampleAuthentication.SampleAuthenticationDTO.LoginRequest">
             <summary>
