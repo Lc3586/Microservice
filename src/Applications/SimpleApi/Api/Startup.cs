@@ -236,9 +236,6 @@ namespace Api
                 app.ConfiguraCAS(Config);
 
             if (Config.EnableFreeSql)
-                app.ConfiguraFreeSql(Config);
-
-            if (Config.EnableFreeSql)
             {
                 if (Config.EnableMultiDatabases)
                     app.ConfiguraFreeSqlMultiDatabase(Config);

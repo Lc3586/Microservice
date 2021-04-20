@@ -69,7 +69,7 @@ namespace Api.Configures
 
                 #region 为JSON文件和UI设置xml文档路径
 
-                var basePath = Path.GetDirectoryName(typeof(Program).Assembly.Location);//获取应用程序所在目录（绝对，不受工作目录影响，建议采用此方法获取路径）
+                var basePath = config.AbsoluteRootDirectory;//获取应用程序所在目录（绝对，不受工作目录影响，建议采用此方法获取路径）
                 foreach (var item in config.Swagger.XmlComments)
                 {
                     var xmlPath = Path.Combine(basePath, item);
@@ -155,8 +155,7 @@ namespace Api.Configures
                 s.EnableFilter();//启用顶部筛选框
 
                 //注入自定义文件
-                var basePath = Path.GetDirectoryName(typeof(Program).Assembly.Location);
-                var dirPath = Path.Combine(basePath, "wwwroot/swagger");
+                var dirPath = Path.Combine(config.AbsoluteRootDirectory, "/wwwroot/swagger");
                 InjectFileFromDir(new DirectoryInfo(dirPath));
                 void InjectFileFromDir(DirectoryInfo dir)
                 {
@@ -176,9 +175,9 @@ namespace Api.Configures
                         }
 
                         if (file.Extension == ".js")
-                            s.InjectJavascript(file.FullName[file.FullName.IndexOf("\\swagger")..]);
+                            s.InjectJavascript(file.FullName);
                         else if (file.Extension == ".css")
-                            s.InjectStylesheet(file.FullName[file.FullName.IndexOf("\\swagger")..]);
+                            s.InjectStylesheet(file.FullName);
                     }
 
                     foreach (var innerDir in dir.GetDirectories())

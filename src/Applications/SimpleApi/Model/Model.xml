@@ -1851,6 +1851,25 @@
             系统配置
             </summary>
         </member>
+        <member name="P:Model.Utils.Config.SystemConfig.RootDirectory">
+            <summary>
+            指定程序根目录
+            </summary>
+            <remarks>
+            <para></para>用于存放应用程序运行过程中需要持久化的文件数据
+            <para>指定此目录时，将会从中获取wwwroot目录</para>
+            </remarks>
+        </member>
+        <member name="P:Model.Utils.Config.SystemConfig.AbsoluteRootDirectory">
+            <summary>
+            程序根目录绝对路径
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Config.SystemConfig._AbsoluteRootDirectory">
+            <summary>
+            程序根目录绝对路径
+            </summary>
+        </member>
         <member name="P:Model.Utils.Config.SystemConfig.AdminId">
             <summary>
             超级管理员Id

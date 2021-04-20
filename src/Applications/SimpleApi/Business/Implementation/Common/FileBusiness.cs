@@ -17,6 +17,7 @@ using Microservice.Library.OpenApi.Extention;
 using Microsoft.AspNetCore.Http;
 using Model.Common;
 using Model.Common.FileDTO;
+using Model.Utils.Config;
 using Model.Utils.Pagination;
 using System;
 using System.Collections.Generic;
@@ -48,6 +49,9 @@ namespace Business.Implementation.Common
             Repository_FileChunk = Orm.GetRepository<Common_ChunkFile, string>();
             HttpContextAccessor = httpContextAccessor;
             MergeHandler = mergeHandler;
+            FileStateDir = $"{Config.AbsoluteRootDirectory}/filestate";
+            PreviewDir = $"{Config.AbsoluteRootDirectory}/filetypes";
+            BaseDir = $"{Config.AbsoluteRootDirectory}/upload/{DateTime.Now:yyyy-MM-dd}";
         }
 
         #endregion
@@ -69,17 +73,17 @@ namespace Business.Implementation.Common
         /// <summary>
         /// 文件状态图存储路径根目录相对路径
         /// </summary>
-        static string FileStateDir => Path.GetDirectoryName("\\filestate\\");
+        readonly string FileStateDir;
 
         /// <summary>
         /// 文件类型预览图存储路径根目录相对路径
         /// </summary>
-        static string PreviewDir => Path.GetDirectoryName("\\filetypes\\");
+        readonly string PreviewDir;
 
         /// <summary>
         /// 存储路径根目录相对路径
         /// </summary>
-        static string BaseDir => Path.GetDirectoryName($"\\upload\\{DateTime.Now:yyyy-MM-dd}\\");
+        readonly string BaseDir;
 
         /// <summary>
         /// 保存
@@ -149,7 +153,7 @@ namespace Business.Implementation.Common
                 goto empty;
 
             var preview = Path.Combine(PreviewDir, $"{suffix.TrimStart('.')}.png");
-            if (File.Exists(PathHelper.GetAbsolutePath($"~{preview}\\")))
+            if (File.Exists(PathHelper.GetAbsolutePath(preview)))
                 return preview;
 
             empty:
@@ -190,10 +194,10 @@ namespace Business.Implementation.Common
             if (!File.Exists(path))
                 throw new MessageException("文件不存在或已被删除");
 
-            //response.SendFileAsync(path);
-            using var fs = new FileStream(path, FileMode.Open, FileAccess.Read);
-            response.ContentLength = fs.Length;
-            await fs.CopyToAsync(response.Body);
+            await response.SendFileAsync(path);
+            //using var fs = new FileStream(path, FileMode.Open, FileAccess.Read);
+            //response.ContentLength = fs.Length;
+            //await fs.CopyToAsync(response.Body);
         }
 
         /// <summary>
@@ -202,19 +206,19 @@ namespace Business.Implementation.Common
         /// <param name="response"></param>
         /// <param name="fileState"></param>
         /// <returns></returns>
-        static async Task<bool> CheckFileStateResponseWhenError(HttpResponse response, string fileState)
+        async Task<bool> CheckFileStateResponseWhenError(HttpResponse response, string fileState)
         {
             if (fileState == FileState.处理中)
             {
-                await ResponseFile(response, PathHelper.GetAbsolutePath($"~{FileStateDir}\\{FileState.处理中}.jpg"));
+                await ResponseFile(response, PathHelper.GetAbsolutePath($"{FileStateDir}/{FileState.处理中}.jpg"));
             }
             else if (fileState == FileState.已删除)
             {
-                await ResponseFile(response, PathHelper.GetAbsolutePath($"~{FileStateDir}\\{FileState.已删除}.jpg"));
+                await ResponseFile(response, PathHelper.GetAbsolutePath($"{FileStateDir}/{FileState.已删除}.jpg"));
             }
             else if (fileState != FileState.可用)
             {
-                await ResponseFile(response, PathHelper.GetAbsolutePath($"~{FileStateDir}\\不可用.jpg"));
+                await ResponseFile(response, PathHelper.GetAbsolutePath($"{FileStateDir}/不可用.jpg"));
             }
             else
                 return true;
@@ -457,7 +461,7 @@ namespace Business.Implementation.Common
 
         public async Task SingleChunkFile(string key, string md5, IFormFile file)
         {
-            var baseDirPath = PathHelper.GetAbsolutePath($"~{BaseDir}\\chunkfiles\\{key}\\");
+            var baseDirPath = PathHelper.GetAbsolutePath($"{BaseDir}/chunkfiles/{key}");
 
             if (!Directory.Exists(baseDirPath))
                 Directory.CreateDirectory(baseDirPath);
@@ -493,10 +497,8 @@ namespace Business.Implementation.Common
 
         public async Task<FileInfo> SingleImageFromUrl(string url, bool download = false, string filename = null)
         {
-            var baseDirPath = PathHelper.GetAbsolutePath($"~{BaseDir}");
-
-            if (!Directory.Exists(baseDirPath))
-                Directory.CreateDirectory(baseDirPath);
+            if (!Directory.Exists(BaseDir))
+                Directory.CreateDirectory(BaseDir);
 
             var newData = new FileInfo
             {
@@ -510,7 +512,7 @@ namespace Business.Implementation.Common
                 newData.FullName = $"{newData.Name}.jpg";
                 newData.Extension = ".jpg";
                 newData.ContentType = "image/jpg";
-                newData.Path = Path.Combine(baseDirPath, $"{Guid.NewGuid()}{newData.Extension}");
+                newData.Path = Path.Combine(BaseDir, $"{Guid.NewGuid()}{newData.Extension}");
 
                 using var client = new WebClient();
                 var stream = await client.OpenReadTaskAsync(url);
@@ -535,10 +537,8 @@ namespace Business.Implementation.Common
 
         public async Task<FileInfo> SingleFileFromUrl(string url, bool download = false, string filename = null)
         {
-            var baseDirPath = PathHelper.GetAbsolutePath($"~{BaseDir}");
-
-            if (!Directory.Exists(baseDirPath))
-                Directory.CreateDirectory(baseDirPath);
+            if (!Directory.Exists(BaseDir))
+                Directory.CreateDirectory(BaseDir);
 
             var newData = new FileInfo
             {
@@ -551,7 +551,7 @@ namespace Business.Implementation.Common
             if (download)
             {
                 newData.StorageType = StorageType.Path;
-                newData.Path = Path.Combine(baseDirPath, $"{Guid.NewGuid()}");
+                newData.Path = Path.Combine(BaseDir, $"{Guid.NewGuid()}");
 
                 using var client = new WebClient();
                 var stream = await client.OpenReadTaskAsync(url);
@@ -575,10 +575,8 @@ namespace Business.Implementation.Common
 
         public FileInfo SingleImageFromBase64(string base64, string filename = null)
         {
-            var baseDirPath = PathHelper.GetAbsolutePath($"~{BaseDir}");
-
-            if (!Directory.Exists(baseDirPath))
-                Directory.CreateDirectory(baseDirPath);
+            if (!Directory.Exists(BaseDir))
+                Directory.CreateDirectory(BaseDir);
 
             var newData = new FileInfo
             {
@@ -590,7 +588,7 @@ namespace Business.Implementation.Common
             };
 
             newData.FullName = $"{newData.Name}.jpg";
-            newData.Path = Path.Combine(baseDirPath, $"{Guid.NewGuid()}{newData.Extension}");
+            newData.Path = Path.Combine(BaseDir, $"{Guid.NewGuid()}{newData.Extension}");
 
             var image = ImgHelper.GetImgFromBase64Url(base64);
             Save(image, newData.Path);
@@ -607,10 +605,8 @@ namespace Business.Implementation.Common
 
         public async Task<FileInfo> SingleFile(IFormFile file, string filename = null)
         {
-            var baseDirPath = PathHelper.GetAbsolutePath($"~{BaseDir}");
-
-            if (!Directory.Exists(baseDirPath))
-                Directory.CreateDirectory(baseDirPath);
+            if (!Directory.Exists(BaseDir))
+                Directory.CreateDirectory(BaseDir);
 
             var newData = new FileInfo
             {
@@ -622,7 +618,7 @@ namespace Business.Implementation.Common
 
             newData.FullName = $"{newData.Name}{newData.Extension}";
             newData.FileType = FileType.GetFileType(newData.Extension);
-            newData.Path = Path.Combine(baseDirPath, $"{Guid.NewGuid()}{newData.Extension}");
+            newData.Path = Path.Combine(BaseDir, $"{Guid.NewGuid()}{newData.Extension}");
 
             using var rs = file.OpenReadStream();
             await Save(rs, newData.Path);
@@ -662,19 +658,29 @@ namespace Business.Implementation.Common
                 response.StatusCode = StatusCodes.Status200OK;
                 response.ContentType = file.ContentType;
 
-                using var fs = new FileStream(file.Path, FileMode.Open, FileAccess.Read);
-                var image = new Image(fs);
-                using var ms = new MemoryStream();
-                image.Resize(width, height)
-                   .Save(ms);
-                await ResponseImage(response, ms);
+                var imagePath = $"{file.Path.Replace(file.Extension, "")}-Screenshot/{width}x{height}.jpg";
+
+                if (!imagePath.Exists())
+                {
+                    if (!Directory.Exists(imagePath))
+                        Directory.CreateDirectory(imagePath);
+
+                    using var fs = new FileStream(file.Path, FileMode.Open, FileAccess.Read);
+                    var image = new Image(fs);
+
+                    using var newFS = File.Create(imagePath);
+                    image.Resize(width, height)
+                       .Save(newFS);
+                }
+
+                await ResponseFile(response, imagePath);
             }
             else if (file.FileType == FileType.视频)
             {
                 response.StatusCode = StatusCodes.Status200OK;
                 response.ContentType = file.ContentType;
 
-                var imagePath = $"{file.Path.Substring(0, file.Path.LastIndexOf('.'))}-Screenshot\\{width}x{height}.jpg";
+                var imagePath = $"{file.Path.Replace(file.Extension, "")}-Screenshot/{width}x{height}.jpg";
 
                 if (!imagePath.Exists())
                 {

@@ -75,7 +75,7 @@ namespace T4CAGC.Handler
             //        {
             //            if (!Directory.Exists(op))
             //                Directory.CreateDirectory(op);
-            //            File.WriteAllText($"{op}\\{fileName}", temple.TransformText(), Encoding.UTF8);
+            //            File.WriteAllText($"{op}/{fileName}", temple.TransformText(), Encoding.UTF8);
             //        });
             //    }
             //}

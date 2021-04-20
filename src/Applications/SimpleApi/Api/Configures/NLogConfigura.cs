@@ -33,7 +33,7 @@ namespace Api.Configures
                         {
                             Name = config.DefaultLoggerName,
                             Layout = config.DefaultLoggerLayout ?? NLoggerConfig.Layout,
-                            FileName = Path.Combine(Directory.GetCurrentDirectory(), NLoggerConfig.FileDic, NLoggerConfig.FileName),
+                            FileName = Path.Combine(config.AbsoluteRootDirectory, NLoggerConfig.FileDic, NLoggerConfig.FileName),
                             Encoding = Encoding.UTF8
                         },
                         LoggerType.RDBMS => new RDBMSTarget()

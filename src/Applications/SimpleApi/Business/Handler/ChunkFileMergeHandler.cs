@@ -96,7 +96,7 @@ namespace Business.Handler
         /// <summary>
         /// 存储路径根目录相对路径
         /// </summary>
-        static string BaseDir => Path.GetDirectoryName($"\\upload\\{DateTime.Now:yyyy-MM-dd}\\");
+        string BaseDir => $"{Config.AbsoluteRootDirectory}/upload/{DateTime.Now:yyyy-MM-dd}";
 
         TaskCompletionSource<bool> TCS;
 
@@ -255,7 +255,7 @@ namespace Business.Handler
             task.ModifyTime = DateTime.Now;
             Repository_ChunkFileMergeTask.Update(task);
 
-            var baseDirPath = PathHelper.GetAbsolutePath($"~{BaseDir}");
+            var baseDirPath = PathHelper.GetAbsolutePath(BaseDir);
 
             if (!Directory.Exists(baseDirPath))
                 Directory.CreateDirectory(baseDirPath);

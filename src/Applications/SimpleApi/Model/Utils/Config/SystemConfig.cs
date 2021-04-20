@@ -1,6 +1,8 @@
 ﻿using Microservice.Library.Cache.Model;
 using Microservice.Library.Configuration.Annotations;
+using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Model.Utils.Config
 {
@@ -10,6 +12,33 @@ namespace Model.Utils.Config
     public class SystemConfig
     {
         #region 基础
+
+        /// <summary>
+        /// 指定程序根目录
+        /// </summary>
+        /// <remarks>
+        /// <para></para>用于存放应用程序运行过程中需要持久化的文件数据
+        /// <para>指定此目录时，将会从中获取wwwroot目录</para>
+        /// </remarks>
+        public string RootDirectory { get; set; }
+
+        /// <summary>
+        /// 程序根目录绝对路径
+        /// </summary>
+        public string AbsoluteRootDirectory
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(_AbsoluteRootDirectory))
+                    _AbsoluteRootDirectory = Path.GetDirectoryName($"{AppContext.BaseDirectory}/{RootDirectory}");
+                return _AbsoluteRootDirectory;
+            }
+        }
+
+        /// <summary>
+        /// 程序根目录绝对路径
+        /// </summary>
+        private string _AbsoluteRootDirectory { get; set; }
 
         /// <summary>
         /// 超级管理员Id

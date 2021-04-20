@@ -25,15 +25,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.31" />
-    <PackageReference Include="Microservice.Library.File" Version="0.0.0.22787-alpha-g0359bb34f9" />
-    <PackageReference Include="Microservice.Library.NLogger" Version="0.0.0.22787-alpha-g0359bb34f9" />
-    <PackageReference Include="Microservice.Library.SelectOption" Version="0.0.0.22787-alpha-g0359bb34f9" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.32" />
+    <PackageReference Include="Microservice.Library.Elasticsearch" Version="0.0.0.11387-alpha-g7b2c09069c" />
+    <PackageReference Include="Microservice.Library.File" Version="0.0.0.11387-alpha-g7b2c09069c" />
+    <PackageReference Include="Microservice.Library.NLogger" Version="0.0.0.11387-alpha-g7b2c09069c" />
+    <PackageReference Include="Microservice.Library.OfficeDocuments" Version="0.0.0.11387-alpha-g7b2c09069c" />
+    <PackageReference Include="Microservice.Library.SelectOption" Version="0.0.0.11387-alpha-g7b2c09069c" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.1.0" />
     <PackageReference Include="NewId" Version="3.0.3" />
-    <PackageReference Include="SuperSocket.WebSocket" Version="2.0.0-beta.8" />
-    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.8" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.9" />
   </ItemGroup>
 
 </Project>

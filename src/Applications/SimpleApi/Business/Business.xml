@@ -253,17 +253,17 @@
             文件处理业务类
             </summary>
         </member>
-        <member name="P:Business.Implementation.Common.FileBusiness.FileStateDir">
+        <member name="F:Business.Implementation.Common.FileBusiness.FileStateDir">
             <summary>
             文件状态图存储路径根目录相对路径
             </summary>
         </member>
-        <member name="P:Business.Implementation.Common.FileBusiness.PreviewDir">
+        <member name="F:Business.Implementation.Common.FileBusiness.PreviewDir">
             <summary>
             文件类型预览图存储路径根目录相对路径
             </summary>
         </member>
-        <member name="P:Business.Implementation.Common.FileBusiness.BaseDir">
+        <member name="F:Business.Implementation.Common.FileBusiness.BaseDir">
             <summary>
             存储路径根目录相对路径
             </summary>
