@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace Api
 {
@@ -11,6 +12,10 @@ namespace Api
     {
         public static void Main(string[] args)
         {
+            //while (true)
+            //{
+            //    Task.Delay(100000).GetAwaiter().GetResult();
+            //}
             CreateHostBuilder(args).Build().Run();
         }
 

@@ -14,6 +14,7 @@ using Microservice.Library.FreeSql.Extention;
 using Microservice.Library.FreeSql.Gen;
 using Microservice.Library.Http;
 using Microservice.Library.OpenApi.Extention;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Model.Common;
 using Model.Common.FileDTO;
@@ -25,6 +26,7 @@ using System.IO;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using FileInfo = Model.Common.FileDTO.FileInfo;
 
@@ -41,6 +43,7 @@ namespace Business.Implementation.Common
             IFreeSqlProvider freeSqlProvider,
             IAutoMapperProvider autoMapperProvider,
             IHttpContextAccessor httpContextAccessor,
+            IWebHostEnvironment webHostEnvironment,
             ChunkFileMergeHandler mergeHandler)
         {
             Orm = freeSqlProvider.GetFreeSql();
@@ -49,9 +52,9 @@ namespace Business.Implementation.Common
             Repository_FileChunk = Orm.GetRepository<Common_ChunkFile, string>();
             HttpContextAccessor = httpContextAccessor;
             MergeHandler = mergeHandler;
-            FileStateDir = $"{Config.AbsoluteRootDirectory}/filestate";
-            PreviewDir = $"{Config.AbsoluteRootDirectory}/filetypes";
-            BaseDir = $"{Config.AbsoluteRootDirectory}/upload/{DateTime.Now:yyyy-MM-dd}";
+            FileStateDir = $"{webHostEnvironment.WebRootPath}/filestate";
+            PreviewDir = $"{webHostEnvironment.WebRootPath}/filetypes";
+            BaseDir = $"{webHostEnvironment.ContentRootPath}/upload/{DateTime.Now:yyyy-MM-dd}";
         }
 
         #endregion
@@ -71,17 +74,17 @@ namespace Business.Implementation.Common
         readonly ChunkFileMergeHandler MergeHandler;
 
         /// <summary>
-        /// 文件状态图存储路径根目录相对路径
+        /// 文件状态图存储路径根目录绝对路径
         /// </summary>
         readonly string FileStateDir;
 
         /// <summary>
-        /// 文件类型预览图存储路径根目录相对路径
+        /// 文件类型预览图存储路径根目录绝对路径
         /// </summary>
         readonly string PreviewDir;
 
         /// <summary>
-        /// 存储路径根目录相对路径
+        /// 存储路径根目录绝对路径
         /// </summary>
         readonly string BaseDir;
 
@@ -110,7 +113,9 @@ namespace Business.Implementation.Common
         /// </summary>
         /// <param name="bytes">文件</param>
         /// <param name="path">绝对路径</param>
+#pragma warning disable IDE0051 // 删除未使用的私有成员
         static async Task Save(byte[] bytes, string path)
+#pragma warning restore IDE0051 // 删除未使用的私有成员
         {
             try
             {
@@ -147,14 +152,16 @@ namespace Business.Implementation.Common
         /// </summary>
         /// <param name="suffix">文件后缀</param>
         /// <returns></returns>
+#pragma warning disable IDE0051 // 删除未使用的私有成员
         string GetPreviewImage(string suffix = null)
+#pragma warning restore IDE0051 // 删除未使用的私有成员
         {
             if (suffix.IsNullOrEmpty())
                 goto empty;
 
-            var preview = Path.Combine(PreviewDir, $"{suffix.TrimStart('.')}.png");
-            if (File.Exists(PathHelper.GetAbsolutePath(preview)))
-                return preview;
+            var previewfile = Path.Combine(PreviewDir, $"{suffix.TrimStart('.')}.png");
+            if (File.Exists(previewfile))
+                return previewfile;
 
             empty:
             return Path.Combine(PreviewDir, "empty.png");
@@ -165,7 +172,9 @@ namespace Business.Implementation.Common
         /// </summary>
         /// <param name="response"></param>
         /// <param name="img"></param>
+#pragma warning disable IDE0051 // 删除未使用的私有成员
         static async Task ResponseImage(HttpResponse response, Image img)
+#pragma warning restore IDE0051 // 删除未使用的私有成员
         {
             using MemoryStream ms = new MemoryStream();
             img.Save(ms);
@@ -178,7 +187,9 @@ namespace Business.Implementation.Common
         /// </summary>
         /// <param name="response"></param>
         /// <param name="stream">流</param>
+#pragma warning disable IDE0051 // 删除未使用的私有成员
         static async Task ResponseImage(HttpResponse response, Stream stream)
+#pragma warning restore IDE0051 // 删除未使用的私有成员
         {
             response.ContentLength = stream.Length;
             await stream.CopyToAsync(response.Body);
@@ -210,15 +221,15 @@ namespace Business.Implementation.Common
         {
             if (fileState == FileState.处理中)
             {
-                await ResponseFile(response, PathHelper.GetAbsolutePath($"{FileStateDir}/{FileState.处理中}.jpg"));
+                await ResponseFile(response, Path.Combine(FileStateDir, $"{FileState.处理中}.jpg"));
             }
             else if (fileState == FileState.已删除)
             {
-                await ResponseFile(response, PathHelper.GetAbsolutePath($"{FileStateDir}/{FileState.已删除}.jpg"));
+                await ResponseFile(response, Path.Combine(FileStateDir, $"{FileState.已删除}.jpg"));
             }
             else if (fileState != FileState.可用)
             {
-                await ResponseFile(response, PathHelper.GetAbsolutePath($"{FileStateDir}/不可用.jpg"));
+                await ResponseFile(response, Path.Combine(FileStateDir, "不可用.jpg"));
             }
             else
                 return true;
@@ -243,7 +254,9 @@ namespace Business.Implementation.Common
         /// </summary>
         /// <param name="stream"></param>
         /// <returns></returns>
+#pragma warning disable IDE0051 // 删除未使用的私有成员
         static async Task<string> GetMD5(Stream stream)
+#pragma warning restore IDE0051 // 删除未使用的私有成员
         {
             using var md5 = MD5.Create();
 
@@ -461,7 +474,7 @@ namespace Business.Implementation.Common
 
         public async Task SingleChunkFile(string key, string md5, IFormFile file)
         {
-            var baseDirPath = PathHelper.GetAbsolutePath($"{BaseDir}/chunkfiles/{key}");
+            var baseDirPath = Path.Combine(BaseDir, $"chunkfiles/{key}");
 
             if (!Directory.Exists(baseDirPath))
                 Directory.CreateDirectory(baseDirPath);
@@ -738,7 +751,7 @@ namespace Business.Implementation.Common
             response.StatusCode = StatusCodes.Status200OK;
 
             response.ContentType = "applicatoin/octet-stream";
-            response.Headers.Add("Content-Disposition", $"attachment; filename=\"{file.FullName}\"");
+            response.Headers.Add("Content-Disposition", $"attachment; filename=\"{UrlEncoder.Default.Encode(file.FullName)}\"");
 
             await ResponseFile(response, file.Path);
         }

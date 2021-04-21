@@ -1851,18 +1851,20 @@
             系统配置
             </summary>
         </member>
-        <member name="P:Model.Utils.Config.SystemConfig.RootDirectory">
+        <member name="P:Model.Utils.Config.SystemConfig.StorageDirectory">
             <summary>
-            指定程序根目录
+            数据存储根目录
             </summary>
             <remarks>
-            <para></para>用于存放应用程序运行过程中需要持久化的文件数据
+            <para>将会更改<see cref="P:Microsoft.AspNetCore.Hosting.IHostingEnvironment.ContentRootPath"/>的值</para>
+            <para>用于存放应用程序运行过程中需要持久化的文件数据</para>
             <para>指定此目录时，将会从中获取wwwroot目录</para>
+            <para>不指定时默认使用程序根目录</para>
             </remarks>
         </member>
-        <member name="P:Model.Utils.Config.SystemConfig.AbsoluteRootDirectory">
+        <member name="P:Model.Utils.Config.SystemConfig.AbsoluteStorageDirectory">
             <summary>
-            程序根目录绝对路径
+            数据存储根目录绝对路径
             </summary>
         </member>
         <member name="P:Model.Utils.Config.SystemConfig._AbsoluteRootDirectory">

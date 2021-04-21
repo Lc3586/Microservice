@@ -17,9 +17,11 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Model.Utils.Config;
 using Newtonsoft.Json.Serialization;
 using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 
@@ -194,13 +196,18 @@ namespace Api
         /// </summary>
         /// <param name="app"></param>
         /// <param name="env"></param>
+        /// <param name="hostingEnvironment"></param>
         /// <remarks>
         /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         /// </remarks>
 #pragma warning disable IDE0060 // 删除未使用的参数
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+#pragma warning disable CS0618 // 类型或成员已过时
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostingEnvironment hostingEnvironment)
+#pragma warning restore CS0618 // 类型或成员已过时
 #pragma warning restore IDE0060 // 删除未使用的参数
         {
+            app.ConfiguraHostEnvironment(env, hostingEnvironment, Config);
+
             //Request.Body重用
             app.Use(next => context =>
             {
@@ -215,6 +222,8 @@ namespace Api
             //.UseDeveloperExceptionPage()
             .UseStaticFiles(new StaticFileOptions
             {
+                //替换静态文件默认目录
+                FileProvider = new PhysicalFileProvider(Path.Combine(Config.AbsoluteStorageDirectory, "wwwroot")),
                 ServeUnknownFileTypes = true,
                 DefaultContentType = "application/octet-stream"
             })

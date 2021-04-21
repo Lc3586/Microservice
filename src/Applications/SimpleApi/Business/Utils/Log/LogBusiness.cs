@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using FileInfo = Model.Utils.Log.LogDTO.FileInfo;
 
@@ -42,7 +43,7 @@ namespace Business.Utils.Log
             Mapper = autoMapperProvider.GetMapper();
             HttpContextAccessor = httpContextAccessor;
 
-            FileDir = Path.Combine(Directory.GetCurrentDirectory(), NLoggerConfig.FileDic);
+            FileDir = Path.Combine(Config.AbsoluteStorageDirectory, NLoggerConfig.FileDic);
             FileNameFormat = NLoggerConfig.FileNameFormat;
             FileSuffix = NLoggerConfig.FileNameFormat[NLoggerConfig.FileNameFormat.LastIndexOf('.')..];
         }
@@ -165,7 +166,7 @@ namespace Business.Utils.Log
 
             var response = HttpContextAccessor.HttpContext.Response;
             response.ContentType = "text/plain";
-            response.Headers.Add("Content-Disposition", $"attachment; filename=\"{filename}\"");
+            response.Headers.Add("Content-Disposition", $"attachment; filename=\"{UrlEncoder.Default.Encode(filename)}\"");
 
             await response.SendFileAsync(path);
         }

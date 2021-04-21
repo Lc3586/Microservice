@@ -7,6 +7,7 @@ using Microservice.Library.Extension;
 using Microservice.Library.File;
 using Microservice.Library.FreeSql.Gen;
 using Microservice.Library.Http;
+using Microsoft.AspNetCore.Hosting;
 using Model.Common;
 using Model.Utils.Config;
 using Model.Utils.Log;
@@ -44,6 +45,18 @@ namespace Business.Handler
         }
 
         SystemConfig _Config;
+
+        IWebHostEnvironment WebHostEnvironment
+        {
+            get
+            {
+                if (_WebHostEnvironment == null)
+                    _WebHostEnvironment = AutofacHelper.GetService<IWebHostEnvironment>();
+                return _WebHostEnvironment;
+            }
+        }
+
+        IWebHostEnvironment _WebHostEnvironment;
 
         IFreeSql Orm
         {
@@ -96,7 +109,7 @@ namespace Business.Handler
         /// <summary>
         /// 存储路径根目录相对路径
         /// </summary>
-        string BaseDir => $"{Config.AbsoluteRootDirectory}/upload/{DateTime.Now:yyyy-MM-dd}";
+        string BaseDir => $"{WebHostEnvironment.ContentRootPath}/upload/{DateTime.Now:yyyy-MM-dd}";
 
         TaskCompletionSource<bool> TCS;
 
@@ -255,12 +268,10 @@ namespace Business.Handler
             task.ModifyTime = DateTime.Now;
             Repository_ChunkFileMergeTask.Update(task);
 
-            var baseDirPath = PathHelper.GetAbsolutePath(BaseDir);
+            if (!Directory.Exists(BaseDir))
+                Directory.CreateDirectory(BaseDir);
 
-            if (!Directory.Exists(baseDirPath))
-                Directory.CreateDirectory(baseDirPath);
-
-            var path = Path.Combine(baseDirPath, $"{Guid.NewGuid()}{task.Extension}");
+            var path = Path.Combine(BaseDir, $"{Guid.NewGuid()}{task.Extension}");
 
             using var fs = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite);
             foreach (var chunkFile in needChunkFiles)

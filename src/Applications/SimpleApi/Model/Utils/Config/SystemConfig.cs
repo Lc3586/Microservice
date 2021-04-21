@@ -14,23 +14,25 @@ namespace Model.Utils.Config
         #region 基础
 
         /// <summary>
-        /// 指定程序根目录
+        /// 数据存储根目录
         /// </summary>
         /// <remarks>
-        /// <para></para>用于存放应用程序运行过程中需要持久化的文件数据
+        /// <para>将会更改<see cref="Microsoft.AspNetCore.Hosting.IHostingEnvironment.ContentRootPath"/>的值</para>
+        /// <para>用于存放应用程序运行过程中需要持久化的文件数据</para>
         /// <para>指定此目录时，将会从中获取wwwroot目录</para>
+        /// <para>不指定时默认使用程序根目录</para>
         /// </remarks>
-        public string RootDirectory { get; set; }
+        public string StorageDirectory { get; set; }
 
         /// <summary>
-        /// 程序根目录绝对路径
+        /// 数据存储根目录绝对路径
         /// </summary>
-        public string AbsoluteRootDirectory
+        public string AbsoluteStorageDirectory
         {
             get
             {
                 if (string.IsNullOrWhiteSpace(_AbsoluteRootDirectory))
-                    _AbsoluteRootDirectory = Path.GetDirectoryName($"{AppContext.BaseDirectory}/{RootDirectory}");
+                    _AbsoluteRootDirectory = Path.GetFullPath(StorageDirectory ?? string.Empty, AppContext.BaseDirectory);
                 return _AbsoluteRootDirectory;
             }
         }

@@ -117,6 +117,29 @@
             <param name="app"></param>
             <param name="config"></param>
         </member>
+        <member name="T:Api.Configures.HostEnvironmentConfigura">
+            <summary>
+            主机环境配置类
+            </summary>
+        </member>
+        <member name="M:Api.Configures.HostEnvironmentConfigura.RegisterHostEnvironment(Microsoft.Extensions.DependencyInjection.IServiceCollection,Model.Utils.Config.SystemConfig)">
+            <summary>
+            注册主机环境
+            </summary>
+            <param name="services"></param>
+            <param name="config"></param>
+            <remarks></remarks>
+        </member>
+        <member name="M:Api.Configures.HostEnvironmentConfigura.ConfiguraHostEnvironment(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IWebHostEnvironment,Microsoft.AspNetCore.Hosting.IHostingEnvironment,Model.Utils.Config.SystemConfig)">
+            <summary>
+            配置主机环境
+            </summary>
+            <param name="app"></param>
+            <param name="webHostEnvironment"></param>
+            <param name="hostingEnvironment"></param>
+            <param name="config"></param>
+            <remarks></remarks>
+        </member>
         <member name="T:Api.Configures.KafkaConfigura">
             <summary>
             Kafka中间件配置类
@@ -2323,12 +2346,13 @@
             </summary>
             <param name="builder"></param>
         </member>
-        <member name="M:Api.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IWebHostEnvironment)">
+        <member name="M:Api.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IWebHostEnvironment,Microsoft.AspNetCore.Hosting.IHostingEnvironment)">
             <summary>
             
             </summary>
             <param name="app"></param>
             <param name="env"></param>
+            <param name="hostingEnvironment"></param>
             <remarks>
             This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
             </remarks>

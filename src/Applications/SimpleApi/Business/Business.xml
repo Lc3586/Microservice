@@ -255,17 +255,17 @@
         </member>
         <member name="F:Business.Implementation.Common.FileBusiness.FileStateDir">
             <summary>
-            文件状态图存储路径根目录相对路径
+            文件状态图存储路径根目录绝对路径
             </summary>
         </member>
         <member name="F:Business.Implementation.Common.FileBusiness.PreviewDir">
             <summary>
-            文件类型预览图存储路径根目录相对路径
+            文件类型预览图存储路径根目录绝对路径
             </summary>
         </member>
         <member name="F:Business.Implementation.Common.FileBusiness.BaseDir">
             <summary>
-            存储路径根目录相对路径
+            存储路径根目录绝对路径
             </summary>
         </member>
         <member name="M:Business.Implementation.Common.FileBusiness.Save(ImageProcessorCore.Image,System.String)">

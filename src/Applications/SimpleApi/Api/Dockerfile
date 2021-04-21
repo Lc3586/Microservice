@@ -1,4 +1,4 @@
-#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
+﻿#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
 FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
 WORKDIR /app
@@ -26,9 +26,31 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "SimpleApi.dll"]
 
-#��������
-#DOCKER build -t lctr/simple-api .
-#������
-#DOCKER volume create --name simple-api-file_storage
-#��������������
-#DOCKER run -it --rm -v simple-api-file_storage lctr/simple-api
+#如果SQL SERVER数据库TLS版本较低
+#可以选择安装升级包(建议使用此方式)
+#根据安装的SQL版本按顺序安装升级包
+#以下列出了2014版本的升级包下载地址
+#Microsoft® SQL Server® 2014 Service Pack 1 (SP1)
+#https://www.microsoft.com/zh-CN/download/details.aspx?id=46694
+#Microsoft® SQL Server® 2014 Service Pack 2 (SP2)
+#https://www.microsoft.com/zh-CN/download/details.aspx?id=53168
+#Microsoft® SQL Server® 2014 Service Pack 3 (SP3)
+#https://www.microsoft.com/zh-CN/download/details.aspx?id=57474
+#SQL Server 2014 SP3 安全更新程序 (KB4505218)
+#https://www.microsoft.com/zh-cn/download/details.aspx?id=58487
+
+#或者降级TLS版本
+#方式一
+#RUN sed -i 's/TLSv1.2/TLSv1.0/g' /etc/ssl/openssl.cnf
+#方式二
+#RUN sed -i 's/MinProtocol = TLSv1.2/MinProtocol = TLSv1/g' /etc/ssl/openssl.cnf
+#RUN sed -i 's/MinProtocol = TLSv1.2/MinProtocol = TLSv1/g' /usr/lib/ssl/openssl.cnf
+
+#构建镜像
+#docker build -f Dockerfile.not-build -t lctr/simple-api .
+#创建卷
+#docker volume create app_data_storage
+#创建容器并运行
+#docker run -it -v app_data_storage lctr/simple-api
+#进入容器
+#docker exec -it [id] /bin/sh
