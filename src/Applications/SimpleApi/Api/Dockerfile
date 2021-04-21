@@ -1,56 +1,45 @@
-ï»¿#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
+#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
 FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
-WORKDIR /app
-EXPOSE 80
-EXPOSE 443
+RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list \
+    && apt-get update \
+    && apt-get install -y ffmpeg \
+    && apt-get clean && apt-get autoclean && apt-get autoremove \
+    && rm -rf /var/lib/apt/lists/*
 
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
-WORKDIR /src
-COPY ["Applications/SimpleApi/Api/Api.csproj", "Applications/SimpleApi/Api/"]
-COPY ["Applications/SimpleApi/IocServiceDemo/IocServiceDemo.csproj", "Applications/SimpleApi/IocServiceDemo/"]
-COPY ["Applications/SimpleApi/SoapServices/SoapServices.csproj", "Applications/SimpleApi/SoapServices/"]
-COPY ["Applications/SimpleApi/Model/Model.csproj", "Applications/SimpleApi/Model/"]
-COPY ["Applications/SimpleApi/Entity/Entity.csproj", "Applications/SimpleApi/Entity/"]
-COPY ["Applications/SimpleApi/Business/Business.csproj", "Applications/SimpleApi/Business/"]
-RUN dotnet restore "Applications/SimpleApi/Api/Api.csproj"
-COPY . .
-WORKDIR "/src/Applications/SimpleApi/Api"
-RUN dotnet build "Api.csproj" -c Release -o /app/build
+RUN apt-get update && apt-get install -y libgdiplus libc6-dev && ln -s /usr/lib/libgdiplus.so /usr/lib/gdiplus.dll
+#ÉèÖÃÊ±Çø
+RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo 'Asia/Shanghai' >/etc/timezone
 
-FROM build AS publish
-RUN dotnet publish "Api.csproj" -c Release -o /app/publish
-
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "SimpleApi.dll"]
-
-#å¦‚æœSQL SERVERæ•°æ®åº“TLSç‰ˆæœ¬è¾ƒä½
-#å¯ä»¥é€‰æ‹©å®‰è£…å‡çº§åŒ…(å»ºè®®ä½¿ç”¨æ­¤æ–¹å¼)
-#æ ¹æ®å®‰è£…çš„SQLç‰ˆæœ¬æŒ‰é¡ºåºå®‰è£…å‡çº§åŒ…
-#ä»¥ä¸‹åˆ—å‡ºäº†2014ç‰ˆæœ¬çš„å‡çº§åŒ…ä¸‹è½½åœ°å€
-#MicrosoftÂ® SQL ServerÂ® 2014 Service Pack 1 (SP1)
+#Èç¹ûSQL SERVERÊı¾İ¿âTLS°æ±¾½ÏµÍ
+#¿ÉÒÔÑ¡Ôñ°²×°Éı¼¶°ü(½¨ÒéÊ¹ÓÃ´Ë·½Ê½)
+#¸ù¾İ°²×°µÄSQL°æ±¾°´Ë³Ğò°²×°Éı¼¶°ü
+#ÒÔÏÂÁĞ³öÁË2014°æ±¾µÄÉı¼¶°üÏÂÔØµØÖ·
+#Microsoft? SQL Server? 2014 Service Pack 1 (SP1)
 #https://www.microsoft.com/zh-CN/download/details.aspx?id=46694
-#MicrosoftÂ® SQL ServerÂ® 2014 Service Pack 2 (SP2)
+#Microsoft? SQL Server? 2014 Service Pack 2 (SP2)
 #https://www.microsoft.com/zh-CN/download/details.aspx?id=53168
-#MicrosoftÂ® SQL ServerÂ® 2014 Service Pack 3 (SP3)
+#Microsoft? SQL Server? 2014 Service Pack 3 (SP3)
 #https://www.microsoft.com/zh-CN/download/details.aspx?id=57474
-#SQL Server 2014 SP3 å®‰å…¨æ›´æ–°ç¨‹åº (KB4505218)
+#SQL Server 2014 SP3 °²È«¸üĞÂ³ÌĞò (KB4505218)
 #https://www.microsoft.com/zh-cn/download/details.aspx?id=58487
 
-#æˆ–è€…é™çº§TLSç‰ˆæœ¬
-#æ–¹å¼ä¸€
+#»òÕß½µ¼¶TLS°æ±¾
+#·½Ê½Ò»
 #RUN sed -i 's/TLSv1.2/TLSv1.0/g' /etc/ssl/openssl.cnf
-#æ–¹å¼äºŒ
+#·½Ê½¶ş
 #RUN sed -i 's/MinProtocol = TLSv1.2/MinProtocol = TLSv1/g' /etc/ssl/openssl.cnf
 #RUN sed -i 's/MinProtocol = TLSv1.2/MinProtocol = TLSv1/g' /usr/lib/ssl/openssl.cnf
 
-#æ„å»ºé•œåƒ
+#¹¹½¨¾µÏñ
 #docker build -f Dockerfile.not-build -t lctr/simple-api .
-#åˆ›å»ºå·
+#´´½¨¾í
 #docker volume create app_data_storage
-#åˆ›å»ºå®¹å™¨å¹¶è¿è¡Œ
-#docker run -it -v app_data_storage lctr/simple-api
-#è¿›å…¥å®¹å™¨
+#´´½¨ÈİÆ÷²¢ÔËĞĞ
+#docker run -v app_data_storage:/simple-api --network bridge --name simple-api -p 5001:443 -p 5000:80 --name simple-api --restart always lctr/simple-api
+#½øÈëÈİÆ÷
 #docker exec -it [id] /bin/sh
+#¸´ÖÆÊı¾İµ½¹²Ïí¾íÖĞ(adminÖ¸µÄÊÇftpµÄÓÃ»§¸ùÄ¿Â¼)
+#cp -r /app/wwwroot /simple-api/admin
+#ÇåÀíÄ¿Â¼
+#rm -rf /app/wwwroot
