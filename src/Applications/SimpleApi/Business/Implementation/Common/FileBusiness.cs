@@ -12,13 +12,11 @@ using Microservice.Library.Extension;
 using Microservice.Library.File;
 using Microservice.Library.FreeSql.Extention;
 using Microservice.Library.FreeSql.Gen;
-using Microservice.Library.Http;
 using Microservice.Library.OpenApi.Extention;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Model.Common;
 using Model.Common.FileDTO;
-using Model.Utils.Config;
 using Model.Utils.Pagination;
 using System;
 using System.Collections.Generic;
@@ -150,16 +148,14 @@ namespace Business.Implementation.Common
         /// <summary>
         /// 获取预览图
         /// </summary>
-        /// <param name="suffix">文件后缀</param>
+        /// <param name="extension">文件后缀</param>
         /// <returns></returns>
-#pragma warning disable IDE0051 // 删除未使用的私有成员
-        string GetPreviewImage(string suffix = null)
-#pragma warning restore IDE0051 // 删除未使用的私有成员
+        string GetPreviewImage(string extension = null)
         {
-            if (suffix.IsNullOrEmpty())
+            if (extension.IsNullOrEmpty())
                 goto empty;
 
-            var previewfile = Path.Combine(PreviewDir, $"{suffix.TrimStart('.')}.png");
+            var previewfile = Path.Combine(PreviewDir, $"{extension.TrimStart('.')}.png");
             if (File.Exists(previewfile))
                 return previewfile;
 
@@ -390,12 +386,14 @@ namespace Business.Implementation.Common
 
         public List<FileInfo> GetList(PaginationDTO pagination)
         {
-            var list = Orm.Select<Common_File>()
+            var entityList = Orm.Select<Common_File>()
                         .Where(o => Operator.IsAdmin == true || o.CreatorId == Operator.AuthenticationInfo.Id)
                         .GetPagination(pagination)
-                        .ToDtoList<Common_File, FileInfo>(typeof(FileInfo).GetNamesWithTagAndOther(true, "_List"));
+                        .ToList<Common_File, FileInfo>(typeof(FileInfo).GetNamesWithTagAndOther(true, "_List"));
 
-            return list;
+            var result = Mapper.Map<List<FileInfo>>(entityList);
+
+            return result;
         }
 
         public FileInfo GetDetail(string id)
@@ -541,6 +539,8 @@ namespace Business.Implementation.Common
                 newData.Path = url;
             }
 
+            newData.State = FileState.可用;
+
             newData.InitEntity();
             var entity = Mapper.Map<Common_File>(newData);
             Repository.Insert(entity);
@@ -579,6 +579,8 @@ namespace Business.Implementation.Common
                 newData.Path = url;
             }
 
+            newData.State = FileState.可用;
+
             newData.InitEntity();
             var entity = Mapper.Map<Common_File>(newData);
             Repository.Insert(entity);
@@ -608,6 +610,7 @@ namespace Business.Implementation.Common
 
             newData.Bytes = FileHelper.GetFileBytes(newData.Path);
             newData.Size = FileHelper.GetFileSize(newData.Bytes.Value);
+            newData.State = FileState.可用;
 
             newData.InitEntity();
             var entity = Mapper.Map<Common_File>(newData);
@@ -638,6 +641,7 @@ namespace Business.Implementation.Common
 
             newData.Bytes = rs.Length;
             newData.Size = FileHelper.GetFileSize(newData.Bytes.Value);
+            newData.State = FileState.可用;
 
             newData.InitEntity();
             var entity = Mapper.Map<Common_File>(newData);
@@ -705,7 +709,11 @@ namespace Business.Implementation.Common
                 await ResponseFile(response, imagePath);
             }
             else
-                throw new MessageException("此文件不支持预览.");
+            {
+                await ResponseFile(response, GetPreviewImage(file.Extension));
+            }
+
+            //throw new MessageException("此文件不支持预览.");
         }
 
         public async Task Browse(string id)

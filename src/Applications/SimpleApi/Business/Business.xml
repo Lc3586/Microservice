@@ -293,7 +293,7 @@
             <summary>
             获取预览图
             </summary>
-            <param name="suffix">文件后缀</param>
+            <param name="extension">文件后缀</param>
             <returns></returns>
         </member>
         <member name="M:Business.Implementation.Common.FileBusiness.ResponseImage(Microsoft.AspNetCore.Http.HttpResponse,ImageProcessorCore.Image)">

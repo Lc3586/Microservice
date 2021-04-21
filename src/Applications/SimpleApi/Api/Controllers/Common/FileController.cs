@@ -134,7 +134,7 @@ namespace Api.Controllers
         /// <param name="file">分片文件</param>
         /// <returns></returns>
         [HttpPost("upload-single-chunkfile/{key}/{md5}")]
-        public async Task<object> SingleChunkFile(string key, string md5, [FromForm] IFormFile file)
+        public async Task<object> SingleChunkFile(string key, string md5, IFormFile file)
         {
             await FileBusiness.SingleChunkFile(key, md5, file);
             return await Task.FromResult(Success());
@@ -166,7 +166,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "文件信息", typeof(FileInfo))]
         public async Task<object> SingleImageFromUrl([FromBody] string url, bool download = false, string filename = null)
         {
-            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(FileBusiness.SingleImageFromUrl(url, download, filename))));
+            return OpenApiJsonContent(ResponseDataFactory.Success(await FileBusiness.SingleImageFromUrl(url, download, filename)));
         }
 
         /// <summary>
@@ -180,7 +180,7 @@ namespace Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, "文件信息", typeof(FileInfo))]
         public async Task<object> SingleFileFromUrl([FromBody] string url, bool download = false, string filename = null)
         {
-            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(FileBusiness.SingleFileFromUrl(url, download, filename))));
+            return OpenApiJsonContent(ResponseDataFactory.Success(await FileBusiness.SingleFileFromUrl(url, download, filename)));
         }
 
         /// <summary>
@@ -204,9 +204,9 @@ namespace Api.Controllers
         /// <returns></returns>
         [HttpPost("upload-single-file")]
         [SwaggerResponse((int)HttpStatusCode.OK, "文件信息", typeof(FileInfo))]
-        public async Task<object> SingleFile([FromForm] IFormFile file, string filename = null)
+        public async Task<object> SingleFile(IFormFile file, string filename = null)
         {
-            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(FileBusiness.SingleFile(file, filename))));
+            return OpenApiJsonContent(ResponseDataFactory.Success(await FileBusiness.SingleFile(file, filename)));
         }
 
         /// <summary>
@@ -219,9 +219,9 @@ namespace Api.Controllers
         /// <param name="time">视频的时间轴位置</param>
         /// <returns></returns>
         [HttpGet("preview/{id}")]
-        public void Preview(string id, int width = 300, int height = 300, TimeSpan? time = null)
+        public async Task Preview(string id, int width = 300, int height = 300, TimeSpan? time = null)
         {
-            FileBusiness.Preview(id, width, height, time);
+            await FileBusiness.Preview(id, width, height, time);
         }
 
         /// <summary>
@@ -230,9 +230,9 @@ namespace Api.Controllers
         /// <param name="id">文件Id</param>
         /// <returns></returns>
         [HttpGet("browse/{id}")]
-        public void Browse(string id)
+        public async Task Browse(string id)
         {
-            FileBusiness.Browse(id);
+            await FileBusiness.Browse(id);
         }
 
         /// <summary>
@@ -241,9 +241,9 @@ namespace Api.Controllers
         /// <param name="id">文件Id</param>
         /// <returns></returns>
         [HttpGet("download/{id}")]
-        public void Download(string id)
+        public async Task Download(string id)
         {
-            FileBusiness.Download(id);
+            await FileBusiness.Download(id);
         }
 
         /// <summary>
