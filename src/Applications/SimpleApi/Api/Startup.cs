@@ -200,11 +200,9 @@ namespace Api
         /// <remarks>
         /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         /// </remarks>
-#pragma warning disable IDE0060 // 删除未使用的参数
 #pragma warning disable CS0618 // 类型或成员已过时
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostingEnvironment hostingEnvironment)
 #pragma warning restore CS0618 // 类型或成员已过时
-#pragma warning restore IDE0060 // 删除未使用的参数
         {
             app.ConfiguraHostEnvironment(env, hostingEnvironment, Config);
 
@@ -223,7 +221,7 @@ namespace Api
             .UseStaticFiles(new StaticFileOptions
             {
                 //替换静态文件默认目录
-                FileProvider = new PhysicalFileProvider(Path.Combine(Config.AbsoluteStorageDirectory, "wwwroot")),
+                FileProvider = new PhysicalFileProvider(Config.AbsoluteWWWRootDirectory),
                 ServeUnknownFileTypes = true,
                 DefaultContentType = "application/octet-stream"
             })

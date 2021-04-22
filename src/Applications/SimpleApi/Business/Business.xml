@@ -363,6 +363,14 @@
             <param name="state">状态<see cref="T:Model.Common.FileState"/></param>
             <returns></returns>
         </member>
+        <member name="M:Business.Implementation.Common.FileBusiness.FileExists(Model.Common.FileDTO.FileInfo)">
+            <summary>
+            文件是否已存在
+            </summary>
+            <remarks>需要先计算MD5值</remarks>
+            <param name="file"></param>
+            <returns></returns>
+        </member>
         <member name="M:Business.Implementation.Common.FileBusiness.AddChunkFile(System.String,System.String,System.String,System.Int32,System.Int32,System.String)">
             <summary>
             新增分片文件信息
@@ -670,12 +678,11 @@
             <param name="filename">文件重命名</param>
             <returns></returns>
         </member>
-        <member name="M:Business.Interface.Common.IFileBusiness.SingleImageFromUrl(System.String,System.Boolean,System.String)">
+        <member name="M:Business.Interface.Common.IFileBusiness.SingleImageFromBase64(System.String,System.String)">
             <summary>
-            通过外链上传单个图片
+            通过Base64字符串上传单个图片
             </summary>
-            <param name="url">外链地址</param>
-            <param name="download">是否下载资源</param>
+            <param name="base64">Base64字符串</param>
             <param name="filename">文件重命名</param>
             <returns></returns>
         </member>
@@ -685,14 +692,6 @@
             </summary>
             <param name="url">外链地址</param>
             <param name="download">是否下载资源</param>
-            <param name="filename">文件重命名</param>
-            <returns></returns>
-        </member>
-        <member name="M:Business.Interface.Common.IFileBusiness.SingleImageFromBase64(System.String,System.String)">
-            <summary>
-            通过Base64字符串上传单个图片
-            </summary>
-            <param name="base64">Base64字符串</param>
             <param name="filename">文件重命名</param>
             <returns></returns>
         </member>

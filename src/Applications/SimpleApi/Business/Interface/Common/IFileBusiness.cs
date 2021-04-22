@@ -85,13 +85,12 @@ namespace Business.Interface.Common
         FileInfo UploadChunkFileFinished(string file_md5, int specs, int total, string filename = null);
 
         /// <summary>
-        /// 通过外链上传单个图片
+        /// 通过Base64字符串上传单个图片
         /// </summary>
-        /// <param name="url">外链地址</param>
-        /// <param name="download">是否下载资源</param>
+        /// <param name="base64">Base64字符串</param>
         /// <param name="filename">文件重命名</param>
         /// <returns></returns>
-        Task<FileInfo> SingleImageFromUrl(string url, bool download = false, string filename = null);
+        Task<FileInfo> SingleImageFromBase64(string base64, string filename = null);
 
         /// <summary>
         /// 通过外链上传单个文件
@@ -101,14 +100,6 @@ namespace Business.Interface.Common
         /// <param name="filename">文件重命名</param>
         /// <returns></returns>
         Task<FileInfo> SingleFileFromUrl(string url, bool download = false, string filename = null);
-
-        /// <summary>
-        /// 通过Base64字符串上传单个图片
-        /// </summary>
-        /// <param name="base64">Base64字符串</param>
-        /// <param name="filename">文件重命名</param>
-        /// <returns></returns>
-        FileInfo SingleImageFromBase64(string base64, string filename = null);
 
         /// <summary>
         /// 上传单个文件

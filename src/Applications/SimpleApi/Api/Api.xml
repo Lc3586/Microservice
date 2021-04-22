@@ -140,6 +140,13 @@
             <param name="config"></param>
             <remarks></remarks>
         </member>
+        <member name="M:Api.Configures.HostEnvironmentConfigura.Copy(System.String,System.String)">
+            <summary>
+            复制文件
+            </summary>
+            <param name="source"></param>
+            <param name="destination"></param>
+        </member>
         <member name="T:Api.Configures.KafkaConfigura">
             <summary>
             Kafka中间件配置类
@@ -385,12 +392,11 @@
             <param name="filename">文件重命名</param>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.FileController.SingleImageFromUrl(System.String,System.Boolean,System.String)">
+        <member name="M:Api.Controllers.FileController.SingleImageFromBase64(System.String,System.String)">
             <summary>
-            通过外链上传单个图片
+            通过Base64字符串上传单个图片
             </summary>
-            <param name="url">外链地址</param>
-            <param name="download">是否下载资源</param>
+            <param name="base64">Base64字符串</param>
             <param name="filename">文件重命名</param>
             <returns></returns>
         </member>
@@ -400,14 +406,6 @@
             </summary>
             <param name="url">外链地址</param>
             <param name="download">是否下载资源</param>
-            <param name="filename">文件重命名</param>
-            <returns></returns>
-        </member>
-        <member name="M:Api.Controllers.FileController.SingleImageFromBase64(System.String,System.String)">
-            <summary>
-            通过Base64字符串上传单个图片
-            </summary>
-            <param name="base64">Base64字符串</param>
             <param name="filename">文件重命名</param>
             <returns></returns>
         </member>

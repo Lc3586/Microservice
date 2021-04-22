@@ -2,6 +2,7 @@
 using Business.Handler;
 using Business.Interface.Common;
 using Business.Utils;
+using Business.Utils.Log;
 using Business.Utils.Pagination;
 using Entity.Common;
 using FreeSql;
@@ -17,6 +18,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Model.Common;
 using Model.Common.FileDTO;
+using Model.Utils.Log;
 using Model.Utils.Pagination;
 using System;
 using System.Collections.Generic;
@@ -41,7 +43,6 @@ namespace Business.Implementation.Common
             IFreeSqlProvider freeSqlProvider,
             IAutoMapperProvider autoMapperProvider,
             IHttpContextAccessor httpContextAccessor,
-            IWebHostEnvironment webHostEnvironment,
             ChunkFileMergeHandler mergeHandler)
         {
             Orm = freeSqlProvider.GetFreeSql();
@@ -50,9 +51,9 @@ namespace Business.Implementation.Common
             Repository_FileChunk = Orm.GetRepository<Common_ChunkFile, string>();
             HttpContextAccessor = httpContextAccessor;
             MergeHandler = mergeHandler;
-            FileStateDir = $"{webHostEnvironment.WebRootPath}/filestate";
-            PreviewDir = $"{webHostEnvironment.WebRootPath}/filetypes";
-            BaseDir = $"{webHostEnvironment.ContentRootPath}/upload/{DateTime.Now:yyyy-MM-dd}";
+            FileStateDir = $"{Config.AbsoluteWWWRootDirectory}/filestate";
+            PreviewDir = $"{Config.AbsoluteWWWRootDirectory}/filetypes";
+            BaseDir = $"{Config.AbsoluteStorageDirectory}/upload/{DateTime.Now:yyyy-MM-dd}";
         }
 
         #endregion
@@ -101,8 +102,8 @@ namespace Business.Implementation.Common
             catch (Exception ex)
             {
                 //var code = Marshal.GetLastWin32Error();
-                //throw new ApplicationException($"文件不支持: {code}", ex);
-                throw new ApplicationException("文件保存失败.", ex);
+                //throw new MessageException($"文件不支持: {code}", ex);
+                throw new MessageException("文件保存失败.", ex);
             }
         }
 
@@ -111,9 +112,7 @@ namespace Business.Implementation.Common
         /// </summary>
         /// <param name="bytes">文件</param>
         /// <param name="path">绝对路径</param>
-#pragma warning disable IDE0051 // 删除未使用的私有成员
         static async Task Save(byte[] bytes, string path)
-#pragma warning restore IDE0051 // 删除未使用的私有成员
         {
             try
             {
@@ -122,7 +121,7 @@ namespace Business.Implementation.Common
             }
             catch (Exception ex)
             {
-                throw new ApplicationException("文件保存失败.", ex);
+                throw new MessageException("文件保存失败.", ex);
             }
         }
 
@@ -135,13 +134,14 @@ namespace Business.Implementation.Common
         {
             try
             {
+                stream.Seek(0, SeekOrigin.Begin);
                 using var fs = File.Create(path);
                 await stream.CopyToAsync(fs);
             }
             catch (Exception ex)
             {
                 var code = Marshal.GetLastWin32Error();
-                throw new ApplicationException($"文件不支持: {code}", ex);
+                throw new MessageException($"文件不支持: {code}", ex);
             }
         }
 
@@ -168,9 +168,7 @@ namespace Business.Implementation.Common
         /// </summary>
         /// <param name="response"></param>
         /// <param name="img"></param>
-#pragma warning disable IDE0051 // 删除未使用的私有成员
         static async Task ResponseImage(HttpResponse response, Image img)
-#pragma warning restore IDE0051 // 删除未使用的私有成员
         {
             using MemoryStream ms = new MemoryStream();
             img.Save(ms);
@@ -183,9 +181,7 @@ namespace Business.Implementation.Common
         /// </summary>
         /// <param name="response"></param>
         /// <param name="stream">流</param>
-#pragma warning disable IDE0051 // 删除未使用的私有成员
         static async Task ResponseImage(HttpResponse response, Stream stream)
-#pragma warning restore IDE0051 // 删除未使用的私有成员
         {
             response.ContentLength = stream.Length;
             await stream.CopyToAsync(response.Body);
@@ -250,12 +246,11 @@ namespace Business.Implementation.Common
         /// </summary>
         /// <param name="stream"></param>
         /// <returns></returns>
-#pragma warning disable IDE0051 // 删除未使用的私有成员
         static async Task<string> GetMD5(Stream stream)
-#pragma warning restore IDE0051 // 删除未使用的私有成员
         {
             using var md5 = MD5.Create();
 
+            stream.Seek(0, SeekOrigin.Begin);
             var md5Byte = await md5.ComputeHashAsync(stream);
             var md5String = BitConverter.ToString(md5Byte);
 
@@ -316,6 +311,35 @@ namespace Business.Implementation.Common
         {
             var fileinfo = Mapper.Map<FileInfo>(GetFile(md5, state));
             return fileinfo;
+        }
+
+        /// <summary>
+        /// 文件是否已存在
+        /// </summary>
+        /// <remarks>需要先计算MD5值</remarks>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        bool FileExists(FileInfo file)
+        {
+            if (file.MD5.IsNullOrWhiteSpace())
+                throw new MessageException("请先计算文件MD5值.");
+
+            var state = GetFileState(file.MD5, false);
+
+            if (state.State != FileState.处理中 && state.State == FileState.可用)
+                return false;
+
+            var exists = Repository.Find(state.Id).InitEntity();
+            file.State = exists.State;
+            file.StorageType = exists.StorageType;
+            file.FileType = exists.FileType;
+            file.Extension = exists.Extension;
+            file.ContentType = exists.ContentType;
+            file.Path = exists.Path;
+            file.Bytes = exists.Bytes;
+            file.Size = exists.Size;
+
+            return true;
         }
 
         /// <summary>
@@ -432,7 +456,6 @@ namespace Business.Implementation.Common
                 var file = Repository.Find(state.Id).InitEntity();
 
                 file.Name = filename;
-                file.FullName = $"{filename}{file.Extension}";
 
                 Repository.Insert(file);
 
@@ -472,6 +495,9 @@ namespace Business.Implementation.Common
 
         public async Task SingleChunkFile(string key, string md5, IFormFile file)
         {
+            if (file == null)
+                throw new MessageException("未上传任何文件.");
+
             var baseDirPath = Path.Combine(BaseDir, $"chunkfiles/{key}");
 
             if (!Directory.Exists(baseDirPath))
@@ -506,7 +532,7 @@ namespace Business.Implementation.Common
             return Mapper.Map<FileInfo>(file);
         }
 
-        public async Task<FileInfo> SingleImageFromUrl(string url, bool download = false, string filename = null)
+        public async Task<FileInfo> SingleImageFromBase64(string base64, string filename = null)
         {
             if (!Directory.Exists(BaseDir))
                 Directory.CreateDirectory(BaseDir);
@@ -514,29 +540,24 @@ namespace Business.Implementation.Common
             var newData = new FileInfo
             {
                 Name = filename ?? Guid.NewGuid().ToString(),
-                FileType = FileType.图片
+                StorageType = StorageType.Path
             };
 
-            if (download)
+            var image = ImgHelper.GetImgFromBase64Url(base64);
+            using var ms = new MemoryStream();
+            image.Save(ms);
+
+            newData.MD5 = await GetMD5(ms);
+            if (!FileExists(newData))
             {
-                newData.StorageType = StorageType.Path;
-                newData.FullName = $"{newData.Name}.jpg";
+                newData.FileType = FileType.图片;
                 newData.Extension = ".jpg";
                 newData.ContentType = "image/jpg";
                 newData.Path = Path.Combine(BaseDir, $"{Guid.NewGuid()}{newData.Extension}");
+                newData.Bytes = ms.Length;
+                newData.Size = FileHelper.GetFileSize(ms.Length);
 
-                using var client = new WebClient();
-                var stream = await client.OpenReadTaskAsync(url);
-                await Save(stream, newData.Path);
-
-                newData.Bytes = stream.Length;
-                newData.Size = FileHelper.GetFileSize(newData.Bytes.Value);
-            }
-            else
-            {
-                newData.FullName = newData.Name;
-                newData.StorageType = StorageType.Uri;
-                newData.Path = url;
+                await Save(ms, newData.Path);
             }
 
             newData.State = FileState.可用;
@@ -553,64 +574,52 @@ namespace Business.Implementation.Common
             if (!Directory.Exists(BaseDir))
                 Directory.CreateDirectory(BaseDir);
 
-            var newData = new FileInfo
-            {
-                Name = filename ?? Guid.NewGuid().ToString(),
-                FileType = FileType.外链资源
-            };
-
-            newData.FullName = newData.Name;
+            var newData = new FileInfo { Name = filename };
 
             if (download)
             {
-                newData.StorageType = StorageType.Path;
                 newData.Path = Path.Combine(BaseDir, $"{Guid.NewGuid()}");
 
                 using var client = new WebClient();
-                var stream = await client.OpenReadTaskAsync(url);
-                await Save(stream, newData.Path);
 
-                newData.Bytes = stream.Length;
-                newData.Size = FileHelper.GetFileSize(newData.Bytes.Value);
+                using var ms = new MemoryStream();
+                var stream = await client.OpenReadTaskAsync(url);
+                await stream.CopyToAsync(ms);
+
+                newData.MD5 = await GetMD5(ms);
+
+                if (!FileExists(newData))
+                {
+                    newData.ContentType = client.ResponseHeaders.Get("Content-Type") ?? "applicatoin/octet-stream";
+
+                    var contentDisposition = client.ResponseHeaders.Get("Content-Disposition");
+                    var index = contentDisposition?.IndexOf("filename=\"") ?? 0;
+                    if (index > 0)
+                    {
+                        var fullName = contentDisposition[index..].TrimEnd('\"');
+                        newData.Extension = Path.GetExtension(fullName);
+                        if (newData.Name.IsNullOrWhiteSpace())
+                            newData.Name = Path.GetFileNameWithoutExtension(fullName);
+                    }
+
+                    newData.StorageType = StorageType.Path;
+                    newData.FileType = FileType.GetFileType(newData.Extension);
+                    newData.Path = Path.Combine(BaseDir, $"{Guid.NewGuid()}{newData.Extension}");
+                    newData.Bytes = ms.Length;
+                    newData.Size = FileHelper.GetFileSize(ms.Length);
+
+                    await Save(ms, newData.Path);
+                }
             }
             else
             {
+                newData.FileType = FileType.外链资源;
                 newData.StorageType = StorageType.Uri;
                 newData.Path = url;
+                newData.State = FileState.可用;
             }
 
-            newData.State = FileState.可用;
-
-            newData.InitEntity();
-            var entity = Mapper.Map<Common_File>(newData);
-            Repository.Insert(entity);
-
-            return newData;
-        }
-
-        public FileInfo SingleImageFromBase64(string base64, string filename = null)
-        {
-            if (!Directory.Exists(BaseDir))
-                Directory.CreateDirectory(BaseDir);
-
-            var newData = new FileInfo
-            {
-                Name = filename ?? Guid.NewGuid().ToString(),
-                StorageType = StorageType.Path,
-                FileType = FileType.图片,
-                Extension = ".jpg",
-                ContentType = "image/jpg"
-            };
-
-            newData.FullName = $"{newData.Name}.jpg";
-            newData.Path = Path.Combine(BaseDir, $"{Guid.NewGuid()}{newData.Extension}");
-
-            var image = ImgHelper.GetImgFromBase64Url(base64);
-            Save(image, newData.Path);
-
-            newData.Bytes = FileHelper.GetFileBytes(newData.Path);
-            newData.Size = FileHelper.GetFileSize(newData.Bytes.Value);
-            newData.State = FileState.可用;
+            newData.Name ??= Guid.NewGuid().ToString();
 
             newData.InitEntity();
             var entity = Mapper.Map<Common_File>(newData);
@@ -621,6 +630,9 @@ namespace Business.Implementation.Common
 
         public async Task<FileInfo> SingleFile(IFormFile file, string filename = null)
         {
+            if (file == null)
+                throw new MessageException("未上传任何文件.");
+
             if (!Directory.Exists(BaseDir))
                 Directory.CreateDirectory(BaseDir);
 
@@ -632,7 +644,6 @@ namespace Business.Implementation.Common
                 StorageType = StorageType.Path
             };
 
-            newData.FullName = $"{newData.Name}{newData.Extension}";
             newData.FileType = FileType.GetFileType(newData.Extension);
             newData.Path = Path.Combine(BaseDir, $"{Guid.NewGuid()}{newData.Extension}");
 
@@ -668,13 +679,10 @@ namespace Business.Implementation.Common
                 throw new MessageException("此文件不支持预览.");
 
             if (!FileHelper.Exists(file.Path))
-                throw new ApplicationException("文件已被删除.");
+                throw new MessageException("文件已被删除.");
 
             if (file.FileType == FileType.图片)
             {
-                response.StatusCode = StatusCodes.Status200OK;
-                response.ContentType = file.ContentType;
-
                 var imagePath = $"{file.Path.Replace(file.Extension, "")}-Screenshot/{width}x{height}.jpg";
 
                 if (!imagePath.Exists())
@@ -690,26 +698,40 @@ namespace Business.Implementation.Common
                        .Save(newFS);
                 }
 
+                response.ContentType = file.ContentType;
                 await ResponseFile(response, imagePath);
             }
             else if (file.FileType == FileType.视频)
             {
-                response.StatusCode = StatusCodes.Status200OK;
-                response.ContentType = file.ContentType;
-
                 var imagePath = $"{file.Path.Replace(file.Extension, "")}-Screenshot/{width}x{height}.jpg";
 
                 if (!imagePath.Exists())
                 {
-                    if (!Directory.Exists(imagePath))
-                        Directory.CreateDirectory(imagePath);
-                    await file.Path.Screenshot(imagePath, time ?? TimeSpan.FromSeconds(1), 31, width, height);
+                    try
+                    {
+                        await file.Path.Screenshot(imagePath, time ?? TimeSpan.FromSeconds(1), 31, width, height);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Log(
+                            NLog.LogLevel.Warn,
+                            LogType.警告信息,
+                            "视频文件截图失败.",
+                            $"File: {file.Path}, Time: {time ?? TimeSpan.FromSeconds(1)}, quality: 31, width: {width}, height: {height}.",
+                            ex);
+
+                        response.ContentType = "image/jpg";
+                        await ResponseFile(response, GetPreviewImage(file.Extension));
+                        return;
+                    }
                 }
 
+                response.ContentType = "image/jpg";
                 await ResponseFile(response, imagePath);
             }
             else
             {
+                response.ContentType = "image/jpg";
                 await ResponseFile(response, GetPreviewImage(file.Extension));
             }
 
@@ -733,9 +755,7 @@ namespace Business.Implementation.Common
             else if (file.StorageType != StorageType.Path)
                 throw new MessageException("此文件不支持浏览.");
 
-            response.StatusCode = StatusCodes.Status200OK;
             response.ContentType = file.ContentType;
-
             await ResponseFile(response, file.Path);
         }
 
@@ -756,10 +776,9 @@ namespace Business.Implementation.Common
             else if (file.StorageType != StorageType.Path)
                 throw new MessageException("此文件不支持下载.");
 
-            response.StatusCode = StatusCodes.Status200OK;
-
-            response.ContentType = "applicatoin/octet-stream";
-            response.Headers.Add("Content-Disposition", $"attachment; filename=\"{UrlEncoder.Default.Encode(file.FullName)}\"");
+            response.ContentType = file.ContentType;
+            //response.ContentType = "applicatoin/octet-stream";
+            response.Headers.Add("Content-Disposition", $"attachment; filename=\"{UrlEncoder.Default.Encode($"{file.Name}{file.Extension}")}\"");
 
             await ResponseFile(response, file.Path);
         }

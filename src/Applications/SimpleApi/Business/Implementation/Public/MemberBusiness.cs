@@ -313,7 +313,7 @@ namespace Business.Implementation.Public
                 });
 
                 if (Repository.Update(entity) <= 0)
-                    throw new ApplicationException($"{(enable ? "启用" : "禁用")}会员失败");
+                    throw new MessageException($"{(enable ? "启用" : "禁用")}会员失败");
             });
 
             if (!success)

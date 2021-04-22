@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace Api.Configures
 {
@@ -139,10 +140,13 @@ namespace Api.Configures
                 s.EnableFilter();//启用顶部筛选框
 
                 //注入自定义文件
-                var dirPath = Path.Combine(config.AbsoluteStorageDirectory, "wwwroot/swagger");
+                var dirPath = Path.Combine(config.AbsoluteWWWRootDirectory, "swagger");
                 InjectFileFromDir(new DirectoryInfo(dirPath));
                 void InjectFileFromDir(DirectoryInfo dir)
                 {
+                    if (!dir.Exists)
+                        return;
+
                     foreach (var file in dir.GetFiles())
                     {
                         if (file.Name.Contains("casLogin"))
@@ -158,7 +162,13 @@ namespace Api.Configures
                                 continue;
                         }
 
-                        var index = file.FullName.IndexOf("/swagger/") + 1;
+                        string key = string.Empty;
+                        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                            key = "/swagger/";
+                        else
+                            key = "\\swagger\\";
+
+                        var index = file.FullName.IndexOf(key) + 1;
 
                         if (file.Extension == ".js")
                             s.InjectJavascript(file.FullName[index..]);

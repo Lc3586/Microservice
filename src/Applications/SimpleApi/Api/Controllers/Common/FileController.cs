@@ -156,17 +156,16 @@ namespace Api.Controllers
         }
 
         /// <summary>
-        /// 通过外链上传单个图片
+        /// 通过Base64字符串上传单个图片
         /// </summary>
-        /// <param name="url">外链地址</param>
-        /// <param name="download">是否下载资源</param>
+        /// <param name="base64">Base64字符串</param>
         /// <param name="filename">文件重命名</param>
         /// <returns></returns>
-        [HttpPost("upload-single-image-url")]
+        [HttpPost("upload-single-image-base64")]
         [SwaggerResponse((int)HttpStatusCode.OK, "文件信息", typeof(FileInfo))]
-        public async Task<object> SingleImageFromUrl([FromBody] string url, bool download = false, string filename = null)
+        public async Task<object> SingleImageFromBase64([FromBody] string base64, string filename = null)
         {
-            return OpenApiJsonContent(ResponseDataFactory.Success(await FileBusiness.SingleImageFromUrl(url, download, filename)));
+            return OpenApiJsonContent(ResponseDataFactory.Success(await FileBusiness.SingleImageFromBase64(base64, filename)));
         }
 
         /// <summary>
@@ -181,19 +180,6 @@ namespace Api.Controllers
         public async Task<object> SingleFileFromUrl([FromBody] string url, bool download = false, string filename = null)
         {
             return OpenApiJsonContent(ResponseDataFactory.Success(await FileBusiness.SingleFileFromUrl(url, download, filename)));
-        }
-
-        /// <summary>
-        /// 通过Base64字符串上传单个图片
-        /// </summary>
-        /// <param name="base64">Base64字符串</param>
-        /// <param name="filename">文件重命名</param>
-        /// <returns></returns>
-        [HttpPost("upload-single-image-base64")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "文件信息", typeof(FileInfo))]
-        public async Task<object> SingleImageFromBase64([FromBody] string base64, string filename = null)
-        {
-            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(FileBusiness.SingleImageFromBase64(base64, filename))));
         }
 
         /// <summary>

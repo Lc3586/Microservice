@@ -90,7 +90,7 @@ namespace Api
                 });
 
                 if (newData.Any() && await orm.Insert(newData).ExecuteAffrowsAsync() <= 0)
-                    throw new ApplicationException($"新增数据失败, 共{newData.Count}条数据.");
+                    throw new MessageException($"新增数据失败, 共{newData.Count}条数据.");
             }
             catch (Exception ex)
             {

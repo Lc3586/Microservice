@@ -492,7 +492,7 @@ namespace Business.Implementation.Common
                 //         .Set(o => o.Scope, scope)
                 //         .Where(o => o.AppId == appId && o.OpenId == openId)
                 //         .ExecuteAffrows() <= 0)
-                //        throw new ApplicationException($"更新微信用户作用域失败, \r\n\topenId: {openId}, \r\n\tscope: {scope}.");
+                //        throw new MessageException($"更新微信用户作用域失败, \r\n\topenId: {openId}, \r\n\tscope: {scope}.");
             }
             else
             {

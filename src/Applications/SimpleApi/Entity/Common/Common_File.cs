@@ -36,13 +36,6 @@ namespace Entity.Common
         public string Name { get; set; }
 
         /// <summary>
-        /// 完整名称
-        /// </summary>
-        [OpenApiSubTag("List", "Detail", "FileInfo")]
-        [Column(StringLength = 300)]
-        public string FullName { get; set; }
-
-        /// <summary>
         /// 文件类型
         /// <para>电子文档</para>
         /// <para>电子表格</para>
@@ -50,6 +43,7 @@ namespace Entity.Common
         /// <para>音频</para>
         /// <para>视频</para>
         /// <para>压缩包</para>
+        /// <para>外链资源</para>
         /// </summary>
         [OpenApiSubTag("List", "Detail", "FileInfo")]
         [Column(StringLength = 10)]

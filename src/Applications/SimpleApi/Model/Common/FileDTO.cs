@@ -213,6 +213,11 @@ namespace Model.Common.FileDTO
     public class FileInfo : Common_File
     {
         /// <summary>
+        /// 完整名称
+        /// </summary>
+        public string FullName => $"{Name}{Extension}";
+
+        /// <summary>
         /// 来源成员映射选项
         /// </summary>
         [OpenApiIgnore]

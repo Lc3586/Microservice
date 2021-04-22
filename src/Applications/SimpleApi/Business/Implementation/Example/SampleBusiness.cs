@@ -185,7 +185,7 @@ namespace Business.Implementation.Example
                 });
 
                 if (Repository.Update(entity) <= 0)
-                    throw new ApplicationException($"{(enable ? "启用" : "禁用")}示例数据失败");
+                    throw new MessageException($"{(enable ? "启用" : "禁用")}示例数据失败");
             });
 
             if (!success)

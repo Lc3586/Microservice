@@ -1,15 +1,47 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
 FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
+
+#安装ffmpeg
 RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list \
     && apt-get update \
     && apt-get install -y ffmpeg \
     && apt-get clean && apt-get autoclean && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/*
-
+    
+#安装libgdiplus库
 RUN apt-get update && apt-get install -y libgdiplus libc6-dev && ln -s /usr/lib/libgdiplus.so /usr/lib/gdiplus.dll
+
 #设置时区
 RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo 'Asia/Shanghai' >/etc/timezone
+
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+
+#生成
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+WORKDIR /src
+COPY ["Applications/SimpleApi/Api/Api.csproj", "Applications/SimpleApi/Api/"]
+COPY ["Applications/SimpleApi/IocServiceDemo/IocServiceDemo.csproj", "Applications/SimpleApi/IocServiceDemo/"]
+COPY ["Applications/SimpleApi/SoapServices/SoapServices.csproj", "Applications/SimpleApi/SoapServices/"]
+COPY ["Applications/SimpleApi/Model/Model.csproj", "Applications/SimpleApi/Model/"]
+COPY ["Applications/SimpleApi/Entity/Entity.csproj", "Applications/SimpleApi/Entity/"]
+COPY ["Applications/SimpleApi/Business/Business.csproj", "Applications/SimpleApi/Business/"]
+RUN dotnet restore "Applications/SimpleApi/Api/Api.csproj"
+COPY . .
+WORKDIR "/src/Applications/SimpleApi/Api"
+RUN dotnet build "Api.csproj" -c Release -o /app/build
+
+#发布
+FROM build AS publish
+RUN dotnet publish "Api.csproj" -c Release -o /app/publish
+
+#运行
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "SimpleApi.dll"]
 
 #如果SQL SERVER数据库TLS版本较低
 #可以选择安装升级包(建议使用此方式)
@@ -23,7 +55,6 @@ RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo 'Asia/Shanghai' 
 #https://www.microsoft.com/zh-CN/download/details.aspx?id=57474
 #SQL Server 2014 SP3 安全更新程序 (KB4505218)
 #https://www.microsoft.com/zh-cn/download/details.aspx?id=58487
-
 #或者降级TLS版本
 #方式一
 #RUN sed -i 's/TLSv1.2/TLSv1.0/g' /etc/ssl/openssl.cnf
@@ -32,14 +63,16 @@ RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo 'Asia/Shanghai' 
 #RUN sed -i 's/MinProtocol = TLSv1.2/MinProtocol = TLSv1/g' /usr/lib/ssl/openssl.cnf
 
 #构建镜像
-#docker build -f Dockerfile.not-build -t lctr/simple-api .
+#docker build -t lctr/simple-api .
 #创建卷
 #docker volume create app_data_storage
 #创建容器并运行
-#docker run -v app_data_storage:/simple-api --network bridge --name simple-api -p 5001:443 -p 5000:80 --name simple-api --restart always lctr/simple-api
+#docker run -v app_data_storage:/app-data --network bridge --name simple-api -p 5001:443 -p 5000:80 --name simple-api --restart always lctr/simple-api
 #进入容器
 #docker exec -it [id] /bin/sh
-#复制数据到共享卷中(admin指的是ftp的用户根目录)
-#cp -r /app/wwwroot /simple-api/admin
+
+#目前程序会自动转移wwwroot文件,无需手动复制
+#复制数据到共享卷中(simple-apin指的是ftp的用户根目录)
+#cp -r /app/wwwroot /app-data/simple-api
 #清理目录
 #rm -rf /app/wwwroot

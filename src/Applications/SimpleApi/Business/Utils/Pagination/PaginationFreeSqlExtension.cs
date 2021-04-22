@@ -70,7 +70,7 @@ namespace Business.Utils.Pagination
                 FilterCompare.notInSet => DynamicFilterOperator.NotAny,
                 FilterCompare.range => DynamicFilterOperator.Range,
                 FilterCompare.dateRange => DynamicFilterOperator.DateRange,
-                _ => throw new ApplicationException($"不支持的过滤条件: {filterCompare}"),
+                _ => throw new MessageException($"不支持的过滤条件: {filterCompare}"),
             };
         }
 

@@ -31,16 +31,38 @@ namespace Model.Utils.Config
         {
             get
             {
-                if (string.IsNullOrWhiteSpace(_AbsoluteRootDirectory))
-                    _AbsoluteRootDirectory = Path.GetFullPath(StorageDirectory ?? string.Empty, AppContext.BaseDirectory);
-                return _AbsoluteRootDirectory;
+                if (string.IsNullOrWhiteSpace(_AbsoluteStorageDirectory))
+                    _AbsoluteStorageDirectory = Path.GetFullPath(StorageDirectory ?? string.Empty, AppContext.BaseDirectory);
+                if (!Directory.Exists(_AbsoluteStorageDirectory))
+                    Directory.CreateDirectory(_AbsoluteStorageDirectory);
+                return _AbsoluteStorageDirectory;
             }
         }
 
         /// <summary>
-        /// 程序根目录绝对路径
+        /// 数据存储根目录绝对路径
         /// </summary>
-        private string _AbsoluteRootDirectory { get; set; }
+        public string _AbsoluteStorageDirectory { get; set; }
+
+        /// <summary>
+        /// 站点资源文件根目录绝对路径
+        /// </summary>
+        public string AbsoluteWWWRootDirectory
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(_AbsoluteWWWRootDirectory))
+                    _AbsoluteWWWRootDirectory = Path.Combine(AbsoluteStorageDirectory, "wwwroot");
+                if (!Directory.Exists(_AbsoluteWWWRootDirectory))
+                    Directory.CreateDirectory(_AbsoluteWWWRootDirectory);
+                return _AbsoluteWWWRootDirectory;
+            }
+        }
+
+        /// <summary>
+        /// 站点资源文件根目录绝对路径
+        /// </summary>
+        public string _AbsoluteWWWRootDirectory { get; set; }
 
         /// <summary>
         /// 超级管理员Id

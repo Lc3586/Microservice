@@ -259,11 +259,6 @@
             名称
             </summary>
         </member>
-        <member name="P:Entity.Common.Common_File.FullName">
-            <summary>
-            完整名称
-            </summary>
-        </member>
         <member name="P:Entity.Common.Common_File.FileType">
             <summary>
             文件类型
@@ -273,6 +268,7 @@
             <para>音频</para>
             <para>视频</para>
             <para>压缩包</para>
+            <para>外链资源</para>
             </summary>
         </member>
         <member name="P:Entity.Common.Common_File.ContentType">

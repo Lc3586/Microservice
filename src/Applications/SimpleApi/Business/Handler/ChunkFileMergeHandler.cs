@@ -46,18 +46,6 @@ namespace Business.Handler
 
         SystemConfig _Config;
 
-        IWebHostEnvironment WebHostEnvironment
-        {
-            get
-            {
-                if (_WebHostEnvironment == null)
-                    _WebHostEnvironment = AutofacHelper.GetService<IWebHostEnvironment>();
-                return _WebHostEnvironment;
-            }
-        }
-
-        IWebHostEnvironment _WebHostEnvironment;
-
         IFreeSql Orm
         {
             get
@@ -109,7 +97,7 @@ namespace Business.Handler
         /// <summary>
         /// 存储路径根目录相对路径
         /// </summary>
-        string BaseDir => $"{WebHostEnvironment.ContentRootPath}/upload/{DateTime.Now:yyyy-MM-dd}";
+        string BaseDir => $"{Config.AbsoluteStorageDirectory}/upload/{DateTime.Now:yyyy-MM-dd}";
 
         TaskCompletionSource<bool> TCS;
 
@@ -313,7 +301,6 @@ namespace Business.Handler
                     .Set(o => o.ContentType, task.ContentType)
                     .Set(o => o.Extension, task.Extension)
                     .Set(o => o.FileType, FileType.GetFileType(task.Extension))
-                    .Set(o => o.FullName, task.FullName)
                     .Set(o => o.Bytes, task.Bytes)
                     .Set(o => o.Size, task.Size)
                     .Set(o => o.Path, task.Path)
