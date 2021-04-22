@@ -1,4 +1,5 @@
 ﻿using Microservice.Library.Extension;
+using Microservice.Library.File;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -47,7 +48,8 @@ namespace Api.Configures
             else
             {
                 //转移静态文件目录
-                Copy(webHostEnvironment.WebRootPath, config.AbsoluteWWWRootDirectory);
+                webHostEnvironment.WebRootPath.CopyTo(config.AbsoluteWWWRootDirectory);
+
                 webHostEnvironment.ContentRootPath = config.AbsoluteStorageDirectory;
                 webHostEnvironment.WebRootPath = config.AbsoluteWWWRootDirectory;
             }
@@ -65,31 +67,6 @@ namespace Api.Configures
             }
 
             return app;
-        }
-
-        /// <summary>
-        /// 复制文件
-        /// </summary>
-        /// <param name="source"></param>
-        /// <param name="destination"></param>
-        static void Copy(string source, string destination)
-        {
-            var sourceDir = new DirectoryInfo(source);
-            if (!sourceDir.Exists)
-                return;
-
-            sourceDir.GetFiles().ForEach(file =>
-            {
-                var dir = file.DirectoryName.Replace(source, destination);
-                if (!Directory.Exists(dir))
-                    Directory.CreateDirectory(dir);
-                File.Copy(file.FullName, file.FullName.Replace(source, destination), true);
-            });
-
-            sourceDir.GetDirectories().ForEach(dir =>
-            {
-                Copy(dir.FullName, dir.FullName.Replace(source, destination));
-            });
         }
     }
 }
