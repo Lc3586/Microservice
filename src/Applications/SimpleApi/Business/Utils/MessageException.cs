@@ -14,12 +14,15 @@ namespace Business.Utils
         /// <param name="msg">消息</param>
         /// <param name="code">错误代码</param>
         /// <param name="innerException">内部异常</param>
-        public MessageException(string msg, ErrorCode code = ErrorCode.business, Exception innerException = null)
+        /// <param name="data">数据</param>
+        public MessageException(string msg, ErrorCode code = ErrorCode.business, Exception innerException = null, object data = null)
         {
             Msg = msg;
             Code = code;
             if (innerException != null)
                 InnerException = innerException;
+            if (data != null)
+                Data.Add("MessageData", data);
         }
 
         /// <summary>
@@ -27,12 +30,15 @@ namespace Business.Utils
         /// </summary>
         /// <param name="msg">消息</param>
         /// <param name="innerException">内部异常</param>
-        public MessageException(string msg, Exception innerException)
+        /// <param name="data">数据</param>
+        public MessageException(string msg, Exception innerException, object data = null)
         {
             Msg = msg;
             Code = ErrorCode.business;
             if (innerException != null)
                 InnerException = innerException;
+            if (data != null)
+                Data.Add("MessageData", data);
         }
 
         /// <summary>

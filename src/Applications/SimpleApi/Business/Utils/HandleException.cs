@@ -57,7 +57,7 @@ namespace Business.Utils
             if (Config.RunMode != RunMode.Publish && Config.RunMode != RunMode.Publish_Swagger)
                 return ResponseDataFactory.Error(
                     string.IsNullOrWhiteSpace(message) ? "系统异常" : message,
-                    exception.GetExceptionAllMsg(),
+                    exception.ExceptionToString(),
                     data,
                     code);
             else
@@ -82,14 +82,13 @@ namespace Business.Utils
                 else if (e_type == typeof(ValidationException))
                 {
                     var _ex = ex as ValidationException;
-                    data = _ex.Data;
                     code = ErrorCode.validation;
+                    data = _ex.Data;
                 }
                 else if (e_type == typeof(ApplicationException))
                 {
                     var _ex = ex as ApplicationException;
                     message += _ex.Message;
-                    data = _ex.Data;
                 }
 
                 if (ex.InnerException != null)

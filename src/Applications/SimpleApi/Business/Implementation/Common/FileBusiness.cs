@@ -14,8 +14,8 @@ using Microservice.Library.File;
 using Microservice.Library.FreeSql.Extention;
 using Microservice.Library.FreeSql.Gen;
 using Microservice.Library.OpenApi.Extention;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 using Model.Common;
 using Model.Common.FileDTO;
 using Model.Utils.Log;
@@ -192,12 +192,14 @@ namespace Business.Implementation.Common
         /// </summary>
         /// <param name="response"></param>
         /// <param name="path"></param>
-        static async Task ResponseFile(HttpResponse response, string path)
+        /// <param name="offset">偏移量</param>
+        /// <param name="count">总数</param>
+        static async Task ResponseFile(HttpResponse response, string path, long offset = 0, long? count = null)
         {
             if (!File.Exists(path))
-                throw new MessageException("文件不存在或已被删除");
+                throw new MessageException($"文件不存在或已被删除.", null, path);
 
-            await response.SendFileAsync(path);
+            await response.SendFileAsync(path, offset, count);
             //using var fs = new FileStream(path, FileMode.Open, FileAccess.Read);
             //response.ContentLength = fs.Length;
             //await fs.CopyToAsync(response.Body);
@@ -387,7 +389,7 @@ namespace Business.Implementation.Common
         void UpdateChunkFile(string taskKey, string md5, long bytes, string contentType, string extension, string path)
         {
             if (!Repository_FileChunk.Where(o => o.TaskKey == taskKey && o.MD5 == md5).Any())
-                throw new MessageException("分片文件不存在或已被移除.");
+                throw new MessageException("分片文件不存在或已被移除.", null, new { TaskKey = taskKey, MD5 = md5 });
 
             var size = FileHelper.GetFileSize(bytes);
 
@@ -399,7 +401,7 @@ namespace Business.Implementation.Common
                                             .Set(o => o.Path, path)
                                             .Set(o => o.State, FileState.可用)
                                             .ExecuteAffrows() <= 0)
-                throw new MessageException("更新分片文件信息失败.");
+                throw new MessageException("更新分片文件信息失败.", null, new { TaskKey = taskKey, MD5 = md5 });
         }
 
         #endregion
@@ -496,7 +498,7 @@ namespace Business.Implementation.Common
         public async Task SingleChunkFile(string key, string md5, IFormFile file)
         {
             if (file == null)
-                throw new MessageException("未上传任何文件.");
+                throw new MessageException("未上传任何文件.", null, new { Key = key, MD5 = md5 });
 
             var baseDirPath = Path.Combine(BaseDir, $"chunkfiles/{key}");
 
@@ -631,7 +633,7 @@ namespace Business.Implementation.Common
         public async Task<FileInfo> SingleFile(IFormFile file, string filename = null)
         {
             if (file == null)
-                throw new MessageException("未上传任何文件.");
+                throw new MessageException("未上传任何文件.", null, filename);
 
             if (!Directory.Exists(BaseDir))
                 Directory.CreateDirectory(BaseDir);
@@ -676,10 +678,10 @@ namespace Business.Implementation.Common
                 return;
             }
             else if (file.StorageType != StorageType.Path)
-                throw new MessageException("此文件不支持预览.");
+                throw new MessageException("此文件不支持预览.", null, file.StorageType);
 
             if (!FileHelper.Exists(file.Path))
-                throw new MessageException("文件已被删除.");
+                throw new MessageException("文件已被删除.", null, file.Path);
 
             if (file.FileType == FileType.图片)
             {
@@ -703,13 +705,14 @@ namespace Business.Implementation.Common
             }
             else if (file.FileType == FileType.视频)
             {
-                var imagePath = $"{file.Path.Replace(file.Extension, "")}-Screenshot/{width}x{height}.jpg";
+                time ??= TimeSpan.FromSeconds(0.001);
+                var imagePath = $"{file.Path.Replace(file.Extension, "")}-Screenshot/{width}x{height}-{time.Value:c}.jpg";
 
-                if (!imagePath.Exists())
+                if (!File.Exists(imagePath))
                 {
                     try
                     {
-                        await file.Path.Screenshot(imagePath, time ?? TimeSpan.FromSeconds(1), 31, width, height);
+                        await file.Path.Screenshot(imagePath, time.Value, 31, width, height);
                     }
                     catch (Exception ex)
                     {
@@ -717,7 +720,7 @@ namespace Business.Implementation.Common
                             NLog.LogLevel.Warn,
                             LogType.警告信息,
                             "视频文件截图失败.",
-                            $"File: {file.Path}, Time: {time ?? TimeSpan.FromSeconds(1)}, quality: 31, width: {width}, height: {height}.",
+                            $"File: {file.Path}, Time: {time.Value:c}, quality: 31, width: {width}, height: {height}.",
                             ex);
 
                         response.ContentType = "image/jpg";
@@ -753,9 +756,38 @@ namespace Business.Implementation.Common
                 return;
             }
             else if (file.StorageType != StorageType.Path)
-                throw new MessageException("此文件不支持浏览.");
+                throw new MessageException("此文件不支持浏览.", null, file.StorageType);
 
             response.ContentType = file.ContentType;
+
+            if (file.FileType == FileType.视频 || file.FileType == FileType.音频)
+            {
+                if (HttpContextAccessor.HttpContext.Request.Headers.TryGetValue("Range", out StringValues value))
+                {
+                    var rangeValue = value.ToString().Replace("bytes=", "");
+                    var range = rangeValue.Split('-');
+                    var start = range[0].ToLong();
+                    long count = 0;
+
+                    if (range.Length > 1)
+                        count = range[1].ToLong() - start;
+
+                    if (count == 0 || start + count > file.Bytes.Value)
+                        count = file.Bytes.Value - start;
+
+                    response.StatusCode = StatusCodes.Status206PartialContent;
+                    response.Headers.Add("Accept-Ranges", "bytes");
+                    response.Headers.Add("Content-Range", $"bytes {start}-{start + count - 1}/{file.Bytes}");
+
+                    response.ContentLength = count;
+
+                    await ResponseFile(response, file.Path, start, count);
+                    return;
+                }
+            }
+
+            response.ContentLength = file.Bytes;
+
             await ResponseFile(response, file.Path);
         }
 
@@ -774,9 +806,10 @@ namespace Business.Implementation.Common
                 return;
             }
             else if (file.StorageType != StorageType.Path)
-                throw new MessageException("此文件不支持下载.");
+                throw new MessageException("此文件不支持下载.", null, file.StorageType);
 
             response.ContentType = file.ContentType;
+            response.ContentLength = file.Bytes;
             //response.ContentType = "applicatoin/octet-stream";
             response.Headers.Add("Content-Disposition", $"attachment; filename=\"{UrlEncoder.Default.Encode($"{file.Name}{file.Extension}")}\"");
 
@@ -785,16 +818,24 @@ namespace Business.Implementation.Common
 
         public void Delete(List<string> ids)
         {
-            var files = Repository.Select.Where(c => ids.Contains(c.Id)).ToList(c => new { c.Id, c.Path });
+            var files = Repository.Select.Where(c => ids.Contains(c.Id)).ToList(c => new { c.Id, c.StorageType, c.Path, c.Extension });
 
             foreach (var file in files)
             {
-                if (!file.Path.IsNullOrEmpty())
-                    DeleteFile(file.Path);
+                if (file.StorageType != StorageType.Path || file.Path.IsNullOrEmpty())
+                    continue;
+
+                //原文件
+                DeleteFile(file.Path);
+
+                //缩略图&截图
+                var s = $"{file.Path.Replace(file.Extension, "")}-Screenshot";
+                if (Directory.Exists(s))
+                    Directory.Delete(s, true);
             }
 
             if (Repository.Delete(o => ids.Contains(o.Id)) <= 0)
-                throw new MessageException("未删除任何数据.");
+                throw new MessageException("未删除任何数据.", null, ids);
         }
 
         #endregion

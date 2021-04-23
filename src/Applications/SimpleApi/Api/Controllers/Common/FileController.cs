@@ -2,6 +2,7 @@
 using Business.Interface.Common;
 using Business.Utils.Authorization;
 using Microservice.Library.Extension;
+using Microservice.Library.OpenApi.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Model.Common.FileDTO;
@@ -202,10 +203,10 @@ namespace Api.Controllers
         /// <param name="id">文件Id</param>
         /// <param name="width">指定宽度</param>
         /// <param name="height">指定高度</param>
-        /// <param name="time">视频的时间轴位置</param>
+        /// <param name="time">视频的时间轴位置（默认值: 00:00:00.001）</param>
         /// <returns></returns>
         [HttpGet("preview/{id}")]
-        public async Task Preview(string id, int width = 300, int height = 300, TimeSpan? time = null)
+        public async Task Preview(string id, int width = 500, int height = 500, TimeSpan? time = null)
         {
             await FileBusiness.Preview(id, width, height, time);
         }

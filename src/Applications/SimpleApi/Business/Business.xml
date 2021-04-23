@@ -310,12 +310,14 @@
             <param name="response"></param>
             <param name="stream">流</param>
         </member>
-        <member name="M:Business.Implementation.Common.FileBusiness.ResponseFile(Microsoft.AspNetCore.Http.HttpResponse,System.String)">
+        <member name="M:Business.Implementation.Common.FileBusiness.ResponseFile(Microsoft.AspNetCore.Http.HttpResponse,System.String,System.Int64,System.Nullable{System.Int64})">
             <summary>
             输出文件
             </summary>
             <param name="response"></param>
             <param name="path"></param>
+            <param name="offset">偏移量</param>
+            <param name="count">总数</param>
         </member>
         <member name="M:Business.Implementation.Common.FileBusiness.CheckFileStateResponseWhenError(Microsoft.AspNetCore.Http.HttpResponse,System.String)">
             <summary>
@@ -2507,20 +2509,22 @@
             消息异常
             </summary>
         </member>
-        <member name="M:Business.Utils.MessageException.#ctor(System.String,Model.Utils.Result.ErrorCode,System.Exception)">
+        <member name="M:Business.Utils.MessageException.#ctor(System.String,Model.Utils.Result.ErrorCode,System.Exception,System.Object)">
             <summary>
             
             </summary>
             <param name="msg">消息</param>
             <param name="code">错误代码</param>
             <param name="innerException">内部异常</param>
+            <param name="data">数据</param>
         </member>
-        <member name="M:Business.Utils.MessageException.#ctor(System.String,System.Exception)">
+        <member name="M:Business.Utils.MessageException.#ctor(System.String,System.Exception,System.Object)">
             <summary>
             
             </summary>
             <param name="msg">消息</param>
             <param name="innerException">内部异常</param>
+            <param name="data">数据</param>
         </member>
         <member name="P:Business.Utils.MessageException.Msg">
             <summary>
