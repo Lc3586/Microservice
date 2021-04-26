@@ -41,6 +41,11 @@ RUN dotnet publish "Api.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+#添加证书
+COPY certificate/dotnet.crt /usr/local/share/ca-certificates/dotnet.crt
+RUN update-ca-certificates
+
 ENTRYPOINT ["dotnet", "SimpleApi.dll"]
 
 #如果SQL SERVER数据库TLS版本较低

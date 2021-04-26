@@ -37,12 +37,16 @@ namespace Model.Utils.Config
                     Directory.CreateDirectory(_AbsoluteStorageDirectory);
                 return _AbsoluteStorageDirectory;
             }
+            set
+            {
+                _AbsoluteStorageDirectory = value;
+            }
         }
 
         /// <summary>
         /// 数据存储根目录绝对路径
         /// </summary>
-        public string _AbsoluteStorageDirectory { get; set; }
+        private string _AbsoluteStorageDirectory { get; set; }
 
         /// <summary>
         /// 站点资源文件根目录绝对路径
@@ -57,12 +61,73 @@ namespace Model.Utils.Config
                     Directory.CreateDirectory(_AbsoluteWWWRootDirectory);
                 return _AbsoluteWWWRootDirectory;
             }
+            set
+            {
+                _AbsoluteWWWRootDirectory = value;
+            }
         }
 
         /// <summary>
         /// 站点资源文件根目录绝对路径
         /// </summary>
-        public string _AbsoluteWWWRootDirectory { get; set; }
+        private string _AbsoluteWWWRootDirectory { get; set; }
+
+        /// <summary>
+        /// 应用程序保护数据存储目录
+        /// </summary>
+        public string DataProtectionDirectory { get; set; }
+
+        /// <summary>
+        /// 应用程序保护数据存储目录绝对路径
+        /// </summary>
+        public string AbsoluteDataProtectionDirectory
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(_AbsoluteDataProtectionDirectory))
+                    _AbsoluteDataProtectionDirectory = Path.GetFullPath(DataProtectionDirectory ?? string.Empty, AppContext.BaseDirectory);
+                if (!Directory.Exists(_AbsoluteDataProtectionDirectory))
+                    Directory.CreateDirectory(_AbsoluteDataProtectionDirectory);
+                return _AbsoluteDataProtectionDirectory;
+            }
+            set
+            {
+                _AbsoluteDataProtectionDirectory = value;
+            }
+        }
+
+        /// <summary>
+        /// 应用程序保护数据存储目录绝对路径
+        /// </summary>
+        private string _AbsoluteDataProtectionDirectory { get; set; }
+
+        /// <summary>
+        /// 用于加密应用程序保护数据的秘钥文件(.pfx)
+        /// </summary>
+        public string DataProtectionCertificateFile { get; set; }
+
+        /// <summary>
+        /// 用于加密应用程序保护数据的秘钥文件(.pfx)绝对路径
+        /// </summary>
+        public string AbsoluteDataProtectionCertificateFile
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(_AbsoluteDataProtectionCertificateFile))
+                    _AbsoluteDataProtectionCertificateFile = Path.GetFullPath(DataProtectionCertificateFile, AppContext.BaseDirectory);
+                return _AbsoluteDataProtectionCertificateFile;
+            }
+        }
+
+        /// <summary>
+        /// 用于加密应用程序保护数据的秘钥文件(.pfx)绝对路径
+        /// </summary>
+        private string _AbsoluteDataProtectionCertificateFile { get; set; }
+
+        /// <summary>
+        /// 用于加密应用程序保护数据的秘钥文件(.pfx)的密码
+        /// </summary>
+        public string DataProtectionCertificateFilePassword { get; set; }
 
         /// <summary>
         /// 超级管理员Id

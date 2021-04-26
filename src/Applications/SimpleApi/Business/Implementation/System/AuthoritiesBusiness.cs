@@ -96,8 +96,8 @@ namespace Business.Implementation.System
             if (!user.Enable)
                 throw new MessageException("用户账号已禁用.");
 
-            if (Repository_UserRole.Where(o => o.UserId == userId && o.Role.Type == $"{RoleType.超级管理员}").Any())
-                throw new MessageException($"拥有{RoleType.超级管理员}角色的用户无需进行相关授权操作.");
+            if (user.Account == Config.AdminAccount)//Repository_UserRole.Where(o => o.UserId == userId && o.Role.Type == $"{RoleType.超级管理员}").Any()
+                throw new MessageException($"{RoleType.超级管理员}无需进行相关授权操作.");
 
             return user;
         }
@@ -1697,8 +1697,7 @@ namespace Business.Implementation.System
                                             Name = o.Name,
                                             Type = o.Type,
                                             Code = o.Code,
-                                            Authorized = (Operator.IsSuperAdmin == true
-                                                        || o.Users.AsSelect().Any(p => p.Id == userId)) ? true : false
+                                            Authorized = o.Users.AsSelect().Any(p => p.Id == userId) ? true : false
                                         });
 
                 if (result.Any())
@@ -1741,8 +1740,7 @@ namespace Business.Implementation.System
                                             Name = o.Name,
                                             Type = o.Type,
                                             Code = o.Code,
-                                            Authorized = (Operator.IsSuperAdmin == true
-                                                        || o.Members.AsSelect().Any(p => p.Id == memberId)) ? true : false
+                                            Authorized = o.Members.AsSelect().Any(p => p.Id == memberId) ? true : false
                                         });
 
                 if (result.Any())
@@ -1787,8 +1785,7 @@ namespace Business.Implementation.System
                                             Code = o.Code,
                                             Uri = o.Uri,
                                             Method = o.Method,
-                                            Authorized = (Operator.IsSuperAdmin == true
-                                                || o.Users.AsSelect().Any(p => p.Id == userId)
+                                            Authorized = (o.Users.AsSelect().Any(p => p.Id == userId)
                                                 || o.Roles.AsSelect().Any(p => p.Users.AsSelect().Any(q => q.Id == userId))) ? true : false
                                         });
 

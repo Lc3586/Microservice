@@ -67,6 +67,19 @@
             </summary>
             <param name="options"></param>
         </member>
+        <member name="T:Api.Configures.DataProtectionConfigura">
+            <summary>
+            应用程序保护数据配置类
+            </summary>
+        </member>
+        <member name="M:Api.Configures.DataProtectionConfigura.RegisterDataProtection(Microsoft.Extensions.DependencyInjection.IServiceCollection,Model.Utils.Config.SystemConfig)">
+            <summary>
+            注册应用程序保护数据配置
+            </summary>
+            <param name="services"></param>
+            <param name="config"></param>
+            <remarks></remarks>
+        </member>
         <member name="T:Api.Configures.ElasticsearchConfigura">
             <summary>
             ES搜索服务配置类
@@ -121,14 +134,6 @@
             <summary>
             主机环境配置类
             </summary>
-        </member>
-        <member name="M:Api.Configures.HostEnvironmentConfigura.RegisterHostEnvironment(Microsoft.Extensions.DependencyInjection.IServiceCollection,Model.Utils.Config.SystemConfig)">
-            <summary>
-            注册主机环境
-            </summary>
-            <param name="services"></param>
-            <param name="config"></param>
-            <remarks></remarks>
         </member>
         <member name="M:Api.Configures.HostEnvironmentConfigura.ConfiguraHostEnvironment(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IWebHostEnvironment,Microsoft.AspNetCore.Hosting.IHostingEnvironment,Model.Utils.Config.SystemConfig)">
             <summary>

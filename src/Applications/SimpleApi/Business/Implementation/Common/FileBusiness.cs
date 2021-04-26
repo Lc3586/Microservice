@@ -50,6 +50,8 @@ namespace Business.Implementation.Common
             Repository = Orm.GetRepository<Common_File, string>();
             Repository_FileChunk = Orm.GetRepository<Common_ChunkFile, string>();
             HttpContextAccessor = httpContextAccessor;
+            HttpRequest = HttpContextAccessor?.HttpContext?.Request;
+            HttpResponse = HttpContextAccessor?.HttpContext?.Response;
             MergeHandler = mergeHandler;
             FileStateDir = $"{Config.AbsoluteWWWRootDirectory}/filestate";
             PreviewDir = $"{Config.AbsoluteWWWRootDirectory}/filetypes";
@@ -69,6 +71,10 @@ namespace Business.Implementation.Common
         readonly IBaseRepository<Common_ChunkFile, string> Repository_FileChunk;
 
         readonly IHttpContextAccessor HttpContextAccessor;
+
+        readonly HttpRequest HttpRequest;
+
+        readonly HttpResponse HttpResponse;
 
         readonly ChunkFileMergeHandler MergeHandler;
 
@@ -166,64 +172,111 @@ namespace Business.Implementation.Common
         /// <summary>
         /// 输出图片
         /// </summary>
-        /// <param name="response"></param>
         /// <param name="img"></param>
-        static async Task ResponseImage(HttpResponse response, Image img)
+        async Task ResponseImage(Image img)
         {
-            using MemoryStream ms = new MemoryStream();
+            using var ms = new MemoryStream();
             img.Save(ms);
-            response.ContentLength = ms.Length;
-            await ms.CopyToAsync(response.Body);
+            await Response(ms);
         }
 
         /// <summary>
-        /// 输出图片
+        /// 输出
         /// </summary>
-        /// <param name="response"></param>
         /// <param name="stream">流</param>
-        static async Task ResponseImage(HttpResponse response, Stream stream)
+        async Task Response(Stream stream)
         {
-            response.ContentLength = stream.Length;
-            await stream.CopyToAsync(response.Body);
+            if (IsResponseRangeBytes(stream.Length, out long start, out long count))
+            {
+                stream.Seek(start, SeekOrigin.Begin);
+                var buffer = new byte[1024];
+                int wrote = 0;
+                while (wrote <= count)
+                {
+                    var length = await stream.ReadAsync(buffer.AsMemory(0, 1024));
+                    await HttpResponse.Body.WriteAsync(buffer.AsMemory(0, length));
+                    wrote += length;
+                    Array.Clear(buffer, 0, length);
+                }
+            }
+            else
+                await stream.CopyToAsync(HttpResponse.Body);
         }
 
         /// <summary>
         /// 输出文件
         /// </summary>
-        /// <param name="response"></param>
-        /// <param name="path"></param>
-        /// <param name="offset">偏移量</param>
-        /// <param name="count">总数</param>
-        static async Task ResponseFile(HttpResponse response, string path, long offset = 0, long? count = null)
+        /// <param name="path">文件路径</param>
+        /// <param name="bytes">总字节数</param>
+        async Task ResponseFile(string path, long? bytes = null)
         {
             if (!File.Exists(path))
-                throw new MessageException($"文件不存在或已被删除.", null, path);
+                throw new MessageException($"文件不存在或已被删除.", path);
 
-            await response.SendFileAsync(path, offset, count);
-            //using var fs = new FileStream(path, FileMode.Open, FileAccess.Read);
-            //response.ContentLength = fs.Length;
-            //await fs.CopyToAsync(response.Body);
+            if (!bytes.HasValue)
+                bytes = FileHelper.GetFileBytes(path);
+
+            if (IsResponseRangeBytes(bytes.Value, out long start, out long count))
+                await HttpResponse.SendFileAsync(path, start, count);
+            else
+                await HttpResponse.SendFileAsync(path);
+        }
+
+        /// <summary>
+        /// 是否需要分段输出数据
+        /// </summary>
+        /// <param name="bytes">总字节数</param>
+        /// <param name="start">开始位置</param>
+        /// <param name="count">输出字节数</param>
+        /// <returns></returns>
+        bool IsResponseRangeBytes(long bytes, out long start, out long count)
+        {
+            if (!HttpRequest.Headers.TryGetValue("Range", out StringValues value))
+            {
+                start = 0;
+                count = bytes;
+                HttpResponse.StatusCode = StatusCodes.Status200OK;
+                HttpResponse.ContentLength = bytes;
+                return false;
+            }
+
+            var rangeValue = value.ToString().Replace("bytes=", "");
+            var range = rangeValue.Split('-');
+            start = range[0].ToLong();
+            count = 0;
+
+            if (range.Length > 1)
+                count = range[1].ToLong() - start;
+
+            if (count == 0 || start + count > bytes)
+                count = bytes - start;
+
+            HttpResponse.StatusCode = StatusCodes.Status206PartialContent;
+            HttpResponse.Headers.Add("Accept-Ranges", "bytes");
+            HttpResponse.Headers.Add("Content-Range", $"bytes {start}-{start + count - 1}/{bytes}");
+            HttpResponse.ContentLength = count;
+
+            return true;
         }
 
         /// <summary>
         /// 输出错误
         /// </summary>
-        /// <param name="response"></param>
         /// <param name="fileState"></param>
         /// <returns></returns>
-        async Task<bool> CheckFileStateResponseWhenError(HttpResponse response, string fileState)
+        async Task<bool> CheckFileStateResponseWhenError(string fileState)
         {
             if (fileState == FileState.处理中)
             {
-                await ResponseFile(response, Path.Combine(FileStateDir, $"{FileState.处理中}.jpg"));
+                await ResponseFile(Path.Combine(FileStateDir, $"{FileState.处理中}.jpg"));
             }
             else if (fileState == FileState.已删除)
             {
-                await ResponseFile(response, Path.Combine(FileStateDir, $"{FileState.已删除}.jpg"));
+                await ResponseFile(Path.Combine(FileStateDir, $"{FileState.已删除}.jpg"));
             }
             else if (fileState != FileState.可用)
             {
-                await ResponseFile(response, Path.Combine(FileStateDir, "不可用.jpg"));
+                await ResponseFile(Path.Combine(FileStateDir, "不可用.jpg"));
             }
             else
                 return true;
@@ -389,7 +442,7 @@ namespace Business.Implementation.Common
         void UpdateChunkFile(string taskKey, string md5, long bytes, string contentType, string extension, string path)
         {
             if (!Repository_FileChunk.Where(o => o.TaskKey == taskKey && o.MD5 == md5).Any())
-                throw new MessageException("分片文件不存在或已被移除.", null, new { TaskKey = taskKey, MD5 = md5 });
+                throw new MessageException("分片文件不存在或已被移除.", new { TaskKey = taskKey, MD5 = md5 });
 
             var size = FileHelper.GetFileSize(bytes);
 
@@ -401,7 +454,7 @@ namespace Business.Implementation.Common
                                             .Set(o => o.Path, path)
                                             .Set(o => o.State, FileState.可用)
                                             .ExecuteAffrows() <= 0)
-                throw new MessageException("更新分片文件信息失败.", null, new { TaskKey = taskKey, MD5 = md5 });
+                throw new MessageException("更新分片文件信息失败.", new { TaskKey = taskKey, MD5 = md5 });
         }
 
         #endregion
@@ -498,7 +551,7 @@ namespace Business.Implementation.Common
         public async Task SingleChunkFile(string key, string md5, IFormFile file)
         {
             if (file == null)
-                throw new MessageException("未上传任何文件.", null, new { Key = key, MD5 = md5 });
+                throw new MessageException("未上传任何文件.", new { Key = key, MD5 = md5 });
 
             var baseDirPath = Path.Combine(BaseDir, $"chunkfiles/{key}");
 
@@ -633,7 +686,7 @@ namespace Business.Implementation.Common
         public async Task<FileInfo> SingleFile(IFormFile file, string filename = null)
         {
             if (file == null)
-                throw new MessageException("未上传任何文件.", null, filename);
+                throw new MessageException("未上传任何文件.", filename);
 
             if (!Directory.Exists(BaseDir))
                 Directory.CreateDirectory(BaseDir);
@@ -669,7 +722,7 @@ namespace Business.Implementation.Common
 
             var response = HttpContextAccessor.HttpContext.Response;
 
-            if (!await CheckFileStateResponseWhenError(response, file.State))
+            if (!await CheckFileStateResponseWhenError(file.State))
                 return;
 
             if (file.StorageType == StorageType.Uri)
@@ -678,10 +731,10 @@ namespace Business.Implementation.Common
                 return;
             }
             else if (file.StorageType != StorageType.Path)
-                throw new MessageException("此文件不支持预览.", null, file.StorageType);
+                throw new MessageException("此文件不支持预览.", file.StorageType);
 
             if (!FileHelper.Exists(file.Path))
-                throw new MessageException("文件已被删除.", null, file.Path);
+                throw new MessageException("文件已被删除.", file.Path);
 
             if (file.FileType == FileType.图片)
             {
@@ -701,7 +754,7 @@ namespace Business.Implementation.Common
                 }
 
                 response.ContentType = file.ContentType;
-                await ResponseFile(response, imagePath);
+                await ResponseFile(imagePath);
             }
             else if (file.FileType == FileType.视频)
             {
@@ -724,18 +777,18 @@ namespace Business.Implementation.Common
                             ex);
 
                         response.ContentType = "image/jpg";
-                        await ResponseFile(response, GetPreviewImage(file.Extension));
+                        await ResponseFile(GetPreviewImage(file.Extension));
                         return;
                     }
                 }
 
                 response.ContentType = "image/jpg";
-                await ResponseFile(response, imagePath);
+                await ResponseFile(imagePath);
             }
             else
             {
                 response.ContentType = "image/jpg";
-                await ResponseFile(response, GetPreviewImage(file.Extension));
+                await ResponseFile(GetPreviewImage(file.Extension));
             }
 
             //throw new MessageException("此文件不支持预览.");
@@ -747,7 +800,7 @@ namespace Business.Implementation.Common
 
             var response = HttpContextAccessor.HttpContext.Response;
 
-            if (!await CheckFileStateResponseWhenError(response, file.State))
+            if (!await CheckFileStateResponseWhenError(file.State))
                 return;
 
             if (file.StorageType == StorageType.Uri)
@@ -756,39 +809,11 @@ namespace Business.Implementation.Common
                 return;
             }
             else if (file.StorageType != StorageType.Path)
-                throw new MessageException("此文件不支持浏览.", null, file.StorageType);
+                throw new MessageException("此文件不支持浏览.", file.StorageType);
 
             response.ContentType = file.ContentType;
 
-            if (file.FileType == FileType.视频 || file.FileType == FileType.音频)
-            {
-                if (HttpContextAccessor.HttpContext.Request.Headers.TryGetValue("Range", out StringValues value))
-                {
-                    var rangeValue = value.ToString().Replace("bytes=", "");
-                    var range = rangeValue.Split('-');
-                    var start = range[0].ToLong();
-                    long count = 0;
-
-                    if (range.Length > 1)
-                        count = range[1].ToLong() - start;
-
-                    if (count == 0 || start + count > file.Bytes.Value)
-                        count = file.Bytes.Value - start;
-
-                    response.StatusCode = StatusCodes.Status206PartialContent;
-                    response.Headers.Add("Accept-Ranges", "bytes");
-                    response.Headers.Add("Content-Range", $"bytes {start}-{start + count - 1}/{file.Bytes}");
-
-                    response.ContentLength = count;
-
-                    await ResponseFile(response, file.Path, start, count);
-                    return;
-                }
-            }
-
-            response.ContentLength = file.Bytes;
-
-            await ResponseFile(response, file.Path);
+            await ResponseFile(file.Path, file.Bytes);
         }
 
         public async Task Download(string id)
@@ -797,7 +822,7 @@ namespace Business.Implementation.Common
 
             var response = HttpContextAccessor.HttpContext.Response;
 
-            if (!await CheckFileStateResponseWhenError(response, file.State))
+            if (!await CheckFileStateResponseWhenError(file.State))
                 return;
 
             if (file.StorageType == StorageType.Uri)
@@ -806,14 +831,13 @@ namespace Business.Implementation.Common
                 return;
             }
             else if (file.StorageType != StorageType.Path)
-                throw new MessageException("此文件不支持下载.", null, file.StorageType);
+                throw new MessageException("此文件不支持下载.", file.StorageType);
 
             response.ContentType = file.ContentType;
-            response.ContentLength = file.Bytes;
             //response.ContentType = "applicatoin/octet-stream";
             response.Headers.Add("Content-Disposition", $"attachment; filename=\"{UrlEncoder.Default.Encode($"{file.Name}{file.Extension}")}\"");
 
-            await ResponseFile(response, file.Path);
+            await ResponseFile(file.Path, file.Bytes);
         }
 
         public void Delete(List<string> ids)
@@ -835,7 +859,7 @@ namespace Business.Implementation.Common
             }
 
             if (Repository.Delete(o => ids.Contains(o.Id)) <= 0)
-                throw new MessageException("未删除任何数据.", null, ids);
+                throw new MessageException("未删除任何数据.", ids);
         }
 
         #endregion

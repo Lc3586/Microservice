@@ -1,10 +1,12 @@
 ﻿using Business.Utils.Log;
 using Microservice.Library.Container;
 using Microservice.Library.Extension;
+using Microservice.Library.FreeSql.Application;
 using Model.Utils.Config;
 using Model.Utils.Log;
 using Model.Utils.Result;
 using System;
+using System.Collections.Generic;
 
 namespace Business.Utils
 {
@@ -50,7 +52,7 @@ namespace Business.Utils
         {
             ErrorCode code = ErrorCode.business;
             var message = string.Empty;
-            object data = null;
+            var data = new List<object>();
 
             HandleException(exception);
 
@@ -61,7 +63,7 @@ namespace Business.Utils
                     data,
                     code);
             else
-                return data == null ?
+                return data.Count > 0 ?
                     ResponseDataFactory.Error(
                         string.IsNullOrWhiteSpace(message) ? "系统繁忙，请稍后重试" : message,
                         code)
@@ -76,18 +78,20 @@ namespace Business.Utils
                 if (e_type == typeof(MessageException))
                 {
                     var _ex = ex as MessageException;
-                    message += _ex.Msg;
+                    message += _ex.Message;
+                    data.Add(_ex.Data);
                     code = _ex.Code;
                 }
                 else if (e_type == typeof(ValidationException))
                 {
                     var _ex = ex as ValidationException;
+                    message += _ex.Message;
+                    data.Add(_ex.Data);
                     code = ErrorCode.validation;
-                    data = _ex.Data;
                 }
-                else if (e_type == typeof(ApplicationException))
+                else if (e_type == typeof(FreeSqlException))
                 {
-                    var _ex = ex as ApplicationException;
+                    var _ex = ex as FreeSqlException;
                     message += _ex.Message;
                 }
 

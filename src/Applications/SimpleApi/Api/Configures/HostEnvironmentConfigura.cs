@@ -15,19 +15,6 @@ namespace Api.Configures
     public static class HostEnvironmentConfigura
     {
         /// <summary>
-        /// 注册主机环境
-        /// </summary>
-        /// <param name="services"></param>
-        /// <param name="config"></param>
-        /// <remarks></remarks>
-        public static IServiceCollection RegisterHostEnvironment(this IServiceCollection services, SystemConfig config)
-        {
-            //services.AddSingleton();
-
-            return services;
-        }
-
-        /// <summary>
         /// 配置主机环境
         /// </summary>
         /// <param name="app"></param>
@@ -42,8 +29,8 @@ namespace Api.Configures
             webHostEnvironment.ApplicationName = config.ProjectName;
             if (webHostEnvironment.EnvironmentName == "Development")
             {
-                config._AbsoluteStorageDirectory = webHostEnvironment.ContentRootPath;
-                config._AbsoluteWWWRootDirectory = webHostEnvironment.WebRootPath;
+                config.AbsoluteStorageDirectory = webHostEnvironment.ContentRootPath;
+                config.AbsoluteWWWRootDirectory = webHostEnvironment.WebRootPath;
             }
             else
             {
@@ -55,12 +42,7 @@ namespace Api.Configures
             }
 
             hostingEnvironment.ApplicationName = config.ProjectName;
-            if (hostingEnvironment.EnvironmentName == "Development")
-            {
-                config._AbsoluteStorageDirectory = hostingEnvironment.ContentRootPath;
-                config._AbsoluteWWWRootDirectory = hostingEnvironment.WebRootPath;
-            }
-            else
+            if (hostingEnvironment.EnvironmentName != "Development")
             {
                 hostingEnvironment.ContentRootPath = config.AbsoluteStorageDirectory;
                 hostingEnvironment.WebRootPath = config.AbsoluteWWWRootDirectory;

@@ -63,6 +63,8 @@ namespace Api
         /// </remarks>
         public void ConfigureServices(IServiceCollection services)
         {
+            services.RegisterDataProtection(Config);
+
             #region 注册服务示例代码
 
             //注册成单例

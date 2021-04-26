@@ -23,6 +23,11 @@ EXPOSE 443
 FROM base AS final
 WORKDIR /app
 COPY ./ ./
+
+#添加证书
+COPY certificate/dotnet.crt /usr/local/share/ca-certificates/dotnet.crt
+RUN update-ca-certificates 
+
 ENTRYPOINT ["dotnet", "SimpleApi.dll"]
 
 #如果SQL SERVER数据库TLS版本较低
@@ -53,7 +58,7 @@ ENTRYPOINT ["dotnet", "SimpleApi.dll"]
 #进入容器
 #docker exec -it [id] /bin/sh
 
-#目前程序会自动转移wwwroot文件,无需手动复制
+#目前程序会自动转移wwwroot中的文件,无需手动复制
 #复制数据到共享卷中(simple-api指的是ftp的用户根目录)
 #cp -r /app/wwwroot /app-data/simple-api
 #清理目录

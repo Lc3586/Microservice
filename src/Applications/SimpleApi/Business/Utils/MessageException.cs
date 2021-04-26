@@ -11,40 +11,52 @@ namespace Business.Utils
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="msg">消息</param>
-        /// <param name="code">错误代码</param>
+        /// <param name="message">消息</param>
         /// <param name="innerException">内部异常</param>
-        /// <param name="data">数据</param>
-        public MessageException(string msg, ErrorCode code = ErrorCode.business, Exception innerException = null, object data = null)
+        public MessageException(string message, Exception innerException = null)
+             : base(message, innerException)
         {
-            Msg = msg;
-            Code = code;
-            if (innerException != null)
-                InnerException = innerException;
-            if (data != null)
-                Data.Add("MessageData", data);
+            Code = ErrorCode.business;
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="msg">消息</param>
+        /// <param name="message">消息</param>
+        /// <param name="code">错误代码</param>
         /// <param name="innerException">内部异常</param>
-        /// <param name="data">数据</param>
-        public MessageException(string msg, Exception innerException, object data = null)
+        public MessageException(string message, ErrorCode code, Exception innerException = null)
+             : base(message, innerException)
         {
-            Msg = msg;
-            Code = ErrorCode.business;
-            if (innerException != null)
-                InnerException = innerException;
-            if (data != null)
-                Data.Add("MessageData", data);
+            Code = code;
         }
 
         /// <summary>
-        /// 消息
+        /// 
         /// </summary>
-        public string Msg { get; set; }
+        /// <param name="message">消息</param>
+        /// <param name="additionalData">附加数据</param>
+        /// <param name="innerException">内部异常</param>
+        public MessageException(string message, object additionalData, Exception innerException = null)
+             : base(message, innerException)
+        {
+            Code = ErrorCode.business;
+            AdditionalData = additionalData;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="message">消息</param>
+        /// <param name="additionalData">附加数据</param>
+        /// <param name="code">错误代码</param>
+        /// <param name="innerException">内部异常</param>
+        public MessageException(string message, object additionalData, ErrorCode code, Exception innerException = null)
+             : base(message, innerException)
+        {
+            Code = code;
+            AdditionalData = additionalData;
+        }
 
         /// <summary>
         /// 错误代码
@@ -52,21 +64,23 @@ namespace Business.Utils
         public ErrorCode Code { get; set; }
 
         /// <summary>
-        /// 内部异常
+        /// 附加数据
         /// </summary>
-        public new Exception InnerException { get; set; }
+        public object AdditionalData { get; set; }
     }
 
     /// <summary>
-    /// 验证异常
+    /// 数据验证异常
     /// </summary>
     public class ValidationException : Exception
     {
         public ValidationException()
         {
+
         }
 
-        public ValidationException(string message) : base(message)
+        public ValidationException(string message)
+            : base(message)
         {
 
         }
@@ -74,55 +88,41 @@ namespace Business.Utils
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="msg">消息</param>
+        /// <param name="message">消息</param>
         /// <param name="innerException">内部异常</param>
-        public ValidationException(string msg, Exception innerException = null)
+        public ValidationException(string message, Exception innerException = null)
+             : base(message, innerException)
         {
-            Msg = msg;
-            if (innerException != null)
-                InnerException = innerException;
+
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="data">数据</param>
+        /// <param name="additionalData">数据</param>
         /// <param name="innerException">内部异常</param>
-        public ValidationException(object data, Exception innerException = null)
+        public ValidationException(object additionalData, Exception innerException = null)
+             : base(null, innerException)
         {
-            Data = data;
-            if (innerException != null)
-                InnerException = innerException;
+            AdditionalData = additionalData;
         }
 
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="msg">消息</param>
-        /// <param name="data">数据</param>
+        /// <param name="message">消息</param>
+        /// <param name="additionalData">附加数据</param>
         /// <param name="innerException">内部异常</param>
-        public ValidationException(string msg, object data, Exception innerException = null)
+        public ValidationException(string message, object additionalData, Exception innerException = null)
+             : base(message, innerException)
         {
-            Msg = msg;
-            Data = data;
-            if (innerException != null)
-                InnerException = innerException;
+            AdditionalData = additionalData;
         }
 
         /// <summary>
-        /// 消息
+        /// 附加数据
         /// </summary>
-        public string Msg { get; set; }
-
-        /// <summary>
-        /// 数据
-        /// </summary>
-        public new object Data { get; set; }
-
-        /// <summary>
-        /// 内部异常
-        /// </summary>
-        public new Exception InnerException { get; set; }
+        public object AdditionalData { get; set; }
     }
 }

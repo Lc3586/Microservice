@@ -1887,6 +1887,41 @@
             站点资源文件根目录绝对路径
             </summary>
         </member>
+        <member name="P:Model.Utils.Config.SystemConfig.DataProtectionDirectory">
+            <summary>
+            应用程序保护数据存储目录
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Config.SystemConfig.AbsoluteDataProtectionDirectory">
+            <summary>
+            应用程序保护数据存储目录绝对路径
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Config.SystemConfig._AbsoluteDataProtectionDirectory">
+            <summary>
+            应用程序保护数据存储目录绝对路径
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Config.SystemConfig.DataProtectionCertificateFile">
+            <summary>
+            用于加密应用程序保护数据的秘钥文件(.pfx)
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Config.SystemConfig.AbsoluteDataProtectionCertificateFile">
+            <summary>
+            用于加密应用程序保护数据的秘钥文件(.pfx)绝对路径
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Config.SystemConfig._AbsoluteDataProtectionCertificateFile">
+            <summary>
+            用于加密应用程序保护数据的秘钥文件(.pfx)绝对路径
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Config.SystemConfig.DataProtectionCertificateFilePassword">
+            <summary>
+            用于加密应用程序保护数据的秘钥文件(.pfx)的密码
+            </summary>
+        </member>
         <member name="P:Model.Utils.Config.SystemConfig.AdminId">
             <summary>
             超级管理员Id

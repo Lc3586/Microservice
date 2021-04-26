@@ -296,34 +296,38 @@
             <param name="extension">文件后缀</param>
             <returns></returns>
         </member>
-        <member name="M:Business.Implementation.Common.FileBusiness.ResponseImage(Microsoft.AspNetCore.Http.HttpResponse,ImageProcessorCore.Image)">
+        <member name="M:Business.Implementation.Common.FileBusiness.ResponseImage(ImageProcessorCore.Image)">
             <summary>
             输出图片
             </summary>
-            <param name="response"></param>
             <param name="img"></param>
         </member>
-        <member name="M:Business.Implementation.Common.FileBusiness.ResponseImage(Microsoft.AspNetCore.Http.HttpResponse,System.IO.Stream)">
+        <member name="M:Business.Implementation.Common.FileBusiness.Response(System.IO.Stream)">
             <summary>
-            输出图片
+            输出
             </summary>
-            <param name="response"></param>
             <param name="stream">流</param>
         </member>
-        <member name="M:Business.Implementation.Common.FileBusiness.ResponseFile(Microsoft.AspNetCore.Http.HttpResponse,System.String,System.Int64,System.Nullable{System.Int64})">
+        <member name="M:Business.Implementation.Common.FileBusiness.ResponseFile(System.String,System.Nullable{System.Int64})">
             <summary>
             输出文件
             </summary>
-            <param name="response"></param>
-            <param name="path"></param>
-            <param name="offset">偏移量</param>
-            <param name="count">总数</param>
+            <param name="path">文件路径</param>
+            <param name="bytes">总字节数</param>
         </member>
-        <member name="M:Business.Implementation.Common.FileBusiness.CheckFileStateResponseWhenError(Microsoft.AspNetCore.Http.HttpResponse,System.String)">
+        <member name="M:Business.Implementation.Common.FileBusiness.IsResponseRangeBytes(System.Int64,System.Int64@,System.Int64@)">
+            <summary>
+            是否需要分段输出数据
+            </summary>
+            <param name="bytes">总字节数</param>
+            <param name="start">开始位置</param>
+            <param name="count">输出字节数</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Implementation.Common.FileBusiness.CheckFileStateResponseWhenError(System.String)">
             <summary>
             输出错误
             </summary>
-            <param name="response"></param>
             <param name="fileState"></param>
             <returns></returns>
         </member>
@@ -2509,78 +2513,78 @@
             消息异常
             </summary>
         </member>
-        <member name="M:Business.Utils.MessageException.#ctor(System.String,Model.Utils.Result.ErrorCode,System.Exception,System.Object)">
+        <member name="M:Business.Utils.MessageException.#ctor(System.String,System.Exception)">
             <summary>
             
             </summary>
-            <param name="msg">消息</param>
+            <param name="message">消息</param>
+            <param name="innerException">内部异常</param>
+        </member>
+        <member name="M:Business.Utils.MessageException.#ctor(System.String,Model.Utils.Result.ErrorCode,System.Exception)">
+            <summary>
+            
+            </summary>
+            <param name="message">消息</param>
             <param name="code">错误代码</param>
             <param name="innerException">内部异常</param>
-            <param name="data">数据</param>
         </member>
-        <member name="M:Business.Utils.MessageException.#ctor(System.String,System.Exception,System.Object)">
+        <member name="M:Business.Utils.MessageException.#ctor(System.String,System.Object,System.Exception)">
             <summary>
             
             </summary>
-            <param name="msg">消息</param>
+            <param name="message">消息</param>
+            <param name="additionalData">附加数据</param>
             <param name="innerException">内部异常</param>
-            <param name="data">数据</param>
         </member>
-        <member name="P:Business.Utils.MessageException.Msg">
+        <member name="M:Business.Utils.MessageException.#ctor(System.String,System.Object,Model.Utils.Result.ErrorCode,System.Exception)">
             <summary>
-            消息
+            
             </summary>
+            <param name="message">消息</param>
+            <param name="additionalData">附加数据</param>
+            <param name="code">错误代码</param>
+            <param name="innerException">内部异常</param>
         </member>
         <member name="P:Business.Utils.MessageException.Code">
             <summary>
             错误代码
             </summary>
         </member>
-        <member name="P:Business.Utils.MessageException.InnerException">
+        <member name="P:Business.Utils.MessageException.AdditionalData">
             <summary>
-            内部异常
+            附加数据
             </summary>
         </member>
         <member name="T:Business.Utils.ValidationException">
             <summary>
-            验证异常
+            数据验证异常
             </summary>
         </member>
         <member name="M:Business.Utils.ValidationException.#ctor(System.String,System.Exception)">
             <summary>
             
             </summary>
-            <param name="msg">消息</param>
+            <param name="message">消息</param>
             <param name="innerException">内部异常</param>
         </member>
         <member name="M:Business.Utils.ValidationException.#ctor(System.Object,System.Exception)">
             <summary>
             
             </summary>
-            <param name="data">数据</param>
+            <param name="additionalData">数据</param>
             <param name="innerException">内部异常</param>
         </member>
         <member name="M:Business.Utils.ValidationException.#ctor(System.String,System.Object,System.Exception)">
             <summary>
             
             </summary>
-            <param name="msg">消息</param>
-            <param name="data">数据</param>
+            <param name="message">消息</param>
+            <param name="additionalData">附加数据</param>
             <param name="innerException">内部异常</param>
         </member>
-        <member name="P:Business.Utils.ValidationException.Msg">
+        <member name="P:Business.Utils.ValidationException.AdditionalData">
             <summary>
-            消息
-            </summary>
-        </member>
-        <member name="P:Business.Utils.ValidationException.Data">
-            <summary>
-            数据
-            </summary>
-        </member>
-        <member name="P:Business.Utils.ValidationException.InnerException">
-            <summary>
-            内部异常
+            附加数据
             </summary>
         </member>
         <member name="T:Business.Utils.ModelErrorsInfo">

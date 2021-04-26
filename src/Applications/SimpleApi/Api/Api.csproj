@@ -372,10 +372,16 @@
     <None Update="app_offline.htm">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="certificate\dotnet.crt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Dockerfile">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Update="Dockerfile.published">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="certificate\dotnet.pfx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
