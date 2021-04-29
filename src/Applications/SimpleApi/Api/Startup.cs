@@ -24,6 +24,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Microservice.Library.ConsoleTool;
 
 namespace Api
 {
@@ -38,9 +39,15 @@ namespace Api
         /// <param name="configuration"></param>
         public Startup(IConfiguration configuration)
         {
+            Bar = new ProgressBar();
+            Bar.Normal(5, "正在读取配置.");
             Configuration = configuration;
             Config = new ConfigHelper(Configuration).GetModel<SystemConfig>("SystemConfig");
+            "已读取配置.".ConsoleWrite();
+            Bar.Normal(6);
             Console.Title = Config.ProjectName;
+            Config.ProjectName.ConsoleWrite();
+            $"运行模式 => {Config.RunMode}.".ConsoleWrite();
         }
 
         /// <summary>
@@ -53,6 +60,8 @@ namespace Api
         /// </summary>
         public SystemConfig Config { get; }
 
+        private ProgressBar Bar { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
@@ -63,8 +72,11 @@ namespace Api
         /// </remarks>
         public void ConfigureServices(IServiceCollection services)
         {
+            Bar.Normal(6, "正在注入依赖.");
+            "注册应用程序保护数据配置.".ConsoleWrite();
             services.RegisterDataProtection(Config);
 
+            "注册示例服务.".ConsoleWrite();
             #region 注册服务示例代码
 
             //注册成单例
@@ -82,70 +94,120 @@ namespace Api
 
             #endregion
 
-            services.AddControllers(options =>
-            {
-                options.Filters.Add<GlobalExceptionFilter>();
-            })
-            .AddNewtonsoftJson(options =>
+            "注册控制器.".ConsoleWrite();
+            "注册全局异常拦截器.".ConsoleWrite();
+            var mvcbuilder = services.AddControllers(options =>
+              {
+                  options.Filters.Add<GlobalExceptionFilter>();
+              });
+
+            "注册NewtonsoftJson.".ConsoleWrite();
+            mvcbuilder.AddNewtonsoftJson(options =>
             {
                 //可在此配置Json序列化全局设置
                 //options.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();
-            })
-            .AddControllersAsServices();
+            });
 
-            services.AddScoped<IHttpContextAccessor, HttpContextAccessor>()
-            .AddTransient<IActionContextAccessor, ActionContextAccessor>()
-            .AddSingleton(Configuration)
-            .AddSingleton(Config)
-            //启用自带的日志组件
-            .AddLogging()
-            .Configure<KestrelServerOptions>(options =>
-            {
-                options.AllowSynchronousIO = true;
-            })
-            .Configure<IISServerOptions>(options =>
+            "注册控制器为服务.".ConsoleWrite();
+            mvcbuilder.AddControllersAsServices();
+
+            "注册HttpContext访问器IHttpContextAccessor, 生命周期 => Scoped.".ConsoleWrite();
+            services.AddScoped<IHttpContextAccessor, HttpContextAccessor>();
+
+            "注册ActionContext访问器IActionContextAccessor, 生命周期 => Transient.".ConsoleWrite();
+            services.AddTransient<IActionContextAccessor, ActionContextAccessor>();
+
+            "注册Configuration, 生命周期 => Singleton.".ConsoleWrite();
+            services.AddSingleton(Configuration);
+
+            "注册系统配置, 生命周期 => Singleton.".ConsoleWrite();
+            services.AddSingleton(Config);
+
+            "注册日志服务.".ConsoleWrite();
+            services.AddLogging();
+
+            "注册Kestrel服务.".ConsoleWrite();
+            services.Configure<KestrelServerOptions>(options =>
             {
                 options.AllowSynchronousIO = true;
             });
 
-            //不是发布模式时，开放swagger接口文档
+            "注册IIS服务.".ConsoleWrite();
+            services.Configure<IISServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
+
             if (Config.EnableSwagger && Config.RunMode != RunMode.Publish)
             {
                 if (Config.Swagger.EnableApiMultiVersion)
+                {
+                    "注册Swagger多版本文档服务.".ConsoleWrite();
                     services.RegisterSwaggerMultiVersion(Config);
+                }
                 else
+                {
+                    "注册Swagger服务.".ConsoleWrite();
                     services.RegisterSwagger(Config);
+                }
             }
 
             if (Config.EnableCache)
+            {
+                "注册缓存服务.".ConsoleWrite();
                 services.RegisterCache(Config);
+            }
 
             if (Config.EnableSampleAuthentication)
+            {
+                "注册简易身份认证服务.".ConsoleWrite();
                 services.RegisterSampleAuthentication(Config);
+            }
 
             if (Config.EnableCAS)
+            {
+                "注册CAS服务.".ConsoleWrite();
                 services.RegisterCAS(Config);
+            }
 
             if (Config.EnableElasticsearch)
+            {
+                "注册ES搜索服务.".ConsoleWrite();
                 services.RegisterElasticsearch(Config);
+            }
 
             if (Config.EnableKafka)
+            {
+                "注册Kafka服务.".ConsoleWrite();
                 services.RegisterKafka(Config);
+            }
 
             if (Config.EnableFreeSql)
             {
                 if (Config.EnableMultiDatabases)
+                {
+                    "注册FreeSql多数据库服务.".ConsoleWrite();
                     services.RegisterFreeSqlMultiDatabase(Config);
+                }
                 else
+                {
+                    "注册FreeSql服务.".ConsoleWrite();
                     services.RegisterFreeSql(Config);
+                }
             }
 
             if (Config.EnableAutoMapper)
+            {
+                "注册AutoMapper服务.".ConsoleWrite();
                 services.RegisterAutoMapper(Config);
+            }
 
             if (Config.EnableWeChatService)
+            {
+                "注册WeChat服务.".ConsoleWrite();
                 services.RegisterWeChat(Configuration, Config);
+            }
 
             if (Config.EnableSoap)
                 services.RegisterSoap(Config);

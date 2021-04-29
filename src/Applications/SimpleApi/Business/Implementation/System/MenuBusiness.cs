@@ -327,7 +327,8 @@ namespace Business.Implementation.System
                                              });
                         break;
                     case Model.System.SortType.up:
-                        target = Repository.Where(o => o.ParentId == current.ParentId && o.Sort == current.Sort - 1)
+                        target = Repository.Where(o => o.ParentId == current.ParentId && o.Sort < current.Sort)
+                                            .OrderByDescending(o => o.Sort)
                                              .First(o => new
                                              {
                                                  o.Id,
@@ -335,7 +336,8 @@ namespace Business.Implementation.System
                                              });
                         break;
                     case Model.System.SortType.down:
-                        target = Repository.Where(o => o.ParentId == current.ParentId && o.Sort == current.Sort + 1)
+                        target = Repository.Where(o => o.ParentId == current.ParentId && o.Sort > current.Sort)
+                                            .OrderBy(o => o.Sort)
                                              .First(o => new
                                              {
                                                  o.Id,

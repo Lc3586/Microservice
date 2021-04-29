@@ -1691,6 +1691,7 @@ namespace Business.Implementation.System
                                             && (paramter.RoleType.Count() == 0 || paramter.RoleType.Contains(o.Type))
                                             && (Operator.IsSuperAdmin == true
                                                 || o.Users.AsSelect().Any(p => p.Id == Operator.AuthenticationInfo.Id)))
+                                        .OrderBy(o => o.Sort)
                                         .ToList(o => new Model.System.RoleDTO.AuthoritiesTree
                                         {
                                             Id = o.Id,
@@ -1734,6 +1735,7 @@ namespace Business.Implementation.System
                                             && (paramter.RoleType.Count() == 0 || paramter.RoleType.Contains(o.Type))
                                             && (Operator.IsSuperAdmin == true
                                                 || o.Users.AsSelect().Any(p => p.Id == Operator.AuthenticationInfo.Id)))
+                                        .OrderBy(o => o.Sort)
                                         .ToList(o => new Model.System.RoleDTO.AuthoritiesTree
                                         {
                                             Id = o.Id,
@@ -1777,6 +1779,7 @@ namespace Business.Implementation.System
                                             && (Operator.IsSuperAdmin == true
                                                 || o.Users.AsSelect().Any(p => p.Id == Operator.AuthenticationInfo.Id)
                                                 || o.Roles.AsSelect().Any(p => p.Users.AsSelect().Any(q => q.Id == Operator.AuthenticationInfo.Id))))
+                                        .OrderBy(o => o.Sort)
                                         .ToList(o => new Model.System.MenuDTO.AuthoritiesTree
                                         {
                                             Id = o.Id,

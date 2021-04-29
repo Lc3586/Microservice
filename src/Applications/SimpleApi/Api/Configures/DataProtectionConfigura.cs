@@ -35,7 +35,6 @@ namespace Api.Configures
                 if (!File.Exists(config.AbsoluteDataProtectionCertificateFile))
                     throw new ApplicationException($"指定的秘钥文件({config.AbsoluteDataProtectionCertificateFile})不存在.");
 
-                Console.WriteLine(config.DataProtectionCertificateFilePassword);
                 var cert = new X509Certificate2(config.AbsoluteDataProtectionCertificateFile, config.DataProtectionCertificateFilePassword);
                 dpBuilder.ProtectKeysWithCertificate(cert);
             }

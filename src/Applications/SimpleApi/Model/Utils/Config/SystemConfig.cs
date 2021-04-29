@@ -1,5 +1,6 @@
 ﻿using Microservice.Library.Cache.Model;
 using Microservice.Library.Configuration.Annotations;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -239,7 +240,7 @@ namespace Model.Utils.Config
         /// <summary>
         /// 需要记录的日志的最低等级
         /// </summary>
-        public int MinLogLevel { get; set; }
+        public int MinLogLevel { get; set; } = 3;//LogLevel.Warning;
 
         #endregion
 

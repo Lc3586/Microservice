@@ -12,8 +12,19 @@ RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list \
 #安装libgdiplus库
 RUN apt-get update && apt-get install -y libgdiplus libc6-dev && ln -s /usr/lib/libgdiplus.so /usr/lib/gdiplus.dll
 
-#设置时区
-RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo 'Asia/Shanghai' >/etc/timezone
+#设置时区为中国上海
+#方式一
+ENV TZ=Asia/Shanghai
+ENV DEBIAN_FRONTEND noninteractive
+# 安装 tzdata 软件包
+RUN apt-get update \
+    && apt-get install -y tzdata \
+    && ln -fs /usr/share/zoneinfo/$TZ  /etc/localtime \
+    && rm -rf /var/lib/apt/lists/ \
+    && dpkg-reconfigure -f noninteractive tzdata
+    
+#方式二
+#RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo 'Asia/Shanghai' >/etc/timezone
 
 WORKDIR /app
 EXPOSE 80
@@ -25,7 +36,7 @@ WORKDIR /app
 COPY ./ ./
 
 #添加证书
-COPY certificate/dotnet.crt /usr/local/share/ca-certificates/dotnet.crt
+COPY certificate/simple-api.crt /usr/local/share/ca-certificates/simple-api.crt
 RUN update-ca-certificates 
 
 ENTRYPOINT ["dotnet", "SimpleApi.dll"]

@@ -492,7 +492,8 @@ namespace Business.Implementation.System
 
                     if (data.Append)
                     {
-                        target_new = Repository.Where(o => o.ParentId == target.ParentId && o.Sort == target.Sort + 1)
+                        target_new = Repository.Where(o => o.ParentId == target.ParentId && o.Sort < target.Sort)
+                                            .OrderByDescending(o => o.Sort)
                                              .First(o => new
                                              {
                                                  o.Id,
@@ -501,7 +502,8 @@ namespace Business.Implementation.System
                     }
                     else
                     {
-                        target_new = Repository.Where(o => o.ParentId == target.ParentId && o.Sort == current.Sort - 1)
+                        target_new = Repository.Where(o => o.ParentId == target.ParentId && o.Sort > current.Sort)
+                                            .OrderBy(o => o.Sort)
                                              .First(o => new
                                              {
                                                  o.Id,
