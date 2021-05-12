@@ -448,7 +448,8 @@ namespace Business.Implementation.System
             {
                 UserType = UserType.系统用户,
                 Account = user.Account,
-                Name = user.Name ?? user.Nickname,
+                Name = user.Name,
+                Nickname = user.Nickname,
                 Face = user.Face,
                 IsAdmin = AuthoritiesBusiness.IsAdminUser(user.Id),
                 Remark = "使用账号密码信息登录系统.",
@@ -483,6 +484,7 @@ namespace Business.Implementation.System
                 UserType = UserType.系统用户,
                 Account = user.Account,
                 Name = user.Name,
+                Nickname = user.Nickname,
                 Face = user.Face,
                 IsAdmin = AuthoritiesBusiness.IsAdminUser(user.Id),
                 Remark = "使用微信信息登录系统.",

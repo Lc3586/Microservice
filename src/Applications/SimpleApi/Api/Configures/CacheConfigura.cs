@@ -1,4 +1,5 @@
 ﻿using Business.Utils.Log;
+using Microservice.Library.ConsoleTool;
 using Microservice.Library.Extension;
 using Microsoft.Extensions.DependencyInjection;
 using Model.Utils.Config;
@@ -18,6 +19,8 @@ namespace Api.Configures
         /// <param name="config"></param>
         public static IServiceCollection RegisterCache(this IServiceCollection services, SystemConfig config)
         {
+            "注册缓存服务.".ConsoleWrite();
+
             services.AddCache(options =>
             {
                 options.CacheType = config.DefaultCacheType;

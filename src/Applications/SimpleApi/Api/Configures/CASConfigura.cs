@@ -2,6 +2,7 @@
 using GSS.Authentication.CAS;
 using GSS.Authentication.CAS.AspNetCore;
 using GSS.Authentication.CAS.Validation;
+using Microservice.Library.ConsoleTool;
 using Microservice.Library.Container;
 using Microservice.Library.NLogger.Gen;
 using Microsoft.AspNetCore.Authentication;
@@ -32,6 +33,8 @@ namespace Api.Configures
         /// <param name="config"></param>
         public static IServiceCollection RegisterCAS(this IServiceCollection services, SystemConfig config)
         {
+            "注册CAS服务.".ConsoleWrite();
+
             services.AddControllers(options =>
             {
                 // Global Authorize Filter
@@ -178,13 +181,15 @@ namespace Api.Configures
         }
 
         /// <summary>
-        /// 配置CAS
+        /// 配置CAS服务
         /// 注：方法在UseMvc之前
         /// </summary>
         /// <param name="app"></param>
         /// <param name="config"></param>
         public static IApplicationBuilder ConfiguraCAS(this IApplicationBuilder app, SystemConfig config)
         {
+            "配置CAS服务.".ConsoleWrite();
+
             //启用单点注销
             if (config.CAS.EnableSingleSignOut)
                 app.UseMiddleware<Middleware.CasSingleSignOutMiddleware>();

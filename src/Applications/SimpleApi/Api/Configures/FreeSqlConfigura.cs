@@ -1,4 +1,5 @@
 ﻿using Business.Utils.Log;
+using Microservice.Library.ConsoleTool;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Model.Utils.Config;
@@ -18,6 +19,9 @@ namespace Api.Configures
         /// <param name="config"></param>
         public static IServiceCollection RegisterFreeSql(this IServiceCollection services, SystemConfig config)
         {
+            "注册FreeSql服务.".ConsoleWrite();
+            $"使用{config.Database.DatabaseType}数据库.".ConsoleWrite();
+
             services.AddFreeSql(s =>
             {
                 s.FreeSqlGeneratorOptions.ConnectionString = config.Database.ConnectString;
@@ -67,12 +71,14 @@ namespace Api.Configures
         }
 
         /// <summary>
-        /// 配置FreeSql
+        /// 配置FreeSql服务
         /// </summary>
         /// <param name="app"></param>
         /// <param name="config"></param>
         public static IApplicationBuilder ConfiguraFreeSql(this IApplicationBuilder app, SystemConfig config)
         {
+            "配置FreeSql服务.".ConsoleWrite();
+
             //单库预热
             //app.ApplicationServices
             //   .GetService<IFreeSqlProvider>()

@@ -6,7 +6,7 @@
     <members>
         <member name="T:Business.Handler.ChunkFileMergeHandler">
             <summary>
-            合并分片文件
+            分片文件合并处理类
             </summary>
         </member>
         <member name="F:Business.Handler.ChunkFileMergeHandler.IdQueue">

@@ -24,7 +24,7 @@ export function injectable(_constructor: Function) {
 }
 
 // 创建实例
-export function create<T>(_constructor: { new (...args: Array<any>): T }): T {
+export function create<T>(_constructor: { new(...args: Array<any>): T }): T {
     // 通过反射机制，获取参数类型列表
     let paramsTypes: Array<Function> = Reflect.getMetadata('design:paramtypes', _constructor);
     // 实例化参数列表
@@ -32,10 +32,10 @@ export function create<T>(_constructor: { new (...args: Array<any>): T }): T {
         // 参数不可注入
         if (classPool.indexOf(v) === -1) {
             throw new Error(`参数${i}[${(v as any).name}]不可被注入`);
-        // 参数有依赖项则递归实例化参数对象
+            // 参数有依赖项则递归实例化参数对象
         } else if (v.length) {
             return create(v as any);
-        // 参数无依赖则直接创建对象
+            // 参数无依赖则直接创建对象
         } else {
             return new (v as any)();
         }
@@ -78,8 +78,33 @@ let a = create(A);
 //var d = new D();
 //var a = new A(b,c,d);
 
+interface Square {
+    kind: "square";
+    size: number;
+}
+interface Rectangle {
+    kind: "rectangle";
+    width: number;
+    height: number;
+}
+interface Circle {
+    kind: "circle";
+    radius: number;
+}
+interface Triangle {
+    kind: "circle";
+    radius: number;
+}
 
+type Shape = Square | Rectangle | Circle | Triangle;
 
+function area(s: Shape) {
+    switch (s.kind) {
+        case "square": return s.size * s.size;
+        case "rectangle": return s.height * s.width;
+        case "circle": return Math.PI * s.radius ** 2;
+    }
+}
 
 enum EventType { Mouse, Keyboard }
 

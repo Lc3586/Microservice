@@ -8,6 +8,8 @@
         // this enables stricter inference for data properties on `this`
         // 以严格模式解析
         "strict": true,
+        //执行null检查
+        "strictNullChecks":true,
         "jsx": "preserve",
         // 如何处理模块
         "moduleResolution": "node",

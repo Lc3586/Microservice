@@ -19,6 +19,7 @@ namespace Entity.Common
     [Index(nameof(Common_EntryLog) + "_idx_" + nameof(UserType), nameof(UserType) + " ASC")]
     [Index(nameof(Common_EntryLog) + "_idx_" + nameof(IsAdmin), nameof(IsAdmin) + " DESC")]
     [Index(nameof(Common_EntryLog) + "_idx_" + nameof(Name), nameof(Name) + " ASC")]
+    [Index(nameof(Common_EntryLog) + "_idx_" + nameof(Nickname), nameof(Nickname) + " ASC")]
     [Index(nameof(Common_EntryLog) + "_idx_" + nameof(CreatorId), nameof(CreatorId) + " ASC")]
     [Index(nameof(Common_EntryLog) + "_idx_" + nameof(CreateTime), nameof(CreateTime) + " DESC")]
     #endregion
@@ -56,12 +57,20 @@ namespace Entity.Common
         public bool? IsAdmin { get; set; }
 
         /// <summary>
-        /// 姓名/昵称
+        /// 姓名
         /// </summary>
         [OpenApiSubTag("List", "Create", "Detail")]
-        [Description("姓名/昵称")]
-        [Column(StringLength = 50)]
+        [Description("姓名")]
+        [Column(StringLength = 20)]
         public string Name { get; set; }
+
+        /// <summary>
+        /// 昵称
+        /// </summary>
+        [OpenApiSubTag("List", "Create", "Detail")]
+        [Description("昵称")]
+        [Column(StringLength = 50)]
+        public string Nickname { get; set; }
 
         /// <summary>
         /// 头像

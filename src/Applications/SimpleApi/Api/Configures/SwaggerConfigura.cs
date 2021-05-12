@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microservice.Library.ConsoleTool;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
@@ -24,6 +25,8 @@ namespace Api.Configures
         /// <param name="config"></param>
         public static IServiceCollection RegisterSwagger(this IServiceCollection services, SystemConfig config)
         {
+            "注册Swagger服务.".ConsoleWrite();
+
             services.AddMvc()
                 //禁用框架结构属性小驼峰命名规则
                 .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
@@ -84,12 +87,14 @@ namespace Api.Configures
         }
 
         /// <summary>
-        /// 配置Swagger
+        /// 配置Swagger服务
         /// </summary>
         /// <param name="app"></param>
         /// <param name="config"></param>
         public static IApplicationBuilder ConfiguraSwagger(this IApplicationBuilder app, SystemConfig config)
         {
+            "配置Swagger服务.".ConsoleWrite();
+
             #region 用户语言（展示用，普通项目无需添加此内容）
 
             var supportedCultures = new[]

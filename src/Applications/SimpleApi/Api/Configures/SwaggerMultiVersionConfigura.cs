@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microservice.Library.ConsoleTool;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,6 +28,8 @@ namespace Api.Configures
         /// <param name="config"></param>
         public static IServiceCollection RegisterSwaggerMultiVersion(this IServiceCollection services, SystemConfig config)
         {
+            "注册Swagger多版本文档服务.".ConsoleWrite();
+
             #region 多版本文档
 
             services.AddApiVersioning();
@@ -92,12 +95,14 @@ namespace Api.Configures
         }
 
         /// <summary>
-        /// 配置Swagger多版本文档
+        /// 配置Swagger多版本文档服务
         /// </summary>
         /// <param name="app"></param>
         /// <param name="config"></param>
         public static IApplicationBuilder ConfiguraSwaggerMultiVersion(this IApplicationBuilder app, SystemConfig config)
         {
+            "配置Swagger多版本文档服务.".ConsoleWrite();
+
             var apiVersionDescription = app.ApplicationServices.GetService<IApiVersionDescriptionProvider>();
 
             #region 方言配置（展示用，普通项目无需添加此内容）

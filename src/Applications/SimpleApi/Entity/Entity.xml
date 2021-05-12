@@ -211,7 +211,12 @@
         </member>
         <member name="P:Entity.Common.Common_EntryLog.Name">
             <summary>
-            姓名/昵称
+            姓名
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_EntryLog.Nickname">
+            <summary>
+            昵称
             </summary>
         </member>
         <member name="P:Entity.Common.Common_EntryLog.Face">

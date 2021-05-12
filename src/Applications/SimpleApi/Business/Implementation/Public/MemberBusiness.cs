@@ -335,7 +335,8 @@ namespace Business.Implementation.Public
             {
                 UserType = UserType.会员,
                 Account = member.Account,
-                Name = member.Nickname,
+                Name = member.Name,
+                Nickname = member.Nickname,
                 Face = member.Face,
                 IsAdmin = false,
                 Remark = "使用微信信息登录系统.",
@@ -369,7 +370,8 @@ namespace Business.Implementation.Public
             {
                 UserType = UserType.会员,
                 Account = member.Account,
-                Name = member.Nickname,
+                Name = member.Name,
+                Nickname = member.Nickname,
                 Face = member.Face,
                 IsAdmin = false,
                 Remark = "使用开发功能登录系统.",

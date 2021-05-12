@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microservice.Library.ConsoleTool;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,6 +25,8 @@ namespace Api.Configures
             IConfiguration configuration,
             SystemConfig config)
         {
+            "注册WeChat服务.".ConsoleWrite();
+
             services.AddWeChatService(configuration, option =>
             {
                 option.WeChatDevOptions.TokenVerificationUrl = new PathString(config.WeChatService.TokenVerificationUrl);
@@ -52,12 +55,14 @@ namespace Api.Configures
         }
 
         /// <summary>
-        /// 配置WeChat
+        /// 配置WeChat服务
         /// </summary>
         /// <param name="app"></param>
         /// <param name="config"></param>
         public static IApplicationBuilder ConfiguraWeChat(this IApplicationBuilder app, SystemConfig config)
         {
+            "配置WeChat服务.".ConsoleWrite();
+
             app.UseWeChatTokenVerification();
             app.UseWeChatOAuthV2();
 

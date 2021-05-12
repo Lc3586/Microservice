@@ -8,9 +8,18 @@ RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list \
     && apt-get install -y ffmpeg \
     && apt-get clean && apt-get autoclean && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/*
-    
+
 #安装libgdiplus库
 RUN apt-get update && apt-get install -y libgdiplus libc6-dev && ln -s /usr/lib/libgdiplus.so /usr/lib/gdiplus.dll
+
+#配置X-Server (xvfb)
+ENV DISPLAY :10
+COPY linux/xvfb.init /etc/init.d/xvfb
+# Removes any windows line endings because linux can`t start the service in this case
+RUN sed -i -e 's/\r//g' /etc/init.d/xvfb
+RUN chmod +x /etc/init.d/xvfb
+RUN update-rc.d xvfb defaults
+# In the end we need to start the xserver and our API, so run.sh starts them in the right order
 
 #设置时区为中国上海
 #方式一
@@ -55,9 +64,13 @@ COPY --from=publish /app/publish .
 
 #添加证书
 COPY certificate/simple-api.crt /usr/local/share/ca-certificates/simple-api.crt
-RUN update-ca-certificates 
+RUN update-ca-certificates
 
-ENTRYPOINT ["dotnet", "SimpleApi.dll"]
+ADD linux/run.sh /run.sh
+RUN chmod a+x /run.sh
+CMD /run.sh
+
+#ENTRYPOINT ["dotnet", "SimpleApi.dll"]
 
 #如果SQL SERVER数据库TLS版本较低
 #可以选择安装升级包(建议使用此方式)

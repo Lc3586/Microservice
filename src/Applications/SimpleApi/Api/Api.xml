@@ -42,7 +42,7 @@
         </member>
         <member name="M:Api.Configures.CASConfigura.ConfiguraCAS(Microsoft.AspNetCore.Builder.IApplicationBuilder,Model.Utils.Config.SystemConfig)">
             <summary>
-            配置CAS
+            配置CAS服务
             注：方法在UseMvc之前
             </summary>
             <param name="app"></param>
@@ -106,7 +106,7 @@
         </member>
         <member name="M:Api.Configures.FreeSqlConfigura.ConfiguraFreeSql(Microsoft.AspNetCore.Builder.IApplicationBuilder,Model.Utils.Config.SystemConfig)">
             <summary>
-            配置FreeSql
+            配置FreeSql服务
             </summary>
             <param name="app"></param>
             <param name="config"></param>
@@ -147,19 +147,19 @@
         </member>
         <member name="T:Api.Configures.KafkaConfigura">
             <summary>
-            Kafka中间件配置类
+            Kafka服务配置类
             </summary>
         </member>
         <member name="M:Api.Configures.KafkaConfigura.RegisterKafka(Microsoft.Extensions.DependencyInjection.IServiceCollection,Model.Utils.Config.SystemConfig)">
             <summary>
-            注册Kafka中间件
+            注册Kafka服务
             </summary>
             <param name="services"></param>
             <param name="config"></param>
         </member>
         <member name="M:Api.Configures.KafkaConfigura.ConfiguraKafka(Microsoft.AspNetCore.Builder.IApplicationBuilder,Model.Utils.Config.SystemConfig)">
             <summary>
-            配置Kafka中间件
+            配置Kafka服务
             </summary>
             <param name="app"></param>
             <param name="config"></param>
@@ -197,7 +197,7 @@
         </member>
         <member name="M:Api.Configures.SampleAuthenticationConfigura.ConfiguraSampleAuthentication(Microsoft.AspNetCore.Builder.IApplicationBuilder,Model.Utils.Config.SystemConfig)">
             <summary>
-            配置简易身份认证
+            配置简易身份认证服务
             注：方法在UseEndpoints之前调用
             </summary>
             <param name="app"></param>
@@ -238,7 +238,7 @@
         </member>
         <member name="M:Api.Configures.SoapConfigure.ConfiguraSoap(Microsoft.AspNetCore.Builder.IApplicationBuilder,Model.Utils.Config.SystemConfig)">
             <summary>
-            配置Soap
+            配置Soap服务
             </summary>
             <param name="app"></param>
             <param name="config"></param>
@@ -257,7 +257,7 @@
         </member>
         <member name="M:Api.Configures.SwaggerConfigura.ConfiguraSwagger(Microsoft.AspNetCore.Builder.IApplicationBuilder,Model.Utils.Config.SystemConfig)">
             <summary>
-            配置Swagger
+            配置Swagger服务
             </summary>
             <param name="app"></param>
             <param name="config"></param>
@@ -276,7 +276,7 @@
         </member>
         <member name="M:Api.Configures.SwaggerMultiVersionConfigura.ConfiguraSwaggerMultiVersion(Microsoft.AspNetCore.Builder.IApplicationBuilder,Model.Utils.Config.SystemConfig)">
             <summary>
-            配置Swagger多版本文档
+            配置Swagger多版本文档服务
             </summary>
             <param name="app"></param>
             <param name="config"></param>
@@ -296,7 +296,7 @@
         </member>
         <member name="M:Api.Configures.WeChatServiceConfigura.ConfiguraWeChat(Microsoft.AspNetCore.Builder.IApplicationBuilder,Model.Utils.Config.SystemConfig)">
             <summary>
-            配置WeChat
+            配置WeChat服务
             </summary>
             <param name="app"></param>
             <param name="config"></param>

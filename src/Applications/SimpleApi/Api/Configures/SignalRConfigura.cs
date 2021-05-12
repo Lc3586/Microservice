@@ -1,6 +1,7 @@
 ﻿using Business.Handler;
 using Business.Hub;
 using Business.Utils.Authorization;
+using Microservice.Library.ConsoleTool;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +23,8 @@ namespace Api.Configures
         /// <returns></returns>
         public static IServiceCollection RegisterSignalR(this IServiceCollection services, SystemConfig config)
         {
+            "注册SignalR服务.".ConsoleWrite();
+
             services.AddAuthorization(options =>
             {
                 options.AddPolicy(nameof(SignalRHubRequirement), policy =>
@@ -56,6 +59,8 @@ namespace Api.Configures
         /// <returns></returns>
         public static IApplicationBuilder ConfiguraSignalR(this IApplicationBuilder app, SystemConfig config)
         {
+            "配置SignalR服务.".ConsoleWrite();
+
             if (config.SignalrCors)
                 app.UseCors("CorsPolicy");
 

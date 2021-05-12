@@ -1,4 +1,5 @@
 ﻿using Api.Filter.Soap;
+using Microservice.Library.ConsoleTool;
 using Microservice.Library.Container;
 using Microservice.Library.Extension;
 using Microservice.Library.Soap.Application;
@@ -26,6 +27,8 @@ namespace Api.Configures
         /// <param name="config"></param>
         public static IServiceCollection RegisterSoap(this IServiceCollection services, SystemConfig config)
         {
+            "注册Soap服务.".ConsoleWrite();
+
             ServerOptions = config.Soaps.Where(w => w.Enable && w.Type == SoapType.Server).Select(w => new SoapServerOptions
             {
                 ServiceType = (w.ServiceType.Substring(0, w.ServiceType.IndexOf('.')), w.ServiceType),
@@ -55,12 +58,14 @@ namespace Api.Configures
         }
 
         /// <summary>
-        /// 配置Soap
+        /// 配置Soap服务
         /// </summary>
         /// <param name="app"></param>
         /// <param name="config"></param>
         public static IApplicationBuilder ConfiguraSoap(this IApplicationBuilder app, SystemConfig config)
         {
+            "配置Soap服务.".ConsoleWrite();
+
             app.AddSoapServer(ServerOptions);
 
             return app;

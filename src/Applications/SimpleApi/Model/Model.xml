@@ -1967,6 +1967,11 @@
             服务器标识
             </summary>
         </member>
+        <member name="P:Model.Utils.Config.SystemConfig.DockerBridge">
+            <summary>
+            Docker桥接网络模式
+            </summary>
+        </member>
         <member name="P:Model.Utils.Config.SystemConfig.FxAssembly">
             <summary>
             标记了IDependency的类的命名空间集合

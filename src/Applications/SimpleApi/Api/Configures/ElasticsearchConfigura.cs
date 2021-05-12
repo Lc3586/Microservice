@@ -1,4 +1,5 @@
 ﻿using Elasticsearch.Net;
+using Microservice.Library.ConsoleTool;
 using Microsoft.Extensions.DependencyInjection;
 using Model.Utils.Config;
 using Nest;
@@ -18,6 +19,8 @@ namespace Api.Configures
         /// <param name="config"></param>
         public static IServiceCollection RegisterElasticsearch(this IServiceCollection services, SystemConfig config)
         {
+            "注册ES搜索服务.".ConsoleWrite();
+
             services.AddElasticsearch(s =>
             {
                 if (config.Elasticsearch.Nodes != null)

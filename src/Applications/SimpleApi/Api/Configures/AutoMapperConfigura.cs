@@ -1,4 +1,5 @@
-﻿using Microservice.Library.Extension;
+﻿using Microservice.Library.ConsoleTool;
+using Microservice.Library.Extension;
 using Microsoft.Extensions.DependencyInjection;
 using Model.Utils.Config;
 
@@ -16,6 +17,8 @@ namespace Api.Configures
         /// <param name="config"></param>
         public static IServiceCollection RegisterAutoMapper(this IServiceCollection services, SystemConfig config)
         {
+            "注册AutoMapper服务.".ConsoleWrite();
+
             services.AddAutoMapper(s =>
             {
                 s.AutoMapperGeneratorOptions.Types = config.AutoMapperAssemblys.GetTypes();

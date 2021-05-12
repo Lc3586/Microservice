@@ -6,6 +6,7 @@ using Autofac.Extras.DynamicProxy;
 using Business.Handler;
 using IocServiceDemo;
 using Microservice.Library.Configuration;
+using Microservice.Library.ConsoleTool;
 using Microservice.Library.Container;
 using Microservice.Library.Extension;
 using Microsoft.AspNetCore.Builder;
@@ -21,10 +22,9 @@ using Microsoft.Extensions.FileProviders;
 using Model.Utils.Config;
 using Newtonsoft.Json.Serialization;
 using System;
-using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
-using Microservice.Library.ConsoleTool;
 
 namespace Api
 {
@@ -39,12 +39,12 @@ namespace Api
         /// <param name="configuration"></param>
         public Startup(IConfiguration configuration)
         {
-            Bar = new ProgressBar();
-            Bar.Normal(5, "正在读取配置.");
+            //Bar? = new ProgressBar();
+            Bar?.Normal(5, "正在读取配置.");
             Configuration = configuration;
             Config = new ConfigHelper(Configuration).GetModel<SystemConfig>("SystemConfig");
             "已读取配置.".ConsoleWrite();
-            Bar.Normal(6);
+            Bar?.Normal(6);
             Console.Title = Config.ProjectName;
             Config.ProjectName.ConsoleWrite();
             $"运行模式 => {Config.RunMode}.".ConsoleWrite();
@@ -72,12 +72,13 @@ namespace Api
         /// </remarks>
         public void ConfigureServices(IServiceCollection services)
         {
-            Bar.Normal(6, "正在注入依赖.");
-            "注册应用程序保护数据配置.".ConsoleWrite();
+            Bar?.Normal(6, "正在注入依赖.");
             services.RegisterDataProtection(Config);
 
-            "注册示例服务.".ConsoleWrite();
+            Bar?.Normal(7);
             #region 注册服务示例代码
+
+            "注册示例服务.".ConsoleWrite();
 
             //注册成单例
             //.AddSingleton(typeof(IDemoService),typeof(DemoServiceA))
@@ -94,6 +95,7 @@ namespace Api
 
             #endregion
 
+            Bar?.Normal(8);
             "注册控制器.".ConsoleWrite();
             "注册全局异常拦截器.".ConsoleWrite();
             var mvcbuilder = services.AddControllers(options =>
@@ -101,6 +103,7 @@ namespace Api
                   options.Filters.Add<GlobalExceptionFilter>();
               });
 
+            Bar?.Normal(9);
             "注册NewtonsoftJson.".ConsoleWrite();
             mvcbuilder.AddNewtonsoftJson(options =>
             {
@@ -109,6 +112,7 @@ namespace Api
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();
             });
 
+            Bar?.Normal(10);
             "注册控制器为服务.".ConsoleWrite();
             mvcbuilder.AddControllersAsServices();
 
@@ -139,84 +143,65 @@ namespace Api
                 options.AllowSynchronousIO = true;
             });
 
+            Bar?.Normal(15);
             if (Config.EnableSwagger && Config.RunMode != RunMode.Publish)
             {
                 if (Config.Swagger.EnableApiMultiVersion)
-                {
-                    "注册Swagger多版本文档服务.".ConsoleWrite();
                     services.RegisterSwaggerMultiVersion(Config);
-                }
                 else
-                {
-                    "注册Swagger服务.".ConsoleWrite();
                     services.RegisterSwagger(Config);
-                }
             }
 
+            Bar?.Normal(16);
             if (Config.EnableCache)
-            {
-                "注册缓存服务.".ConsoleWrite();
                 services.RegisterCache(Config);
-            }
 
+            Bar?.Normal(17);
             if (Config.EnableSampleAuthentication)
-            {
-                "注册简易身份认证服务.".ConsoleWrite();
                 services.RegisterSampleAuthentication(Config);
-            }
 
+            Bar?.Normal(18);
             if (Config.EnableCAS)
-            {
-                "注册CAS服务.".ConsoleWrite();
                 services.RegisterCAS(Config);
-            }
 
+            Bar?.Normal(19);
             if (Config.EnableElasticsearch)
-            {
-                "注册ES搜索服务.".ConsoleWrite();
                 services.RegisterElasticsearch(Config);
-            }
 
+            Bar?.Normal(20);
             if (Config.EnableKafka)
-            {
-                "注册Kafka服务.".ConsoleWrite();
                 services.RegisterKafka(Config);
-            }
 
+            Bar?.Normal(21);
             if (Config.EnableFreeSql)
             {
                 if (Config.EnableMultiDatabases)
-                {
-                    "注册FreeSql多数据库服务.".ConsoleWrite();
                     services.RegisterFreeSqlMultiDatabase(Config);
-                }
                 else
-                {
-                    "注册FreeSql服务.".ConsoleWrite();
                     services.RegisterFreeSql(Config);
-                }
             }
 
+            Bar?.Normal(22);
             if (Config.EnableAutoMapper)
-            {
-                "注册AutoMapper服务.".ConsoleWrite();
                 services.RegisterAutoMapper(Config);
-            }
 
+            Bar?.Normal(23);
             if (Config.EnableWeChatService)
-            {
-                "注册WeChat服务.".ConsoleWrite();
                 services.RegisterWeChat(Configuration, Config);
-            }
 
+            Bar?.Normal(24);
             if (Config.EnableSoap)
                 services.RegisterSoap(Config);
 
+            Bar?.Normal(25);
             if (Config.EnableSignalr)
                 services.RegisterSignalR(Config);
 
+            Bar?.Normal(26);
             services.RegisterNLog(Config);
 
+            Bar?.Normal(27);
+            "初始化分片文件合并服务.".ConsoleWrite();
             //上传功能-合并分片文件
             services.AddSingleton(new ChunkFileMergeHandler());
         }
@@ -227,6 +212,12 @@ namespace Api
         /// <param name="builder"></param>
         public void ConfigureContainer(ContainerBuilder builder)
         {
+            Bar?.Normal(58, "正在配置Autofac容器");
+
+            "配置Autofac容器.".ConsoleWrite();
+
+            "注册IDependency接口.".ConsoleWrite();
+
             // 在这里添加服务注册
             var baseType = typeof(IDependency);
 
@@ -241,14 +232,20 @@ namespace Api
                 .EnableInterfaceInterceptors()
                 .InterceptedBy(typeof(Interceptor));
 
+            Bar?.Normal(59);
+            "注册控制器.".ConsoleWrite();
             //注册Controller
             builder.RegisterAssemblyTypes(typeof(Startup).GetTypeInfo().Assembly)
                 .Where(t => typeof(Controller).IsAssignableFrom(t) && t.Name.EndsWith(nameof(Controller), StringComparison.Ordinal))
                 .PropertiesAutowired();
 
+            Bar?.Normal(50);
+            "注册Interceptor(AOP).".ConsoleWrite();
             //AOP
             builder.RegisterType<Interceptor>();
 
+            Bar?.Normal(51);
+            "注册DisposableContainer(请求结束自动释放).".ConsoleWrite();
             //请求结束自动释放
             builder.RegisterType<DisposableContainer>()
                 .As<IDisposableContainer>()
@@ -268,29 +265,45 @@ namespace Api
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostingEnvironment hostingEnvironment)
 #pragma warning restore CS0618 // 类型或成员已过时
         {
+            Bar?.Normal(82, "正在配置应用程序");
             app.ConfiguraHostEnvironment(env, hostingEnvironment, Config);
 
-            //Request.Body重用
+            Bar?.Normal(83);
+            "允许重复读取请求Body.".ConsoleWrite();
+            //允许重复读取请求Body
             app.Use(next => context =>
             {
                 context.Request.EnableBuffering();
 
                 return next(context);
-            })
+            });
+
+            Bar?.Normal(84);
+            "使用异常处理中间件.".ConsoleWrite();
             //处理异常
-            .UseMiddleware<ExceptionHandlerMiddleware>()
+            app.UseMiddleware<ExceptionHandlerMiddleware>();
+
+            Bar?.Normal(85);
+            "使用跨域中间件.".ConsoleWrite();
             //跨域
-            .UseMiddleware<CorsMiddleware>()
-            //.UseDeveloperExceptionPage()
-            .UseStaticFiles(new StaticFileOptions
+            app.UseMiddleware<CorsMiddleware>();
+            //app.UseDeveloperExceptionPage();
+
+            Bar?.Normal(86);
+            "使用静态文件服务.".ConsoleWrite();
+            app.UseStaticFiles(new StaticFileOptions
             {
                 //替换静态文件默认目录
                 FileProvider = new PhysicalFileProvider(Config.AbsoluteWWWRootDirectory),
                 ServeUnknownFileTypes = true,
                 DefaultContentType = "application/octet-stream"
-            })
-            .UseRouting();
+            });
 
+            Bar?.Normal(87);
+            "使用路由中间件.".ConsoleWrite();
+            app.UseRouting();
+
+            Bar?.Normal(88);
             //不是发布模式时，开放swagger接口文档
             if (Config.EnableSwagger && Config.RunMode != RunMode.Publish)
             {
@@ -300,12 +313,15 @@ namespace Api
                     app.ConfiguraSwagger(Config);
             }
 
+            Bar?.Normal(89);
             if (Config.EnableSampleAuthentication)
                 app.ConfiguraSampleAuthentication(Config);
 
+            Bar?.Normal(80);
             if (Config.EnableCAS)
                 app.ConfiguraCAS(Config);
 
+            Bar?.Normal(91);
             if (Config.EnableFreeSql)
             {
                 if (Config.EnableMultiDatabases)
@@ -314,33 +330,55 @@ namespace Api
                     app.ConfiguraFreeSql(Config);
             }
 
+            Bar?.Normal(92);
             if (Config.EnableWeChatService)
                 app.ConfiguraWeChat(Config);
 
+            Bar?.Normal(93);
             if (Config.EnableKafka)
                 app.ConfiguraKafka(Config);
 
+            Bar?.Normal(94);
+            "使用终端中间件.".ConsoleWrite();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-            })
-            //Nginx服务器
-            .UseForwardedHeaders(new ForwardedHeadersOptions
-            {
-                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
 
+            Bar?.Normal(95);
+            $"使用反向代理 {(Config.DockerBridge ? "Docker桥接网络模式" : "")}.".ConsoleWrite();
+            //Nginx服务器
+            app.UseForwardedHeaders(Config.DockerBridge
+                ? new ForwardedHeadersOptions
+                {
+                    ForwardedHeaders = ForwardedHeaders.All,
+                    KnownNetworks = { new IPNetwork(IPAddress.Parse("172.17.0.0"), 16) }
+                }
+                : new ForwardedHeadersOptions
+                {
+                    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+                });
+
+            Bar?.Normal(96);
             if (Config.EnableSoap)
                 app.ConfiguraSoap(Config);
 
+            Bar?.Normal(97);
             if (Config.EnableSignalr)
                 app.ConfiguraSignalR(Config);
 
+            Bar?.Normal(98);
+            "获取AutofacIOC容器.".ConsoleWrite();
             //获取AutofacIOC容器
             AutofacHelper.Container = app.ApplicationServices.GetAutofacRoot();
 
+            Bar?.Normal(99);
+            "启动分片文件合并服务.".ConsoleWrite();
             //上传功能-合并分片文件
             AutofacHelper.GetService<ChunkFileMergeHandler>().Start();
+
+            Bar?.Normal(100, "应用程序已启动");
+            "应用程序已启动.".ConsoleWrite(ConsoleColor.White, null, true, 1);
         }
     }
 }

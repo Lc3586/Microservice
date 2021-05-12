@@ -21,7 +21,7 @@ using System.Threading.Tasks;
 namespace Business.Handler
 {
     /// <summary>
-    /// 合并分片文件
+    /// 分片文件合并处理类
     /// </summary>
     public class ChunkFileMergeHandler
     {

@@ -1,4 +1,5 @@
-﻿using Microservice.Library.Extension;
+﻿using Microservice.Library.ConsoleTool;
+using Microservice.Library.Extension;
 using Microservice.Library.File;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -26,14 +27,20 @@ namespace Api.Configures
         public static IApplicationBuilder ConfiguraHostEnvironment(this IApplicationBuilder app, IWebHostEnvironment webHostEnvironment, IHostingEnvironment hostingEnvironment, SystemConfig config)
 #pragma warning restore CS0618 // 类型或成员已过时
         {
+            "配置主机环境.".ConsoleWrite();
+
             webHostEnvironment.ApplicationName = config.ProjectName;
             if (webHostEnvironment.EnvironmentName == "Development")
             {
+                "当前为开发环境(Development).".ConsoleWrite();
+
                 config.AbsoluteStorageDirectory = webHostEnvironment.ContentRootPath;
                 config.AbsoluteWWWRootDirectory = webHostEnvironment.WebRootPath;
             }
             else
             {
+                $"当前为{webHostEnvironment.EnvironmentName}环境.".ConsoleWrite();
+
                 //转移静态文件目录
                 webHostEnvironment.WebRootPath.CopyTo(config.AbsoluteWWWRootDirectory, true, true);
 
@@ -47,6 +54,9 @@ namespace Api.Configures
                 hostingEnvironment.ContentRootPath = config.AbsoluteStorageDirectory;
                 hostingEnvironment.WebRootPath = config.AbsoluteWWWRootDirectory;
             }
+
+            $"ContentRootPath(应用程序文件存储根目录) => {webHostEnvironment.ContentRootPath}.".ConsoleWrite();
+            $"WebRootPath(应用程序站点文件根目录) => {webHostEnvironment.WebRootPath}.".ConsoleWrite();
 
             return app;
         }

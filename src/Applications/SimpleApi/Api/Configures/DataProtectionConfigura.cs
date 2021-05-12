@@ -1,4 +1,5 @@
-﻿using Microservice.Library.Extension;
+﻿using Microservice.Library.ConsoleTool;
+using Microservice.Library.Extension;
 using Microservice.Library.File;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
@@ -25,6 +26,8 @@ namespace Api.Configures
         /// <remarks></remarks>
         public static IServiceCollection RegisterDataProtection(this IServiceCollection services, SystemConfig config)
         {
+            "注册应用程序保护数据配置.".ConsoleWrite();
+
             var dpBuilder = services.AddDataProtection();
 
             if (!config.AbsoluteDataProtectionDirectory.IsNullOrWhiteSpace())

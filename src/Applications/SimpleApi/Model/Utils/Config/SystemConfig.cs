@@ -184,6 +184,11 @@ namespace Model.Utils.Config
         /// </summary>
         public string ServerKey { get; set; }
 
+        /// <summary>
+        /// Docker桥接网络模式
+        /// </summary>
+        public bool DockerBridge { get; set; }
+
         #endregion
 
         #region 高级

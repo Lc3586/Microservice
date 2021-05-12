@@ -1,4 +1,5 @@
 ﻿using Business.Utils.Log;
+using Microservice.Library.ConsoleTool;
 using Microservice.Library.NLogger.Application;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +22,8 @@ namespace Api.Configures
         /// <param name="config"></param>
         public static IServiceCollection RegisterNLog(this IServiceCollection services, SystemConfig config)
         {
+            "注册NLog服务.".ConsoleWrite();
+
             services.AddNLogger(s =>
             {
                 s.TargetGeneratorOptions

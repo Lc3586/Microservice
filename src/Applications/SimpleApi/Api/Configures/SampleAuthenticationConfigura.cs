@@ -1,4 +1,5 @@
 ﻿using Business.Utils.Authorization;
+using Microservice.Library.ConsoleTool;
 using Microservice.Library.Container;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -23,6 +24,8 @@ namespace Api.Configures
         /// <param name="config"></param>
         public static IServiceCollection RegisterSampleAuthentication(this IServiceCollection services, SystemConfig config)
         {
+            "注册简易身份认证服务.".ConsoleWrite();
+
             services.AddControllers(options =>
             {
                 //全局身份（登录）验证, 除非添加AllowAnonymousAttribute特性忽略验证
@@ -87,13 +90,15 @@ namespace Api.Configures
         }
 
         /// <summary>
-        /// 配置简易身份认证
+        /// 配置简易身份认证服务
         /// 注：方法在UseEndpoints之前调用
         /// </summary>
         /// <param name="app"></param>
         /// <param name="config"></param>
         public static IApplicationBuilder ConfiguraSampleAuthentication(this IApplicationBuilder app, SystemConfig config)
         {
+            "配置简易身份认证服务.".ConsoleWrite();
+
             app.UseCookiePolicy();
             app.UseAuthentication();
             app.UseAuthorization();

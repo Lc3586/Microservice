@@ -1,4 +1,5 @@
 ﻿using Business.Utils.Log;
+using Microservice.Library.ConsoleTool;
 using Microservice.Library.Extension;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +22,8 @@ namespace Api.Configures
         /// <param name="config"></param>
         public static IServiceCollection RegisterFreeSqlMultiDatabase(this IServiceCollection services, SystemConfig config)
         {
+            "注册FreeSql多数据库服务.".ConsoleWrite();
+
             #region 多库
 
             services.AddFreeSql<string>(options =>
@@ -50,6 +53,8 @@ namespace Api.Configures
                     .Where(d => d.Enable)
                     .ForEach(d =>
                     {
+                        $"使用{d.DatabaseType}数据库.".ConsoleWrite();
+
                         options.Add(d.Name, options =>
                         {
                             //自行配置Builder
@@ -116,6 +121,8 @@ namespace Api.Configures
         /// <param name="config"></param>
         public static IApplicationBuilder ConfiguraFreeSqlMultiDatabase(this IApplicationBuilder app, SystemConfig config)
         {
+            "配置FreeSql多数据库服务.".ConsoleWrite();
+
             //多库预热
             //app.ApplicationServices
             //    .GetService<IFreeSqlMultipleProvider<string>>()
