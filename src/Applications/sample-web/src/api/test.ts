@@ -92,13 +92,13 @@ interface Circle {
     radius: number;
 }
 interface Triangle {
-    kind: "circle";
+    kind: "triangle";
     radius: number;
 }
 
 type Shape = Square | Rectangle | Circle | Triangle;
 
-function area(s: Shape) {
+function area(s: Shape): number {
     switch (s.kind) {
         case "square": return s.size * s.size;
         case "rectangle": return s.height * s.width;

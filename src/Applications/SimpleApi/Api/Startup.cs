@@ -25,6 +25,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace Api
 {
@@ -39,7 +40,11 @@ namespace Api
         /// <param name="configuration"></param>
         public Startup(IConfiguration configuration)
         {
-            //Bar? = new ProgressBar();
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                Bar = new ProgressBar();
+            else
+                Bar = new ProgressBar(1, 50, ProgressBar.ProgressBarType.Character);
+
             Bar?.Normal(5, "正在读取配置.");
             Configuration = configuration;
             Config = new ConfigHelper(Configuration).GetModel<SystemConfig>("SystemConfig");
