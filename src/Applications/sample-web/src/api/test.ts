@@ -98,13 +98,32 @@ interface Triangle {
 
 type Shape = Square | Rectangle | Circle | Triangle;
 
-function area(s: Shape): number {
+function assertNever(x: never): never {
+    throw new Error("Unexpected object: " + x);
+}
+
+function area(s: Shape) {
     switch (s.kind) {
         case "square": return s.size * s.size;
         case "rectangle": return s.height * s.width;
         case "circle": return Math.PI * s.radius ** 2;
+        default: return assertNever(s);
     }
 }
+
+function pluck<T, K extends keyof T>(o: T, names: K[]): T[K][] {
+    return names.map(n => o[n]);
+}
+
+interface Person {
+    name: string;
+    age: number;
+}
+let person: Person = {
+    name: 'Jarid',
+    age: 35
+};
+let strings: string[] = pluck(person, ['name']); // ok, string[]
 
 enum EventType { Mouse, Keyboard }
 

@@ -40,10 +40,10 @@ namespace Api
         /// <param name="configuration"></param>
         public Startup(IConfiguration configuration)
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                Bar = new ProgressBar();
-            else
-                Bar = new ProgressBar(1, 50, ProgressBar.ProgressBarType.Character);
+            //if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            //    Bar = new ProgressBar();
+            //else
+            //    Bar = new ProgressBar(1, 50, ProgressBar.ProgressBarType.Character);
 
             Bar?.Normal(5, "正在读取配置.");
             Configuration = configuration;
