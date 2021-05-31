@@ -158,22 +158,5 @@ namespace Api.Controllers.Utils
         {
             await Context.SignOutAsync();
         }
-
-        /// <summary>
-        /// 获取验证后的身份信息
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet("getToken")]
-        [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
-        public async Task<string> GetToken()
-        {
-            return await Task.FromResult(JWTHelper.GetToken(new AuthorizedInfo
-            {
-                AppName = Config.ProjectName,
-                Id = Context.User.Claims?.FirstOrDefault(o => o.Type == "id")?.Value,
-                Account = Context.User.Claims?.FirstOrDefault(o => o.Type == "account")?.Value,
-                Name = Context.User.Claims?.FirstOrDefault(o => o.Type == "name")?.Value
-            }.ToJson(), Config.JWTSecret));
-        }
     }
 }

@@ -313,49 +313,41 @@ namespace Business.Implementation.System
 
             (bool success, Exception ex) = Orm.RunTransaction(() =>
             {
-                dynamic target;
-
-                switch (data.Type)
+                var target = data.Type switch
                 {
-                    case Model.System.SortType.top:
-                        target = Repository.Where(o => o.ParentId == current.ParentId)
-                                             .OrderBy(o => o.Sort)
-                                             .First(o => new
-                                             {
-                                                 o.Id,
-                                                 o.Sort
-                                             });
-                        break;
-                    case Model.System.SortType.up:
-                        target = Repository.Where(o => o.ParentId == current.ParentId && o.Sort < current.Sort)
-                                            .OrderByDescending(o => o.Sort)
-                                             .First(o => new
-                                             {
-                                                 o.Id,
-                                                 o.Sort
-                                             });
-                        break;
-                    case Model.System.SortType.down:
-                        target = Repository.Where(o => o.ParentId == current.ParentId && o.Sort > current.Sort)
-                                            .OrderBy(o => o.Sort)
-                                             .First(o => new
-                                             {
-                                                 o.Id,
-                                                 o.Sort
-                                             });
-                        break;
-                    case Model.System.SortType.low:
-                        target = Repository.Where(o => o.ParentId == current.ParentId)
-                                             .OrderByDescending(o => o.Sort)
-                                             .First(o => new
-                                             {
-                                                 o.Id,
-                                                 o.Sort
-                                             });
-                        break;
-                    default:
-                        throw new MessageException($"不支持的排序类型 {data.Type}.");
-                }
+                    Model.System.SortType.top => Repository.Where(o => o.ParentId == current.ParentId)
+                                                                .OrderBy(o => o.Sort)
+                                                                .First(o => new
+                                                                {
+                                                                    o.Id,
+                                                                    o.Sort
+                                                                }),
+                    Model.System.SortType.up => Repository.Where(o => o.ParentId == current.ParentId && o.Sort < current.Sort)
+                .OrderByDescending(o => o.Sort)
+                 .First(o => new
+                 {
+                     o.Id,
+                     o.Sort
+                 }),
+                    Model.System.SortType.down => Repository.Where(o => o.ParentId == current.ParentId && o.Sort > current.Sort)
+                .OrderBy(o => o.Sort)
+                 .First(o => new
+                 {
+                     o.Id,
+                     o.Sort
+                 }),
+                    Model.System.SortType.low => Repository.Where(o => o.ParentId == current.ParentId)
+                 .OrderByDescending(o => o.Sort)
+                 .First(o => new
+                 {
+                     o.Id,
+                     o.Sort
+                 }),
+                    _ => throw new MessageException($"不支持的排序类型 {data.Type}."),
+                };
+
+                if (target == default)
+                    return;
 
                 var orId = OperationRecordBusiness.Create(new Common_OperationRecord
                 {
@@ -364,16 +356,13 @@ namespace Business.Implementation.System
                     Explain = $"菜单排序[名称 {current.Name}, 类型 {current.Type}]."
                 });
 
-                string targetId = target.Id;
-                int targetSort = target.Sort;
-
                 if (Repository.UpdateDiy
-                         .Where(o => o.Id == targetId)
+                         .Where(o => o.Id == target.Id)
                          .Set(o => o.Sort, current.Sort)
                          .ExecuteAffrows() < 0
                     || Repository.UpdateDiy
                          .Where(o => o.Id == current.Id)
-                         .Set(o => o.Sort, targetSort)
+                         .Set(o => o.Sort, target.Sort)
                          .ExecuteAffrows() < 0)
                     throw new MessageException("菜单排序失败.");
             });

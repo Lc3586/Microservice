@@ -1,7 +1,5 @@
 ﻿using Business.Interface.System;
-using Business.Utils.Authorization;
 using Microservice.Library.Extension;
-using Microservice.Library.Http;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -9,8 +7,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Model.Utils.SampleAuthentication.SampleAuthenticationDTO;
 using Swashbuckle.AspNetCore.Annotations;
-using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -49,27 +47,10 @@ namespace Api.Controllers.Utils
         /// </remarks>
         /// <returns>身份信息</returns>
         [HttpPost("authorized")]
-        public async Task<AuthenticationInfo> Authorized()
+        [SwaggerResponse((int)HttpStatusCode.OK, "验证信息", typeof(AuthenticationInfo))]
+        public object Authorized()
         {
-            var info = new AuthenticationInfo()
-            {
-                Id = Context.User.Claims?.FirstOrDefault(o => o.Type == nameof(AuthenticationInfo.Id))?.Value,
-
-                Account = Context.User.Claims?.FirstOrDefault(o => o.Type == ClaimTypes.Name)?.Value,
-
-                UserType = Context.User.Claims?.FirstOrDefault(o => o.Type == nameof(AuthenticationInfo.UserType))?.Value,
-
-                RoleTypes = Context.User.Claims?.Where(o => o.Type == ClaimTypes.Role).Select(o => o.Value).ToList(),
-
-                Nickname = Context.User.Claims?.FirstOrDefault(o => o.Type == ClaimTypes.GivenName)?.Value,
-                Sex = Context.User.Claims?.FirstOrDefault(o => o.Type == ClaimTypes.Gender)?.Value,
-
-                Face = Context.User.Claims?.FirstOrDefault(o => o.Type == nameof(AuthenticationInfo.Face))?.Value,
-
-                AuthenticationMethod = Context.User.Claims?.FirstOrDefault(o => o.Type == ClaimTypes.AuthenticationMethod)?.Value
-            };
-
-            return await Task.FromResult(info);
+            return Success(UserBusiness.AnalysisClaims(Context.User.Claims?.ToList()));
         }
 
         /// <summary>
@@ -116,23 +97,7 @@ namespace Api.Controllers.Utils
         {
             var authenticationInfo = UserBusiness.Login(data.Account, data.Password);
 
-            var claims = new List<Claim>
-            {
-                new Claim(nameof(AuthenticationInfo.Id), authenticationInfo.Id),
-
-                new Claim(ClaimTypes.Name, authenticationInfo.Account),
-
-                new Claim(nameof(AuthenticationInfo.UserType), authenticationInfo.UserType),
-
-                new Claim(ClaimTypes.GivenName, authenticationInfo.Nickname ?? string.Empty),
-                new Claim(ClaimTypes.Gender, authenticationInfo.Sex ?? string.Empty),
-
-                new Claim(nameof(AuthenticationInfo.Face), authenticationInfo.Face ?? string.Empty),
-
-                new Claim(ClaimTypes.AuthenticationMethod, "SA")
-            };
-
-            claims.AddRange(authenticationInfo.RoleTypes.Select(o => new Claim(ClaimTypes.Role, o)));
+            var claims = UserBusiness.CreateClaims(authenticationInfo, "SA");
 
             await Context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)));
 
@@ -153,32 +118,6 @@ namespace Api.Controllers.Utils
             var props = new AuthenticationProperties { RedirectUri = data.ReturnUrl };
 
             await Context.SignOutAsync(props);
-        }
-
-        /// <summary>
-        /// 获取验证后的身份信息
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet("getToken")]
-        public async Task<string> GetToken()
-        {
-            return await Task.FromResult(JWTHelper.GetToken(new AuthenticationInfo
-            {
-                Id = Context.User.Claims?.FirstOrDefault(o => o.Type == nameof(AuthenticationInfo.Id))?.Value,
-
-                Account = Context.User.Claims?.FirstOrDefault(o => o.Type == ClaimTypes.Name)?.Value,
-
-                UserType = Context.User.Claims?.FirstOrDefault(o => o.Type == nameof(AuthenticationInfo.UserType))?.Value,
-
-                RoleTypes = Context.User.Claims?.Where(o => o.Type == ClaimTypes.Role).Select(o => o.Value).ToList(),
-
-                Nickname = Context.User.Claims?.FirstOrDefault(o => o.Type == ClaimTypes.GivenName)?.Value,
-                Sex = Context.User.Claims?.FirstOrDefault(o => o.Type == ClaimTypes.Gender)?.Value,
-
-                Face = Context.User.Claims?.FirstOrDefault(o => o.Type == nameof(AuthenticationInfo.Face))?.Value,
-
-                AuthenticationMethod = Context.User.Claims?.FirstOrDefault(o => o.Type == ClaimTypes.AuthenticationMethod)?.Value
-            }.ToJson(), Config.JWTSecret));
         }
     }
 }

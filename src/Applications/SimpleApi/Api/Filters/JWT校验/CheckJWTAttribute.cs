@@ -29,7 +29,7 @@ namespace Api
                 var req = context.HttpContext.Request;
 
                 string token = req.GetToken();
-                if (!JWTHelper.CheckToken(token, Config.JWTSecret))
+                if (!JWTHelper.CheckToken(token, Config.JWT.SecurityKey))
                 {
                     context.Result = Error("token校验失败!", _errorCode);
                     return;

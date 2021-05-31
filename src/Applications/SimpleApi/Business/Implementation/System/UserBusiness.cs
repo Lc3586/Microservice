@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using Business.Utils.Filter;
 using Business.Interface.Common;
 using Business.Interface.System;
 using Business.Utils;
+using Business.Utils.Filter;
 using Business.Utils.Pagination;
 using Entity.Common;
 using Entity.System;
@@ -13,6 +13,7 @@ using Microservice.Library.FreeSql.Extention;
 using Microservice.Library.FreeSql.Gen;
 using Microservice.Library.OpenApi.Extention;
 using Microservice.Library.SelectOption;
+using Microsoft.IdentityModel.Tokens;
 using Model.Common;
 using Model.System;
 using Model.System.UserDTO;
@@ -20,7 +21,10 @@ using Model.Utils.Pagination;
 using Model.Utils.SampleAuthentication.SampleAuthenticationDTO;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Text;
 
 namespace Business.Implementation.System
 {
@@ -419,6 +423,50 @@ namespace Business.Implementation.System
 
             if (!success)
                 throw ex;
+        }
+
+        public List<Claim> CreateClaims(AuthenticationInfo authenticationInfo, string authenticationMethod)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(nameof(AuthenticationInfo.Id), authenticationInfo.Id),
+
+                new Claim(ClaimTypes.Name, authenticationInfo.Account),
+
+                new Claim(nameof(AuthenticationInfo.UserType), authenticationInfo.UserType),
+
+                new Claim(ClaimTypes.GivenName, authenticationInfo.Nickname ?? string.Empty),
+                new Claim(ClaimTypes.Gender, authenticationInfo.Sex ?? string.Empty),
+
+                new Claim(nameof(AuthenticationInfo.Face), authenticationInfo.Face ?? string.Empty),
+
+                new Claim(ClaimTypes.AuthenticationMethod, authenticationMethod)
+            };
+
+            claims.AddRange(authenticationInfo.RoleTypes.Select(o => new Claim(ClaimTypes.Role, o)));
+
+            return claims;
+        }
+
+        public AuthenticationInfo AnalysisClaims(List<Claim> claims)
+        {
+            return new AuthenticationInfo()
+            {
+                Id = claims?.FirstOrDefault(o => o.Type == nameof(AuthenticationInfo.Id))?.Value,
+
+                Account = claims?.FirstOrDefault(o => o.Type == ClaimTypes.Name)?.Value,
+
+                UserType = claims?.FirstOrDefault(o => o.Type == nameof(AuthenticationInfo.UserType))?.Value,
+
+                RoleTypes = claims?.Where(o => o.Type == ClaimTypes.Role).Select(o => o.Value).ToList(),
+
+                Nickname = claims?.FirstOrDefault(o => o.Type == ClaimTypes.GivenName)?.Value,
+                Sex = claims?.FirstOrDefault(o => o.Type == ClaimTypes.Gender)?.Value,
+
+                Face = claims?.FirstOrDefault(o => o.Type == nameof(AuthenticationInfo.Face))?.Value,
+
+                AuthenticationMethod = claims?.FirstOrDefault(o => o.Type == ClaimTypes.AuthenticationMethod)?.Value
+            };
         }
 
         public AuthenticationInfo Login(string account, string password)

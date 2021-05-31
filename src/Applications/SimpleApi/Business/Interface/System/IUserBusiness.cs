@@ -1,9 +1,10 @@
 ﻿using Microservice.Library.SelectOption;
 using Model.Common;
-using Model.Utils.SampleAuthentication.SampleAuthenticationDTO;
-using Model.Utils.Pagination;
 using Model.System.UserDTO;
+using Model.Utils.Pagination;
+using Model.Utils.SampleAuthentication.SampleAuthenticationDTO;
 using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace Business.Interface.System
 {
@@ -83,6 +84,21 @@ namespace Business.Interface.System
         /// </summary>
         /// <param name="data">数据</param>
         void UpdatePassword(UpdatePassword data);
+
+        /// <summary>
+        /// 获取声明信息
+        /// </summary>
+        /// <param name="authenticationInfo">验证信息</param>
+        /// <param name="authenticationMethod">验证方法</param>
+        /// <returns>声明信息</returns>
+        List<Claim> CreateClaims(AuthenticationInfo authenticationInfo, string authenticationMethod);
+
+        /// <summary>
+        /// 解析声明信息
+        /// </summary>
+        /// <param name="claims">声明信息</param>
+        /// <returns>验证信息</returns>
+        AuthenticationInfo AnalysisClaims(List<Claim> claims);
 
         /// <summary>
         /// 登录

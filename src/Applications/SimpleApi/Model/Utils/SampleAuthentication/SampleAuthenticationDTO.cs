@@ -1,6 +1,7 @@
 ﻿/* 
  * SampleAuthentication相关业务模型
  */
+using System;
 using System.Collections.Generic;
 
 namespace Model.Utils.SampleAuthentication.SampleAuthenticationDTO

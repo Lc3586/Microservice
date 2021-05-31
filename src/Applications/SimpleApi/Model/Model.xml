@@ -1540,6 +1540,37 @@
             启动时同步实体类型集合到数据库
             </summary>
         </member>
+        <member name="T:Model.Utils.Config.JWTSetting">
+            <summary>
+            JWT配置
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Config.JWTSetting.SecurityKey">
+            <summary>
+            密钥
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Config.JWTSetting.Algorithm">
+            <summary>
+            算法
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Config.JWTSetting.Issuer">
+            <summary>
+            发行者
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Config.JWTSetting.Audience">
+            <summary>
+            受众
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Config.JWTSetting.Validity">
+            <summary>
+            有效期时长
+            <para>默认20分钟</para>
+            </summary>
+        </member>
         <member name="T:Model.Utils.Config.KafkaSetting">
             <summary>
             kafka中间件配置
@@ -1983,11 +2014,6 @@
             数据删除模式,默认逻辑删除
             </summary>
         </member>
-        <member name="P:Model.Utils.Config.SystemConfig.JWTSecret">
-            <summary>
-            JWT秘钥
-            </summary>
-        </member>
         <member name="P:Model.Utils.Config.SystemConfig.WorkerId">
             <summary>
             工作ID
@@ -2116,7 +2142,17 @@
         </member>
         <member name="P:Model.Utils.Config.SystemConfig.CAS">
             <summary>
-            ElasticSearch配置
+            CAS配置
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Config.SystemConfig.EnableJWT">
+            <summary>
+            启用JWT
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Config.SystemConfig.JWT">
+            <summary>
+            JWT配置
             </summary>
         </member>
         <member name="P:Model.Utils.Config.SystemConfig.EnableWeChatService">
@@ -2241,6 +2277,21 @@
             <para>scope为snsapi_userinfo</para>
             <para>使用<see cref="T:Microservice.Library.WeChat.Extension.WeChatOAuthV2Middleware"/>中间件时，中间件监听的接口。</para>
             </remarks>
+        </member>
+        <member name="T:Model.Utils.JWT.JWTDTO.TokenInfo">
+            <summary>
+            令牌信息
+            </summary>
+        </member>
+        <member name="P:Model.Utils.JWT.JWTDTO.TokenInfo.AccessToken">
+            <summary>
+            访问令牌
+            </summary>
+        </member>
+        <member name="P:Model.Utils.JWT.JWTDTO.TokenInfo.Expires">
+            <summary>
+            过期时间
+            </summary>
         </member>
         <member name="T:Model.Utils.Log.LogDTO.FileInfo">
             <summary>

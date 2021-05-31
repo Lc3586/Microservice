@@ -209,11 +209,6 @@ namespace Model.Utils.Config
         public DeleteMode DeleteMode { get; set; }
 
         /// <summary>
-        /// JWT秘钥
-        /// </summary>
-        public string JWTSecret { get; set; }
-
-        /// <summary>
         /// 工作ID
         /// </summary>
         public long WorkerId { get; set; }
@@ -389,10 +384,25 @@ namespace Model.Utils.Config
         public bool EnableCAS { get; set; }
 
         /// <summary>
-        /// ElasticSearch配置
+        /// CAS配置
         /// </summary>
         [JsonConfig("jsonconfig/cas.json", "CAS")]
         public CASSetting CAS { get; set; }
+
+        #endregion
+
+        #region JWT
+
+        /// <summary>
+        /// 启用JWT
+        /// </summary>
+        public bool EnableJWT { get; set; }
+
+        /// <summary>
+        /// JWT配置
+        /// </summary>
+        [JsonConfig("jsonconfig/jwt.json", "JWT")]
+        public JWTSetting JWT { get; set; }
 
         #endregion
 

@@ -1902,6 +1902,21 @@
             </summary>
             <param name="data">数据</param>
         </member>
+        <member name="M:Business.Interface.System.IUserBusiness.CreateClaims(Model.Utils.SampleAuthentication.SampleAuthenticationDTO.AuthenticationInfo,System.String)">
+            <summary>
+            获取声明信息
+            </summary>
+            <param name="authenticationInfo">验证信息</param>
+            <param name="authenticationMethod">验证方法</param>
+            <returns>声明信息</returns>
+        </member>
+        <member name="M:Business.Interface.System.IUserBusiness.AnalysisClaims(System.Collections.Generic.List{System.Security.Claims.Claim})">
+            <summary>
+            解析声明信息
+            </summary>
+            <param name="claims">声明信息</param>
+            <returns>验证信息</returns>
+        </member>
         <member name="M:Business.Interface.System.IUserBusiness.Login(System.String,System.String)">
             <summary>
             登录
@@ -2323,6 +2338,32 @@
             <para>转小写</para>
             </summary>
             <returns></returns>
+        </member>
+        <member name="T:Business.Utils.JWT.JWTHelper">
+            <summary>
+            JWT帮助类
+            </summary>
+        </member>
+        <member name="M:Business.Utils.JWT.JWTHelper.GenerateToken(System.Collections.Generic.List{System.Security.Claims.Claim})">
+            <summary>
+            生成令牌
+            </summary>
+            <param name="claims">声明信息</param>
+            <returns>令牌信息</returns>
+        </member>
+        <member name="M:Business.Utils.JWT.JWTHelper.AnalysisToken(System.String)">
+            <summary>
+            分析令牌
+            </summary>
+            <param name="accessToken">令牌</param>
+            <returns>声明信息</returns>
+        </member>
+        <member name="M:Business.Utils.JWT.JWTHelper.RefreshToken(System.String)">
+            <summary>
+            刷新令牌
+            </summary>
+            <param name="accessToken">令牌</param>
+            <returns>令牌信息</returns>
         </member>
         <member name="T:Business.Utils.Kafka.KafkaConsume`2">
             <summary>

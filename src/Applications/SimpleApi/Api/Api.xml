@@ -145,6 +145,26 @@
             <param name="config"></param>
             <remarks></remarks>
         </member>
+        <member name="T:Api.Configures.JWTConfigura">
+            <summary>
+            JWT配置类
+            </summary>
+        </member>
+        <member name="M:Api.Configures.JWTConfigura.RegisterJWT(Microsoft.Extensions.DependencyInjection.IServiceCollection,Model.Utils.Config.SystemConfig)">
+            <summary>
+            注册JWT服务
+            </summary>
+            <param name="services"></param>
+            <param name="config"></param>
+        </member>
+        <member name="M:Api.Configures.JWTConfigura.ConfiguraJWT(Microsoft.AspNetCore.Builder.IApplicationBuilder,Model.Utils.Config.SystemConfig)">
+            <summary>
+            配置JWT服务
+            注：方法在UseEndpoints之前调用
+            </summary>
+            <param name="app"></param>
+            <param name="config"></param>
+        </member>
         <member name="T:Api.Configures.KafkaConfigura">
             <summary>
             Kafka服务配置类
@@ -1790,9 +1810,35 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.Utils.CASController.GetToken">
+        <member name="T:Api.Controllers.Utils.JWTController">
             <summary>
-            获取验证后的身份信息
+            身份令牌接口
+            </summary>
+        </member>
+        <member name="M:Api.Controllers.Utils.JWTController.Authorized">
+            <summary>
+            登录验证
+            </summary>
+            <remarks>
+            <para>使用此接口判断登录状态</para>
+            <para>已登录返回身份信息</para>
+            <para>未登录返回状态码401</para>
+            </remarks>
+            <returns>身份信息</returns>
+        </member>
+        <member name="M:Api.Controllers.Utils.JWTController.GetToken(Model.Utils.SampleAuthentication.SampleAuthenticationDTO.LoginRequest)">
+            <summary>
+            获取令牌
+            </summary>
+            <remarks>
+            <para>返回的Token，放在请求的Header中，"Authorization":"Bearer xxxxxxxxxxxxxx"</para>
+            </remarks>
+            <param name="data">参数（已登录的情况下此参数为空）</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.Utils.JWTController.RefreshToken">
+            <summary>
+            刷新令牌
             </summary>
             <returns></returns>
         </member>
@@ -1909,12 +1955,6 @@
             注销
             </summary>
             <param name="data">参数</param>
-            <returns></returns>
-        </member>
-        <member name="M:Api.Controllers.Utils.SampleAuthenticationController.GetToken">
-            <summary>
-            获取验证后的身份信息
-            </summary>
             <returns></returns>
         </member>
         <member name="T:Api.Controllers.Utils.TestController">

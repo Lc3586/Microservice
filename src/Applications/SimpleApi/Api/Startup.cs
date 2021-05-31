@@ -169,6 +169,9 @@ namespace Api
             if (Config.EnableCAS)
                 services.RegisterCAS(Config);
 
+            if (Config.EnableJWT)
+                services.RegisterJWT(Config);
+
             Bar?.Normal(19);
             if (Config.EnableElasticsearch)
                 services.RegisterElasticsearch(Config);
@@ -321,6 +324,9 @@ namespace Api
             Bar?.Normal(89);
             if (Config.EnableSampleAuthentication)
                 app.ConfiguraSampleAuthentication(Config);
+
+            if (Config.EnableJWT)
+                app.ConfiguraJWT(Config);
 
             Bar?.Normal(80);
             if (Config.EnableCAS)
