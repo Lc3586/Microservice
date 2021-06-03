@@ -1,6 +1,8 @@
 ﻿using Business.Handler;
 using Microservice.Library.Container;
+using Microservice.Library.Extension;
 using Model.Utils.Config;
+using Model.Utils.Log;
 using Model.Utils.SignalR;
 using NLog;
 using NLog.Targets;
@@ -15,7 +17,15 @@ namespace Business.Utils.Log
     {
         protected override string GetFormattedMessage(LogEventInfo logEvent)
         {
+            if (!logEvent.Properties.TryGetValue(NLoggerConfig.LogType, out object logType) && logEvent.Exception != null)
+            {
+                logEvent.Message += logEvent.Exception == null ? "" : $"\r\n\t{logEvent.Exception.GetExceptionAllMsg()}";
+                logEvent.Properties[NLoggerConfig.LogType] = LogType.GetName(LogType.系统异常);
+                logEvent.Properties[NLoggerConfig.Data] = "\r\n\tStack Trace: " + logEvent.Exception.ExceptionToString();
+            }
+
             var formattedMessage = base.GetFormattedMessage(logEvent);
+
             Monitor(logEvent, formattedMessage);
             return formattedMessage;
         }

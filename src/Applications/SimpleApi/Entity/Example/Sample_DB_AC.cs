@@ -16,10 +16,11 @@ namespace Entity.Example
     /// </remarks>
     [Table]//FreeSql使用CodeFirst模式时必须添加此特性，如果要禁用实体同步设置DisableSyncStructure = true
     //[System.ComponentModel.DataAnnotations.Schema.Table(nameof(Example_DB_AC))]//特别指定数据库表名
+    [OraclePrimaryKeyName("pk1_S_DB_AC" + ",pk2_S_DB_AC")]
     #region 设置索引
-    [Index(nameof(Sample_DB_AC) + "_idx_" + nameof(CreatorId), nameof(CreatorId) + " ASC")]
-    [Index(nameof(Sample_DB_AC) + "_idx_" + nameof(CreatorName), nameof(CreatorName) + " ASC")]
-    [Index(nameof(Sample_DB_AC) + "_idx_" + nameof(CreateTime), nameof(CreateTime) + " DESC")]
+    [Index("S_DB_AC_idx_01", nameof(CreatorId) + " ASC")]
+    [Index("S_DB_AC_idx_02", nameof(CreatorName) + " ASC")]
+    [Index("S_DB_AC_idx_03", nameof(CreateTime) + " DESC")]
     #endregion
     public class Sample_DB_AC
     {

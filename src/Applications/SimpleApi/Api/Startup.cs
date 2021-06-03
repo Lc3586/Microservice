@@ -273,6 +273,10 @@ namespace Api
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostingEnvironment hostingEnvironment)
 #pragma warning restore CS0618 // 类型或成员已过时
         {
+            "获取AutofacIOC容器.".ConsoleWrite();
+            //获取AutofacIOC容器
+            AutofacHelper.Container = app.ApplicationServices.GetAutofacRoot();
+
             Bar?.Normal(82, "正在配置应用程序");
             app.ConfiguraHostEnvironment(env, hostingEnvironment, Config);
 
@@ -379,13 +383,9 @@ namespace Api
                 app.ConfiguraSignalR(Config);
 
             Bar?.Normal(98);
-            "获取AutofacIOC容器.".ConsoleWrite();
-            //获取AutofacIOC容器
-            AutofacHelper.Container = app.ApplicationServices.GetAutofacRoot();
 
             Bar?.Normal(99);
             "启动分片文件合并服务.".ConsoleWrite();
-            //上传功能-合并分片文件
             AutofacHelper.GetService<ChunkFileMergeHandler>().Start();
 
             Bar?.Normal(100, "应用程序已启动");

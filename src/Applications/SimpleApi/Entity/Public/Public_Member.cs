@@ -14,17 +14,17 @@ namespace Entity.Public
     /// 会员
     /// </summary>
     [Table]
-    [OraclePrimaryKeyName("pk_" + nameof(Public_Member))]
+    [OraclePrimaryKeyName("pk_P_M")]
     #region 设置索引
-    [Index(nameof(Public_Member) + "_idx_" + nameof(Account), nameof(Account) + " ASC")]
-    [Index(nameof(Public_Member) + "_idx_" + nameof(Nickname), nameof(Nickname) + " ASC")]
-    [Index(nameof(Public_Member) + "_idx_" + nameof(Name), nameof(Name) + " ASC")]
-    [Index(nameof(Public_Member) + "_idx_" + nameof(Sex), nameof(Sex) + " ASC")]
-    [Index(nameof(Public_Member) + "_idx_" + nameof(Tel), nameof(Tel) + " ASC")]
-    [Index(nameof(Public_Member) + "_idx_" + nameof(Company), nameof(Company) + " ASC")]
-    [Index(nameof(Public_Member) + "_idx_" + nameof(Enable), nameof(Enable) + " DESC")]
-    [Index(nameof(Public_Member) + "_idx_" + nameof(CreatorId), nameof(CreatorId) + " ASC")]
-    [Index(nameof(Public_Member) + "_idx_" + nameof(CreateTime), nameof(CreateTime) + " DESC")]
+    [Index("P_M_idx_01", nameof(Account) + " ASC")]
+    [Index("P_M_idx_02", nameof(Nickname) + " ASC")]
+    [Index("P_M_idx_03", nameof(Name) + " ASC")]
+    [Index("P_M_idx_04", nameof(Sex) + " ASC")]
+    [Index("P_M_idx_05", nameof(Tel) + " ASC")]
+    [Index("P_M_idx_06", nameof(Company) + " ASC")]
+    [Index("P_M_idx_07", nameof(Enable) + " DESC")]
+    [Index("P_M_idx_08", nameof(CreatorId) + " ASC")]
+    [Index("P_M_idx_09", nameof(CreateTime) + " DESC")]
     #endregion
     public class Public_Member
     {

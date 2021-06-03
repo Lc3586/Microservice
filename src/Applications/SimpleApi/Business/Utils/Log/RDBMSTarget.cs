@@ -2,8 +2,10 @@
 using Entity.System;
 using FreeSql;
 using Microservice.Library.Container;
+using Microservice.Library.Extension;
 using Microservice.Library.FreeSql.Gen;
 using Model.Utils.Config;
+using Model.Utils.Log;
 using Model.Utils.SignalR;
 using NLog;
 using NLog.Targets;
@@ -60,6 +62,13 @@ namespace Business.Utils.Log
 
         protected override async void Write(LogEventInfo logEvent)
         {
+            if (!logEvent.Properties.TryGetValue(NLoggerConfig.LogType, out object logType) && logEvent.Exception != null)
+            {
+                logEvent.Message += logEvent.Exception == null ? "" : $"\r\n\t{logEvent.Exception.GetExceptionAllMsg()}";
+                logEvent.Properties[NLoggerConfig.LogType] = LogType.GetName(LogType.系统异常);
+                logEvent.Properties[NLoggerConfig.Data] = "\r\n\tStack Trace: " + logEvent.Exception.ExceptionToString();
+            }
+
             var log = GetBase_SysLogInfo(logEvent);
             Monitor(log, logEvent.FormattedMessage);
             await Repository.InsertAsync(log);

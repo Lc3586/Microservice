@@ -12,6 +12,7 @@ namespace Entity.System
     /// 用户授权菜单
     /// </summary>
     [Table]
+    [OraclePrimaryKeyName("pk1_S_UM,pk2_S_UM")]
     public class System_UserMenu
     {
         /// <summary>

@@ -97,7 +97,7 @@
                 connectToLogHub();
             }
             else
-                ElementPlus.ElMessage(response.data.Msg);
+                ElementPlus.ElMessage(response.data.Message);
         }).catch(error => {
             main.qr.loading = false;
             ElementPlus.ElMessage('获取二维码地址失败.');
@@ -132,7 +132,7 @@
                     if (response.data.Success)
                         window.location.href = '/adminVue/index.html';
                     else
-                        ElementPlus.ElMessage(response.data.Msg);
+                        ElementPlus.ElMessage(response.data.Message);
                 }).catch(error => {
                     console.info(error);
                     ElementPlus.ElMessage('登录失败.');

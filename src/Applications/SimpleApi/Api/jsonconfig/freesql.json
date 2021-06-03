@@ -2,8 +2,7 @@
   "FreeSql": {
     //开发选项，生产环境注释
     "AutoSyncStructure": true,
-    "SyncStructureToLower": false,
-    "SyncStructureToUpper": false,
-    "SyncStructureOnStartup": true
+    "SyncStructureOnStartup": true,
+    "SyncStructureNameConvert": "ToUpper"
   }
 }

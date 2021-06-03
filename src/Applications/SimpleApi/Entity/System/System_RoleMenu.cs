@@ -12,6 +12,7 @@ namespace Entity.System
     /// 角色授权菜单
     /// </summary>
     [Table]
+    [OraclePrimaryKeyName("pk1_S_RM,pk2_S_RM")]
     public class System_RoleMenu
     {
         /// <summary>

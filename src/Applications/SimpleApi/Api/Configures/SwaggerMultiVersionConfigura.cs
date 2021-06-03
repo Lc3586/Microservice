@@ -37,7 +37,7 @@ namespace Api.Configures
 
             #endregion
 
-            services.AddSwaggerGen(s =>
+            services.AddSwaggerGen(options =>
             {
                 #region 配置文档
 
@@ -65,11 +65,11 @@ namespace Api.Configures
                     return prefix + modelType.FullName.Split('`').First();
                 }
 
-                s.CustomSchemaIds(SchemaIdSelector);
+                options.CustomSchemaIds(SchemaIdSelector);
 
                 #endregion
 
-                s.SchemaFilter<OpenApiSchemaFilter>();
+                options.SchemaFilter<OpenApiSchemaFilter>();
 
                 #region 为JSON文件和UI设置xml文档路径
 
@@ -79,13 +79,13 @@ namespace Api.Configures
                     var xmlPath = Path.Combine(basePath, item);
 
                     if (File.Exists(xmlPath))
-                        s.IncludeXmlComments(xmlPath);
+                        options.IncludeXmlComments(xmlPath, true);
                 }
 
                 #endregion
 
                 //启用注解
-                s.EnableAnnotations();
+                options.EnableAnnotations();
             })
             .AddMvc()
             //禁用框架结构属性小驼峰命名规则
@@ -177,6 +177,12 @@ namespace Api.Configures
                         {
                             //sa登录脚本脚本
                             if (!config.EnableSampleAuthentication)
+                                continue;
+                        }
+                        else if (file.Name.Contains("jwt"))
+                        {
+                            //jwt脚本
+                            if (!config.EnableJWT)
                                 continue;
                         }
 

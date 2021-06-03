@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Business.Utils.Authorization
@@ -36,7 +35,7 @@ namespace Business.Utils.Authorization
 
             string uri = resource.Request.Path.Value?.ToLower();
 
-            if (!ResourcesUriAuthorization(uri))
+            if (!MenuUriAuthorization(uri) && !ResourcesUriAuthorization(uri))
                 goto fail;
 
             success:
@@ -64,7 +63,7 @@ namespace Business.Utils.Authorization
 
             string uri = resource.HttpContext.Request.Path.Value?.ToLower();
 
-            if (!ResourcesUriAuthorization(uri))
+            if (!MenuUriAuthorization(uri) && !ResourcesUriAuthorization(uri))
                 goto fail;
 
             success:

@@ -1,5 +1,6 @@
 ﻿using Business.Utils.Log;
 using Microservice.Library.ConsoleTool;
+using Microservice.Library.FreeSql.Gen;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Model.Utils.Config;
@@ -22,12 +23,12 @@ namespace Api.Configures
             "注册FreeSql服务.".ConsoleWrite();
             $"使用{config.Database.DatabaseType}数据库.".ConsoleWrite();
 
-            services.AddFreeSql(s =>
+            services.AddFreeSql(options =>
             {
-                s.FreeSqlGeneratorOptions.ConnectionString = config.Database.ConnectString;
-                s.FreeSqlGeneratorOptions.DatabaseType = config.Database.DatabaseType;
-                s.FreeSqlGeneratorOptions.LazyLoading = true;
-                s.FreeSqlGeneratorOptions.MonitorCommandExecuting = (cmd) =>
+                options.FreeSqlGeneratorOptions.ConnectionString = config.Database.ConnectString;
+                options.FreeSqlGeneratorOptions.DatabaseType = config.Database.DatabaseType;
+                options.FreeSqlGeneratorOptions.LazyLoading = true;
+                options.FreeSqlGeneratorOptions.MonitorCommandExecuting = (cmd) =>
                 {
                     Logger.Log(
                         NLog.LogLevel.Trace,
@@ -37,7 +38,7 @@ namespace Api.Configures
                         null,
                         false);
                 };
-                s.FreeSqlGeneratorOptions.MonitorCommandExecuted = (cmd, log) =>
+                options.FreeSqlGeneratorOptions.MonitorCommandExecuted = (cmd, log) =>
                 {
                     Logger.Log(
                         NLog.LogLevel.Trace,
@@ -47,7 +48,7 @@ namespace Api.Configures
                         null,
                         false);
                 };
-                s.FreeSqlGeneratorOptions.HandleCommandLog = (content) =>
+                options.FreeSqlGeneratorOptions.HandleCommandLog = (content) =>
                 {
                     Logger.Log(
                         NLog.LogLevel.Trace,
@@ -57,14 +58,13 @@ namespace Api.Configures
                         null,
                         false);
                 };
-                s.FreeSqlDevOptions.SyncStructureNameConvert = FreeSql.Internal.NameConvertType.PascalCaseToUnderscoreWithLower;
 
-                s.FreeSqlDevOptions.AutoSyncStructure = config.FreeSql.AutoSyncStructure;
-                s.FreeSqlDevOptions.SyncStructureNameConvert = config.FreeSql.SyncStructureNameConvert;
-                s.FreeSqlDevOptions.SyncStructureOnStartup = config.FreeSql.SyncStructureOnStartup;
+                options.FreeSqlDevOptions.AutoSyncStructure = config.FreeSql.AutoSyncStructure;
+                options.FreeSqlDevOptions.SyncStructureNameConvert = config.FreeSql.SyncStructureNameConvert;
+                options.FreeSqlDevOptions.SyncStructureOnStartup = config.FreeSql.SyncStructureOnStartup;
 
-                s.FreeSqlDbContextOptions.EnableAddOrUpdateNavigateList = true;
-                s.FreeSqlDbContextOptions.EntityAssembly = config.Database.EntityAssembly;
+                options.FreeSqlDbContextOptions.EnableAddOrUpdateNavigateList = true;
+                options.FreeSqlDbContextOptions.EntityAssembly = config.Database.EntityAssembly;
             });
 
             return services;
@@ -80,9 +80,9 @@ namespace Api.Configures
             "配置FreeSql服务.".ConsoleWrite();
 
             //单库预热
-            //app.ApplicationServices
-            //   .GetService<IFreeSqlProvider>()
-            //   .GetFreeSql();
+            app.ApplicationServices
+               .GetService<IFreeSqlProvider>()
+               .GetFreeSql();
 
             return app;
         }

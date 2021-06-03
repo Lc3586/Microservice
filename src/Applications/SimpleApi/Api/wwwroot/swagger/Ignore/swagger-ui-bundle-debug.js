@@ -11936,11 +11936,8 @@
                 }
             };
             var ne = /[\n\t]/g,
-                re = /\r[\n
-]|[␤
-
-]/ g,
-        oe = / /g;
+                re = /\r[\n]|[␤]/g,
+                oe = / /g;
 
     function ae(e) {
         switch (e) {

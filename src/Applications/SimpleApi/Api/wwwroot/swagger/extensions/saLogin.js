@@ -54,7 +54,10 @@ window.onDomLoaded(() => {
                     dataType: 'json',
                     success: function (data) {
                         typeof (appOffline) != "undefined" ? appOffline = false : 1;
-                        done(data);
+                        if (data.Success)
+                            done(data.Data);
+                        else
+                            done(false);
                     },
                     error: function (response) {
                         if (response.status == 401)
@@ -188,7 +191,7 @@ window.onDomLoaded(() => {
                                     window.showDialog(
                                         '登录失败',
                                         [
-                                            ['H5', '错误信息', data.Msg]
+                                            ['H5', '错误信息', data.Message]
                                         ]);
                             },
                             error: function (response) {

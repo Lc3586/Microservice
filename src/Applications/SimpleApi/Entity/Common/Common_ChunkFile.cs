@@ -1,6 +1,6 @@
 ﻿using FreeSql.DataAnnotations;
-using Microservice.Library.OpenApi.JsonExtension;
 using Microservice.Library.OpenApi.Annotations;
+using Microservice.Library.OpenApi.JsonExtension;
 using Newtonsoft.Json;
 using System;
 
@@ -10,14 +10,14 @@ namespace Entity.Common
     /// 分片文件信息
     /// </summary>
     [Table]
-    [OraclePrimaryKeyName("pk_SPAA_" + nameof(Common_ChunkFile) + "_01")]
-    [Index(nameof(Common_ChunkFile) + "_idx_" + nameof(ServerKey), nameof(ServerKey) + " ASC")]
-    [Index(nameof(Common_ChunkFile) + "_idx_" + nameof(TaskKey), nameof(TaskKey) + " ASC")]
-    [Index(nameof(Common_ChunkFile) + "_idx_" + nameof(FileMD5), nameof(FileMD5) + " ASC")]
-    [Index(nameof(Common_ChunkFile) + "_idx_" + nameof(MD5), nameof(MD5) + " ASC")]
-    [Index(nameof(Common_ChunkFile) + "_idx_" + nameof(Index), nameof(Index) + " ASC")]
-    [Index(nameof(Common_ChunkFile) + "_idx_" + nameof(Specs), nameof(Specs) + " ASC")]
-    [Index(nameof(Common_ChunkFile) + "_idx_" + nameof(State), nameof(State) + " ASC")]
+    [OraclePrimaryKeyName("pk_C_CF")]
+    [Index("C_CF_idx_01", nameof(ServerKey) + " ASC")]
+    [Index("C_CF_idx_02", nameof(TaskKey) + " ASC")]
+    [Index("C_CF_idx_03", nameof(FileMD5) + " ASC")]
+    [Index("C_CF_idx_04", nameof(MD5) + " ASC")]
+    [Index("C_CF_idx_05", nameof(Index) + " ASC")]
+    [Index("C_CF_idx_06", nameof(Specs) + " ASC")]
+    [Index("C_CF_idx_07", nameof(State) + " ASC")]
     public class Common_ChunkFile
     {
         /// <summary>

@@ -96,7 +96,7 @@ namespace Business.Implementation.System
             if (!user.Enable)
                 throw new MessageException("用户账号已禁用.");
 
-            if (user.Account == Config.AdminAccount)//Repository_UserRole.Where(o => o.UserId == userId && o.Role.Type == $"{RoleType.超级管理员}").Any()
+            if (user.Account == Config.AdminAccount && Repository_UserRole.Where(o => o.UserId == userId && o.Role.Type == $"{RoleType.超级管理员}").Any())//Repository_UserRole.Where(o => o.UserId == userId && o.Role.Type == $"{RoleType.超级管理员}").Any()
                 throw new MessageException($"{RoleType.超级管理员}无需进行相关授权操作.");
 
             return user;

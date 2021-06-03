@@ -14,13 +14,13 @@ namespace Entity.Example
     /// </summary>
     /// <remarks>附带导航属性，多对多</remarks>
     [Table]//FreeSql使用CodeFirst模式时必须添加此特性，如果要禁用实体同步设置DisableSyncStructure = true
-    [OraclePrimaryKeyName("pk_" + nameof(Sample_DB_C))]
+    [OraclePrimaryKeyName("pk_S_DB_C")]
     //[System.ComponentModel.DataAnnotations.Schema.Table(nameof(Example_DB_C))]//特别指定数据库表名
     #region 设置索引
-    [Index(nameof(Sample_DB_C) + "_idx_" + nameof(Name), nameof(Name) + " ASC")]
-    [Index(nameof(Sample_DB_C) + "_idx_" + nameof(CreatorId), nameof(CreatorId) + " ASC")]
-    [Index(nameof(Sample_DB_C) + "_idx_" + nameof(CreatorName), nameof(CreatorName) + " ASC")]
-    [Index(nameof(Sample_DB_C) + "_idx_" + nameof(CreateTime), nameof(CreateTime) + " DESC")]
+    [Index("S_DB_C_idx_01", nameof(Name) + " ASC")]
+    [Index("S_DB_C_idx_02", nameof(CreatorId) + " ASC")]
+    [Index("S_DB_C_idx_03", nameof(CreatorName) + " ASC")]
+    [Index("S_DB_C_idx_04", nameof(CreateTime) + " DESC")]
     #endregion
     public class Sample_DB_C
     {

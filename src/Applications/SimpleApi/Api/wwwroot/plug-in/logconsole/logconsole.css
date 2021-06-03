@@ -138,6 +138,7 @@ body > .full_container {
 .logfile-content-dialog .el-dialog__body {
     height: 80%;
     overflow-y: auto;
+    background-color: antiquewhite;
 }
 
 .logfile-content-dialog .el-dialog__footer {
@@ -148,7 +149,7 @@ body > .full_container {
 .logfile-content {
     height: 100%;
     white-space: pre-wrap;
-    background-color: antiquewhite;
+    /*background-color: antiquewhite;*/
     border-radius: 4px;
     padding-top: 10px;
     padding-left: 30px;

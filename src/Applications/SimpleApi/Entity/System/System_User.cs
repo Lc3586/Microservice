@@ -14,16 +14,16 @@ namespace Entity.System
     /// 系统用户
     /// </summary>
     [Table]
-    [OraclePrimaryKeyName("pk_" + nameof(System_User))]
+    [OraclePrimaryKeyName("pk_S_U")]
     #region 设置索引
-    [Index(nameof(System_User) + "_idx_" + nameof(Account), nameof(Account) + " ASC")]
-    [Index(nameof(System_User) + "_idx_" + nameof(Nickname), nameof(Nickname) + " ASC")]
-    [Index(nameof(System_User) + "_idx_" + nameof(Name), nameof(Name) + " ASC")]
-    [Index(nameof(System_User) + "_idx_" + nameof(Tel), nameof(Tel) + " ASC")]
-    [Index(nameof(System_User) + "_idx_" + nameof(Enable), nameof(Enable) + " DESC")]
-    [Index(nameof(System_User) + "_idx_" + nameof(CreatorId), nameof(CreatorId) + " ASC")]
-    [Index(nameof(System_User) + "_idx_" + nameof(CreateTime), nameof(CreateTime) + " DESC")]
-    [Index(nameof(System_User) + "_idx_" + nameof(ModifyTime), nameof(ModifyTime) + " DESC")]
+    [Index("S_U_idx_01", nameof(Account) + " ASC")]
+    [Index("S_U_idx_02", nameof(Nickname) + " ASC")]
+    [Index("S_U_idx_03", nameof(Name) + " ASC")]
+    [Index("S_U_idx_04", nameof(Tel) + " ASC")]
+    [Index("S_U_idx_05", nameof(Enable) + " DESC")]
+    [Index("S_U_idx_06", nameof(CreatorId) + " ASC")]
+    [Index("S_U_idx_07", nameof(CreateTime) + " DESC")]
+    [Index("S_U_idx_08", nameof(ModifyTime) + " DESC")]
     #endregion
     public class System_User
     {

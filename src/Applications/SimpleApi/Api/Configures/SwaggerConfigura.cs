@@ -31,11 +31,11 @@ namespace Api.Configures
                 //禁用框架结构属性小驼峰命名规则
                 .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
 
-            services.AddSwaggerGen(s =>
+            services.AddSwaggerGen(options =>
             {
                 #region 配置文档
 
-                s.SwaggerDoc(config.Swagger.ApiVersion.Version, new OpenApiInfo
+                options.SwaggerDoc(config.Swagger.ApiVersion.Version, new OpenApiInfo
                 {
                     Title = config.Swagger.ApiVersion.Title,
                     Version = config.Swagger.ApiVersion.Version,
@@ -57,13 +57,13 @@ namespace Api.Configures
                     return prefix + modelType.FullName.Split('`').First();
                 }
 
-                s.CustomSchemaIds(SchemaIdSelector);
+                options.CustomSchemaIds(SchemaIdSelector);
 
                 #endregion
 
-                s.SchemaFilter<OpenApiSchemaFilter>();
+                options.SchemaFilter<OpenApiSchemaFilter>();
 
-                s.DocumentFilter<DocumentFilter>();
+                options.DocumentFilter<DocumentFilter>();
 
                 #region 为JSON文件和UI设置xml文档路径
 
@@ -74,13 +74,35 @@ namespace Api.Configures
                     var xmlPath = Path.Combine(basePath, item);
 
                     if (File.Exists(xmlPath))
-                        s.IncludeXmlComments(xmlPath);
+                        options.IncludeXmlComments(xmlPath, true);
                 }
 
                 #endregion
 
                 //启用注解
-                s.EnableAnnotations();
+                options.EnableAnnotations();
+
+                if (config.EnableJWT)
+                {
+                    options.AddSecurityDefinition("JWT", new OpenApiSecurityScheme
+                    {
+                        Description = "在请求的Header中，添加\"Authorization\":\"Bearer xxxxxxxxxxxxxx\"",
+                        Name = "Authorization",
+                        In = ParameterLocation.Header,
+                        Type = SecuritySchemeType.Http,
+                        Scheme = "Bearer"
+                    });
+
+                    var scheme = new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "JWT" }
+                    };
+
+                    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                    {
+                        [scheme] = Array.Empty<string>()
+                    });
+                }
             });
 
             return services;
@@ -156,14 +178,20 @@ namespace Api.Configures
                     {
                         if (file.Name.Contains("casLogin"))
                         {
-                            //cas登录脚本脚本
+                            //cas登录脚本
                             if (!config.EnableCAS)
                                 continue;
                         }
                         else if (file.Name.Contains("saLogin"))
                         {
-                            //sa登录脚本脚本
+                            //sa登录脚本
                             if (!config.EnableSampleAuthentication)
+                                continue;
+                        }
+                        else if (file.Name.Contains("jwt"))
+                        {
+                            //jwt脚本
+                            if (!config.EnableJWT)
                                 continue;
                         }
 

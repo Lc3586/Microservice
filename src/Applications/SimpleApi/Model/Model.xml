@@ -2787,7 +2787,7 @@
         </member>
         <member name="P:Model.Utils.Pagination.PaginationFilter.DynamicFilterInfo">
             <summary>
-            分组设置
+            子条件
             </summary>
         </member>
         <member name="T:Model.Utils.Pagination.Schema">

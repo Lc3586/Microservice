@@ -26,20 +26,8 @@ namespace Business.Utils.Authorization
 
             var uri = $"/hub/{resource.HubMethodName.ToLower()}";
 
-            //验证权限
-            switch (Operator.AuthenticationInfo.UserType)
-            {
-                case UserType.系统用户:
-                    if (!AuthoritiesBusiness.UserHasResourcesUri(Operator.AuthenticationInfo.Id, uri))
-                        return Task.CompletedTask;
-                    break;
-                case UserType.会员:
-                    if (!AuthoritiesBusiness.MemberHasResourcesUri(Operator.AuthenticationInfo.Id, uri))
-                        return Task.CompletedTask;
-                    break;
-                default:
-                    return Task.CompletedTask;
-            }
+            if (!ResourcesUriAuthorization(uri))
+                return Task.CompletedTask;
 
             success:
             context.Succeed(requirement);

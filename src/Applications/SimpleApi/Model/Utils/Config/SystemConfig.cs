@@ -114,7 +114,7 @@ namespace Model.Utils.Config
         {
             get
             {
-                if (string.IsNullOrWhiteSpace(_AbsoluteDataProtectionCertificateFile))
+                if (!string.IsNullOrWhiteSpace(DataProtectionCertificateFile) && string.IsNullOrWhiteSpace(_AbsoluteDataProtectionCertificateFile))
                     _AbsoluteDataProtectionCertificateFile = Path.GetFullPath(DataProtectionCertificateFile, AppContext.BaseDirectory);
                 return _AbsoluteDataProtectionCertificateFile;
             }

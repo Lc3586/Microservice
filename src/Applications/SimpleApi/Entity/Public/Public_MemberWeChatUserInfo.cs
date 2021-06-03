@@ -11,6 +11,7 @@ namespace Entity.Public
     /// 会员绑定的微信
     /// </summary>
     [Table]
+    [OraclePrimaryKeyName("pk1_P_MWCUI,pk2_P_MWCUI")]
     public class Public_MemberWeChatUserInfo
     {
         /// <summary>

@@ -10,6 +10,7 @@ namespace Entity.Public
     /// 会员授权角色
     /// </summary>
     [Table]
+    [OraclePrimaryKeyName("pk1_P_MR,pk2_P_MR")]
     public class Public_MemberRole
     {
         /// <summary>

@@ -46,7 +46,7 @@ namespace Model.Utils.Pagination
         public FilterGroupSetting Group { get; set; }
 
         /// <summary>
-        /// 分组设置
+        /// 子条件
         /// </summary>
         [OpenApiSchema(OpenApiSchemaType.model, OpenApiSchemaFormat.model_once)]
         public List<PaginationFilter> DynamicFilterInfo { get; set; }

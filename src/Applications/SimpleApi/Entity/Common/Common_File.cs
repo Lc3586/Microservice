@@ -10,15 +10,15 @@ namespace Entity.Common
     /// 文件信息
     /// </summary>
     [Table]
-    [OraclePrimaryKeyName("pk_SPAA_" + nameof(Common_File) + "_01")]
-    [Index(nameof(Common_File) + "_idx_" + nameof(Name), nameof(Name) + " ASC")]
-    [Index(nameof(Common_File) + "_idx_" + nameof(FileType), nameof(FileType) + " ASC")]
-    [Index(nameof(Common_File) + "_idx_" + nameof(ContentType), nameof(ContentType) + " ASC")]
-    [Index(nameof(Common_File) + "_idx_" + nameof(Extension), nameof(Extension) + " ASC")]
-    [Index(nameof(Common_File) + "_idx_" + nameof(ServerKey), nameof(ServerKey) + " ASC")]
-    [Index(nameof(Common_File) + "_idx_" + nameof(MD5), nameof(MD5) + " ASC")]
-    [Index(nameof(Common_File) + "_idx_" + nameof(CreatorId), nameof(CreatorId) + " ASC")]
-    [Index(nameof(Common_File) + "_idx_" + nameof(CreateTime), nameof(CreateTime) + " DESC")]
+    [OraclePrimaryKeyName("pk_C_F")]
+    [Index("C_F_idx_01", nameof(Name) + " ASC")]
+    [Index("C_F_idx_02", nameof(FileType) + " ASC")]
+    [Index("C_F_idx_03", nameof(ContentType) + " ASC")]
+    [Index("C_F_idx_04", nameof(Extension) + " ASC")]
+    [Index("C_F_idx_05", nameof(ServerKey) + " ASC")]
+    [Index("C_F_idx_06", nameof(MD5) + " ASC")]
+    [Index("C_F_idx_07", nameof(CreatorId) + " ASC")]
+    [Index("C_F_idx_08", nameof(CreateTime) + " DESC")]
     public class Common_File
     {
         /// <summary>

@@ -9,6 +9,7 @@ namespace Entity.System
     /// 角色授权资源
     /// </summary>
     [Table]
+    [OraclePrimaryKeyName("pk1_S_RR,pk2_S_RR")]
     public class System_RoleResources
     {
         /// <summary>

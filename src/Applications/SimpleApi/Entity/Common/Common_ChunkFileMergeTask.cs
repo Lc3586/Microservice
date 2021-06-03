@@ -10,12 +10,12 @@ namespace Entity.Common
     /// 分片文件合并任务
     /// </summary>
     [Table]
-    [OraclePrimaryKeyName("pk_SPAA_" + nameof(Common_ChunkFileMergeTask) + "_01")]
-    [Index(nameof(Common_ChunkFileMergeTask) + "_idx_" + nameof(ServerKey), nameof(ServerKey) + " ASC")]
-    [Index(nameof(Common_ChunkFileMergeTask) + "_idx_" + nameof(MD5), nameof(MD5) + " ASC")]
-    [Index(nameof(Common_ChunkFileMergeTask) + "_idx_" + nameof(Specs), nameof(Specs) + " ASC")]
-    [Index(nameof(Common_ChunkFileMergeTask) + "_idx_" + nameof(Total), nameof(Total) + " ASC")]
-    [Index(nameof(Common_ChunkFileMergeTask) + "_idx_" + nameof(State), nameof(State) + " ASC")]
+    [OraclePrimaryKeyName("pk_C_CFMT")]
+    [Index("C_CFMT_idx_01", nameof(ServerKey) + " ASC")]
+    [Index("C_CFMT_idx_02", nameof(MD5) + " ASC")]
+    [Index("C_CFMT_idx_03", nameof(Specs) + " ASC")]
+    [Index("C_CFMT_idx_04", nameof(Total) + " ASC")]
+    [Index("C_CFMT_idx_05", nameof(State) + " ASC")]
     public class Common_ChunkFileMergeTask
     {
         /// <summary>

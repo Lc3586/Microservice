@@ -12,6 +12,7 @@ namespace Entity.System
     /// 用户授权资源
     /// </summary>
     [Table]
+    [OraclePrimaryKeyName("pk1_S_UR,pk2_S_UR")]
     public class System_UserResources
     {
         /// <summary>

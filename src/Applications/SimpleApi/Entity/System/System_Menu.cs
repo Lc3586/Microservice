@@ -12,19 +12,19 @@ namespace Entity.System
     /// 菜单
     /// </summary>
     [Table]
-    [OraclePrimaryKeyName("pk_" + nameof(System_Menu))]
+    [OraclePrimaryKeyName("pk_S_M")]
     #region 设置索引
-    [Index(nameof(System_Menu) + "_idx_" + nameof(RootId), nameof(RootId) + " ASC")]
-    [Index(nameof(System_Menu) + "_idx_" + nameof(ParentId), nameof(ParentId) + " ASC")]
-    [Index(nameof(System_Menu) + "_idx_" + nameof(Name), nameof(Name) + " ASC")]
-    [Index(nameof(System_Menu) + "_idx_" + nameof(Type), nameof(Type) + " ASC")]
-    [Index(nameof(System_Menu) + "_idx_" + nameof(Code), nameof(Code) + " ASC")]
-    [Index(nameof(System_Menu) + "_idx_" + nameof(Uri), nameof(Uri) + " ASC")]
-    [Index(nameof(System_Menu) + "_idx_" + nameof(Method), nameof(Method) + " ASC")]
-    [Index(nameof(System_Menu) + "_idx_" + nameof(Enable), nameof(Enable) + " DESC")]
-    [Index(nameof(System_Menu) + "_idx_" + nameof(CreatorId), nameof(CreatorId) + " ASC")]
-    [Index(nameof(System_Menu) + "_idx_" + nameof(CreateTime), nameof(CreateTime) + " DESC")]
-    [Index(nameof(System_Menu) + "_idx_" + nameof(ModifyTime), nameof(ModifyTime) + " DESC")]
+    [Index("S_M_idx_01", nameof(RootId) + " ASC")]
+    [Index("S_M_idx_02", nameof(ParentId) + " ASC")]
+    [Index("S_M_idx_03", nameof(Name) + " ASC")]
+    [Index("S_M_idx_04", nameof(Type) + " ASC")]
+    [Index("S_M_idx_05", nameof(Code) + " ASC")]
+    [Index("S_M_idx_06", nameof(Uri) + " ASC")]
+    [Index("S_M_idx_07", nameof(Method) + " ASC")]
+    [Index("S_M_idx_08", nameof(Enable) + " DESC")]
+    [Index("S_M_idx_09", nameof(CreatorId) + " ASC")]
+    [Index("S_M_idx_10", nameof(CreateTime) + " DESC")]
+    [Index("S_M_idx_11", nameof(ModifyTime) + " DESC")]
     #endregion
     public class System_Menu
     {
@@ -84,7 +84,7 @@ namespace Entity.System
         /// </summary>
         [OpenApiSubTag("List", "TreeList", "Create", "Edit", "Detail", "Authorities")]
         [Description("链接地址")]
-        [Column(StringLength = 2048)]
+        [Column(StringLength = 2000)]
         public string Uri { get; set; }
 
         /// <summary>

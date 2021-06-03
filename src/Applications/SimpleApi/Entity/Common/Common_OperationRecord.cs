@@ -13,13 +13,13 @@ namespace Entity.Common
     /// 操作记录
     /// </summary>
     [Table]
-    [OraclePrimaryKeyName("pk_SPAA_" + nameof(Common_OperationRecord) + "_01")]
+    [OraclePrimaryKeyName("pk_C_OR")]
     #region 设置索引
-    [Index(nameof(Common_OperationRecord) + "_idx_" + nameof(DataId), nameof(DataId) + " ASC")]
-    [Index(nameof(Common_OperationRecord) + "_idx_" + nameof(DataType), nameof(DataType) + " ASC")]
-    [Index(nameof(Common_OperationRecord) + "_idx_" + nameof(Account), nameof(Account) + " ASC")]
-    [Index(nameof(Common_OperationRecord) + "_idx_" + nameof(CreatorId), nameof(CreatorId) + " ASC")]
-    [Index(nameof(Common_OperationRecord) + "_idx_" + nameof(CreateTime), nameof(CreateTime) + " DESC")]
+    [Index("C_OR_idx_01", nameof(DataId) + " ASC")]
+    [Index("C_OR_idx_02", nameof(DataType) + " ASC")]
+    [Index("C_OR_idx_03", nameof(Account) + " ASC")]
+    [Index("C_OR_idx_04", nameof(CreatorId) + " ASC")]
+    [Index("C_OR_idx_05", nameof(CreateTime) + " DESC")]
     #endregion
     public class Common_OperationRecord
     {

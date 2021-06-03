@@ -1,5 +1,9 @@
 ﻿using FreeSql;
 using FreeSql.Internal.Model;
+using Microservice.Library.Container;
+using Microservice.Library.Extension;
+using Microservice.Library.FreeSql.Extention;
+using Microservice.Library.FreeSql.Gen;
 using Model.Utils.Pagination;
 using System;
 using System.Collections.Generic;
@@ -12,6 +16,42 @@ namespace Business.Utils.Pagination
     /// </summary>
     public static class PaginationFreeSqlExtension
     {
+        static IFreeSql Orm
+        {
+            get
+            {
+                if (_Orm == null)
+                    _Orm = AutofacHelper.GetService<IFreeSqlProvider>().GetFreeSql();
+                return _Orm;
+            }
+        }
+
+        static IFreeSql _Orm;
+
+        /// <summary>
+        /// 获取表字段信息
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="csName">属性名称</param>
+        /// <returns></returns>
+        static ColumnInfo GetColumnInfo<T>(string csName)
+        {
+            if (_Tables == null)
+                _Tables = new Dictionary<Type, Dictionary<string, ColumnInfo>>();
+
+            var type = typeof(T);
+
+            if (!_Tables.ContainsKey(type))
+                _Tables.Add(type, Orm.GetTableInfo<T>().ColumnsByCs);
+
+            if (!_Tables[type].ContainsKey(csName))
+                throw new MessageException($"{csName} 字段不存在.");
+
+            return _Tables[type][csName];
+        }
+
+        static Dictionary<Type, Dictionary<string, ColumnInfo>> _Tables;
+
         private static DynamicFilterInfo ToDynamicFilterInfo(this PaginationDynamicFilterInfo paginationDynamicFilterInfo)
         {
             return new DynamicFilterInfo
@@ -88,6 +128,9 @@ namespace Business.Utils.Pagination
                 source.WhereDynamicFilter(pagination.DynamicFilterInfo.ToDynamicFilterInfo());
 
             string where = string.Empty;
+
+            Check(pagination.Filter);
+
             if (!pagination.FilterToSql(ref where, alias))
                 throw new MessageException("搜索条件不支持");
 
@@ -95,6 +138,18 @@ namespace Business.Utils.Pagination
                 source.Where(where);
 
             return source;
+
+            void Check(List<PaginationFilter> filters)
+            {
+                if (!filters.Any_Ex())
+                    return;
+
+                filters.ForEach(o =>
+                {
+                    o.Field = GetColumnInfo<T>(o.Field).Attribute.Name;
+                    Check(o.DynamicFilterInfo);
+                });
+            }
         }
 
         /// <summary>
@@ -107,6 +162,8 @@ namespace Business.Utils.Pagination
         /// <returns></returns>
         public static ISelect<T> OrderBy<T>(this ISelect<T> source, PaginationDTO pagination, string alias = "a")
         {
+            Check();
+
             string orderby = string.Empty;
             if (!pagination.OrderByToSql(ref orderby, alias))
                 throw new MessageException("排序条件不支持");
@@ -115,6 +172,17 @@ namespace Business.Utils.Pagination
                 source.OrderBy(orderby);
 
             return source;
+
+            void Check()
+            {
+                if (!string.IsNullOrWhiteSpace(pagination.SortField))
+                    pagination.SortField = GetColumnInfo<T>(pagination.SortField).Attribute.Name;
+
+                if (!pagination.AdvancedSort.Any_Ex())
+                    return;
+
+                pagination.AdvancedSort.ForEach(o => o.Field = GetColumnInfo<T>(o.Field).Attribute.Name);
+            }
         }
 
         /// <summary>

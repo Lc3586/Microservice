@@ -295,7 +295,7 @@
                 getLogConfig();
             }
             else
-                ElementPlus.ElMessage(response.data.Msg);
+                ElementPlus.ElMessage(response.data.Message);
         }).catch(function (error) {
             main.sa.loading = false;
             ElementPlus.ElMessage('SA身份验证时发生异常.');
@@ -313,7 +313,7 @@
                 if (type.data.Success)
                     switchToPane(type.data.Data);
                 else
-                    ElementPlus.ElMessage(type.data.Msg);
+                    ElementPlus.ElMessage(type.data.Message);
 
                 if (levels.data.Success) {
                     main.logConfig.levels = levels.data.Data;
@@ -331,7 +331,7 @@
                     main.logDB.isLevelIndeterminate = false;
                 }
                 else
-                    ElementPlus.ElMessage(levels.data.Msg);
+                    ElementPlus.ElMessage(levels.data.Message);
 
                 if (types.data.Success) {
                     main.logConfig.types = types.data.Data;
@@ -349,7 +349,7 @@
                     main.logDB.isTypeIndeterminate = false;
                 }
                 else
-                    ElementPlus.ElMessage(types.data.Msg);
+                    ElementPlus.ElMessage(types.data.Message);
 
             }))
             .catch((error) => {
@@ -834,8 +834,8 @@
                 if (response.data.Success)
                     main.logFile.list = response.data.Data;
                 else {
-                    main.logFile.error = response.data.Msg;
-                    ElementPlus.ElMessage(response.data.Msg);
+                    main.logFile.error = response.data.Message;
+                    ElementPlus.ElMessage(response.data.Message);
                 }
                 main.logFile.loading = false;
             })
@@ -1069,8 +1069,8 @@
                 main.logES.list = response.data.Data.List;
             }
             else {
-                main.logES.error = response.data.Msg;
-                ElementPlus.ElMessage(response.data.Msg);
+                main.logES.error = response.data.Message;
+                ElementPlus.ElMessage(response.data.Message);
             }
             main.logES.loading = false;
         }).catch(function (error) {
@@ -1158,7 +1158,7 @@
                     }
                 }
                 else {
-                    ElementPlus.ElMessage(response.data.Msg);
+                    ElementPlus.ElMessage(response.data.Message);
                 }
                 main.log.loading = false;
             })
@@ -1182,8 +1182,8 @@
                 main.logDB.list = response.data.Data.List;
             }
             else {
-                main.logDB.error = response.data.Msg;
-                ElementPlus.ElMessage(response.data.Msg);
+                main.logDB.error = response.data.Message;
+                ElementPlus.ElMessage(response.data.Message);
             }
             main.logDB.loading = false;
         }).catch(function (error) {
@@ -1271,7 +1271,7 @@
                     }
                 }
                 else {
-                    ElementPlus.ElMessage(response.data.Msg);
+                    ElementPlus.ElMessage(response.data.Message);
                 }
                 main.log.loading = false;
             })

@@ -69,9 +69,9 @@
                 main.close = true;
                 vant.Dialog.alert({
                     title: '错误',
-                    message: response.data.Msg,
+                    message: response.data.Message,
                 }).then(() => {
-                    main.explain = response.data.Msg;
+                    main.explain = response.data.Message;
                 });
             }
         }).catch(error => {
@@ -109,7 +109,7 @@
 
                 vant.Dialog.alert({
                     title: '错误',
-                    message: response.data.Msg,
+                    message: response.data.Message,
                 });
             }
         }).catch(error => {
@@ -136,7 +136,7 @@
 
                 vant.Dialog.alert({
                     title: '错误',
-                    message: response.data.Msg,
+                    message: response.data.Message,
                 });
             }
         }).catch(error => {

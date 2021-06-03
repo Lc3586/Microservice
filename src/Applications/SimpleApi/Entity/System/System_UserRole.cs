@@ -12,6 +12,7 @@ namespace Entity.System
     /// 用户授权角色
     /// </summary>
     [Table]
+    [OraclePrimaryKeyName("pk1_S_URole,pk2_S_URole")]
     public class System_UserRole
     {
         /// <summary>

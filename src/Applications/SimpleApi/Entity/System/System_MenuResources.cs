@@ -9,6 +9,7 @@ namespace Entity.System
     /// 菜单相关资源
     /// </summary>
     [Table]
+    [OraclePrimaryKeyName("pk1_S_MR,pk2_S_MR")]
     public class System_MenuResources
     {
         /// <summary>

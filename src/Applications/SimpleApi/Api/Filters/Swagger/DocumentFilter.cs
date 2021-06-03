@@ -49,6 +49,12 @@ namespace Api
                     .Select(o => o.RelativePath));
             }
 
+            if (!Config.EnableJWT)
+            {
+                removePaths.AddRange(context.ApiDescriptions.Where(o => o.RelativePath.IndexOf("jwt/") == 0)
+                    .Select(o => o.RelativePath));
+            }
+
             if (removePaths.Any())
                 removePaths.ForEach(o => swaggerDoc.Paths.Remove($"/{o}"));
         }

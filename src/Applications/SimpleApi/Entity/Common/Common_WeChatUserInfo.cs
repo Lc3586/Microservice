@@ -15,18 +15,18 @@ namespace Entity.Common
     /// 微信用户信息
     /// </summary>
     [Table]
-    [OraclePrimaryKeyName("pk_SPAA_" + nameof(Common_ChunkFile) + "_01")]
-    [Index(nameof(Common_ChunkFile) + "_idx_" + nameof(AppId), nameof(AppId) + " ASC")]
-    [Index(nameof(Common_ChunkFile) + "_idx_" + nameof(OpenId), nameof(OpenId) + " ASC")]
-    [Index(nameof(Common_ChunkFile) + "_idx_" + nameof(UnionId), nameof(UnionId) + " ASC")]
-    [Index(nameof(Common_ChunkFile) + "_idx_" + nameof(GroupId), nameof(GroupId) + " ASC")]
-    [Index(nameof(Common_ChunkFile) + "_idx_" + nameof(Nickname), nameof(Nickname) + " ASC")]
-    [Index(nameof(Common_ChunkFile) + "_idx_" + nameof(Sex), nameof(Sex) + " ASC")]
-    [Index(nameof(Common_ChunkFile) + "_idx_" + nameof(Language), nameof(Language) + " ASC")]
-    [Index(nameof(Common_ChunkFile) + "_idx_" + nameof(City), nameof(City) + " ASC")]
-    [Index(nameof(Common_ChunkFile) + "_idx_" + nameof(Province), nameof(Province) + " ASC")]
-    [Index(nameof(Common_ChunkFile) + "_idx_" + nameof(Country), nameof(Country) + " ASC")]
-    [Index(nameof(Common_ChunkFile) + "_idx_" + nameof(Enable), nameof(Enable) + " ASC")]
+    [OraclePrimaryKeyName("pk_C_WCUI")]
+    [Index("C_WCUI_idx_", nameof(AppId) + " ASC")]
+    [Index("C_WCUI_idx_", nameof(OpenId) + " ASC")]
+    [Index("C_WCUI_idx_", nameof(UnionId) + " ASC")]
+    [Index("C_WCUI_idx_", nameof(GroupId) + " ASC")]
+    [Index("C_WCUI_idx_", nameof(Nickname) + " ASC")]
+    [Index("C_WCUI_idx_", nameof(Sex) + " ASC")]
+    [Index("C_WCUI_idx_", nameof(Language) + " ASC")]
+    [Index("C_WCUI_idx_", nameof(City) + " ASC")]
+    [Index("C_WCUI_idx_", nameof(Province) + " ASC")]
+    [Index("C_WCUI_idx_", nameof(Country) + " ASC")]
+    [Index("C_WCUI_idx_", nameof(Enable) + " ASC")]
     public class Common_WeChatUserInfo
     {
         /// <summary>
@@ -82,7 +82,7 @@ namespace Entity.Common
         /// </summary>
         [OpenApiSubTag("List", "Detail")]
         [Description("头像")]
-        [Column(StringLength = 2048)]
+        [Column(StringLength = 2000)]
         public string HeadimgUrl { get; set; }
 
         /// <summary>

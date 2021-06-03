@@ -10,6 +10,7 @@ namespace Entity.System
     /// 用户绑定的微信
     /// </summary>
     [Table]
+    [OraclePrimaryKeyName("pk1_S_UWCUI,pk2_S_UWCUI")]
     public class System_UserWeChatUserInfo
     {
         /// <summary>

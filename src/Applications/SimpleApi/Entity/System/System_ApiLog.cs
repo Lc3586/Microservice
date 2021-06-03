@@ -13,11 +13,11 @@ namespace Entity.System
     /// 接口日志
     /// </summary>
     [Table]
-    [OraclePrimaryKeyName("pk_" + nameof(System_ApiLog))]
+    [OraclePrimaryKeyName("pk_S_AL")]
     #region 设置索引
-    [Index(nameof(System_ApiLog) + "_idx_" + nameof(LogType), nameof(LogType) + " ASC")]
-    [Index(nameof(System_ApiLog) + "_idx_" + nameof(CreatorId), nameof(CreatorId) + " ASC")]
-    [Index(nameof(System_ApiLog) + "_idx_" + nameof(CreateTime), nameof(CreateTime) + " DESC")]
+    [Index("S_AL_idx_01", nameof(LogType) + " ASC")]
+    [Index("S_AL_idx_02", nameof(CreatorId) + " ASC")]
+    [Index("S_AL_idx_03", nameof(CreateTime) + " DESC")]
     #endregion
     #region Elasticsearch相关
     [ElasticsearchIndiceExtension(Version = "v1", IndicesSubType = NestIndexSubType.Day)]

@@ -2704,6 +2704,14 @@
             分页设置FreeSql拓展方法
             </summary>
         </member>
+        <member name="M:Business.Utils.Pagination.PaginationFreeSqlExtension.GetColumnInfo``1(System.String)">
+            <summary>
+            获取表字段信息
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="csName">属性名称</param>
+            <returns></returns>
+        </member>
         <member name="M:Business.Utils.Pagination.PaginationFreeSqlExtension.Filter``1(FreeSql.ISelect{``0},Model.Utils.Pagination.PaginationDTO,System.String)">
             <summary>
             过滤

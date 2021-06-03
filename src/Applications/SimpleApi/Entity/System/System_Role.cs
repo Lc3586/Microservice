@@ -13,19 +13,19 @@ namespace Entity.System
     /// 角色
     /// </summary>
     [Table]
-    [OraclePrimaryKeyName("pk_" + nameof(System_Role))]
+    [OraclePrimaryKeyName("pk_S_Role")]
     #region 设置索引
-    [Index(nameof(System_Role) + "_idx_" + nameof(RootId), nameof(RootId) + " ASC")]
-    [Index(nameof(System_Role) + "_idx_" + nameof(ParentId), nameof(ParentId) + " ASC")]
-    [Index(nameof(System_Role) + "_idx_" + nameof(Name), nameof(Name) + " ASC")]
-    [Index(nameof(System_Role) + "_idx_" + nameof(Type), nameof(Type) + " ASC")]
-    [Index(nameof(System_Role) + "_idx_" + nameof(Code), nameof(Code) + " ASC")]
-    [Index(nameof(System_Role) + "_idx_" + nameof(Enable), nameof(Enable) + " DESC")]
-    [Index(nameof(System_Role) + "_idx_" + nameof(AutoAuthorizeRoleForUser), nameof(AutoAuthorizeRoleForUser) + " DESC")]
-    [Index(nameof(System_Role) + "_idx_" + nameof(AutoAuthorizeRoleForMember), nameof(AutoAuthorizeRoleForMember) + " DESC")]
-    [Index(nameof(System_Role) + "_idx_" + nameof(CreatorId), nameof(CreatorId) + " ASC")]
-    [Index(nameof(System_Role) + "_idx_" + nameof(CreateTime), nameof(CreateTime) + " DESC")]
-    [Index(nameof(System_Role) + "_idx_" + nameof(ModifyTime), nameof(ModifyTime) + " DESC")]
+    [Index("S_Role_idx_01", nameof(RootId) + " ASC")]
+    [Index("S_Role_idx_02", nameof(ParentId) + " ASC")]
+    [Index("S_Role_idx_03", nameof(Name) + " ASC")]
+    [Index("S_Role_idx_04", nameof(Type) + " ASC")]
+    [Index("S_Role_idx_05", nameof(Code) + " ASC")]
+    [Index("S_Role_idx_06", nameof(Enable) + " DESC")]
+    [Index("S_Role_idx_07", nameof(AutoAuthorizeRoleForUser) + " DESC")]
+    [Index("S_Role_idx_08", nameof(AutoAuthorizeRoleForMember) + " DESC")]
+    [Index("S_Role_idx_09", nameof(CreatorId) + " ASC")]
+    [Index("S_Role_idx_10", nameof(CreateTime) + " DESC")]
+    [Index("S_Role_idx_11", nameof(ModifyTime) + " DESC")]
     #endregion
     public class System_Role
     {

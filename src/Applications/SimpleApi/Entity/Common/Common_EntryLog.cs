@@ -13,15 +13,15 @@ namespace Entity.Common
     /// 登录日志
     /// </summary>
     [Table]
-    [OraclePrimaryKeyName("pk_" + nameof(Common_EntryLog))]
+    [OraclePrimaryKeyName("pk_C_EL")]
     #region 设置索引
-    [Index(nameof(Common_EntryLog) + "_idx_" + nameof(Account), nameof(Account) + " ASC")]
-    [Index(nameof(Common_EntryLog) + "_idx_" + nameof(UserType), nameof(UserType) + " ASC")]
-    [Index(nameof(Common_EntryLog) + "_idx_" + nameof(IsAdmin), nameof(IsAdmin) + " DESC")]
-    [Index(nameof(Common_EntryLog) + "_idx_" + nameof(Name), nameof(Name) + " ASC")]
-    [Index(nameof(Common_EntryLog) + "_idx_" + nameof(Nickname), nameof(Nickname) + " ASC")]
-    [Index(nameof(Common_EntryLog) + "_idx_" + nameof(CreatorId), nameof(CreatorId) + " ASC")]
-    [Index(nameof(Common_EntryLog) + "_idx_" + nameof(CreateTime), nameof(CreateTime) + " DESC")]
+    [Index("C_EL_idx_" + nameof(Account), nameof(Account) + " ASC")]
+    [Index("C_EL_idx_" + nameof(UserType), nameof(UserType) + " ASC")]
+    [Index("C_EL_idx_" + nameof(IsAdmin), nameof(IsAdmin) + " DESC")]
+    [Index("C_EL_idx_" + nameof(Name), nameof(Name) + " ASC")]
+    [Index("C_EL_idx_" + nameof(Nickname), nameof(Nickname) + " ASC")]
+    [Index("C_EL_idx_" + nameof(CreatorId), nameof(CreatorId) + " ASC")]
+    [Index("C_EL_idx_" + nameof(CreateTime), nameof(CreateTime) + " DESC")]
     #endregion
     public class Common_EntryLog
     {
