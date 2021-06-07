@@ -1,24 +1,4 @@
-﻿/*头部样式*/
-.el-header {
-    text-align: left;
-    line-height: 60px;
-    color: #586069;
-    font-weight: 400;
-}
-
-    .el-header i {
-        font-size: 39px;
-    }
-
-    .el-header .overall_title {
-        font-size: 30px;
-    }
-
-    .el-header .overall_explain {
-        font-size: 20px;
-    }
-
-/*设置行*/
+﻿/*设置行*/
 .el-row {
     min-height: 50px;
     margin-bottom: 20px;
@@ -26,82 +6,10 @@
 }
 
 /*容器样式*/
-body > .full_container {
+body > .main_container {
+    height: calc(100vh - 80px);
     margin-bottom: 40px;
 }
-
-.main_container {
-    height: calc(100vh - 80px);
-}
-
-.el-tabs__content {
-    height: 100%;
-}
-
-.el-tabs {
-    width: 100%;
-}
-
-/*标签内容页的统一样式*/
-.el-tab-pane {
-    height: 100%;
-    overflow-x: hidden;
-}
-
-/*标签内容页-实时日志部分的样式*/
-.reallog_pane {
-    overflow: visible;
-    padding-top: 20px !important;
-}
-
-    .reallog_pane .filter {
-        position: fixed;
-        margin-top: -20px;
-        display: contents;
-    }
-
-    .reallog_pane textarea {
-        margin-bottom: 10px;
-    }
-
-    .reallog_pane .tool {
-        position: fixed;
-        right: 20px;
-        margin-top: -60px;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-    }
-
-        .reallog_pane .tool .max-slider {
-            min-width: 300px;
-        }
-
-    .reallog_pane .item {
-        margin-right: 20px;
-    }
-
-    .reallog_pane .block {
-        background: #24292e;
-        overflow-y: auto;
-        padding-top: 30px;
-        padding-bottom: 50px;
-        margin-top: 20px;
-        border-radius: 4px !important;
-        height: 78%;
-    }
-
-    .reallog_pane .el-timeline-item__timestamp {
-        line-height: 20px;
-        color: #fafbfc;
-    }
-
-    .reallog_pane .el-timeline-item__content {
-        white-space: pre-wrap;
-        color: #e1e4e8;
-        font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace !important;
-        font-size: 12px !important;
-    }
 
 /*日志状态的图标样式*/
 .block i {
@@ -111,57 +19,31 @@ body > .full_container {
     font-size: 32px;
 }
 
-/*一般日志的图标*/
-.el-icon-info {
+/*未启用状态的图标*/
+.el-icon-turn-off {
+    color: #808080;
+}
+
+/*运行状态的图标*/
+.el-icon-loading {
     color: #5e6d82;
 }
 
-/*正常日志的图标*/
-.el-icon-success {
+/*空闲状态的图标*/
+.el-icon-remove-outline {
     color: #28a745;
 }
 
-/*警告日志的图标*/
-.el-icon-warning {
+/*未知状态的图标*/
+.el-icon-question {
     color: #ffc107;
 }
 
-/*异常日志的图标*/
-.el-icon-error {
+/*已停止状态的图标*/
+.el-icon-switch-button {
     color: #cb2431;
 }
 
 .el-dialog__body {
     min-height: 300px;
-}
-
-.logfile-content-dialog .el-dialog__body {
-    height: 80%;
-    overflow-y: auto;
-    background-color: antiquewhite;
-}
-
-.logfile-content-dialog .el-dialog__footer {
-    position: fixed;
-    right: 20px;
-}
-
-.logfile-content {
-    height: 100%;
-    white-space: pre-wrap;
-    /*background-color: antiquewhite;*/
-    border-radius: 4px;
-    padding-top: 10px;
-    padding-left: 30px;
-    font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace !important;
-}
-
-/*列表中警告的日志*/
-.el-table .warning-row {
-    background: oldlace;
-}
-
-/*列表中异常的日志*/
-.el-table .error-row {
-    background: #f0808069;
 }

@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>日志中心</title>
+    <script src="../../vue/vue.global.prod.js"></script>
+
+    <script src="../../utils/axios.min.js"></script>
+
+    <link href="../../element-plus/theme-chalk/element-plus.index.css" rel="stylesheet" />
+    <script src="../../element-plus/element-plus.index.full.js"></script>
+    <script src="../../element-plus/element-plus.es.js"></script>
+    <script src="../../element-plus/element-plus.zh-cn.js"></script>
+    <script src="../../element-plus/dayjs.zh-cn.js"></script>
+
+    <script src="../../utils/lodash.min.js"></script>
+
+    <link href="systemconsole.css" rel="stylesheet" />
+    <script src="systemconsole.js"></script>
+</head>
+<body>
+    <div id="app">
+        <el-container class="main_container">
+            <el-row :gutter="12" v-for="name in models.data" :key="name">
+                <el-col :span="12/models.x">
+                    <el-card class="box-card"
+                             shadow="hover">
+                        <template #header>
+                            <div class="card-header" v-loading="models.data[name].loading">
+                                <span>{{name}} <i class="{{models.data[name].icon}}" title="{{models.data[name].explain}}"></i></span>
+                                <div v-if="models.data[name].state == 'stop'">
+                                    <el-button type="primary"
+                                               round
+                                               disabled="models.data[name].disable"
+                                               @click="start(name)">启动</el-button>
+                                </div>
+                                <div v-else-if="models.data[name].state != 'none'">
+                                    <el-button type="danger"
+                                               round
+                                               disabled="models.data[name].disable"
+                                               @click="shutdown(name)">关停</el-button>
+                                    <el-button type="warning"
+                                               round
+                                               disabled="models.data[name].disable"
+                                               @click="reboot(name)">重启</el-button>
+                                </div>
+                            </div>
+                        </template>
+                    </el-card>
+                </el-col>
+            </el-row>
+        </el-container>
+
+        <!--SA身份验证-->
+        <el-dialog title="SA身份验证"
+                   v-model="sa.show"
+                   :width="350"
+                   :close-on-click-modal="false"
+                   :close-on-press-escape="false"
+                   :show-close="false"
+                   v-loading="sa.loading">
+            <el-form :model="sa">
+                <el-form-item label="用户名" :label-width="200">
+                    <el-input type="text" v-model="sa.username" :maxlength="20" size="medium"></el-input>
+                </el-form-item>
+                <el-form-item label="密码" :label-width="200">
+                    <el-input type="text" v-model="sa.password" :maxlength="25" size="medium" show-password></el-input>
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <span class="dialog-footer">
+                    <el-button type="primary" @click="saLogin">登录</el-button>
+                </span>
+            </template>
+        </el-dialog>
+    </div>
+</body>
+</html>
