@@ -1,9 +1,9 @@
-{
+﻿{
   "JWT": {
     "SecurityKey": "89a1aa089fae4bf1be509f52afab4742",
     "Algorithm": "HS256",
-    "Issuer": "ʾ��ϵͳ",
-    "Audience": "ʾ��ϵͳ",
+    "Issuer": "示例系统",
+    "Audience": "示例系统",
     "Validity": "00:20:00"
   }
 }

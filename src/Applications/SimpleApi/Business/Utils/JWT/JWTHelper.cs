@@ -72,6 +72,8 @@ namespace Business.Utils.JWT
         /// <returns>令牌信息</returns>
         public static TokenInfo GenerateToken(List<Claim> claims)
         {
+            claims.RemoveAll(o => o.Type == "iss" || o.Type == "aud");
+
             var expires = DateTime.Now.AddTicks(Config.JWT.Validity.Ticks);
 
             var token = new JwtSecurityToken(

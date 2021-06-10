@@ -32,6 +32,14 @@
     bottom: 300px;
 }
 
+/*显示/隐藏快速导航标签图标*/
+.changeTags {
+    /*display: none;*/
+    position: fixed;
+    z-index: 100;
+    top: 50%;
+}
+
 /*左侧标签*/
 .tagsBody {
     display: flex;

@@ -276,6 +276,10 @@ window.onInformationLoaded(() => {
             var setToken = (token, done) => {
                 $('.btn.authorize').click();
 
+                //先注销
+                if ($('.authorize.locked').length == 1)
+                    $('.btn-done').prev().click();
+
                 //设置input值并触发onchange事件
                 var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
                 nativeInputValueSetter.call($('.auth-container input')[0], token);
@@ -284,6 +288,7 @@ window.onInformationLoaded(() => {
 
                 $('[type="submit"]').click();
                 $('.close-modal').click();
+
                 done();
             };
 
