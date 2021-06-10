@@ -1095,11 +1095,89 @@
             <param name="roleId">角色Id</param>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.AuthoritiesController.GetRoleResources(System.String)">
+        <member name="M:Api.Controllers.AuthoritiesController.GetRoleResources(System.String,Model.Utils.Pagination.PaginationDTO)">
             <summary>
             获取授权给角色的资源
             </summary>
             <param name="roleId">角色Id</param>
+            <param name="pagination">分页设置</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.AuthoritiesController.GetUserRoleTree(System.String,Model.System.RoleDTO.TreeListParamter)">
+            <summary>
+            获取用户角色授权树状列表数据
+            </summary>
+            <param name="userId">用户ID</param>
+            <param name="paramter">参数</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.AuthoritiesController.GetMemberRoleTree(System.String,Model.System.RoleDTO.TreeListParamter)">
+            <summary>
+            获取会员角色授权树状列表数据
+            </summary>
+            <param name="memberId">会员ID</param>
+            <param name="paramter">参数</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.AuthoritiesController.GetCurrentAccountRoleTree(Model.System.RoleDTO.TreeListParamter)">
+            <summary>
+            获取当前登录账号的角色授权树状列表数据
+            </summary>
+            <param name="paramter">参数</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.AuthoritiesController.GetRoleMenuTree(System.String,Model.System.MenuDTO.TreeListParamter)">
+            <summary>
+            获取角色菜单授权树状列表数据
+            </summary>
+            <param name="roleId">角色ID</param>
+            <param name="paramter">参数</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.AuthoritiesController.GetUserMenuTree(System.String,Model.System.MenuDTO.TreeListParamter)">
+            <summary>
+            获取用户菜单授权树状列表数据
+            </summary>
+            <param name="userId">用户ID</param>
+            <param name="paramter">参数</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.AuthoritiesController.GetMemberMenuTree(System.String,Model.System.MenuDTO.TreeListParamter)">
+            <summary>
+            获取会员菜单授权树状列表数据
+            </summary>
+            <param name="memberId">会员ID</param>
+            <param name="paramter">参数</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.AuthoritiesController.GetCurrentAccountMenuTree(Model.System.MenuDTO.TreeListParamter)">
+            <summary>
+            获取当前登录账号的菜单授权树状列表数据
+            </summary>
+            <param name="paramter">参数</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.AuthoritiesController.GetRoleResourcesList(System.String,Model.Utils.Pagination.PaginationDTO)">
+            <summary>
+            获取角色的授权资源列表数据
+            </summary>
+            <param name="roleId">角色Id</param>
+            <param name="pagination">分页设置</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.AuthoritiesController.GetUserResourcesList(System.String,Model.Utils.Pagination.PaginationDTO)">
+            <summary>
+            获取用户的授权资源列表数据
+            </summary>
+            <param name="userId">用户Id</param>
+            <param name="pagination">分页设置</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.AuthoritiesController.GetCurrentAccountResourcesList(Model.Utils.Pagination.PaginationDTO)">
+            <summary>
+            获取当前登录账号的资源授权列表数据
+            </summary>
+            <param name="pagination">分页设置</param>
             <returns></returns>
         </member>
         <member name="M:Api.Controllers.AuthoritiesController.IsSuperAdminUser(System.String,System.Boolean)">
@@ -1222,54 +1300,6 @@
             <param name="memberId">会员Id</param>
             <param name="resourcesUri">资源链接</param>
             <param name="checkEnable">检查是否已启用（默认true）</param>
-            <returns></returns>
-        </member>
-        <member name="M:Api.Controllers.AuthoritiesController.GetRoleMenuTree(System.String,Model.System.MenuDTO.TreeListParamter)">
-            <summary>
-            获取角色菜单授权树状列表数据
-            </summary>
-            <param name="roleId">角色ID</param>
-            <param name="paramter">参数</param>
-            <returns></returns>
-        </member>
-        <member name="M:Api.Controllers.AuthoritiesController.GetUserRoleTree(System.String,Model.System.RoleDTO.TreeListParamter)">
-            <summary>
-            获取用户角色授权树状列表数据
-            </summary>
-            <param name="userId">用户ID</param>
-            <param name="paramter">参数</param>
-            <returns></returns>
-        </member>
-        <member name="M:Api.Controllers.AuthoritiesController.GetMemberRoleTree(System.String,Model.System.RoleDTO.TreeListParamter)">
-            <summary>
-            获取会员角色授权树状列表数据
-            </summary>
-            <param name="memberId">会员ID</param>
-            <param name="paramter">参数</param>
-            <returns></returns>
-        </member>
-        <member name="M:Api.Controllers.AuthoritiesController.GetUserMenuTree(System.String,Model.System.MenuDTO.TreeListParamter)">
-            <summary>
-            获取用户菜单授权树状列表数据
-            </summary>
-            <param name="userId">用户ID</param>
-            <param name="paramter">参数</param>
-            <returns></returns>
-        </member>
-        <member name="M:Api.Controllers.AuthoritiesController.GetRoleResourcesList(System.String,Model.Utils.Pagination.PaginationDTO)">
-            <summary>
-            获取能授权给角色的资源列表数据
-            </summary>
-            <param name="roleId">角色Id</param>
-            <param name="pagination">分页设置</param>
-            <returns></returns>
-        </member>
-        <member name="M:Api.Controllers.AuthoritiesController.GetUserResourcesList(System.String,Model.Utils.Pagination.PaginationDTO)">
-            <summary>
-            获取能授权给用户的资源列表数据
-            </summary>
-            <param name="userId">用户Id</param>
-            <param name="pagination">分页设置</param>
             <returns></returns>
         </member>
         <member name="T:Api.Controllers.MenuController">
@@ -1682,7 +1712,7 @@
             <summary>
             返回成功
             </summary>
-            <param name="msg">消息</param>
+            <param name="message">消息</param>
             <returns></returns>
         </member>
         <member name="M:Api.Controllers.Utils.BaseController.Success``1(``0)">
@@ -1697,7 +1727,7 @@
             返回成功
             </summary>
             <param name="data">返回的数据</param>
-            <param name="msg">返回的消息</param>
+            <param name="message">返回的消息</param>
             <returns></returns>
         </member>
         <member name="M:Api.Controllers.Utils.BaseController.SuccessOpenApiSchema``1(``0,System.String)">
@@ -1706,7 +1736,7 @@
             </summary>
             <typeparam name="TOpenApiSchema">接口架构类型</typeparam>
             <param name="data"></param>
-            <param name="msg"></param>
+            <param name="message"></param>
             <returns></returns>
         </member>
         <member name="M:Api.Controllers.Utils.BaseController.Error">
@@ -1719,7 +1749,7 @@
             <summary>
             返回错误
             </summary>
-            <param name="msg">错误提示</param>
+            <param name="message">错误提示</param>
             <returns></returns>
         </member>
         <member name="M:Api.Controllers.Utils.BaseController.ErrorOpenApiSchema``1(``0,System.String)">
@@ -1728,7 +1758,7 @@
             </summary>
             <typeparam name="TOpenApiSchema">接口架构类型</typeparam>
             <param name="data"></param>
-            <param name="msg"></param>
+            <param name="message"></param>
             <returns></returns>
         </member>
         <member name="M:Api.Controllers.Utils.BaseController.DataTable``1(System.Collections.Generic.List{``0})">

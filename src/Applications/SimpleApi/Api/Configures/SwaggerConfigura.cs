@@ -188,6 +188,18 @@ namespace Api.Configures
                             if (!config.EnableSampleAuthentication)
                                 continue;
                         }
+                        else if (file.Name.Contains("wechat"))
+                        {
+                            //微信脚本
+                            if (!config.EnableWeChatService)
+                                continue;
+                        }
+                        else if (file.Name.Contains("Site"))
+                        {
+                            //站点脚本
+                            if (config.EnableSite?.Any(o => file.Name.Contains(o)) != true)
+                                continue;
+                        }
                         else if (file.Name.Contains("jwt"))
                         {
                             //jwt脚本

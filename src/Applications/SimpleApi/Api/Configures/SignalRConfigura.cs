@@ -45,7 +45,7 @@ namespace Api.Configures
                 option.EnableDetailedErrors = config.RunMode != RunMode.Publish && config.RunMode != RunMode.Publish_Swagger;
             });
 
-            //日志转发
+            $"初始化{LogForwardHandler.Name}.".ConsoleWrite();
             services.AddSingleton(new LogForwardHandler());
 
             return services;
@@ -70,7 +70,7 @@ namespace Api.Configures
                 endpoints.MapHub<WeChatServiceHub>("/wechathub");
             });
 
-            //启动日志转发
+            $"启动{LogForwardHandler.Name}.".ConsoleWrite();
             app.ApplicationServices.GetService<LogForwardHandler>().Start();
 
             return app;

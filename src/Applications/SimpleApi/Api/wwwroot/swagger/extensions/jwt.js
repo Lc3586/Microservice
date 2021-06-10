@@ -38,6 +38,9 @@ window.onInformationLoaded(() => {
             }
         ],
         () => {
+            //隐藏框架原本的按钮
+            $('.auth-wrapper button').css('opacity', 0);
+
             var tokenInfo = JSON.parse(window.localStorage.getItem('jwt-token'));
 
             /**
@@ -101,13 +104,19 @@ window.onInformationLoaded(() => {
                         for (var item in data) {
                             content.push(['input-readonly', item, data[item]]);
                         }
-                        window.showDialog(
+                        var close = window.showDialog(
                             'JWT登录信息',
                             content,
                             {
                                 '刷新令牌': {
                                     'click': () => {
-                                        refreshToken();
+                                        close(refreshToken);
+                                    }
+                                },
+                                '删除令牌': {
+                                    'click': () => {
+                                        window.localStorage.removeItem('jwt-token');
+                                        close(() => { addBtn(false); });
                                     }
                                 },
                                 '查看对接说明': {
@@ -124,7 +133,7 @@ window.onInformationLoaded(() => {
                                 }
                             });
                     } else {
-                        window.showDialog(
+                        var close = window.showDialog(
                             '获取令牌',
                             [
                                 ['input', '用户名', ''],
@@ -133,7 +142,7 @@ window.onInformationLoaded(() => {
                             {
                                 '获取令牌': {
                                     'click': () => {
-                                        getToken($('#key_0').val(), $('#key_1').val());
+                                        getToken($('#key_0').val(), $('#key_1').val(), close);
                                     }
                                 },
                                 '查看对接说明': {
@@ -160,7 +169,7 @@ window.onInformationLoaded(() => {
 
                 if (data) {
                     //定时更新令牌
-                    var updating = setInterval(refreshToken, new Date(tokenInfo.Expires) - new Date() - 60 * 1000);
+                    window.delayedEvent(refreshToken, null, new Date(tokenInfo.Expires) - new Date() - 60 * 1000, 'refresh-Token');
                 }
             };
 
@@ -172,9 +181,10 @@ window.onInformationLoaded(() => {
             *
             * @param {string} account 用户名
             * @param {string} password 密码
+            * @param {Function} close 关闭弹出层
             *
             */
-            var getToken = (account, password) => {
+            var getToken = (account, password, close) => {
                 $.ajax({
                     type: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -188,8 +198,10 @@ window.onInformationLoaded(() => {
                         if (data.Success) {
                             tokenInfo = data.Data;
                             window.localStorage.setItem('jwt-token', JSON.stringify(tokenInfo));
-                            setToken(tokenInfo.AccessToken, () => {
-                                check(addBtn);
+                            close(() => {
+                                setToken(tokenInfo.AccessToken, () => {
+                                    check(addBtn);
+                                });
                             });
                         }
                         else
@@ -262,16 +274,16 @@ window.onInformationLoaded(() => {
              * @param {Function} done 回调事件
              */
             var setToken = (token, done) => {
-                console.info('设置令牌.');
                 $('.btn.authorize').click();
-                console.info('open and set.');
-                $('.auth-container input').val(token);
-                console.info($('.auth-container input').val());
+
+                //设置input值并触发onchange事件
+                var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
+                nativeInputValueSetter.call($('.auth-container input')[0], token);
+                var ev2 = new Event('input', { bubbles: true });
+                $('.auth-container input')[0].dispatchEvent(ev2);
+
                 $('[type="submit"]').click();
-                console.info($('[type="submit"]').length);
-                console.info('submit.');
-                $('[type="submit"]').next().click();
-                console.info('close.');
+                $('.close-modal').click();
                 done();
             };
 

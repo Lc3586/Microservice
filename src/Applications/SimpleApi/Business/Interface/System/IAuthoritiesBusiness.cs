@@ -356,19 +356,21 @@ namespace Business.Interface.System
         /// </summary>
         /// <param name="userId">用户Id</param>
         /// <param name="mergeRoleResources">包括角色的授权资源</param>
+        /// <param name="pagination"></param>
         /// <returns>
         /// <para>资源授权信息</para>
         /// </returns>
-        List<Model.System.ResourcesDTO.Authorities> GetUserResources(string userId, bool mergeRoleResources);
+        List<Model.System.ResourcesDTO.Authorities> GetUserResources(string userId, bool mergeRoleResources, PaginationDTO pagination = null);
 
         /// <summary>
         /// 获权授权给会员的资源
         /// </summary>
         /// <param name="memberId">会员Id</param>
+        /// <param name="pagination">分页设置</param>
         /// <returns>
         /// <para>资源授权信息</para>
         /// </returns>
-        List<Model.System.ResourcesDTO.Authorities> GetMemberResources(string memberId);
+        List<Model.System.ResourcesDTO.Authorities> GetMemberResources(string memberId, PaginationDTO pagination = null);
 
         /// <summary>
         /// 获取角色的授权数据
@@ -396,10 +398,88 @@ namespace Business.Interface.System
         /// 获取授权给角色的资源
         /// </summary>
         /// <param name="roleId">角色Id</param>
+        /// <param name="pagination">分页设置</param>
         /// <returns>
         /// <para>资源授权信息</para>
         /// </returns>
-        List<Model.System.ResourcesDTO.Authorities> GetRoleResources(string roleId);
+        List<Model.System.ResourcesDTO.Authorities> GetRoleResources(string roleId, PaginationDTO pagination);
+
+        /// <summary>
+        /// 获取用户角色授权树状列表数据
+        /// </summary>
+        /// <param name="userId">用户ID</param>
+        /// <param name="paramter">参数</param>
+        /// <returns></returns>
+        List<Model.System.RoleDTO.AuthoritiesTree> GetUserRoleTree(string userId, Model.System.RoleDTO.TreeListParamter paramter);
+
+        /// <summary>
+        /// 获取会员角色授权树状列表数据
+        /// </summary>
+        /// <param name="memberId">会员ID</param>
+        /// <param name="paramter">参数</param>
+        /// <returns></returns>
+        List<Model.System.RoleDTO.AuthoritiesTree> GetMemberRoleTree(string memberId, Model.System.RoleDTO.TreeListParamter paramter);
+
+        /// <summary>
+        /// 获取当前登录账号的角色授权树状列表数据
+        /// </summary>
+        /// <param name="paramter">参数</param>
+        /// <returns></returns>
+        List<Model.System.RoleDTO.AuthoritiesTree> GetCurrentAccountRoleTree(Model.System.RoleDTO.TreeListParamter paramter);
+
+        /// <summary>
+        /// 获取角色菜单授权树状列表数据
+        /// </summary>
+        /// <param name="roleId">角色ID</param>
+        /// <param name="paramter">参数</param>
+        /// <returns></returns>
+        List<Model.System.MenuDTO.AuthoritiesTree> GetRoleMenuTree(string roleId, Model.System.MenuDTO.TreeListParamter paramter);
+
+        /// <summary>
+        /// 获取用户菜单授权树状列表数据
+        /// </summary>
+        /// <param name="userId">用户ID</param>
+        /// <param name="paramter">参数</param>
+        /// <returns></returns>
+        List<Model.System.MenuDTO.AuthoritiesTree> GetUserMenuTree(string userId, Model.System.MenuDTO.TreeListParamter paramter);
+
+        /// <summary>
+        /// 获取会员菜单授权树状列表数据
+        /// </summary>
+        /// <param name="memberId">会员ID</param>
+        /// <param name="paramter">参数</param>
+        /// <returns></returns>
+        List<Model.System.MenuDTO.AuthoritiesTree> GetMemberMenuTree(string memberId, Model.System.MenuDTO.TreeListParamter paramter);
+
+        /// <summary>
+        /// 获取当前登录账号的菜单授权树状列表数据
+        /// </summary>
+        /// <param name="paramter">参数</param>
+        /// <returns></returns>
+        List<Model.System.MenuDTO.AuthoritiesTree> GetCurrentAccountMenuTree(Model.System.MenuDTO.TreeListParamter paramter);
+
+        /// <summary>
+        /// 获取角色的授权资源列表数据
+        /// </summary>
+        /// <param name="roleId">角色Id</param>
+        /// <param name="pagination">分页设置</param>
+        /// <returns></returns>
+        List<Model.System.ResourcesDTO.Authorities> GetRoleResourcesList(string roleId, PaginationDTO pagination);
+
+        /// <summary>
+        /// 获取用户的授权资源列表数据
+        /// </summary>
+        /// <param name="userId">用户Id</param>
+        /// <param name="pagination">分页设置</param>
+        /// <returns></returns>
+        List<Model.System.ResourcesDTO.Authorities> GetUserResourcesList(string userId, PaginationDTO pagination);
+
+        /// <summary>
+        /// 获取当前登录账号的资源授权列表数据
+        /// </summary>
+        /// <param name="pagination">分页设置</param>
+        /// <returns></returns>
+        List<Model.System.ResourcesDTO.Authorities> GetCurrentAccountResourcesList(PaginationDTO pagination);
 
         #endregion
 
@@ -549,53 +629,7 @@ namespace Business.Interface.System
 
         #region 拓展功能
 
-        /// <summary>
-        /// 获取角色菜单授权树状列表数据
-        /// </summary>
-        /// <param name="roleId">角色ID</param>
-        /// <param name="paramter">参数</param>
-        /// <returns></returns>
-        List<Model.System.MenuDTO.AuthoritiesTree> GetRoleMenuTree(string roleId, Model.System.MenuDTO.TreeListParamter paramter);
 
-        /// <summary>
-        /// 获取用户角色授权树状列表数据
-        /// </summary>
-        /// <param name="userId">用户ID</param>
-        /// <param name="paramter">参数</param>
-        /// <returns></returns>
-        List<Model.System.RoleDTO.AuthoritiesTree> GetUserRoleTree(string userId, Model.System.RoleDTO.TreeListParamter paramter);
-
-        /// <summary>
-        /// 获取会员角色授权树状列表数据
-        /// </summary>
-        /// <param name="memberId">会员ID</param>
-        /// <param name="paramter">参数</param>
-        /// <returns></returns>
-        List<Model.System.RoleDTO.AuthoritiesTree> GetMemberRoleTree(string memberId, Model.System.RoleDTO.TreeListParamter paramter);
-
-        /// <summary>
-        /// 获取用户菜单授权树状列表数据
-        /// </summary>
-        /// <param name="userId">用户ID</param>
-        /// <param name="paramter">参数</param>
-        /// <returns></returns>
-        List<Model.System.MenuDTO.AuthoritiesTree> GetUserMenuTree(string userId, Model.System.MenuDTO.TreeListParamter paramter);
-
-        /// <summary>
-        /// 获取能授权给角色的资源列表数据
-        /// </summary>
-        /// <param name="roleId">角色Id</param>
-        /// <param name="pagination">分页设置</param>
-        /// <returns></returns>
-        List<Model.System.ResourcesDTO.Authorities> GetRoleResourcesList(string roleId, PaginationDTO pagination);
-
-        /// <summary>
-        /// 获取能授权给用户的资源列表数据
-        /// </summary>
-        /// <param name="userId">用户Id</param>
-        /// <param name="pagination">分页设置</param>
-        /// <returns></returns>
-        List<Model.System.ResourcesDTO.Authorities> GetUserResourcesList(string userId, PaginationDTO pagination);
 
         #endregion
     }

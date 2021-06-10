@@ -209,8 +209,7 @@ namespace Api
             services.RegisterNLog(Config);
 
             Bar?.Normal(27);
-            "初始化分片文件合并服务.".ConsoleWrite();
-            //上传功能-合并分片文件
+            $"初始化{ChunkFileMergeHandler.Name}.".ConsoleWrite();
             services.AddSingleton(new ChunkFileMergeHandler());
         }
 
@@ -385,7 +384,7 @@ namespace Api
             Bar?.Normal(98);
 
             Bar?.Normal(99);
-            "启动分片文件合并服务.".ConsoleWrite();
+            $"启动{ChunkFileMergeHandler.Name}.".ConsoleWrite();
             AutofacHelper.GetService<ChunkFileMergeHandler>().Start();
 
             Bar?.Normal(100, "应用程序已启动");

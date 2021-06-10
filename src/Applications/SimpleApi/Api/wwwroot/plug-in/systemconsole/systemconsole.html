@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>日志中心</title>
+    <title>系统控制台</title>
     <script src="../../vue/vue.global.prod.js"></script>
 
     <script src="../../utils/axios.min.js"></script>
@@ -21,31 +21,40 @@
 <body>
     <div id="app">
         <el-container class="main_container">
-            <el-row :gutter="12" v-for="name in models.data" :key="name">
-                <el-col :span="12/models.x">
-                    <el-card class="box-card"
+            <el-row :gutter="24" v-for="(y,index) in modulars.data" :key="index">
+                <el-col :span="24/modulars.x" v-for="modular in y" :key="modular.Name">
+                    <el-card class="modular-card"
                              shadow="hover">
                         <template #header>
-                            <div class="card-header" v-loading="models.data[name].loading">
-                                <span>{{name}} <i class="{{models.data[name].icon}}" title="{{models.data[name].explain}}"></i></span>
-                                <div v-if="models.data[name].state == 'stop'">
+                            <div class="modular-header" v-loading="modular.loading">
+                                <i :class="modular.icon" :title="modular.explain"></i><span>{{modular.Name}}</span>
+                                <div v-if="modular.State == 'stop'" class="modular-tool">
                                     <el-button type="primary"
                                                round
-                                               disabled="models.data[name].disable"
-                                               @click="start(name)">启动</el-button>
+                                               :disabled="modular.disable"
+                                               @click="start(modular.Name)">启动</el-button>
                                 </div>
-                                <div v-else-if="models.data[name].state != 'none'">
+                                <div v-else-if="modular.State != 'none'" class="modular-tool">
                                     <el-button type="danger"
                                                round
-                                               disabled="models.data[name].disable"
-                                               @click="shutdown(name)">关停</el-button>
+                                               :disabled="modular.disable"
+                                               @click="shutdown(modular.Name)">关停</el-button>
                                     <el-button type="warning"
                                                round
-                                               disabled="models.data[name].disable"
-                                               @click="reboot(name)">重启</el-button>
+                                               :disabled="modular.disable"
+                                               @click="reboot(modular.Name)">重启</el-button>
                                 </div>
                             </div>
                         </template>
+                        <div v-if="!!modular.error" class="modular-error">
+                            <h3>{{modular.error}}</h3>
+                        </div>
+                        <div v-if="!!modular.Data" class="modular-data">
+                            <div v-for="(val,key) in modular.Data" :key="key" :title="key">
+                                <h6>{{key}}</h6>
+                                <span>{{val}}</span>
+                            </div>
+                        </div>
                     </el-card>
                 </el-col>
             </el-row>

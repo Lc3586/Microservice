@@ -2024,6 +2024,11 @@
             简易身份认证
             </summary>
         </member>
+        <member name="P:Model.Utils.Config.SystemConfig.EnableSite">
+            <summary>
+            启用站点
+            </summary>
+        </member>
         <member name="P:Model.Utils.Config.SystemConfig.DefaultLoggerName">
             <summary>
             默认日志组件名称
@@ -3391,6 +3396,26 @@
         <member name="P:Model.Utils.SignalR.WeChatUserInfo.HeadimgUrl">
             <summary>
             头像
+            </summary>
+        </member>
+        <member name="T:Model.Utils.SystemConsole.InfoDTO.ModularInfo">
+            <summary>
+            模块信息
+            </summary>
+        </member>
+        <member name="P:Model.Utils.SystemConsole.InfoDTO.ModularInfo.Name">
+            <summary>
+            名称
+            </summary>
+        </member>
+        <member name="P:Model.Utils.SystemConsole.InfoDTO.ModularInfo.State">
+            <summary>
+            状态
+            </summary>
+        </member>
+        <member name="P:Model.Utils.SystemConsole.InfoDTO.ModularInfo.Data">
+            <summary>
+            附加数据
             </summary>
         </member>
         <member name="T:Model.Utils.SystemConsole.State">

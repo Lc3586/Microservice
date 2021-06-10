@@ -218,6 +218,11 @@ namespace Model.Utils.Config
         /// </summary>
         public bool EnableSampleAuthentication { get; set; }
 
+        /// <summary>
+        /// 启用站点
+        /// </summary>
+        public List<string> EnableSite { get; set; }
+
         #endregion
 
         #region 日志

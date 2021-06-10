@@ -1333,7 +1333,7 @@ namespace Business.Implementation.System
                         o._Menus = GetRoleMenu(o.Id);
 
                     if (includeResources)
-                        o._Resources = GetRoleResources(o.Id);
+                        o._Resources = GetRoleResources(o.Id, new PaginationDTO { PageIndex = -1 });
                 });
 
             return roles;
@@ -1357,7 +1357,7 @@ namespace Business.Implementation.System
                         o._Menus = GetRoleMenu(o.Id);
 
                     if (includeResources)
-                        o._Resources = GetRoleResources(o.Id);
+                        o._Resources = GetRoleResources(o.Id, new PaginationDTO { PageIndex = -1 });
                 });
 
             return roles;
@@ -1423,9 +1423,9 @@ namespace Business.Implementation.System
             return menus;
         }
 
-        public List<Model.System.ResourcesDTO.Authorities> GetUserResources(string userId, bool mergeRoleResources)
+        public List<Model.System.ResourcesDTO.Authorities> GetUserResources(string userId, bool mergeRoleResources, PaginationDTO pagination = null)
         {
-            var resources = Repository_Resources.Where(o => (o.Users.AsSelect()
+            var select = Repository_Resources.Where(o => (o.Users.AsSelect()
                                                             .Where(p => p.Id == userId)
                                                             .Any()
                                                     || (mergeRoleResources == true
@@ -1433,34 +1433,41 @@ namespace Business.Implementation.System
                                                                 .Where(p => p.Users.AsSelect()
                                                                                 .Where(q => q.Id == userId)
                                                                                 .Any() && p.Enable == true)
-                                                                .Any())) && o.Enable == true)
-                                    .ToList(o => new Model.System.ResourcesDTO.Authorities
-                                    {
-                                        Id = o.Id,
-                                        Name = o.Name,
-                                        Type = o.Type,
-                                        Code = o.Code,
-                                        Uri = o.Uri
-                                    });
+                                                                .Any())) && o.Enable == true);
+            if (pagination != null)
+                select = select.GetPagination(pagination);
+
+            var resources = select.ToList(o => new Model.System.ResourcesDTO.Authorities
+            {
+                Id = o.Id,
+                Name = o.Name,
+                Type = o.Type,
+                Code = o.Code,
+                Uri = o.Uri
+            });
 
             return resources;
         }
 
-        public List<Model.System.ResourcesDTO.Authorities> GetMemberResources(string memberId)
+        public List<Model.System.ResourcesDTO.Authorities> GetMemberResources(string memberId, PaginationDTO pagination = null)
         {
-            var resources = Repository_Resources.Where(o => o.Roles.AsSelect()
+            var select =
+               Repository_Resources.Where(o => o.Roles.AsSelect()
                                                         .Where(p => p.Members.AsSelect()
                                                                             .Where(q => q.Id == memberId)
                                                                             .Any() && p.Enable == true)
-                                                        .Any() && o.Enable == true)
-                                    .ToList(o => new Model.System.ResourcesDTO.Authorities
-                                    {
-                                        Id = o.Id,
-                                        Name = o.Name,
-                                        Type = o.Type,
-                                        Code = o.Code,
-                                        Uri = o.Uri
-                                    });
+                                                        .Any() && o.Enable == true);
+            if (pagination != null)
+                select = select.GetPagination(pagination);
+
+            var resources = select.ToList(o => new Model.System.ResourcesDTO.Authorities
+            {
+                Id = o.Id,
+                Name = o.Name,
+                Type = o.Type,
+                Code = o.Code,
+                Uri = o.Uri
+            });
 
             return resources;
         }
@@ -1486,7 +1493,7 @@ namespace Business.Implementation.System
                 role._Menus = GetRoleMenu(role.Id);
 
             if (includeResources)
-                role._Resources = GetRoleResources(role.Id);
+                role._Resources = GetRoleResources(role.Id, new PaginationDTO { PageIndex = -1 });
 
             return role;
         }
@@ -1507,11 +1514,12 @@ namespace Business.Implementation.System
                                 });
         }
 
-        public List<Model.System.ResourcesDTO.Authorities> GetRoleResources(string roleId)
+        public List<Model.System.ResourcesDTO.Authorities> GetRoleResources(string roleId, PaginationDTO pagination)
         {
             return Repository_Resources.Where(o => o.Roles.AsSelect()
                                             .Where(p => p.Id == roleId)
                                             .Any() && o.Enable == true)
+                                .GetPagination(pagination)
                                 .ToList(o => new Model.System.ResourcesDTO.Authorities
                                 {
                                     Id = o.Id,
@@ -1763,6 +1771,16 @@ namespace Business.Implementation.System
             }
         }
 
+        public List<Model.System.RoleDTO.AuthoritiesTree> GetCurrentAccountRoleTree(Model.System.RoleDTO.TreeListParamter paramter)
+        {
+            return Operator.AuthenticationInfo.UserType switch
+            {
+                UserType.系统用户 => GetUserRoleTree(Operator.AuthenticationInfo.Id, paramter),
+                UserType.会员 => GetMemberRoleTree(Operator.AuthenticationInfo.Id, paramter),
+                _ => null
+            };
+        }
+
         public List<Model.System.MenuDTO.AuthoritiesTree> GetUserMenuTree(string userId, Model.System.MenuDTO.TreeListParamter paramter)
         {
             paramter.MenuType.RemoveAll(o => o.IsNullOrWhiteSpace());
@@ -1810,13 +1828,66 @@ namespace Business.Implementation.System
             }
         }
 
+        public List<Model.System.MenuDTO.AuthoritiesTree> GetMemberMenuTree(string memberId, Model.System.MenuDTO.TreeListParamter paramter)
+        {
+            paramter.MenuType.RemoveAll(o => o.IsNullOrWhiteSpace());
+            return GetMemberMenuTree(paramter);
+
+            List<Model.System.MenuDTO.AuthoritiesTree> GetMemberMenuTree(Model.System.MenuDTO.TreeListParamter paramter, bool deep = false)
+            {
+                if (paramter.ParentId.IsNullOrWhiteSpace())
+                    paramter.ParentId = null;
+
+                var result = Repository_Menu.Select
+                                        .Where(o => o.ParentId == paramter.ParentId
+                                            && (paramter.MenuType.Count() == 0 || paramter.MenuType.Contains(o.Type))
+                                            && (o.Roles.AsSelect().Any(p => p.Members.AsSelect().Any(q => q.Id == Operator.AuthenticationInfo.Id))))
+                                        .OrderBy(o => o.Sort)
+                                        .ToList(o => new Model.System.MenuDTO.AuthoritiesTree
+                                        {
+                                            Id = o.Id,
+                                            Name = o.Name,
+                                            Type = o.Type,
+                                            Code = o.Code,
+                                            Uri = o.Uri,
+                                            Method = o.Method,
+                                            Authorized = (o.Roles.AsSelect().Any(p => p.Members.AsSelect().Any(q => q.Id == memberId))) ? true : false
+                                        });
+
+                if (result.Any())
+                    result.ForEach(o =>
+                    {
+                        var rank = paramter.Rank;
+                        if (!rank.HasValue || rank > 0)
+                        {
+                            paramter.ParentId = o.Id;
+                            paramter.Rank--;
+                            o.Childs_ = GetMemberMenuTree(paramter, true);
+                        }
+                    });
+                else if (deep)
+                    result = null;
+
+                return result;
+            }
+        }
+
+        public List<Model.System.MenuDTO.AuthoritiesTree> GetCurrentAccountMenuTree(Model.System.MenuDTO.TreeListParamter paramter)
+        {
+            return Operator.AuthenticationInfo.UserType switch
+            {
+                UserType.系统用户 => GetUserMenuTree(Operator.AuthenticationInfo.Id, paramter),
+                UserType.会员 => GetMemberMenuTree(Operator.AuthenticationInfo.Id, paramter),
+                _ => null
+            };
+        }
+
         public List<Model.System.ResourcesDTO.Authorities> GetRoleResourcesList(string roleId, PaginationDTO pagination)
         {
             return Repository_Resources.Where(o => !o.Roles.AsSelect()
                                 .Where(p => p.Id == roleId)
                                 .Any() && o.Enable == true)
-                    .Filter(pagination)
-                    .OrderBy(pagination)
+                    .GetPagination(pagination)
                     .ToList(o => new Model.System.ResourcesDTO.Authorities
                     {
                         Id = o.Id,
@@ -1836,8 +1907,7 @@ namespace Business.Implementation.System
                                                     .Where(p => p.Users.AsSelect().Where(q => q.Id == userId).Any())
                                                     .Any()
                                                 && o.Enable == true)
-                    .Filter(pagination)
-                    .OrderBy(pagination)
+                    .GetPagination(pagination)
                     .ToList(o => new Model.System.ResourcesDTO.Authorities
                     {
                         Id = o.Id,
@@ -1846,6 +1916,16 @@ namespace Business.Implementation.System
                         Code = o.Code,
                         Uri = o.Uri
                     });
+        }
+
+        public List<Model.System.ResourcesDTO.Authorities> GetCurrentAccountResourcesList(PaginationDTO pagination)
+        {
+            return Operator.AuthenticationInfo.UserType switch
+            {
+                UserType.系统用户 => GetUserResources(Operator.AuthenticationInfo.Id, true, pagination),
+                UserType.会员 => GetMemberResources(Operator.AuthenticationInfo.Id, pagination),
+                _ => null
+            };
         }
 
         #endregion

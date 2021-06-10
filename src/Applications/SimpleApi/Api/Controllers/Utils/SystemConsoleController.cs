@@ -2,11 +2,14 @@
 using Business.Handler;
 using Business.Utils.Authorization;
 using Microservice.Library.Container;
+using Microservice.Library.Extension;
 using Microsoft.AspNetCore.Mvc;
 using Model.Utils.Result;
 using Model.Utils.SystemConsole;
+using Model.Utils.SystemConsole.InfoDTO;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -50,13 +53,13 @@ namespace Api.Controllers
         [HttpPost("shutdown")]
         public async Task<object> Shutdown(string name = null)
         {
-            if (name == null || name == "日志转发")
+            if (name == null || name == LogForwardHandler.Name)
             {
                 if (LogForward?.State() != false)
                     LogForward?.Shutdown();
             }
 
-            if (name == null || name == "合并分片文件")
+            if (name == null || name == ChunkFileMergeHandler.Name)
             {
                 if (ChunkFileMerge?.State() != false)
                     ChunkFileMerge?.Shutdown();
@@ -73,7 +76,7 @@ namespace Api.Controllers
         [HttpPost("reboot")]
         public async Task<object> Reboot(string name = null)
         {
-            if (name == null || name == "日志转发")
+            if (name == null || name == LogForwardHandler.Name)
             {
                 if (LogForward?.State() != false)
                     LogForward?.Shutdown();
@@ -81,7 +84,7 @@ namespace Api.Controllers
                     LogForward?.Start();
             }
 
-            if (name == null || name == "合并分片文件")
+            if (name == null || name == ChunkFileMergeHandler.Name)
             {
                 if (ChunkFileMerge?.State() != false)
                     ChunkFileMerge?.Shutdown();
@@ -98,34 +101,61 @@ namespace Api.Controllers
         /// <param name="name">名称，为null时获取全部</param>
         /// <returns></returns>
         [HttpPost("state")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "状态", typeof(Dictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.OK, "模块信息", typeof(ModularInfo))]
         public async Task<object> GetState(string name = null)
         {
-            var result = new Dictionary<string, string>();
+            var result = new List<ModularInfo>();
 
-            if (name == null || name == "日志转发")
+            if (name == null || name == LogForwardHandler.Name)
             {
+                var modular = new ModularInfo
+                {
+                    Name = LogForwardHandler.Name,
+                    Data = new
+                    {
+                        启动时间 = LogForward.StartTime?.ToString("yyyy-MM-dd HH:mm:ss"),
+                        数据总量 = LogForward.DataCount
+                    }
+                };
+
                 if (LogForward == null)
-                    result.Add("日志转发", State.未启用);
+                    modular.State = State.未启用;
                 else
                 {
                     var lfstate = LogForward?.State();
-                    result.Add("日志转发", lfstate == null ? State.空闲 : lfstate == true ? State.运行中 : State.已停止);
+                    modular.State = lfstate == null ? State.空闲 : lfstate == true ? State.运行中 : State.已停止;
                 }
+
+                result.Add(modular);
             }
 
-            if (name == null || name == "合并分片文件")
+            if (name == null || name == ChunkFileMergeHandler.Name)
             {
+                var modular = new ModularInfo
+                {
+                    Name = ChunkFileMergeHandler.Name,
+                    Data = new
+                    {
+                        启动时间 = ChunkFileMerge.StartTime?.ToString("yyyy-MM-dd HH:mm:ss"),
+                        数据总量 = ChunkFileMerge.DataCount
+                    }
+                };
+
                 if (ChunkFileMerge == null)
-                    result.Add("合并分片文件", State.未启用);
+                    modular.State = State.未启用;
                 else
                 {
                     var lfstate = ChunkFileMerge?.State();
-                    result.Add("合并分片文件", lfstate == null ? State.空闲 : lfstate == true ? State.运行中 : State.已停止);
+                    modular.State = lfstate == null ? State.空闲 : lfstate == true ? State.运行中 : State.已停止;
                 }
+
+                result.Add(modular);
             }
 
-            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(result)));
+            if (result.Count == 1)
+                return await Task.FromResult(Success(result.First()));
+            else
+                return await Task.FromResult(Success(result.OrderBy(o => o.Name)));
         }
 
         #endregion     

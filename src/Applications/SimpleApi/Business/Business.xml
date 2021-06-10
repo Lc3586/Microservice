@@ -65,6 +65,21 @@
             </summary>
             <param name="chunkFiles">分片文件</param>
         </member>
+        <member name="F:Business.Handler.ChunkFileMergeHandler.Name">
+            <summary>
+            名称
+            </summary>
+        </member>
+        <member name="F:Business.Handler.ChunkFileMergeHandler.StartTime">
+            <summary>
+            启动时间
+            </summary>
+        </member>
+        <member name="P:Business.Handler.ChunkFileMergeHandler.DataCount">
+            <summary>
+            数据总量
+            </summary>
+        </member>
         <member name="M:Business.Handler.ChunkFileMergeHandler.State">
             <summary>
             当前状态
@@ -111,6 +126,21 @@
             </summary>
             <remarks>
             </remarks>
+        </member>
+        <member name="F:Business.Handler.LogForwardHandler.Name">
+            <summary>
+            名称
+            </summary>
+        </member>
+        <member name="F:Business.Handler.LogForwardHandler.StartTime">
+            <summary>
+            启动时间
+            </summary>
+        </member>
+        <member name="P:Business.Handler.LogForwardHandler.DataCount">
+            <summary>
+            数据总量
+            </summary>
         </member>
         <member name="M:Business.Handler.LogForwardHandler.State">
             <summary>
@@ -1307,21 +1337,23 @@
             <para>菜单授权信息</para>
             </returns>
         </member>
-        <member name="M:Business.Interface.System.IAuthoritiesBusiness.GetUserResources(System.String,System.Boolean)">
+        <member name="M:Business.Interface.System.IAuthoritiesBusiness.GetUserResources(System.String,System.Boolean,Model.Utils.Pagination.PaginationDTO)">
             <summary>
             获权授权给用户的资源
             </summary>
             <param name="userId">用户Id</param>
             <param name="mergeRoleResources">包括角色的授权资源</param>
+            <param name="pagination"></param>
             <returns>
             <para>资源授权信息</para>
             </returns>
         </member>
-        <member name="M:Business.Interface.System.IAuthoritiesBusiness.GetMemberResources(System.String)">
+        <member name="M:Business.Interface.System.IAuthoritiesBusiness.GetMemberResources(System.String,Model.Utils.Pagination.PaginationDTO)">
             <summary>
             获权授权给会员的资源
             </summary>
             <param name="memberId">会员Id</param>
+            <param name="pagination">分页设置</param>
             <returns>
             <para>资源授权信息</para>
             </returns>
@@ -1348,14 +1380,92 @@
             <para>菜单授权信息</para>
             </returns>
         </member>
-        <member name="M:Business.Interface.System.IAuthoritiesBusiness.GetRoleResources(System.String)">
+        <member name="M:Business.Interface.System.IAuthoritiesBusiness.GetRoleResources(System.String,Model.Utils.Pagination.PaginationDTO)">
             <summary>
             获取授权给角色的资源
             </summary>
             <param name="roleId">角色Id</param>
+            <param name="pagination">分页设置</param>
             <returns>
             <para>资源授权信息</para>
             </returns>
+        </member>
+        <member name="M:Business.Interface.System.IAuthoritiesBusiness.GetUserRoleTree(System.String,Model.System.RoleDTO.TreeListParamter)">
+            <summary>
+            获取用户角色授权树状列表数据
+            </summary>
+            <param name="userId">用户ID</param>
+            <param name="paramter">参数</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Interface.System.IAuthoritiesBusiness.GetMemberRoleTree(System.String,Model.System.RoleDTO.TreeListParamter)">
+            <summary>
+            获取会员角色授权树状列表数据
+            </summary>
+            <param name="memberId">会员ID</param>
+            <param name="paramter">参数</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Interface.System.IAuthoritiesBusiness.GetCurrentAccountRoleTree(Model.System.RoleDTO.TreeListParamter)">
+            <summary>
+            获取当前登录账号的角色授权树状列表数据
+            </summary>
+            <param name="paramter">参数</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Interface.System.IAuthoritiesBusiness.GetRoleMenuTree(System.String,Model.System.MenuDTO.TreeListParamter)">
+            <summary>
+            获取角色菜单授权树状列表数据
+            </summary>
+            <param name="roleId">角色ID</param>
+            <param name="paramter">参数</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Interface.System.IAuthoritiesBusiness.GetUserMenuTree(System.String,Model.System.MenuDTO.TreeListParamter)">
+            <summary>
+            获取用户菜单授权树状列表数据
+            </summary>
+            <param name="userId">用户ID</param>
+            <param name="paramter">参数</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Interface.System.IAuthoritiesBusiness.GetMemberMenuTree(System.String,Model.System.MenuDTO.TreeListParamter)">
+            <summary>
+            获取会员菜单授权树状列表数据
+            </summary>
+            <param name="memberId">会员ID</param>
+            <param name="paramter">参数</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Interface.System.IAuthoritiesBusiness.GetCurrentAccountMenuTree(Model.System.MenuDTO.TreeListParamter)">
+            <summary>
+            获取当前登录账号的菜单授权树状列表数据
+            </summary>
+            <param name="paramter">参数</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Interface.System.IAuthoritiesBusiness.GetRoleResourcesList(System.String,Model.Utils.Pagination.PaginationDTO)">
+            <summary>
+            获取角色的授权资源列表数据
+            </summary>
+            <param name="roleId">角色Id</param>
+            <param name="pagination">分页设置</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Interface.System.IAuthoritiesBusiness.GetUserResourcesList(System.String,Model.Utils.Pagination.PaginationDTO)">
+            <summary>
+            获取用户的授权资源列表数据
+            </summary>
+            <param name="userId">用户Id</param>
+            <param name="pagination">分页设置</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Interface.System.IAuthoritiesBusiness.GetCurrentAccountResourcesList(Model.Utils.Pagination.PaginationDTO)">
+            <summary>
+            获取当前登录账号的资源授权列表数据
+            </summary>
+            <param name="pagination">分页设置</param>
+            <returns></returns>
         </member>
         <member name="M:Business.Interface.System.IAuthoritiesBusiness.IsSuperAdminUser(System.String,System.Boolean)">
             <summary>
@@ -1495,54 +1605,6 @@
             <param name="memberId">会员Id</param>
             <param name="resourcesUri">资源链接</param>
             <param name="checkEnable">检查是否已启用</param>
-            <returns></returns>
-        </member>
-        <member name="M:Business.Interface.System.IAuthoritiesBusiness.GetRoleMenuTree(System.String,Model.System.MenuDTO.TreeListParamter)">
-            <summary>
-            获取角色菜单授权树状列表数据
-            </summary>
-            <param name="roleId">角色ID</param>
-            <param name="paramter">参数</param>
-            <returns></returns>
-        </member>
-        <member name="M:Business.Interface.System.IAuthoritiesBusiness.GetUserRoleTree(System.String,Model.System.RoleDTO.TreeListParamter)">
-            <summary>
-            获取用户角色授权树状列表数据
-            </summary>
-            <param name="userId">用户ID</param>
-            <param name="paramter">参数</param>
-            <returns></returns>
-        </member>
-        <member name="M:Business.Interface.System.IAuthoritiesBusiness.GetMemberRoleTree(System.String,Model.System.RoleDTO.TreeListParamter)">
-            <summary>
-            获取会员角色授权树状列表数据
-            </summary>
-            <param name="memberId">会员ID</param>
-            <param name="paramter">参数</param>
-            <returns></returns>
-        </member>
-        <member name="M:Business.Interface.System.IAuthoritiesBusiness.GetUserMenuTree(System.String,Model.System.MenuDTO.TreeListParamter)">
-            <summary>
-            获取用户菜单授权树状列表数据
-            </summary>
-            <param name="userId">用户ID</param>
-            <param name="paramter">参数</param>
-            <returns></returns>
-        </member>
-        <member name="M:Business.Interface.System.IAuthoritiesBusiness.GetRoleResourcesList(System.String,Model.Utils.Pagination.PaginationDTO)">
-            <summary>
-            获取能授权给角色的资源列表数据
-            </summary>
-            <param name="roleId">角色Id</param>
-            <param name="pagination">分页设置</param>
-            <returns></returns>
-        </member>
-        <member name="M:Business.Interface.System.IAuthoritiesBusiness.GetUserResourcesList(System.String,Model.Utils.Pagination.PaginationDTO)">
-            <summary>
-            获取能授权给用户的资源列表数据
-            </summary>
-            <param name="userId">用户Id</param>
-            <param name="pagination">分页设置</param>
             <returns></returns>
         </member>
         <member name="T:Business.Interface.System.IMenuBusiness">

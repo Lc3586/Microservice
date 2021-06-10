@@ -342,6 +342,21 @@ namespace Business.Handler
         #region 公共部分
 
         /// <summary>
+        /// 名称
+        /// </summary>
+        public const string Name = "分片文件合并模块";
+
+        /// <summary>
+        /// 启动时间
+        /// </summary>
+        public DateTime? StartTime;
+
+        /// <summary>
+        /// 数据总量
+        /// </summary>
+        public int DataCount => IdQueue.Count;
+
+        /// <summary>
         /// 当前状态
         /// </summary>
         /// <returns></returns>
@@ -356,6 +371,8 @@ namespace Business.Handler
         public void Start()
         {
             TCS = new TaskCompletionSource<bool>();
+
+            StartTime = DateTime.Now;
 
             //将未完成的任务添加至队列
             Repository_ChunkFileMergeTask.Where(o => o.State != $"{CFMTState.已完成}" && o.ServerKey == Config.ServerKey)
@@ -372,6 +389,8 @@ namespace Business.Handler
         {
             if (TCS == null)
                 TCS = new TaskCompletionSource<bool>();
+
+            StartTime = DateTime.Now;
 
             TCS?.SetResult(false);
 

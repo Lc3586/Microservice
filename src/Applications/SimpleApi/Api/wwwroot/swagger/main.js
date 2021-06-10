@@ -607,19 +607,20 @@ if (!window.delayedEvent) {
      * @method delayedEvent
      *
      * @param {Function} handler 处理函数
-     * @param {number} event 延时(毫秒)(默认800)
+     * @param {any} params 参数
+     * @param {number} timeout 延时(毫秒)(默认800)
      * @param {string} event 事件名称
      * @param {boolean} repeat 禁止重复(默认禁止)
      *
     */
-    window.delayedEvent = function (handler, timeout, event, repeat = false) {
+    window.delayedEvent = function (handler, params, timeout, event, repeat = false) {
         if (!repeat) {
             event ? 1 : event = Date.now();
             if (delayedEvents[event])
                 window.clearTimeout(delayedEvents[event]);
         }
 
-        delayedEvents[event] = window.setTimeout(() => { delayedEvents[event] = 0; handler(); }, timeout || 800);
+        delayedEvents[event] = window.setTimeout(() => { delayedEvents[event] = 0; handler(params); }, timeout || 800);
     }
 }
 
@@ -661,7 +662,7 @@ if (!window.showDialog) {
     *
     */
     window.showDialog = (title, content, button, closeButton = true, mask = true, drag = false) => {
-        var close = () => { $body.fadeOut(() => { $body.remove(); }); },
+        var close = done => { $body.fadeOut(() => { $body.remove(); typeof (done) == 'function' && done(); }); },
             $body = $('<div id="dialog" class="dialog-ux ' + (mask ? '' : 'dialog-ux-none') + '">' + (mask ? '<div class="backdrop-ux"></div>' : '') + '<div class="modal-ux"><div class="modal-dialog-ux"><div class="modal-ux-inner"><div class="modal-ux-header"><h3>' + title + '</h3></div><div class="modal-ux-content"><div class="auth-container"><div><div><div class="auth-container-items"></div><div class="auth-btn-wrapper"></div></div></div></div></div></div></div></div></div></div>'),
             info = '';
 
@@ -824,7 +825,9 @@ if (!window.addPlugIn) {
                 .html(svg || defaultSvg.default)
                 .attr('title', title)
                 .off('click')
-                .on('click', (e) => { fun(name, e); });
+                .on('click', (e) => { fun(name, e); })
+                .find('svg')
+                .css({ 'width': '3em', 'height': '3em' });
     }
 
     /**

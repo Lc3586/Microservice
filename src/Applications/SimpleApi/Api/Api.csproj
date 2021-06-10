@@ -103,10 +103,14 @@
     <Content Remove="wwwroot\filetypes\xmind.png" />
     <Content Remove="wwwroot\filetypes\xml.png" />
     <Content Remove="wwwroot\filetypes\zip.png" />
+    <Content Remove="wwwroot\plug-in\systemconsole\systemconsole.css" />
+    <Content Remove="wwwroot\plug-in\systemconsole\systemconsole.html" />
+    <Content Remove="wwwroot\plug-in\systemconsole\systemconsole.js" />
     <Content Remove="wwwroot\swagger\casLogin.js" />
     <Content Remove="wwwroot\swagger\custom-javascript.js" />
     <Content Remove="wwwroot\swagger\custom-stylesheet.css" />
     <Content Remove="wwwroot\swagger\extensions\jwt.js" />
+    <Content Remove="wwwroot\swagger\extensions\systemConsole.js" />
     <Content Remove="wwwroot\swagger\ignore\swagger-ui-bundle-debug.js" />
     <Content Remove="wwwroot\swagger\jquery-1.8.3.min.js" />
     <Content Remove="wwwroot\swagger\saLogin.js" />
@@ -334,10 +338,22 @@
     <None Include="wwwroot\filetypes\zip.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="wwwroot\plug-in\systemconsole\systemconsole.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\systemconsole\systemconsole.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\systemconsole\systemconsole.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="wwwroot\swagger\extensions\casLogin.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="wwwroot\swagger\extensions\jwt.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\swagger\extensions\systemConsole.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="wwwroot\swagger\ignore\swagger-ui-bundle-debug.js">

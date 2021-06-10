@@ -17,8 +17,8 @@ window.onDomLoaded(() => {
         () => {
             window.onInformationLoaded(() => {
                 $('.operation-filter-input').attr('placeholder', '标签名称（区分大小写）')
-                    .on('change', (e) => {
-                        generateTags();
+                    .on('input', (e) => {
+                        window.delayedEvent(generateTags, null, 100, 'generate-Tags');
                     });
 
                 //生成左侧标签
@@ -27,6 +27,8 @@ window.onDomLoaded(() => {
                     if ($tagBody.length == 0)
                         $tagBody = $('<div class="tagsBody"></div>')
                             .appendTo($('body'));
+                    else
+                        $('.tagsBody').empty();
 
                     $('.opblock-tag').each((index, item) => {
                         var $tag = $('<span title="{1}">{0}</span>'.format(item.dataset['tag'], $(item).find('.renderedMarkdown p').text()))
@@ -61,15 +63,15 @@ window.onDomLoaded(() => {
                 var observer = new mutationObserver((mutations) => {
                     for (var index in mutations) {
                         if (mutations[index].type == 'childList') {
-                            $('.tagsBody').empty();
-                            generateTags();
+                            window.delayedEvent(generateTags, null, 100, 'generate-Tags');
                             break;
                         }
                     }
                 });
+
                 observer.observe($(".opblock-tag-section")[0].parentElement.parentElement, { attributes: false, childList: true });
 
-                generateTags();
+                window.delayedEvent(generateTags, null, 100, 'generate-Tags');
 
                 console.info('已加载功能 => 接口标签快速导航');
             });

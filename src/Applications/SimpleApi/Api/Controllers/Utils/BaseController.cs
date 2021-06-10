@@ -128,14 +128,14 @@ namespace Api.Controllers.Utils
         /// <summary>
         /// 返回成功
         /// </summary>
-        /// <param name="msg">消息</param>
+        /// <param name="message">消息</param>
         /// <returns></returns>
-        protected ContentResult Success(string msg)
+        protected ContentResult Success(string message)
         {
             ResponseData res = new ResponseData
             {
                 Success = true,
-                Message = msg,
+                Message = message,
             };
 
             return JsonContent(res.ToJson());
@@ -162,14 +162,14 @@ namespace Api.Controllers.Utils
         /// 返回成功
         /// </summary>
         /// <param name="data">返回的数据</param>
-        /// <param name="msg">返回的消息</param>
+        /// <param name="message">返回的消息</param>
         /// <returns></returns>
-        protected ContentResult Success<T>(T data, string msg)
+        protected ContentResult Success<T>(T data, string message)
         {
             ResponseData<T> res = new ResponseData<T>
             {
                 Success = true,
-                Message = msg,
+                Message = message,
                 Data = data
             };
 
@@ -181,14 +181,14 @@ namespace Api.Controllers.Utils
         /// </summary>
         /// <typeparam name="TOpenApiSchema">接口架构类型</typeparam>
         /// <param name="data"></param>
-        /// <param name="msg"></param>
+        /// <param name="message"></param>
         /// <returns></returns>
-        protected ContentResult SuccessOpenApiSchema<TOpenApiSchema>(TOpenApiSchema data, string msg = "请求成功")
+        protected ContentResult SuccessOpenApiSchema<TOpenApiSchema>(TOpenApiSchema data, string message = "请求成功")
         {
             return base.Content(new ResponseData<object>
             {
                 Success = true,
-                Message = msg,
+                Message = message,
                 Data = data.ToOpenApiJson().ToObject<object>()
             }.ToJson(), "application/json", Encoding.UTF8);
         }
@@ -211,14 +211,14 @@ namespace Api.Controllers.Utils
         /// <summary>
         /// 返回错误
         /// </summary>
-        /// <param name="msg">错误提示</param>
+        /// <param name="message">错误提示</param>
         /// <returns></returns>
-        protected ContentResult Error(string msg)
+        protected ContentResult Error(string message)
         {
             ResponseData res = new ResponseData
             {
                 Success = false,
-                Message = msg,
+                Message = message,
             };
 
             return JsonContent(res.ToJson());
@@ -229,14 +229,14 @@ namespace Api.Controllers.Utils
         /// </summary>
         /// <typeparam name="TOpenApiSchema">接口架构类型</typeparam>
         /// <param name="data"></param>
-        /// <param name="msg"></param>
+        /// <param name="message"></param>
         /// <returns></returns>
-        protected ContentResult ErrorOpenApiSchema<TOpenApiSchema>(TOpenApiSchema data, string msg = "请求失败")
+        protected ContentResult ErrorOpenApiSchema<TOpenApiSchema>(TOpenApiSchema data, string message = "请求失败")
         {
             return base.Content(new ResponseData<object>
             {
                 Success = false,
-                Message = msg,
+                Message = message,
                 Data = data.ToOpenApiJson().ToObject<object>()
             }.ToJson(), "application/json", Encoding.UTF8);
         }

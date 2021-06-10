@@ -448,6 +448,8 @@ namespace Api.Controllers
 
         #region 获取授权接口
 
+        #region 暂时不开放
+
         /// <summary>
         /// 获取用户的授权数据
         /// </summary>
@@ -458,6 +460,7 @@ namespace Api.Controllers
         /// <param name="mergeRoleMenu">合并角色的授权菜单</param>
         /// <param name="mergeRoleResources">合并角色的授权资源</param>
         /// <returns></returns>
+        [NonAction]
         [HttpPost("user-data")]
         [SwaggerOperation(Tags = new[] { "获取授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.UserDTO.Authorities))]
@@ -474,6 +477,7 @@ namespace Api.Controllers
         /// <param name="includeMenu">包括授权菜单</param>
         /// <param name="includeResources">包括授权资源</param>
         /// <returns></returns>
+        [NonAction]
         [HttpPost("member-data")]
         [SwaggerOperation(Tags = new[] { "获取授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.Public.MemberDTO.Authorities))]
@@ -489,6 +493,7 @@ namespace Api.Controllers
         /// <param name="includeMenu">包括授权菜单</param>
         /// <param name="includeResources">包括授权资源</param>
         /// <returns></returns>
+        [NonAction]
         [HttpPost("user-role-data")]
         [SwaggerOperation(Tags = new[] { "获取授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.RoleDTO.Authorities))]
@@ -504,6 +509,7 @@ namespace Api.Controllers
         /// <param name="includeMenu">包括授权菜单</param>
         /// <param name="includeResources">包括授权资源</param>
         /// <returns></returns>
+        [NonAction]
         [HttpPost("member-role-data")]
         [SwaggerOperation(Tags = new[] { "获取授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.RoleDTO.Authorities))]
@@ -518,6 +524,7 @@ namespace Api.Controllers
         /// <param name="userId">用户Id</param>
         /// <param name="mergeRoleMenu">包括角色的授权菜单</param>
         /// <returns></returns>
+        [NonAction]
         [HttpPost("user-menu-data")]
         [SwaggerOperation(Tags = new[] { "获取授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.MenuDTO.Authorities))]
@@ -531,6 +538,7 @@ namespace Api.Controllers
         /// </summary>
         /// <param name="memberId">会员Id</param>
         /// <returns></returns>
+        [NonAction]
         [HttpPost("member-menu-data")]
         [SwaggerOperation(Tags = new[] { "获取授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.MenuDTO.Authorities))]
@@ -545,6 +553,7 @@ namespace Api.Controllers
         /// <param name="userId">用户Id</param>
         /// <param name="mergeRoleResources">包括角色的授权资源</param>
         /// <returns></returns>
+        [NonAction]
         [HttpPost("user-resources-data")]
         [SwaggerOperation(Tags = new[] { "获取授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.ResourcesDTO.Authorities))]
@@ -558,6 +567,7 @@ namespace Api.Controllers
         /// </summary>
         /// <param name="memberId">会员Id</param>
         /// <returns></returns>
+        [NonAction]
         [HttpPost("member-resources-data")]
         [SwaggerOperation(Tags = new[] { "获取授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.ResourcesDTO.Authorities))]
@@ -573,6 +583,7 @@ namespace Api.Controllers
         /// <param name="includeMenu">包括授权菜单</param>
         /// <param name="includeResources">包括授权资源</param>
         /// <returns></returns>
+        [NonAction]
         [HttpPost("role-data")]
         [SwaggerOperation(Tags = new[] { "获取授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.RoleDTO.Authorities))]
@@ -586,6 +597,7 @@ namespace Api.Controllers
         /// </summary>
         /// <param name="roleId">角色Id</param>
         /// <returns></returns>
+        [NonAction]
         [HttpPost("role-menu-data")]
         [SwaggerOperation(Tags = new[] { "获取授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.MenuDTO.Authorities))]
@@ -598,13 +610,154 @@ namespace Api.Controllers
         /// 获取授权给角色的资源
         /// </summary>
         /// <param name="roleId">角色Id</param>
+        /// <param name="pagination">分页设置</param>
         /// <returns></returns>
+        [NonAction]
         [HttpPost("role-resources-data")]
         [SwaggerOperation(Tags = new[] { "获取授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.ResourcesDTO.Authorities))]
-        public async Task<object> GetRoleResources(string roleId)
+        public async Task<object> GetRoleResources(string roleId, [FromBody] PaginationDTO pagination)
         {
-            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetRoleResources(roleId))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetRoleResources(roleId, pagination))));
+        }
+
+        #endregion
+
+        /// <summary>
+        /// 获取用户角色授权树状列表数据
+        /// </summary>
+        /// <param name="userId">用户ID</param>
+        /// <param name="paramter">参数</param>
+        /// <returns></returns>
+        [HttpPost("user-data-role-tree/{userId}")]
+        [SwaggerOperation(Tags = new[] { "获取授权" })]
+        [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.RoleDTO.AuthoritiesTree))]
+        public async Task<object> GetUserRoleTree(string userId, [FromBody] Model.System.RoleDTO.TreeListParamter paramter)
+        {
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetUserRoleTree(userId, paramter))));
+        }
+
+        /// <summary>
+        /// 获取会员角色授权树状列表数据
+        /// </summary>
+        /// <param name="memberId">会员ID</param>
+        /// <param name="paramter">参数</param>
+        /// <returns></returns>
+        [HttpPost("member-data-role-tree/{memberId}")]
+        [SwaggerOperation(Tags = new[] { "获取授权" })]
+        [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.RoleDTO.AuthoritiesTree))]
+        public async Task<object> GetMemberRoleTree(string memberId, [FromBody] Model.System.RoleDTO.TreeListParamter paramter)
+        {
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetMemberRoleTree(memberId, paramter))));
+        }
+
+        /// <summary>
+        /// 获取当前登录账号的角色授权树状列表数据
+        /// </summary>
+        /// <param name="paramter">参数</param>
+        /// <returns></returns>
+        [HttpPost("current-account-data-role-tree")]
+        [SwaggerOperation(Tags = new[] { "获取授权" })]
+        [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.RoleDTO.AuthoritiesTree))]
+        public async Task<object> GetCurrentAccountRoleTree([FromBody] Model.System.RoleDTO.TreeListParamter paramter)
+        {
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetCurrentAccountRoleTree(paramter))));
+        }
+
+        /// <summary>
+        /// 获取角色菜单授权树状列表数据
+        /// </summary>
+        /// <param name="roleId">角色ID</param>
+        /// <param name="paramter">参数</param>
+        /// <returns></returns>
+        [HttpPost("role-data-menu-tree/{roleId}")]
+        [SwaggerOperation(Tags = new[] { "获取授权" })]
+        [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.MenuDTO.AuthoritiesTree))]
+        public async Task<object> GetRoleMenuTree(string roleId, [FromBody] Model.System.MenuDTO.TreeListParamter paramter)
+        {
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetRoleMenuTree(roleId, paramter))));
+        }
+
+        /// <summary>
+        /// 获取用户菜单授权树状列表数据
+        /// </summary>
+        /// <param name="userId">用户ID</param>
+        /// <param name="paramter">参数</param>
+        /// <returns></returns>
+        [HttpPost("user-data-menu-tree/{userId}")]
+        [SwaggerOperation(Tags = new[] { "获取授权" })]
+        [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.MenuDTO.AuthoritiesTree))]
+        public async Task<object> GetUserMenuTree(string userId, [FromBody] Model.System.MenuDTO.TreeListParamter paramter)
+        {
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetUserMenuTree(userId, paramter))));
+        }
+
+        /// <summary>
+        /// 获取会员菜单授权树状列表数据
+        /// </summary>
+        /// <param name="memberId">会员ID</param>
+        /// <param name="paramter">参数</param>
+        /// <returns></returns>
+        [HttpPost("member-data-menu-tree/{memberId}")]
+        [SwaggerOperation(Tags = new[] { "获取授权" })]
+        [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.MenuDTO.AuthoritiesTree))]
+        public async Task<object> GetMemberMenuTree(string memberId, [FromBody] Model.System.MenuDTO.TreeListParamter paramter)
+        {
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetMemberMenuTree(memberId, paramter))));
+        }
+
+        /// <summary>
+        /// 获取当前登录账号的菜单授权树状列表数据
+        /// </summary>
+        /// <param name="paramter">参数</param>
+        /// <returns></returns>
+        [HttpPost("current-account-data-menu-tree")]
+        [SwaggerOperation(Tags = new[] { "获取授权" })]
+        [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.MenuDTO.AuthoritiesTree))]
+        public async Task<object> GetCurrentAccountMenuTree([FromBody] Model.System.MenuDTO.TreeListParamter paramter)
+        {
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetCurrentAccountMenuTree(paramter))));
+        }
+
+        /// <summary>
+        /// 获取角色的授权资源列表数据
+        /// </summary>
+        /// <param name="roleId">角色Id</param>
+        /// <param name="pagination">分页设置</param>
+        /// <returns></returns>
+        [HttpPost("role-data-resources-list/{roleId}")]
+        [SwaggerOperation(Tags = new[] { "权限相关拓展接口" })]
+        [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.ResourcesDTO.Authorities))]
+        public async Task<object> GetRoleResourcesList(string roleId, [FromBody] PaginationDTO pagination)
+        {
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetRoleResourcesList(roleId, pagination))));
+        }
+
+        /// <summary>
+        /// 获取用户的授权资源列表数据
+        /// </summary>
+        /// <param name="userId">用户Id</param>
+        /// <param name="pagination">分页设置</param>
+        /// <returns></returns>
+        [HttpPost("user-data-resources-list/{userId}")]
+        [SwaggerOperation(Tags = new[] { "权限相关拓展接口" })]
+        [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.ResourcesDTO.Authorities))]
+        public async Task<object> GetUserResourcesList(string userId, [FromBody] PaginationDTO pagination)
+        {
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetUserResourcesList(userId, pagination))));
+        }
+
+        /// <summary>
+        /// 获取当前登录账号的资源授权列表数据
+        /// </summary>
+        /// <param name="pagination">分页设置</param>
+        /// <returns></returns>
+        [HttpPost("current-account-data-resources-list")]
+        [SwaggerOperation(Tags = new[] { "权限相关拓展接口" })]
+        [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.ResourcesDTO.Authorities))]
+        public async Task<object> GetCurrentAccountResourcesList([FromBody] PaginationDTO pagination)
+        {
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetCurrentAccountResourcesList(pagination))));
         }
 
         #endregion
@@ -667,6 +820,8 @@ namespace Api.Controllers
             return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.IsAdminRole(roleId, checkEnable))));
         }
 
+        #region 暂时不开放
+
         /// <summary>
         /// 用户是否拥有角色授权
         /// </summary>
@@ -674,6 +829,7 @@ namespace Api.Controllers
         /// <param name="roleId">角色Id</param>
         /// <param name="checkEnable">检查是否已启用（默认true）</param>
         /// <returns></returns>
+        [NonAction]
         [HttpPost("user-has-role")]
         [SwaggerOperation(Tags = new[] { "验证授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
@@ -689,6 +845,7 @@ namespace Api.Controllers
         /// <param name="roleId">角色Id</param>
         /// <param name="checkEnable">检查是否已启用（默认true）</param>
         /// <returns></returns>
+        [NonAction]
         [HttpPost("member-has-role")]
         [SwaggerOperation(Tags = new[] { "验证授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
@@ -704,6 +861,7 @@ namespace Api.Controllers
         /// <param name="menuId">菜单Id</param>
         /// <param name="checkEnable">检查是否已启用（默认true）</param>
         /// <returns></returns>
+        [NonAction]
         [HttpPost("user-has-menu")]
         [SwaggerOperation(Tags = new[] { "验证授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
@@ -719,6 +877,7 @@ namespace Api.Controllers
         /// <param name="menuUri">菜单链接</param>
         /// <param name="checkEnable">检查是否已启用（默认true）</param>
         /// <returns></returns>
+        [NonAction]
         [HttpPost("user-has-menu-uri")]
         [SwaggerOperation(Tags = new[] { "验证授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
@@ -734,6 +893,7 @@ namespace Api.Controllers
         /// <param name="menuId">菜单Id</param>
         /// <param name="checkEnable">检查是否已启用（默认true）</param>
         /// <returns></returns>
+        [NonAction]
         [HttpPost("member-has-menu")]
         [SwaggerOperation(Tags = new[] { "验证授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
@@ -749,6 +909,7 @@ namespace Api.Controllers
         /// <param name="menuUri">菜单链接</param>
         /// <param name="checkEnable">检查是否已启用（默认true）</param>
         /// <returns></returns>
+        [NonAction]
         [HttpPost("member-has-menu-uri")]
         [SwaggerOperation(Tags = new[] { "验证授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
@@ -764,6 +925,7 @@ namespace Api.Controllers
         /// <param name="resourcesId">资源Id</param>
         /// <param name="checkEnable">检查是否已启用（默认true）</param>
         /// <returns></returns>
+        [NonAction]
         [HttpPost("user-has-resources")]
         [SwaggerOperation(Tags = new[] { "验证授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
@@ -779,6 +941,7 @@ namespace Api.Controllers
         /// <param name="resourcesUri">资源链接</param>
         /// <param name="checkEnable">检查是否已启用（默认true）</param>
         /// <returns></returns>
+        [NonAction]
         [HttpPost("user-has-resources-uri")]
         [SwaggerOperation(Tags = new[] { "验证授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
@@ -794,6 +957,7 @@ namespace Api.Controllers
         /// <param name="resourcesId">资源Id</param>
         /// <param name="checkEnable">检查是否已启用（默认true）</param>
         /// <returns></returns>
+        [NonAction]
         [HttpPost("member-has-resources")]
         [SwaggerOperation(Tags = new[] { "验证授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
@@ -809,6 +973,7 @@ namespace Api.Controllers
         /// <param name="resourcesUri">资源链接</param>
         /// <param name="checkEnable">检查是否已启用（默认true）</param>
         /// <returns></returns>
+        [NonAction]
         [HttpPost("member-has-resources-uri")]
         [SwaggerOperation(Tags = new[] { "验证授权" })]
         [SwaggerResponse((int)HttpStatusCode.OK, "验证结果", typeof(bool))]
@@ -819,91 +984,11 @@ namespace Api.Controllers
 
         #endregion
 
+        #endregion
+
         #region 拓展功能
 
-        /// <summary>
-        /// 获取角色菜单授权树状列表数据
-        /// </summary>
-        /// <param name="roleId">角色ID</param>
-        /// <param name="paramter">参数</param>
-        /// <returns></returns>
-        [HttpPost("role-data-menu-tree/{roleId}")]
-        [SwaggerOperation(Tags = new[] { "权限相关拓展接口" })]
-        [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.MenuDTO.AuthoritiesTree))]
-        public async Task<object> GetRoleMenuTree(string roleId, [FromBody] Model.System.MenuDTO.TreeListParamter paramter)
-        {
-            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetRoleMenuTree(roleId, paramter))));
-        }
 
-        /// <summary>
-        /// 获取用户角色授权树状列表数据
-        /// </summary>
-        /// <param name="userId">用户ID</param>
-        /// <param name="paramter">参数</param>
-        /// <returns></returns>
-        [HttpPost("user-data-role-tree/{userId}")]
-        [SwaggerOperation(Tags = new[] { "权限相关拓展接口" })]
-        [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.RoleDTO.AuthoritiesTree))]
-        public async Task<object> GetUserRoleTree(string userId, [FromBody] Model.System.RoleDTO.TreeListParamter paramter)
-        {
-            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetUserRoleTree(userId, paramter))));
-        }
-
-        /// <summary>
-        /// 获取会员角色授权树状列表数据
-        /// </summary>
-        /// <param name="memberId">会员ID</param>
-        /// <param name="paramter">参数</param>
-        /// <returns></returns>
-        [HttpPost("member-data-role-tree/{memberId}")]
-        [SwaggerOperation(Tags = new[] { "权限相关拓展接口" })]
-        [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.RoleDTO.AuthoritiesTree))]
-        public async Task<object> GetMemberRoleTree(string memberId, [FromBody] Model.System.RoleDTO.TreeListParamter paramter)
-        {
-            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetMemberRoleTree(memberId, paramter))));
-        }
-
-        /// <summary>
-        /// 获取用户菜单授权树状列表数据
-        /// </summary>
-        /// <param name="userId">用户ID</param>
-        /// <param name="paramter">参数</param>
-        /// <returns></returns>
-        [HttpPost("user-data-menu-tree/{userId}")]
-        [SwaggerOperation(Tags = new[] { "权限相关拓展接口" })]
-        [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.MenuDTO.AuthoritiesTree))]
-        public async Task<object> GetUserMenuTree(string userId, [FromBody] Model.System.MenuDTO.TreeListParamter paramter)
-        {
-            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetUserMenuTree(userId, paramter))));
-        }
-
-        /// <summary>
-        /// 获取能授权给角色的资源列表数据
-        /// </summary>
-        /// <param name="roleId">角色Id</param>
-        /// <param name="pagination">分页设置</param>
-        /// <returns></returns>
-        [HttpPost("role-data-resources-list/{roleId}")]
-        [SwaggerOperation(Tags = new[] { "权限相关拓展接口" })]
-        [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.ResourcesDTO.Authorities))]
-        public async Task<object> GetRoleResourcesList(string roleId, [FromBody] PaginationDTO pagination)
-        {
-            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetRoleResourcesList(roleId, pagination))));
-        }
-
-        /// <summary>
-        /// 获取能授权给用户的资源列表数据
-        /// </summary>
-        /// <param name="userId">用户Id</param>
-        /// <param name="pagination">分页设置</param>
-        /// <returns></returns>
-        [HttpPost("user-data-resources-list/{userId}")]
-        [SwaggerOperation(Tags = new[] { "权限相关拓展接口" })]
-        [SwaggerResponse((int)HttpStatusCode.OK, "授权数据", typeof(Model.System.ResourcesDTO.Authorities))]
-        public async Task<object> GetUserResourcesList(string userId, [FromBody] PaginationDTO pagination)
-        {
-            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(AuthoritiesBusiness.GetUserResourcesList(userId, pagination))));
-        }
 
         #endregion
     }
