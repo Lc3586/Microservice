@@ -899,6 +899,13 @@
             <param name="data">数据</param>
             <returns></returns>
         </member>
+        <member name="M:Business.Interface.Example.ISampleBusiness.Delete(System.Collections.Generic.List{System.String})">
+            <summary>
+            删除
+            </summary>
+            <param name="ids">Id集合</param>
+            <returns></returns>
+        </member>
         <member name="M:Business.Interface.Example.ISampleBusiness.Enable(System.String,System.Boolean)">
             <summary>
             启用/禁用
@@ -907,11 +914,34 @@
             <param name="enable">设置状态</param>
             <returns></returns>
         </member>
-        <member name="M:Business.Interface.Example.ISampleBusiness.Delete(System.Collections.Generic.List{System.String})">
+        <member name="M:Business.Interface.Example.ISampleBusiness.DownloadTemplate(System.String)">
             <summary>
-            删除
+            下载导入模板
             </summary>
-            <param name="ids">Id集合</param>
+            <param name="version">
+            Excel文件版本,
+            <see cref="F:Model.Utils.OfficeDocuments.ExcelVersion.xls"/>2003,(默认)
+            <seealso cref="F:Model.Utils.OfficeDocuments.ExcelVersion.xlsx"/>2007
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Interface.Example.ISampleBusiness.Import(Microsoft.AspNetCore.Http.IFormFile)">
+            <summary>
+            数据导入
+            </summary>
+            <param name="file">Execl文件</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Interface.Example.ISampleBusiness.Export(System.String,System.String)">
+            <summary>
+            导出
+            </summary>
+            <param name="version">
+            Excel文件版本,
+            <see cref="F:Model.Utils.OfficeDocuments.ExcelVersion.xls"/>2003,(默认)
+            <seealso cref="F:Model.Utils.OfficeDocuments.ExcelVersion.xlsx"/>2007
+            </param>
+            <param name="paginationJson">分页参数Json字符串</param>
             <returns></returns>
         </member>
         <member name="T:Business.Interface.System.IMemberBusiness">
@@ -1670,14 +1700,14 @@
             <param name="enable">设置状态</param>
             <returns></returns>
         </member>
-        <member name="M:Business.Interface.System.IMenuBusiness.Sort(Model.System.MenuDTO.Sort)">
+        <member name="M:Business.Interface.System.IMenuBusiness.Sort(Model.Utils.Sort.SortParamsDTO.Sort)">
             <summary>
             排序
             </summary>
             <param name="data">数据</param>
             <returns></returns>
         </member>
-        <member name="M:Business.Interface.System.IMenuBusiness.DragSort(Model.System.MenuDTO.DragSort)">
+        <member name="M:Business.Interface.System.IMenuBusiness.DragSort(Model.Utils.Sort.SortParamsDTO.TreeDragSort)">
             <summary>
             拖动排序
             </summary>
@@ -1879,14 +1909,14 @@
             <param name="enable">设置状态</param>
             <returns></returns>
         </member>
-        <member name="M:Business.Interface.System.IRoleBusiness.Sort(Model.System.RoleDTO.Sort)">
+        <member name="M:Business.Interface.System.IRoleBusiness.Sort(Model.Utils.Sort.SortParamsDTO.Sort)">
             <summary>
             排序
             </summary>
             <param name="data">数据</param>
             <returns></returns>
         </member>
-        <member name="M:Business.Interface.System.IRoleBusiness.DragSort(Model.System.RoleDTO.DragSort)">
+        <member name="M:Business.Interface.System.IRoleBusiness.DragSort(Model.Utils.Sort.SortParamsDTO.TreeDragSort)">
             <summary>
             拖动排序
             </summary>

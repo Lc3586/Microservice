@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
+﻿using System.ComponentModel;
 
-namespace Model.System
+namespace Model.Utils.Sort
 {
     /// <summary>
-    /// 排序方式
+    /// 排序方法
     /// </summary>
-    public enum SortType
+    public enum SortMethod
     {
         /// <summary>
         /// 置顶

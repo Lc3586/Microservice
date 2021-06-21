@@ -133,6 +133,8 @@ window.onInformationLoaded(() => {
                                 }
                             });
                     } else {
+                        window.localStorage.removeItem('jwt-token');
+
                         var close = window.showDialog(
                             '获取令牌',
                             [

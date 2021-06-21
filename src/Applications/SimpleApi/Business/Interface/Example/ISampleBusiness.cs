@@ -1,6 +1,10 @@
-﻿using Model.Example.DBDTO;
+﻿using Microsoft.AspNetCore.Http;
+using Model.Example.DBDTO;
+using Model.Utils.OfficeDocuments;
+using Model.Utils.OfficeDocuments.ExcelDTO;
 using Model.Utils.Pagination;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Business.Interface.Example
 {
@@ -47,14 +51,6 @@ namespace Business.Interface.Example
         void Edit(Edit data);
 
         /// <summary>
-        /// 启用/禁用
-        /// </summary>
-        /// <param name="id">数据</param>
-        /// <param name="enable">设置状态</param>
-        /// <returns></returns>
-        void Enable(string id, bool enable);
-
-        /// <summary>
         /// 删除
         /// </summary>
         /// <param name="ids">Id集合</param>
@@ -65,7 +61,43 @@ namespace Business.Interface.Example
 
         #region 拓展功能
 
+        /// <summary>
+        /// 启用/禁用
+        /// </summary>
+        /// <param name="id">数据</param>
+        /// <param name="enable">设置状态</param>
+        /// <returns></returns>
+        void Enable(string id, bool enable);
 
+        /// <summary>
+        /// 下载导入模板
+        /// </summary>
+        /// <param name="version">
+        /// Excel文件版本,
+        /// <see cref="ExcelVersion.xls"/>2003,(默认)
+        /// <seealso cref="ExcelVersion.xlsx"/>2007
+        /// </param>
+        /// <returns></returns>
+        Task DownloadTemplate(string version = ExcelVersion.xlsx);
+
+        /// <summary>
+        /// 数据导入
+        /// </summary>
+        /// <param name="file">Execl文件</param>
+        /// <returns></returns>
+        ImportResult Import(IFormFile file);
+
+        /// <summary>
+        /// 导出
+        /// </summary>
+        /// <param name="version">
+        /// Excel文件版本,
+        /// <see cref="ExcelVersion.xls"/>2003,(默认)
+        /// <seealso cref="ExcelVersion.xlsx"/>2007
+        /// </param>
+        /// <param name="paginationJson">分页参数Json字符串</param>
+        /// <returns></returns>
+        void Export(string version = ExcelVersion.xlsx, string paginationJson = null);
 
         #endregion
     }

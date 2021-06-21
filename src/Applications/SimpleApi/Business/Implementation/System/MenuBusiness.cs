@@ -14,6 +14,8 @@ using Microservice.Library.FreeSql.Gen;
 using Microservice.Library.OpenApi.Extention;
 using Model.System.MenuDTO;
 using Model.Utils.Pagination;
+using Model.Utils.Sort;
+using Model.Utils.Sort.SortParamsDTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -295,7 +297,7 @@ namespace Business.Implementation.System
         [AdministratorOnly]
         public void Sort(Sort data)
         {
-            if (data.Span == 0 && (data.Type != Model.System.SortType.top || data.Type != Model.System.SortType.low))
+            if (data.Span == 0 && (data.Method != SortMethod.top || data.Method != SortMethod.low))
                 return;
 
             var current = Repository.Where(o => o.Id == data.Id)
@@ -313,37 +315,37 @@ namespace Business.Implementation.System
 
             (bool success, Exception ex) = Orm.RunTransaction(() =>
             {
-                var target = data.Type switch
+                var target = data.Method switch
                 {
-                    Model.System.SortType.top => Repository.Where(o => o.ParentId == current.ParentId)
+                    SortMethod.top => Repository.Where(o => o.ParentId == current.ParentId)
                                                                 .OrderBy(o => o.Sort)
                                                                 .First(o => new
                                                                 {
                                                                     o.Id,
                                                                     o.Sort
                                                                 }),
-                    Model.System.SortType.up => Repository.Where(o => o.ParentId == current.ParentId && o.Sort < current.Sort)
+                    SortMethod.up => Repository.Where(o => o.ParentId == current.ParentId && o.Sort < current.Sort)
                 .OrderByDescending(o => o.Sort)
                  .First(o => new
                  {
                      o.Id,
                      o.Sort
                  }),
-                    Model.System.SortType.down => Repository.Where(o => o.ParentId == current.ParentId && o.Sort > current.Sort)
+                    SortMethod.down => Repository.Where(o => o.ParentId == current.ParentId && o.Sort > current.Sort)
                 .OrderBy(o => o.Sort)
                  .First(o => new
                  {
                      o.Id,
                      o.Sort
                  }),
-                    Model.System.SortType.low => Repository.Where(o => o.ParentId == current.ParentId)
+                    SortMethod.low => Repository.Where(o => o.ParentId == current.ParentId)
                  .OrderByDescending(o => o.Sort)
                  .First(o => new
                  {
                      o.Id,
                      o.Sort
                  }),
-                    _ => throw new MessageException($"不支持的排序类型 {data.Type}."),
+                    _ => throw new MessageException($"不支持的排序方法 {data.Method}."),
                 };
 
                 if (target == default)
@@ -372,7 +374,7 @@ namespace Business.Implementation.System
         }
 
         [AdministratorOnly]
-        public void DragSort(DragSort data)
+        public void DragSort(TreeDragSort data)
         {
             if (data.Id == data.TargetId)
                 return;

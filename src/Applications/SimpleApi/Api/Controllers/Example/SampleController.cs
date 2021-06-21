@@ -2,8 +2,11 @@
 using Business.Interface.Example;
 using Business.Utils.Authorization;
 using Microservice.Library.Extension;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Model.Example.DBDTO;
+using Model.Utils.OfficeDocuments;
+using Model.Utils.OfficeDocuments.ExcelDTO;
 using Model.Utils.Pagination;
 using Model.Utils.Result;
 using Swashbuckle.AspNetCore.Annotations;
@@ -197,5 +200,66 @@ namespace Api.Controllers
             SampleBusiness.Delete(ids?.ToList());
             return await Task.FromResult(Success());
         }
+
+        #region 拓展
+
+        /// <summary>
+        /// 启用/禁用
+        /// </summary>
+        /// <param name="id">数据</param>
+        /// <param name="enable">设置状态</param>
+        /// <returns></returns>
+        [HttpPost("enable/{id}/{enable}")]
+        public async Task<object> Enable(string id, bool enable)
+        {
+            SampleBusiness.Enable(id, enable);
+            return await Task.FromResult(Success());
+        }
+
+        /// <summary>
+        /// 下载导入模板
+        /// </summary>
+        /// <param name="version">
+        /// Excel文件版本,
+        /// xls(2003),
+        /// (默认)xlsx(2007)
+        /// </param>
+        /// <returns></returns>
+        [HttpGet("downloadtemplate")]
+        public async Task DownloadTemplate(string version = ExcelVersion.xlsx)
+        {
+            await SampleBusiness.DownloadTemplate(version);
+        }
+
+        /// <summary>
+        /// 导入
+        /// </summary>
+        /// <param name="file">Execl文件</param>
+        /// <returns></returns>
+        [HttpPost("import")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "导入结果", typeof(ImportResult))]
+        [Consumes("multipart/form-data")]
+        public async Task<object> Import(IFormFile file)
+        {
+            return await Task.FromResult(ResponseDataFactory.Success(SampleBusiness.Import(file)));
+        }
+
+        /// <summary>
+        /// 导出
+        /// </summary>
+        /// <param name="version">
+        /// Excel文件版本,
+        /// <see cref="ExcelVersion.xls"/>2003,(默认)
+        /// <seealso cref="ExcelVersion.xlsx"/>2007
+        /// </param>
+        /// <param name="paginationJson">分页参数Json字符串</param>
+        /// <returns></returns>
+        [HttpGet("export")]
+        public void Export(string version = ExcelVersion.xlsx, string paginationJson = null)
+        {
+            SampleBusiness.Export(version, paginationJson);
+        }
+
+        #endregion
     }
 }

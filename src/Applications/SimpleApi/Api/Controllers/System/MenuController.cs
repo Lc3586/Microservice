@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Model.System.MenuDTO;
 using Model.Utils.Pagination;
 using Model.Utils.Result;
+using Model.Utils.Sort.SortParamsDTO;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Linq;
@@ -154,7 +155,7 @@ namespace Api.Controllers
         /// <param name="data">数据</param>
         /// <returns></returns>
         [HttpPost("dragsort")]
-        public async Task<object> DragSort([FromBody] DragSort data)
+        public async Task<object> DragSort([FromBody] TreeDragSort data)
         {
             MenuBusiness.DragSort(data);
             return await Task.FromResult(Success());

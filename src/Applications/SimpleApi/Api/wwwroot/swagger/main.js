@@ -683,7 +683,7 @@ if (!window.showDialog) {
         if (content)
             $.each(content, (index, item) => {
                 var type = item[0],
-                    _title = item.length > 2 ? item[1] : null,
+                    _title = item.length >= 2 ? item[1] : null,
                     _content = item.length > 2 ? item[2] : item[1],
                     _key = 'key_' + index;
 
@@ -692,7 +692,7 @@ if (!window.showDialog) {
 
                 switch (type) {
                     case 'H5':
-                        info += '<h5>' + _content + '</h5>';
+                        info += '<h5 id="' + _key + '">' + _content + '</h5>';
                         break;
                     case 'input':
                     case 'input-readonly':

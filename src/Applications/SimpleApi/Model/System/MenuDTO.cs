@@ -1,8 +1,6 @@
 ﻿using Entity.System;
 using Microservice.Library.DataMapping.Annotations;
 using Microservice.Library.OpenApi.Annotations;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -117,59 +115,5 @@ namespace Model.System.MenuDTO
     public class Edit : System_Menu
     {
 
-    }
-
-    /// <summary>
-    /// 排序
-    /// </summary>
-    public class Sort
-    {
-        /// <summary>
-        /// Id
-        /// </summary>
-        public string Id { get; set; }
-
-        /// <summary>
-        /// 排序类型
-        /// <para>默认值 up</para>
-        /// </summary>
-        [OpenApiSchema(OpenApiSchemaType.@enum, OpenApiSchemaFormat.enum_description, SortType.up)]
-        [JsonConverter(typeof(StringEnumConverter))]
-        public SortType Type { get; set; }
-
-        /// <summary>
-        /// 跨度
-        /// <para>移动几位</para>
-        /// <para>默认值 1</para>
-        /// </summary>
-        public int Span { get; set; } = 1;
-    }
-
-    /// <summary>
-    /// 拖动排序
-    /// </summary>
-    public class DragSort
-    {
-        /// <summary>
-        /// Id
-        /// </summary>
-        public string Id { get; set; }
-
-        /// <summary>
-        /// 目标Id
-        /// </summary>
-        public string TargetId { get; set; }
-
-        /// <summary>
-        /// 是否排在目标之后
-        /// </summary>
-        /// <remarks>默认true</remarks>
-        public bool Append { get; set; } = true;
-
-        /// <summary>
-        /// 是否移至目标内部
-        /// </summary>
-        /// <remarks>默认false</remarks>
-        public bool Inside { get; set; } = false;
     }
 }

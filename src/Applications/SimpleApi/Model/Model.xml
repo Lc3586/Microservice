@@ -912,56 +912,6 @@
             编辑
             </summary>
         </member>
-        <member name="T:Model.System.MenuDTO.Sort">
-            <summary>
-            排序
-            </summary>
-        </member>
-        <member name="P:Model.System.MenuDTO.Sort.Id">
-            <summary>
-            Id
-            </summary>
-        </member>
-        <member name="P:Model.System.MenuDTO.Sort.Type">
-            <summary>
-            排序类型
-            <para>默认值 up</para>
-            </summary>
-        </member>
-        <member name="P:Model.System.MenuDTO.Sort.Span">
-            <summary>
-            跨度
-            <para>移动几位</para>
-            <para>默认值 1</para>
-            </summary>
-        </member>
-        <member name="T:Model.System.MenuDTO.DragSort">
-            <summary>
-            拖动排序
-            </summary>
-        </member>
-        <member name="P:Model.System.MenuDTO.DragSort.Id">
-            <summary>
-            Id
-            </summary>
-        </member>
-        <member name="P:Model.System.MenuDTO.DragSort.TargetId">
-            <summary>
-            目标Id
-            </summary>
-        </member>
-        <member name="P:Model.System.MenuDTO.DragSort.Append">
-            <summary>
-            是否排在目标之后
-            </summary>
-            <remarks>默认true</remarks>
-        </member>
-        <member name="P:Model.System.MenuDTO.DragSort.Inside">
-            <summary>
-            是否移至目标内部
-            </summary>
-            <remarks>默认false</remarks>
-        </member>
         <member name="T:Model.System.MenuType">
             <summary>
             菜单类型
@@ -1078,56 +1028,6 @@
             编辑
             </summary>
         </member>
-        <member name="T:Model.System.RoleDTO.Sort">
-            <summary>
-            排序
-            </summary>
-        </member>
-        <member name="P:Model.System.RoleDTO.Sort.Id">
-            <summary>
-            Id
-            </summary>
-        </member>
-        <member name="P:Model.System.RoleDTO.Sort.Type">
-            <summary>
-            排序类型
-            <para>默认值 up</para>
-            </summary>
-        </member>
-        <member name="P:Model.System.RoleDTO.Sort.Span">
-            <summary>
-            跨度
-            <para>移动几位</para>
-            <para>默认值 1</para>
-            </summary>
-        </member>
-        <member name="T:Model.System.RoleDTO.DragSort">
-            <summary>
-            拖动排序
-            </summary>
-        </member>
-        <member name="P:Model.System.RoleDTO.DragSort.Id">
-            <summary>
-            Id
-            </summary>
-        </member>
-        <member name="P:Model.System.RoleDTO.DragSort.TargetId">
-            <summary>
-            目标Id
-            </summary>
-        </member>
-        <member name="P:Model.System.RoleDTO.DragSort.Append">
-            <summary>
-            是否排在目标之后
-            </summary>
-            <remarks>默认true</remarks>
-        </member>
-        <member name="P:Model.System.RoleDTO.DragSort.Inside">
-            <summary>
-            是否移至目标内部
-            </summary>
-            <remarks>默认false</remarks>
-        </member>
         <member name="T:Model.System.RoleDTO.AuthorizeToUser">
             <summary>
             授权角色给用户
@@ -1176,31 +1076,6 @@
         <member name="T:Model.System.RoleType">
             <summary>
             角色类型
-            </summary>
-        </member>
-        <member name="T:Model.System.SortType">
-            <summary>
-            排序方式
-            </summary>
-        </member>
-        <member name="F:Model.System.SortType.top">
-            <summary>
-            置顶
-            </summary>
-        </member>
-        <member name="F:Model.System.SortType.up">
-            <summary>
-            向上
-            </summary>
-        </member>
-        <member name="F:Model.System.SortType.down">
-            <summary>
-            向下
-            </summary>
-        </member>
-        <member name="F:Model.System.SortType.low">
-            <summary>
-            置底
             </summary>
         </member>
         <member name="T:Model.System.UserDTO.List">
@@ -2352,6 +2227,83 @@
             <param name="name">名称</param>
             <returns>值</returns>
         </member>
+        <member name="T:Model.Utils.OfficeDocuments.ExcelDTO.ImportResult">
+            <summary>
+            导入结果
+            </summary>
+        </member>
+        <member name="M:Model.Utils.OfficeDocuments.ExcelDTO.ImportResult.#ctor(System.Int32,System.Int32,System.Collections.Generic.List{Model.Utils.OfficeDocuments.ExcelDTO.ErrorInfo})">
+            <summary>
+            
+            </summary>
+            <param name="addTotal">新增数据量</param>
+            <param name="updateTotal">更新数据量</param>
+            <param name="error">错误信息</param>
+        </member>
+        <member name="M:Model.Utils.OfficeDocuments.ExcelDTO.ImportResult.#ctor(System.Collections.Generic.List{Model.Utils.OfficeDocuments.ExcelDTO.ErrorInfo})">
+            <summary>
+            
+            </summary>
+            <param name="error">错误信息</param>
+        </member>
+        <member name="P:Model.Utils.OfficeDocuments.ExcelDTO.ImportResult.AddTotal">
+            <summary>
+            新增数据量
+            </summary>
+        </member>
+        <member name="P:Model.Utils.OfficeDocuments.ExcelDTO.ImportResult.UpdateTotal">
+            <summary>
+            更新数据量
+            </summary>
+        </member>
+        <member name="P:Model.Utils.OfficeDocuments.ExcelDTO.ImportResult.Error">
+            <summary>
+            错误信息
+            </summary>
+        </member>
+        <member name="T:Model.Utils.OfficeDocuments.ExcelDTO.ErrorInfo">
+            <summary>
+            错误信息
+            </summary>
+        </member>
+        <member name="M:Model.Utils.OfficeDocuments.ExcelDTO.ErrorInfo.#ctor(System.Int32,System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="rowIndex">行序号</param>
+            <param name="columnName">列名</param>
+            <param name="info">信息</param>
+        </member>
+        <member name="P:Model.Utils.OfficeDocuments.ExcelDTO.ErrorInfo.RowIndex">
+            <summary>
+            行序号
+            </summary>
+        </member>
+        <member name="P:Model.Utils.OfficeDocuments.ExcelDTO.ErrorInfo.ColumnName">
+            <summary>
+            列名
+            </summary>
+        </member>
+        <member name="P:Model.Utils.OfficeDocuments.ExcelDTO.ErrorInfo.Info">
+            <summary>
+            信息
+            </summary>
+        </member>
+        <member name="T:Model.Utils.OfficeDocuments.ExcelVersion">
+            <summary>
+            Excel文件版本
+            </summary>
+        </member>
+        <member name="F:Model.Utils.OfficeDocuments.ExcelVersion.xls">
+            <summary>
+            Excel 2003版本
+            </summary>
+        </member>
+        <member name="F:Model.Utils.OfficeDocuments.ExcelVersion.xlsx">
+            <summary>
+            Excel 2007及以上版本
+            </summary>
+        </member>
         <member name="T:Model.Utils.Pagination.FilterCompare">
             <summary>
             筛选条件比较类型
@@ -3397,6 +3349,86 @@
             <summary>
             头像
             </summary>
+        </member>
+        <member name="T:Model.Utils.Sort.SortMethod">
+            <summary>
+            排序方法
+            </summary>
+        </member>
+        <member name="F:Model.Utils.Sort.SortMethod.top">
+            <summary>
+            置顶
+            </summary>
+        </member>
+        <member name="F:Model.Utils.Sort.SortMethod.up">
+            <summary>
+            向上
+            </summary>
+        </member>
+        <member name="F:Model.Utils.Sort.SortMethod.down">
+            <summary>
+            向下
+            </summary>
+        </member>
+        <member name="F:Model.Utils.Sort.SortMethod.low">
+            <summary>
+            置底
+            </summary>
+        </member>
+        <member name="T:Model.Utils.Sort.SortParamsDTO.Sort">
+            <summary>
+            普通排序
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Sort.SortParamsDTO.Sort.Id">
+            <summary>
+            Id
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Sort.SortParamsDTO.Sort.Method">
+            <summary>
+            排序方法
+            <para>默认值 up</para>
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Sort.SortParamsDTO.Sort.Span">
+            <summary>
+            跨度
+            <para>移动几位</para>
+            <para>默认值 1</para>
+            </summary>
+        </member>
+        <member name="T:Model.Utils.Sort.SortParamsDTO.DragSort">
+            <summary>
+            拖动排序
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Sort.SortParamsDTO.DragSort.Id">
+            <summary>
+            Id
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Sort.SortParamsDTO.DragSort.TargetId">
+            <summary>
+            目标Id
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Sort.SortParamsDTO.DragSort.Append">
+            <summary>
+            是否排在目标之后
+            </summary>
+            <remarks>默认true</remarks>
+        </member>
+        <member name="T:Model.Utils.Sort.SortParamsDTO.TreeDragSort">
+            <summary>
+            树状列表拖动排序
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Sort.SortParamsDTO.TreeDragSort.Inside">
+            <summary>
+            是否移至目标内部
+            </summary>
+            <remarks>默认false</remarks>
         </member>
         <member name="T:Model.Utils.SystemConsole.InfoDTO.ModularInfo">
             <summary>

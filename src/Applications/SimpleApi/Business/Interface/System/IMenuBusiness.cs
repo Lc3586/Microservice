@@ -1,5 +1,6 @@
 ﻿using Model.System.MenuDTO;
 using Model.Utils.Pagination;
+using Model.Utils.Sort.SortParamsDTO;
 using System.Collections.Generic;
 
 namespace Business.Interface.System
@@ -85,7 +86,7 @@ namespace Business.Interface.System
         /// </summary>
         /// <param name="data">数据</param>
         /// <returns></returns>
-        void DragSort(DragSort data);
+        void DragSort(TreeDragSort data);
 
         /// <summary>
         /// 关联资源
