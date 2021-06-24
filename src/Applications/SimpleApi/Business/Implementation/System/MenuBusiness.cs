@@ -206,15 +206,15 @@ namespace Business.Implementation.System
                         editData.Level = parent.Level + 1;
                         editData.RootId = parent.RootId == null ? parent.Id : parent.RootId;
                     }
+
+                    if (Repository.UpdateDiy
+                             .Where(o => o.ParentId == entity.ParentId && o.Id != entity.Id && o.Sort > editData.Sort)
+                             .Set(o => o.Sort - 1)
+                             .ExecuteAffrows() < 0)
+                        throw new MessageException("重新排序失败.");
+
+                    editData.Sort = Repository.Where(o => o.ParentId == editData.ParentId).Max(o => o.Sort) + 1;
                 }
-
-                editData.Sort = Repository.Where(o => o.ParentId == editData.ParentId).Max(o => o.Sort) + 1;
-
-                if (Repository.UpdateDiy
-                         .Where(o => o.ParentId == entity.ParentId && o.Id != entity.Id && o.Sort > editData.Sort)
-                         .Set(o => o.Sort - 1)
-                         .ExecuteAffrows() < 0)
-                    throw new MessageException("重新排序失败.");
 
                 var orId = OperationRecordBusiness.Create(new Common_OperationRecord
                 {

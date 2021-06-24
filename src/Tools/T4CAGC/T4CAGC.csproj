@@ -51,15 +51,40 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
-    <Compile Update="Template\Model_Entity.cs">
+    <Compile Update="Template\Const.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>Model_Entity.tt</DependentUpon>
+      <DependentUpon>Const.tt</DependentUpon>
     </Compile>
-    <Compile Update="Template\Model_Expand.cs">
+    <Compile Update="Template\Controller.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>Model_Expand.tt</DependentUpon>
+      <DependentUpon>Controller.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Template\DTO.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>DTO.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Template\Entity.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Entity.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Template\Enum.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Enum.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Template\Implementation.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Implementation.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Template\Interface.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Interface.tt</DependentUpon>
     </Compile>
   </ItemGroup>
 
@@ -71,13 +96,33 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Template\Model_Entity.tt">
+    <None Update="Template\Implementation.tt">
+      <LastGenOutput>Implementation.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>Model_Entity.cs</LastGenOutput>
     </None>
-    <None Update="Template\Model_Expand.tt">
+    <None Update="Template\Controller.tt">
+      <LastGenOutput>Controller.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>Model_Expand.cs</LastGenOutput>
+    </None>
+    <None Update="Template\Interface.tt">
+      <LastGenOutput>Interface.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </None>
+    <None Update="Template\Enum.tt">
+      <LastGenOutput>Enum.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </None>
+    <None Update="Template\Const.tt">
+      <LastGenOutput>Const.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </None>
+    <None Update="Template\DTO.tt">
+      <LastGenOutput>DTO.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </None>
+    <None Update="Template\Entity.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>Entity.cs</LastGenOutput>
     </None>
   </ItemGroup>
 

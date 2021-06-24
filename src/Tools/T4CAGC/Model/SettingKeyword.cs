@@ -5,7 +5,11 @@
     /// </summary>
     public static class SettingKeyword
     {
-        public const string 表 = "Table";
+        public const string 普通表 = "Table";
+
+        public const string FreeSql表 = "FSTable";
+
+        public const string Elasticsearch表 = "ESTable";
 
         public const string 树状结构表 = "TreeTable";
 
@@ -41,7 +45,11 @@
 
         public const string 标签 = "Tags";
 
-        public const string 接口框架数据格式化 = "OASF";
+        public const string 接口架构属性 = "OAS";
+
+        public const string 接口架构时间格式化 = "OASDTF";
+
+        public const string Elasticsearch字段属性 = "NEST";
 
         public const string 映射 = "Map";
 

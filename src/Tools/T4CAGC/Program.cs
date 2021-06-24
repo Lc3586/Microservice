@@ -6,6 +6,7 @@ using Microservice.Library.Container;
 using Microservice.Library.Extension;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using T4CAGC.Configures;
@@ -43,6 +44,39 @@ namespace T4CAGC
         {
             try
             {
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    Console.SetBufferSize(150, Console.BufferHeight);
+
+                #region 欢迎语
+
+                ",]]]]]]]]]]]]]]]]]`       ,@@^           ]/@@@@@@]`             ,]]]`               ,/@@@@@@\\]              ]/@@@@@@]`".ConsoleWrite(ConsoleColor.Magenta);
+                "  =@@@@@@@@@@@@@^        /@@@^        ,@@@@@@[[@@@@@@`          @@@@@            ,@@@@@@[[@@@@@@\\        ,@@@@@@[[@@@@@@`".ConsoleWrite(ConsoleColor.Green);
+                "      @@@              *@@@@@^       @@@@`        ,@@@^        /@@[@@@          /@@@`         \\@@@      @@@@`        ,@@@^".ConsoleWrite(ConsoleColor.Green);
+                "      @@@             ,@@`=@@^      @@@/           ,@@@       =@@^ =@@\\        @@@/            \\@@^    @@@/           ,@@@".ConsoleWrite(ConsoleColor.Yellow);
+                "      @@@            /@@  =@@^     =@@@                      =@@@   \\@@^      =@@@                    =@@@".ConsoleWrite(ConsoleColor.Yellow);
+                "      @@@          *@@/   =@@^     =@@^                      @@@`    @@@`     =@@^                    =@@^".ConsoleWrite(ConsoleColor.Cyan);
+                "      @@@         ,@@`    =@@^     =@@^                     @@@^     ,@@@     =@@^        =@@@@@@@@   =@@^".ConsoleWrite(ConsoleColor.Cyan);
+                "      @@@        =@@]]]]]]/@@\\]]`  =@@@                    =@@@@@@@@@@@@@@    =@@@              @@@   =@@@".ConsoleWrite(ConsoleColor.Yellow);
+                "      @@@        =@@@@@@@@@@@@@@^   @@@\\           =@@@   =@@@         \\@@\\    @@@\\             @@@    @@@\\           =@@@".ConsoleWrite(ConsoleColor.Yellow);
+                "      @@@                 =@@^       @@@@`        ,@@@^  ,@@@`          @@@^    \\@@@`         ,@@@@     @@@@`        ,@@@^".ConsoleWrite(ConsoleColor.Green);
+                "      @@@                 =@@^        ,@@@@@@]]@@@@@@`   @@@^           ,@@@^    ,@@@@@@]]@@@@@@@@@      ,@@@@@@]]@@@@@@`".ConsoleWrite(ConsoleColor.Green);
+                "      [[[                 ,[[`           [\\@@@@@@/`     ,[[[             ,[[[       ,\\@@@@@@/`  ,[[         [\\@@@@@@/`\r\n\r\n\r\n\r\n\r\n\r\n\r\n".ConsoleWrite(ConsoleColor.Magenta);
+
+                "\t]]]]]]]]]]]`      ]]]]            ,]]]`\t\t,]]`                  ]/@@@@@@]`      ]]]]]]]]]]]]]]]]]]   ]]]]]]]]]]]]]`".ConsoleWrite(ConsoleColor.Cyan);
+                "\t@@@@@@@@@@@@@@`    \\@@@`         =@@@^\t\t=@@^               ,@@@@@@[[@@@@@@`   @@@@@@@@@@@@@@@@@@   @@@@@@@@@@@@@@@@`".ConsoleWrite(ConsoleColor.Cyan);
+                "\t@@@        ,@@@^    =@@@^       /@@@`  \t\t=@@^              @@@@`        ,@@@^         =@@^          @@@          ,@@@^".ConsoleWrite(ConsoleColor.Cyan);
+                "\t@@@         =@@^      @@@\\     @@@/   \t\t=@@^             @@@/           ,@@@         =@@^          @@@           =@@^".ConsoleWrite(ConsoleColor.Cyan);
+                "\t@@@        /@@@        \\@@@` ,@@@`    \t\t=@@^            =@@@                         =@@^          @@@           @@@^".ConsoleWrite(ConsoleColor.Cyan);
+                "\t@@@@@@@@@@@@@^          ,@@@@@@@       \t\t=@@^            =@@^                         =@@^          @@@]]]]]]]/@@@@@`".ConsoleWrite(ConsoleColor.Cyan);
+                "\t@@@      ,[\\@@@\\          \\@@@/     \t\t=@@^            =@@^                         =@@^          @@@@@@@@@@@@@@".ConsoleWrite(ConsoleColor.Cyan);
+                "\t@@@          @@@^          @@@         \t\t=@@^            =@@@                         =@@^          @@@        ,@@@^".ConsoleWrite(ConsoleColor.Cyan);
+                "\t@@@          =@@^          @@@         \t\t=@@^             @@@\\           =@@@         =@@^          @@@          @@@^".ConsoleWrite(ConsoleColor.Cyan);
+                "\t@@@         /@@@`          @@@         \t\t=@@^              @@@@`        ,@@@^         =@@^          @@@          ,@@@`".ConsoleWrite(ConsoleColor.Cyan);
+                "\t@@@@@@@@@@@@@@@`           @@@         \t\t=@@@@@@@@@@@@@     ,@@@@@@]]@@@@@@`          =@@^          @@@           =@@@ ".ConsoleWrite(ConsoleColor.Cyan);
+                "\t[[[[[[[[[[[[               [[[         \t\t,[[[[[[[[[[[[[        [\\@@@@@@/`             ,[[`          [[[            [[[`\r\n\r\n\r\n\r\n\r\n\r\n\r\n".ConsoleWrite(ConsoleColor.Cyan);
+
+                #endregion
+
                 "程序启动中.".ConsoleWrite();
                 "正在读取配置.".ConsoleWrite();
 
@@ -75,11 +109,11 @@ namespace T4CAGC
 
                 try
                 {
-                    await GenerateHandler.Generate();
+                    GenerateHandler.Generate();
                 }
-                catch (System.Exception ex)
+                catch (Exception ex)
                 {
-                    Logger.Log(NLog.LogLevel.Error, LogType.系统异常, $"生成失败, {GetExceptionAllMsg(ex.InnerException)}", null, ex);
+                    Logger.Log(NLog.LogLevel.Error, LogType.系统异常, $"生成失败, {GetExceptionAllMsg(ex)}", null, ex);
                     return 1;
                 }
 
@@ -98,7 +132,7 @@ namespace T4CAGC
         /// <returns></returns>
         public static string GetExceptionAllMsg(Exception ex)
         {
-            var message = ex?.Message;
+            var message = ex.Message;
             if (ex.InnerException != null)
                 message += $" {GetExceptionAllMsg(ex.InnerException)}";
             return message;

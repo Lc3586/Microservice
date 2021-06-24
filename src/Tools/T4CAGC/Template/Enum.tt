@@ -1,0 +1,23 @@
+﻿<#@ template language="C#" #>  
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="T4CAGC.Model" #>
+<#@ import namespace="Microservice.Library.Extension" #>
+<#@ include file=".\Reuseable\BaseHead.ttinclude" #>
+
+namespace Model.<#=Options.ModuleName#>
+{
+    /// <summary>
+    /// <#=Options.TableRemark#> <#=Options.Field.Remark#>
+    /// </summary>
+    public enum <#=Options.ModuleName#>_<#=Options.Field.Name#>
+    {
+<#
+	foreach (var @enum in Options.Field.Enums.OrderBy(o => o.Key))
+	{
+#>
+        <#=@enum.Key#><#=@enum.Value.HasValue ? " = @enum.Value" : ""#>,
+<#
+    }
+#>
+    }
+}

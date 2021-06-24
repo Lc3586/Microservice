@@ -133,8 +133,6 @@ window.onInformationLoaded(() => {
                                 }
                             });
                     } else {
-                        window.localStorage.removeItem('jwt-token');
-
                         var close = window.showDialog(
                             '获取令牌',
                             [
@@ -172,7 +170,8 @@ window.onInformationLoaded(() => {
                 if (data) {
                     //定时更新令牌
                     window.delayedEvent(refreshToken, null, new Date(tokenInfo.Expires) - new Date() - 60 * 1000, 'refresh-Token');
-                }
+                } else
+                    window.localStorage.removeItem('jwt-token');
             };
 
             /**

@@ -57,7 +57,7 @@ window.onInformationLoaded(() => {
             };
 
             $('.block-desktop').on('focus', 'input,textarea', e => {
-                if (!flag || e.target.className.indexOf('noQuickInput') > -1)
+                if (!flag || e.target.className.indexOf('noQuickInput') > -1 || e.target.type != 'text')
                     return;
 
                 let $input = e.target.nodeName == 'TEXTAREA'
@@ -67,7 +67,7 @@ window.onInformationLoaded(() => {
                 $input.val(e.target.value)
                     .on('blur', _e => {
                         //设置input值并触发onchange事件
-                        var nativeInputValueSetter = Object.getOwnPropertyDescriptor(e.target.nodeName == 'TEXTAREA' ? window.HTMLTextAreaElement : window.HTMLInputElement.prototype, "value").set;
+                        var nativeInputValueSetter = Object.getOwnPropertyDescriptor(e.target.nodeName == 'TEXTAREA' ? window.HTMLTextAreaElement.prototype : window.HTMLInputElement.prototype, "value").set;
                         nativeInputValueSetter.call(e.target, _e.target.value);
                         var ev2 = new Event('input', { bubbles: true });
                         e.target.dispatchEvent(ev2);

@@ -2,6 +2,7 @@
 using FreeSql.DatabaseModel;
 using NLog;
 using System.Collections.Generic;
+using System.Text;
 using T4CAGC.Log;
 
 namespace T4CAGC.Model
@@ -58,13 +59,24 @@ namespace T4CAGC.Model
         /// <summary>
         /// 输出路径
         /// </summary>
+        /// <remarks>生成类型为<see cref="GenType.EnrichmentProject"/>充实项目时此路径应该为项目（解决方案）根路径.</remarks>
         public string OutputPath { get; set; }
+
+        /// <summary>
+        /// 编码名称
+        /// </summary>
+        public string EncodingName { get; set; } = Encoding.UTF8.EncodingName;
 
         /// <summary>
         /// 生成类型
         /// </summary>
-        /// <remarks>默认 <see cref="Config.GenType.All"/></remarks>
-        public GenType GenType { get; set; } = GenType.All;
+        /// <remarks>默认 <see cref="T4CAGC.Model.GenType.EnrichmentProject"/> 充实项目</remarks>
+        public GenType GenType { get; set; } = GenType.EnrichmentProject;
+
+        /// <summary>
+        /// 覆盖文件
+        /// </summary>
+        public bool OverlayFile { get; set; }
 
         /// <summary>
         /// 指定表

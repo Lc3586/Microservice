@@ -13,6 +13,26 @@ namespace T4CAGC.Model
         public string Name { get; set; }
 
         /// <summary>
+        /// 模块名
+        /// </summary>
+        public string ModuleName { get; set; }
+
+        /// <summary>
+        /// 简短名称
+        /// </summary>
+        public string ReducedName { get; set; }
+
+        /// <summary>
+        /// FreeSql实体类
+        /// </summary>
+        public bool FreeSql { get; set; }
+
+        /// <summary>
+        /// Elasticsearch实体类
+        /// </summary>
+        public bool Elasticsearch { get; set; }
+
+        /// <summary>
         /// 树状结构
         /// </summary>
         public bool Tree { get; set; }

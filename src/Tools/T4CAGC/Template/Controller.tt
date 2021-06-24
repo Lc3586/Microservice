@@ -1,0 +1,368 @@
+﻿<#@ template language="C#" #>  
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="T4CAGC.Model" #>
+<#@ import namespace="T4CAGC.Extension" #>
+<#@ import namespace="Microservice.Library.Extension" #>
+<#@ include file=".\Reuseable\BaseHead.ttinclude" #>
+
+namespace Api.Controllers
+{
+    /// <summary>
+    /// <#=Options.Table.Remark#>接口
+    /// </summary>
+    [Route("/<#=Options.Table.Name.GetAbbreviation(30).ToLower()#>")]
+    [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
+    [SwaggerTag("<#=Options.Table.Remark#>接口")]
+    public class <#=Options.Table.ReducedName#>Controller : BaseApiController
+    {
+        #region DI
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="<#=Options.Table.ReducedName.ToLower()#>Business"></param>
+        public SampleController(I<#=Options.Table.ReducedName#>Business <#=Options.Table.ReducedName.ToLower()#>Business)
+        {
+            <#=Options.Table.ReducedName#>Business = <#=Options.Table.ReducedName.ToLower()#>Business;
+        }
+
+        /// <summary>
+        /// <#=Options.Table.Remark#>接口类
+        /// </summary>
+        readonly I<#=Options.Table.ReducedName#>Business <#=Options.Table.ReducedName#>Business;
+
+        #endregion
+
+        #region 基础功能
+
+<#
+    foreach (var field in Options.Table.Fields)
+    {
+        if(field.Consts.Any_Ex())
+        {
+#>
+
+        /// <summary>
+        /// 获取<#=field.Remark#>集合
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("<#=field.Name.ToLower()#>-list")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "<#=field.Remark#>", typeof(List<string>))]
+        public async Task<object> Get<#=field.Name#>List()
+        {
+            return await Task.FromResult(Success(<#=Options.Table.ReducedName#>Business.Get<#=field.Name#>List()));
+        }
+<#
+        }
+        
+        if(field.Enums.Any_Ex())
+        {
+#>
+
+        /// <summary>
+        /// 获取<#=field.Remark#>字典
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("<#=field.Name.ToLower()#>-dic")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "<#=field.Remark#>", typeof(Dictionary<string, int>))]
+        public async Task<object> Get<#=field.Name#>Dic()
+        {
+            return await Task.FromResult(Success(<#=Options.Table.ReducedName#>Business.Get<#=field.Name#>Dic()));
+        }
+<#
+        }
+    }
+
+    if(Functions.ContainsKey(Function.List))
+    {
+#>
+
+        /// <summary>
+        /// 获取列表数据
+        /// </summary>
+        /// <param name="pagination">分页设置</param>
+        /// <returns></returns>
+        [HttpPost("list")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "列表数据", typeof(<#=Functions[Function.List]#>))]
+        public async Task<object> GetList([FromBody] PaginationDTO pagination)
+        {
+            return await Task.FromResult(OpenApiJsonContent(<#=Options.Table.ReducedName#>Business.GetList(pagination), pagination));
+        }
+<#
+    }
+
+    if(Functions.ContainsKey(Function.Detail))
+    {
+#>
+
+        /// <summary>
+        /// 详情数据数据
+        /// </summary>
+<#WritePrimaryParamsRemark();#>
+        /// <returns></returns>
+        [HttpPost("detail-data<#WritePrimaryRouteParams();#>")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "详情数据", typeof(<#=Functions[Function.Detail]#>))]
+        public async Task<object> GetDetail(<#WritePrimaryParams();#>)
+        {
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(<#=Options.Table.ReducedName#>Business.GetDetail(<#WritePrimaryMethodParams();#>))));
+        }
+<#
+    }
+
+    if(Functions.ContainsKey(Function.Create))
+    {
+#>
+
+        /// <summary>
+        /// 新增
+        /// </summary>
+        /// <param name="data">表单数据</param>
+        /// <returns></returns>
+        [HttpPost("create")]
+        public async Task<object> Create([FromBody] <#=Functions[Function.Create]#> data)
+        {
+            <#=Options.Table.ReducedName#>Business.Create(data);
+            return await Task.FromResult(Success("添加成功."));
+        }
+<#
+    }
+
+    if(Functions.ContainsKey(Function.Edit))
+    {
+#>
+
+        /// <summary>
+        /// 获取编辑数据
+        /// </summary>
+<#WritePrimaryParamsRemark();#>
+        /// <returns></returns>
+        [HttpPost("edit-data<#WritePrimaryRouteParams();#>")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "编辑数据", typeof(<#=Functions[Function.Edit]#>))]
+        public async Task<object> GetEdit(<#WritePrimaryParams();#>)
+        {
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(<#=Options.Table.ReducedName#>Business.GetEdit(<#WritePrimaryMethodParams();#>))));
+        }
+
+        /// <summary>
+        /// 编辑数据
+        /// </summary>
+        /// <param name="data">表单数据</param>
+        /// <returns></returns>
+        [HttpPost("edit")]
+        public async Task<object> Edit([FromBody] <#=Functions[Function.Edit]#> data)
+        {
+            <#=Options.Table.ReducedName#>Business.Edit(data);
+            return await Task.FromResult(Success());
+        }
+<#
+    }
+
+    if(Functions.ContainsKey(Function.Delete))
+    {
+#>
+
+        /// <summary>
+        /// 删除数据
+        /// </summary>
+<#WritePrimaryListParamsRemark();#>
+        /// <returns></returns>
+        [HttpPost("delete")]
+        public async Task<object> Delete(IEnumerable<string> keys)
+        {
+            <#=Options.Table.ReducedName#>Business.Delete(keys?.ToList());
+            return await Task.FromResult(Success());
+        }
+<#
+    }
+#>
+
+        #endregion
+
+        #region 拓展功能
+<#
+    if(Functions.ContainsKey(Function.Enable))
+    {
+#>
+
+        /// <summary>
+        /// 启用/禁用
+        /// </summary>
+<#WritePrimaryParamsRemark();#>
+        /// <param name="enable">设置状态</param>
+        /// <returns></returns>
+        [HttpPost("enable<#WritePrimaryRouteParams();#>/{enable}")]
+        public async Task<object> Enable(<#WritePrimaryParams();#>, bool enable)
+        {
+            <#=Options.Table.ReducedName#>Business.Enable(<#WritePrimaryMethodParams();#>, enable);
+            return await Task.FromResult(Success());
+        }
+<#
+    }
+    
+    if(Functions.ContainsKey(Function.Sort))
+    {
+#>
+
+        /// <summary>
+        /// 普通排序
+        /// </summary>
+        /// <param name="data">数据</param>
+        /// <returns></returns>
+        [HttpPost("sort")]
+        public async Task<object> Sort([FromBody] Sort data)
+        {
+            <#=Options.Table.ReducedName#>Business.Sort(data);
+            return await Task.FromResult(Success());
+        }
+
+        /// <summary>
+        /// 拖动排序
+        /// </summary>
+        /// <param name="data">数据</param>
+        /// <returns></returns>
+        [HttpPost("dragsort")]
+        public async Task<object> DragSort([FromBody] <#=Options.Table.Tree ? "TreeDragSort" : "DragSort"#> data)
+        {
+            <#=Options.Table.ReducedName#>Business.DragSort(data);
+            return await Task.FromResult(Success());
+        }
+<#
+    }
+    
+    if(Functions.ContainsKey(Function.Import))
+    {
+#>
+
+        /// <summary>
+        /// 下载导入模板
+        /// </summary>
+        /// <param name="version">
+        /// <para>指定Excel文件版本</para>
+        /// <para><see cref="ExcelVersion.xls"/>: 2003版本</para>
+        /// <para>(默认)<see cref="ExcelVersion.xlsx"/>: 2007及以上版本</para>
+        /// </param>
+        /// <param name="autogenerateTemplate">
+        /// <para>指明要使用的模板类型</para>
+        /// <para>true: 自动生成模板</para>
+        /// <para>(默认)false: 使用预制模板</para>
+        /// </param>
+        /// <returns></returns>
+        [HttpGet("downloadtemplate")]
+        public async Task DownloadTemplate(string version = ExcelVersion.xlsx, bool autogenerateTemplate = false)
+        {
+            await <#=Options.Table.ReducedName#>Business.DownloadTemplate(version, autogenerateTemplate);
+        }
+
+        /// <summary>
+        /// 导入
+        /// </summary>
+        /// <param name="file">Execl文件</param>
+        /// <param name="autogenerateTemplate">
+        /// <para>指明所使用的模板类型</para>
+        /// <para>true: 自动生成的模板</para>
+        /// <para>(默认)false: 预制模板</para>
+        /// </param>
+        /// <returns></returns>
+        [HttpPost("import")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "导入结果", typeof(ImportResult))]
+        [Consumes("multipart/form-data")]
+        public async Task<object> Import(IFormFile file, bool autogenerateTemplate = false)
+        {
+            return await Task.FromResult(ResponseDataFactory.Success(<#=Options.Table.ReducedName#>Business.Import(file, autogenerateTemplate)));
+        }
+<#
+    }
+    
+    if(Functions.ContainsKey(Function.Export))
+    {
+#>
+
+        /// <summary>
+        /// 导出
+        /// </summary>
+        /// <param name="version">
+        /// <para>指定Excel文件版本</para>
+        /// <para><see cref="ExcelVersion.xls"/>: 2003版本</para>
+        /// <para>(默认)<see cref="ExcelVersion.xlsx"/>: 2007及以上版本</para>
+        /// </param>
+        /// <param name="paginationJson">分页参数Json字符串</param>
+        /// <returns></returns>
+        [HttpGet("export")]
+        public void Export(string version = ExcelVersion.xlsx, string paginationJson = null)
+        {
+            <#=Options.Table.ReducedName#>Business.Export(version, paginationJson);
+        }
+<#
+    }
+#>
+
+        #endregion
+    }
+}
+
+<#+
+    /// <summary>
+    /// 主键参数注释
+    /// </summary>
+    private void WritePrimaryParamsRemark()
+    {
+        foreach (var field in PrimaryKeys)
+        {
+#>
+        /// <param name="<#=field.Name.ToLower()#>"><#=field.Remark#></param>
+<#+
+        }
+    }
+
+    /// <summary>
+    /// 主键参数
+    /// </summary>
+    private void WritePrimaryParams()
+    {
+        var i = 0;
+        foreach (var field in PrimaryKeys)
+        {
+#><#=i > 0 ? ", " : ""#><#=field.Type#> <#=field.Name.ToLower()#><#+
+            i++;
+        }
+    }
+
+    /// <summary>
+    /// 主键路由参数
+    /// </summary>
+    private void WritePrimaryRouteParams()
+    {
+        foreach (var field in PrimaryKeys)
+        {
+#>/{<#=field.Name.ToLower()#>}<#+
+        }
+    }
+
+    /// <summary>
+    /// 主键方法参数
+    /// </summary>
+    private void WritePrimaryMethodParams()
+    {
+        var i = 0;
+        foreach (var field in PrimaryKeys)
+        {
+#><#=i > 0 ? ", " : ""#><#=field.Name.ToLower()#><#+
+            i++;
+        }
+    }
+
+    /// <summary>
+    /// 主键集合参数注释
+    /// </summary>
+    private void WritePrimaryListParamsRemark()
+    {
+#>/// <param name="keys"><#+
+        var i = 0;
+        foreach (var field in PrimaryKeys)
+        {
+#>[[<#=i > 0 ? " + " : ""#><#=field.Remark#>]]<#+
+            i++;
+        }
+#></param><#+
+    }
+#>

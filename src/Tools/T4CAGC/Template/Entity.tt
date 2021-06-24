@@ -1,0 +1,107 @@
+﻿<#@ template language="C#" #>  
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="T4CAGC.Model" #>
+<#@ import namespace="Microservice.Library.Extension" #>
+<#@ include file=".\Reuseable\BaseHead.ttinclude" #>
+
+namespace Entity.<#=Options.Table.ModuleName#>
+{
+    /// <summary>
+    /// <#=Options.Table.Remark#>
+    /// </summary>
+<#
+	foreach (var attribute in Attributes.OrderBy(o => o))
+	{
+#>
+    [<#=attribute#>]
+<#
+	}
+#>
+    public class <#=Options.Table.Name#>
+    {
+<#
+	foreach (var field in Options.Table.Fields.Where(o => !o.Virtual))
+	{
+        WriteRemark(field);
+        WriteAttributes(FieldWithAttributes[field.Name]);
+#>
+        public <#=field.Type#><#=field.Nullable?"?":""#> <#=field.Name#> { get; set; }
+
+<#
+	}
+#>
+        #region 关联
+
+<#
+    foreach (var field in Options.Table.Fields.Where(o => o.Virtual))
+	{
+        WriteRemark(field);
+        WriteAttributes(FieldWithAttributes[field.Name]);
+
+        if(field.FK)
+        {
+#>
+        public virtual <#=field.Bind#> <#=field.Name#> { get; set; }
+
+<#
+        }
+        else
+        {
+#>
+        public virtual ICollection<<#=field.Bind#>> <#=field.Name#> { get; set; }
+
+<#
+        }
+    }
+#>
+        #endregion
+    }
+}
+
+<#+
+    private void WriteRemark(FieldInfo field)
+    {
+#>
+        /// <summary>
+        /// <#=field.Remark#>
+<#+
+        if(field.Consts.Any_Ex())
+        {
+#>
+        /// <para>以下为可能的值:</para>
+<#+
+            foreach (var @const in field.Consts.OrderBy(o => o.Value).ThenBy(o => o.Key))
+            {
+#>
+        /// <para><#=@const.Key#> <#=@const.Value#></para>
+<#+
+            }
+        }
+
+        if(field.Enums.Any_Ex())
+        {
+#>
+        /// <para>以下为可能的值:</para>
+<#+
+            foreach (var @enum in field.Enums.OrderBy(o => o.Value).ThenBy(o => o.Key))
+            {
+#>
+        /// <para><#=@enum.Key#> <#=@enum.Value#></para>
+<#+
+            }
+        }
+#>
+        /// </summary>
+<#+
+    }
+
+    private void WriteAttributes(List<string> attributes)
+    {
+        foreach (var attribute in attributes.OrderBy(o => o))
+        {
+#>
+        [<#=attribute#>]
+<#+
+        } 
+    }
+#>

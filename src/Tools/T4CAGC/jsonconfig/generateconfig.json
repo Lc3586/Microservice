@@ -1,11 +1,12 @@
 ﻿{
   "Config": {
     "Version": "v0.0.0.1",
-    "DataSource": "F:\\图锐信息\\项目框架学习\\GitHub社区项目\\Microservice\\docs\\SimpleApi\\数据结构.csv",
+    "DataSource": "F:\\图锐信息\\Workshop\\任务素材\\210410云创智慧园区\\数据结构(2021年6月24日 145808).csv",
     "DataSourceType": "CSV",
     "LoggerType": "Console",
-    "OutputPath": "F:\\图锐信息\\项目框架学习\\GitHub社区项目\\Microservice\\docs\\SimpleApi\\自动生成文件",
-    "GenType": "All",
+    "OutputPath": "F:\\图锐信息\\Workshop\\任务素材\\210410云创智慧园区\\自动生成文件",
+    "GenType": "EnrichmentProject",
+    "OverlayFile": true,
     "TableSettings": [
       {
 

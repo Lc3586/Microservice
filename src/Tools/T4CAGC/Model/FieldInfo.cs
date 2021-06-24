@@ -51,7 +51,7 @@ namespace T4CAGC.Model
         /// <summary>
         /// 说明
         /// </summary>
-        public string Description { get; set; } = string.Empty;
+        public string Description { get; set; }
 
         /// <summary>
         /// 注释
@@ -71,7 +71,12 @@ namespace T4CAGC.Model
         /// <summary>
         /// 数据类型
         /// </summary>
-        public Type DataType { get; set; } = typeof(string);
+        public string Type { get; set; } = "string";
+
+        /// <summary>
+        /// 数据类型
+        /// </summary>
+        public Type CsType { get; set; } = typeof(string);
 
         /// <summary>
         /// 长度
@@ -94,30 +99,45 @@ namespace T4CAGC.Model
         public bool Required { get; set; }
 
         /// <summary>
-        /// 标签
+        /// 标签集合
         /// </summary>
-        public List<string> Tag { get; set; }
+        public List<string> Tags { get; set; }
 
         /// <summary>
-        /// 标签属性
+        /// 接口架构属性
         /// </summary>
-        /// <remarks>匹配<see cref="Microservice.Library.OpenApi.Annotations.OpenApiSchemaFormat"/>属性名</remarks>
-        public string OASF { get; set; }
+        /// <remarks>
+        /// <para>以下属性按顺序填写，并以逗号拼接（填写示例：$OAS[number,number_decimal,123456.0789] 或者 $OAS[number,number_decimal]）</para>
+        /// <para><see cref="Microservice.Library.OpenApi.Annotations.OpenApiSchemaType"/></para>
+        /// <para><see cref="Microservice.Library.OpenApi.Annotations.OpenApiSchemaFormat"/>（可选）</para>
+        /// <para>默认值（可选）</para>
+        /// </remarks>
+        public string[] OAS { get; set; }
 
         /// <summary>
-        /// 数据映射
+        /// 接口架构时间格式化
+        /// </summary>
+        public string OASDTF { get; set; }
+
+        /// <summary>
+        /// NEST属性
+        /// </summary>
+        public string NEST { get; set; }
+
+        /// <summary>
+        /// 数据映射集合
         /// </summary>
         /// <remarks>类型/字段名称</remarks>
-        public Dictionary<Type, string> Map { get; set; } = new Dictionary<Type, string>();
+        public Dictionary<Type, string> Maps { get; set; } = new Dictionary<Type, string>();
 
         /// <summary>
-        /// 常量
+        /// 常量集合
         /// </summary>
-        public Dictionary<string, string> Const { get; set; } = new Dictionary<string, string>();
+        public Dictionary<string, string> Consts { get; set; } = new Dictionary<string, string>();
 
         /// <summary>
-        /// 枚举
+        /// 枚举集合
         /// </summary>
-        public Dictionary<string, int?> Enum { get; set; } = new Dictionary<string, int?>();
+        public Dictionary<string, int?> Enums { get; set; } = new Dictionary<string, int?>();
     }
 }

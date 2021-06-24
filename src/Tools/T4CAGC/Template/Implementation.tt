@@ -1,0 +1,1112 @@
+﻿<#@ template language="C#" #>  
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="T4CAGC.Model" #>
+<#@ import namespace="Microservice.Library.Extension" #>
+<#@ include file=".\Reuseable\BaseHead.ttinclude" #>
+
+namespace Business.Implementation.<#=Options.Table.ModuleName#>
+{
+    /// <summary>
+    /// <#=Options.Table.Remark#>业务类
+    /// </summary>
+    public class <#=Options.Table.ReducedName#>Business : BaseBusiness, I<#=Options.Table.ReducedName#>Business
+    {
+        #region DI
+
+        public <#=Options.Table.ReducedName#>Business(
+<#
+        if (Options.Table.FreeSql)
+        {
+#>
+            IFreeSqlProvider freeSqlProvider,
+<#
+        }
+
+        if (Options.Table.Elasticsearch)
+        {
+#>
+            IElasticsearchProvider elasticsearchProvider,
+<#
+        }
+
+        if (Functions.ContainsKey(Function.Import) || Functions.ContainsKey(Function.Export))
+        {
+#>
+            IHttpContextAccessor httpContextAccessor,
+<#
+        }
+#>
+            IAutoMapperProvider autoMapperProvider,
+            IOperationRecordBusiness operationRecordBusiness)
+        {
+<#
+
+        if (Options.Table.FreeSql)
+        {
+#>
+            Orm = freeSqlProvider.GetFreeSql();
+            Repository = Orm.GetRepository<<#=Options.Table.Name#>, <#WritePrimaryTupleParams();#>>();
+<#
+        }
+
+        if (Options.Table.Elasticsearch)
+        {
+#>
+            ESClient = elasticsearchProvider.GetElasticsearch<<#=Options.Table.Name#>>();
+<#
+        }
+
+        if (Functions.ContainsKey(Function.Import) || Functions.ContainsKey(Function.Export))
+        {
+#>
+            HttpContextAccessor = httpContextAccessor;
+<#
+        }
+#>
+            Mapper = autoMapperProvider.GetMapper();
+            OperationRecordBusiness = operationRecordBusiness;
+        }
+
+        #endregion
+
+        #region 私有成员
+<#
+        if (Options.Table.FreeSql)
+        {
+#>
+
+        readonly IFreeSql Orm;
+
+        readonly IBaseRepository<<#=Options.Table.Name#>, <#WritePrimaryTupleParams();#>> Repository;
+<#
+        }
+        
+        if (Options.Table.Elasticsearch)
+        {
+#>
+
+        readonly ElasticsearchClient ESClient;
+<#
+        }
+        
+        if (Functions.ContainsKey(Function.Import) || Functions.ContainsKey(Function.Export))
+        {
+#>
+
+        readonly IHttpContextAccessor HttpContextAccessor;
+<#
+        }
+#>
+
+        readonly IMapper Mapper;
+
+        readonly IOperationRecordBusiness OperationRecordBusiness;
+
+        #endregion
+
+        #region 基础功能
+<#
+    foreach (var field in Options.Table.Fields)
+    {
+        if(field.Consts.Any_Ex())
+        {
+#>
+
+        public List<string> Get<#=field.Name#>List()
+        {
+            return typeof(<#=field.Name#>).GetFields().Select(o => (string)o.GetValue(null)).ToList();
+        }
+<#
+        }
+        
+        if(field.Enums.Any_Ex())
+        {
+#>
+
+        public Dictionary<string, int> Get<#=field.Name#>Dic()
+        {
+            return Enum.GetValues<<#=field.Name#>>().ToDictionary(k => k.ToString(), v => (int)v);
+        }
+<#
+        }
+    }
+
+    if(Functions.ContainsKey(Function.List))
+    {
+#>
+
+        public List<<#=Functions[Function.List]#>> GetList(PaginationDTO pagination)
+        {
+            var entityList = Repository.Select
+                                    .GetPagination(pagination)
+                                    .ToList<<#=Options.Table.Name#>, <#=Functions[Function.List]#>>(typeof(<#=Functions[Function.List]#>).GetNamesWithTagAndOther(true, "_List"));
+
+            var result = Mapper.Map<List<<#=Functions[Function.List]#>>>(entityList);
+
+            return result;
+        }
+<#
+    }
+
+    if(Functions.ContainsKey(Function.Detail))
+    {
+#>
+
+        public <#=Functions[Function.Detail]#> GetDetail(<#WritePrimaryParams();#>)
+        {
+<#
+        if(PrimaryKeys.Count > 1)
+        {
+#>
+            var entity = Repository.Where(o => <#WritePrimaryFieldLinq("o");#>).GetAndCheckNull();
+<#
+        }
+        else
+        {
+#>
+            var entity = Repository.GetAndCheckNull(<#WritePrimaryTupleParamsName();#>);
+<#
+        }
+#>
+
+            var result = Mapper.Map<<#=Functions[Function.Detail]#>>(entity);
+
+            return result;
+        }
+<#
+    }
+
+    if(Functions.ContainsKey(Function.Create))
+    {
+#>
+
+        public void Create(<#=Functions[Function.Create]#> data)
+        {
+            var newData = Mapper.Map<<#=Options.Table.Name#>>(data).InitEntity();
+
+            //@数据验证#待完善@
+            //if (Repository.Where(o => <#=Options.Table.Tree ? "o.ParentId == editData.ParentId && " : ""#>o.Name == newData.Name).Any())
+            //    throw new MessageException($"<#=Options.Table.Tree ? "当前层级" : ""#>已存在名称为{newData.Name}的<#=Options.Table.Remark#>.");
+
+            (bool success, Exception ex) = Orm.RunTransaction(() =>
+            {
+<#
+        if(Options.Table.Tree)
+        {
+#>
+                if (newData.ParentId.IsNullOrWhiteSpace())
+                {
+                    newData.ParentId = null;
+                    newData.Level = 0;
+                    newData.RootId = null;
+                }
+                else
+                {
+                    var parent = Repository.GetAndCheckNull(newData.ParentId);
+                    newData.Level = parent.Level + 1;
+                    newData.RootId = parent.RootId == null ? parent.Id : parent.RootId;
+                }
+<#
+            if(Functions.ContainsKey(Function.Sort))
+            {
+#>
+
+                newData.<#=FunctionsWithField[Function.Sort].Name#> = Repository.Where(o => o.ParentId == editData.ParentId).Max(o => o.<#=FunctionsWithField[Function.Sort].Name#>) + 1;
+<#
+            }
+        }
+        else
+        {
+            if(Functions.ContainsKey(Function.Sort))
+            {
+#>
+
+                newData.<#=FunctionsWithField[Function.Sort].Name#> = Repository.Max(o => o.<#=FunctionsWithField[Function.Sort].Name#>) + 1;
+<#
+            }
+        }
+#>
+
+                Repository.Insert(newData);
+
+                var orId = OperationRecordBusiness.Create(new Common_OperationRecord
+                {
+                    DataType = nameof(<#=Options.Table.Name#>),
+                    DataId = <#WritePrimaryField("newData", " + ");#>,
+                    Explain = $"创建<#=Options.Table.Remark#>[@字段说明#待完善@]."
+                });
+            });
+
+            if (!success)
+                throw new MessageException("创建<#=Options.Table.Remark#>失败", ex);
+        }
+<#
+    }
+
+    if(Functions.ContainsKey(Function.Edit))
+    {
+#>
+
+        public <#=Functions[Function.Edit]#> GetEdit(<#WritePrimaryParams();#>)
+        {
+<#
+    if(PrimaryKeys.Count > 1)
+    {
+#>
+            var entity = Repository.Where(o => <#WritePrimaryFieldLinq("o");#>).GetAndCheckNull();
+<#
+    }
+    else
+    {
+#>
+            var entity = Repository.GetAndCheckNull(<#WritePrimaryTupleParamsName();#>);
+<#
+    }
+#>
+
+            var result = Mapper.Map<<#=Functions[Function.Edit]#>>(entity);
+
+            return result;
+        }
+
+        public void Edit(<#=Functions[Function.Edit]#> data)
+        {
+            var editData = Mapper.Map<<#=Options.Table.Name#>>(data).ModifyEntity();
+
+            //@数据验证#待完善@
+            //if (Repository.Where(o => <#=Options.Table.Tree ? "o.ParentId == editData.ParentId && " : ""#>o.Name == newData.Name && o.Id != editData.Id).Any())
+            //    throw new MessageException($"<#=Options.Table.Tree ? "当前层级" : ""#>已存在名称为{newData.Name}的<#=Options.Table.Remark#>.");
+
+            var entity = Repository.GetAndCheckNull(<#WritePrimaryField("editData", ", ");#>);
+
+            var changed_ = string.Join(",",
+                                       entity.GetPropertyValueChangeds<<#=Options.Table.Name#>, Edit>(editData)
+                                            .Select(p => $"\r\n\t {p.Description}：{p.FormerValue} 更改为 {p.CurrentValue}"));
+
+            (bool success, Exception ex) = Orm.RunTransaction(() =>
+            {
+<#
+        if(Options.Table.Tree)
+        {
+#>
+                if (editData.ParentId != entity.ParentId)
+                {
+                    if (editData.ParentId.IsNullOrWhiteSpace())
+                    {
+                        editData.ParentId = null;
+                        editData.Level = 0;
+                        editData.RootId = null;
+                    }
+                    else
+                    {
+                        var parent = Repository.GetAndCheckNull(editData.ParentId);
+                        editData.Level = parent.Level + 1;
+                        editData.RootId = parent.RootId == null ? parent.Id : parent.RootId;
+                    }
+<#
+    if(Functions.ContainsKey(Function.Sort))
+    {
+#>
+
+                    if (Repository.UpdateDiy
+                             .Where(o => o.ParentId == entity.ParentId && o.Id != entity.Id && o.<#=FunctionsWithField[Function.Sort].Name#> > editData.<#=FunctionsWithField[Function.Sort].Name#>)
+                             .Set(o => o.<#=FunctionsWithField[Function.Sort].Name#> - 1)
+                             .ExecuteAffrows() < 0)
+                        throw new MessageException("重新排序失败.");
+
+                    editData.<#=FunctionsWithField[Function.Sort].Name#> = Repository.Where(o => o.ParentId == editData.ParentId).Max(o => o.<#=FunctionsWithField[Function.Sort].Name#>) + 1;
+<#
+    }
+#>
+                }
+<#
+        }
+#>
+
+                if (Repository.UpdateDiy
+                      .SetSource(editData)
+                      .UpdateColumns(typeof(<#=Functions[Function.Edit]#>).GetNamesWithTagAndOther(false, "_Edit").ToArray())
+                      .ExecuteAffrows() <= 0)
+                    throw new MessageException("修改<#=Options.Table.Remark#>失败");
+
+                var orId = OperationRecordBusiness.Create(new Common_OperationRecord
+                {
+                    DataType = nameof(<#=Options.Table.Name#>),
+                    DataId = <#WritePrimaryField("editData", " + ");#>,
+                    Explain = $"修改<#=Options.Table.Remark#>[@字段说明#待完善@].",
+                    Remark = $"变更详情: \r\n\t{changed_}"
+                });
+            });
+
+            if (!success)
+                throw ex;
+        }
+<#
+    }
+
+    if(Functions.ContainsKey(Function.Delete))
+    {
+#>
+
+        public void Delete(List<string> keys)
+        {
+            var entityList = Repository.Select.Where(c => keys.Contains(<#WritePrimaryField("c", " + ");#>)).ToList(c => new { <#WritePrimaryField("c", ", ");#> });
+
+            var orList = new List<Common_OperationRecord>();
+
+            foreach (var entity in entityList)
+            {
+                //@检查数据#待完善@
+
+                orList.Add(new Common_OperationRecord
+                {
+                    DataType = nameof(<#=Options.Table.Name#>),
+                    DataId = <#WritePrimaryField("entity", " + ");#>,
+                    Explain = $"删除<#=Options.Table.Remark#>[@字段说明#待完善@]."
+                });
+            }
+
+            (bool success, Exception ex) = Orm.RunTransaction(() =>
+            {
+                if (Repository.Delete(o => keys.Contains(<#WritePrimaryField("c", " + ");#>)) <= 0)
+                    throw new MessageException("未删除任何数据");
+
+                var orIds = OperationRecordBusiness.Create(orList);
+            });
+
+            if (!success)
+                throw new MessageException("删除<#=Options.Table.Remark#>失败", ex);
+        }
+<#
+    }
+#>
+
+        #endregion
+
+        #region 拓展功能
+<#
+    if(Functions.ContainsKey(Function.Enable))
+    {
+#>
+
+        public void Enable(<#WritePrimaryParams();#>, bool enable)
+        {
+<#
+    if(PrimaryKeys.Count > 1)
+    {
+#>
+            var entity = Repository.Where(o => <#WritePrimaryFieldLinq("o");#>).GetAndCheckNull();
+<#
+    }
+    else
+    {
+#>
+            var entity = Repository.GetAndCheckNull(<#WritePrimaryTupleParamsName();#>);
+<#
+    }
+#>
+
+            entity.<#=FunctionsWithField[Function.Enable].Name#> = enable;
+
+            (bool success, Exception ex) = Orm.RunTransaction(() =>
+            {
+                if (Repository.Update(entity) <= 0)
+                    throw new MessageException($"{(enable ? "启用" : "禁用")}<#=Options.Table.Remark#>失败");
+
+                var orId = OperationRecordBusiness.Create(new Common_OperationRecord
+                {
+                    DataType = nameof(<#=Options.Table.Name#>),
+                    DataId = <#WritePrimaryField("entity", " + ");#>,
+                    Explain = $"{(enable ? "启用" : "禁用")}<#=Options.Table.Remark#>[@字段说明#待完善@]."
+                });
+            });
+
+            if (!success)
+                throw ex;
+        }
+<#
+    }
+    
+    if(Functions.ContainsKey(Function.Sort))
+    {
+#>
+
+        public void Sort(Sort data)
+        {
+            if (data.Span == 0 && (data.Method != SortMethod.top || data.Method != SortMethod.low))
+                return;
+
+            var current = Repository.Where(o => o.Id == data.Id)
+                                    .ToOne(o => new
+                                    {
+                                        o.Id,
+<#
+        if(Options.Table.Tree)
+        {
+#>
+                                        o.ParentId,
+<#
+        }
+#>
+                                        o.Sort
+                                    });
+
+            if (current == default)
+                throw new MessageException("数据不存在或已被移除.");
+
+            (bool success, Exception ex) = Orm.RunTransaction(() =>
+            {
+                var target = data.Method switch
+                {
+<#
+        if(Options.Table.Tree)
+        {
+#>
+                    SortMethod.top => Repository.Where(o => o.ParentId == current.ParentId)
+                                                .OrderBy(o => o.Sort)
+<#
+        }
+        else
+        {
+#>
+                    SortMethod.top => Repository.OrderBy(o => o.Sort)
+<#
+        }
+#>
+                                                .First(o => new
+                                                {
+                                                    o.Id,
+                                                    o.Sort
+                                                }),
+<#
+        if(Options.Table.Tree)
+        {
+#>
+                    SortMethod.up => Repository.Where(o => o.ParentId == current.ParentId && o.Sort < current.Sort)
+                                                .OrderByDescending(o => o.Sort)
+<#
+        }
+        else
+        {
+#>
+                    SortMethod.up => Repository.OrderByDescending(o => o.Sort)
+<#
+        }
+#>
+                                               .First(o => new
+                                               {
+                                                   o.Id,
+                                                   o.Sort
+                                               }),
+<#
+        if(Options.Table.Tree)
+        {
+#>
+                    SortMethod.down => Repository.Where(o => o.ParentId == current.ParentId && o.Sort > current.Sort)
+                                                .OrderBy(o => o.Sort)
+<#
+        }
+        else
+        {
+#>
+                    SortMethod.down => Repository.OrderBy(o => o.Sort)
+<#
+        }
+#>
+                                                 .First(o => new
+                                                 {
+                                                     o.Id,
+                                                     o.Sort
+                                                 }),
+<#
+        if(Options.Table.Tree)
+        {
+#>
+                    SortMethod.low => Repository.Where(o => o.ParentId == current.ParentId)
+                                                .OrderByDescending(o => o.Sort)
+<#
+        }
+        else
+        {
+#>
+                    SortMethod.down => Repository.OrderByDescending(o => o.Sort)
+<#
+        }
+#>
+                                                .First(o => new
+                                                {
+                                                    o.Id,
+                                                    o.Sort
+                                                }),
+                    _ => throw new MessageException($"不支持的排序方法 {data.Method}."),
+                };
+
+                if (target == default)
+                    return;
+
+                if (Repository.UpdateDiy
+                         .Where(o => o.Id == target.Id)
+                         .Set(o => o.Sort, current.Sort)
+                         .ExecuteAffrows() < 0
+                    || Repository.UpdateDiy
+                         .Where(o => o.Id == current.Id)
+                         .Set(o => o.Sort, target.Sort)
+                         .ExecuteAffrows() < 0)
+                    throw new MessageException("<#=Options.Table.Remark#>排序失败.");
+
+                var orId = OperationRecordBusiness.Create(new Common_OperationRecord
+                {
+                    DataType = nameof(<#=Options.Table.Name#>),
+                    DataId = <#WritePrimaryField("target", " + ");#>,
+                    Explain = $"<#=Options.Table.Remark#>排序[排序方法: {data.Method}@字段说明#待完善@]."
+                });
+            });
+
+            if (!success)
+                throw ex;
+        }
+
+        public void DragSort(<#=Options.Table.Tree ? "TreeDragSort" : "DragSort"#> data)
+        {
+            if (data.Id == data.TargetId)
+                return;
+
+            var current = Repository.Where(o => o.Id == data.Id)
+                                    .ToOne(o => new
+                                    {
+                                        o.Id,
+<#
+        if(Options.Table.Tree)
+        {
+#>
+                                        o.ParentId,
+<#
+        }
+#>
+                                        o.Sort
+                                    });
+
+            if (current == default)
+                throw new MessageException("数据不存在或已被移除.");
+
+            var target = Repository.Where(o => o.Id == data.TargetId)
+                                    .ToOne(o => new
+                                    {
+                                        o.Id,
+<#
+        if(Options.Table.Tree)
+        {
+#>
+                                        o.ParentId,
+<#
+        }
+#>
+                                        o.Sort
+                                    });
+
+            if (target == default)
+                throw new MessageException("目标数据不存在.");
+
+            (bool success, Exception ex) = Orm.RunTransaction(() =>
+            {
+<#
+        if(Options.Table.Tree)
+        {
+#>
+                if (current.ParentId == target.ParentId)
+                {
+                    #region 同层级排序
+
+                    dynamic target_new;
+
+                    if (data.Append)
+                    {
+                        target_new = Repository.Where(o => o.ParentId == target.ParentId && o.Sort == target.Sort + 1)
+                                             .First(o => new
+                                             {
+                                                 o.Id,
+                                                 o.Sort
+                                             });
+                    }
+                    else
+                    {
+                        target_new = Repository.Where(o => o.ParentId == target.ParentId && o.Sort == current.Sort - 1)
+                                             .First(o => new
+                                             {
+                                                 o.Id,
+                                                 o.Sort
+                                             });
+                    }
+
+                    string target_newId = target_new.Id;
+                    int target_newSort = target_new.Sort;
+
+                    if (Repository.UpdateDiy
+                             .Where(o => o.Id == target_newId)
+                             .Set(o => o.Sort, current.Sort)
+                             .ExecuteAffrows() < 0
+                        || Repository.UpdateDiy
+                             .Where(o => o.Id == current.Id)
+                             .Set(o => o.Sort, target_newSort)
+                             .ExecuteAffrows() < 0)
+                        throw new MessageException("<#=Options.Table.Remark#>排序失败.");
+
+                    #endregion
+                }
+                else
+                {
+                    #region 异层级排序
+
+                    if (Repository.UpdateDiy
+                             .Where(o => o.ParentId == current.ParentId && o.Sort > current.Sort)
+                             .Set(o => o.Sort - 1)
+                             .ExecuteAffrows() < 0
+                        || Repository.UpdateDiy
+                             .Where(o => o.ParentId == target.ParentId && o.Sort > (data.Append == true ? target.Sort : (target.Sort - 1)))
+                             .Set(o => o.Sort + 1)
+                             .ExecuteAffrows() < 0
+                        || Repository.UpdateDiy
+                                .Where(o => o.Id == current.Id)
+                                .Set(o => o.Sort, data.Inside == true ? 0 : (data.Append == true ? (target.Sort + 1) : target.Sort))
+                                .Set(o => o.ParentId, data.Inside == true ? target.Id : target.ParentId)
+                                .Set(o => o.Level, data.Inside == true ? (target.Level + 1) : target.Level)
+                                .Set(o => o.RootId, target.RootId)
+                                .ExecuteAffrows() <= 0)
+                        throw new MessageException("<#=Options.Table.Remark#>排序失败.");
+
+                    #endregion
+                }
+<#
+        }
+        else
+        {
+#>
+                    dynamic target_new;
+
+                    if (data.Append)
+                    {
+                        target_new = Repository.Where(o => o.Sort == target.Sort + 1)
+                                             .First(o => new
+                                             {
+                                                 o.Id,
+                                                 o.Sort
+                                             });
+                    }
+                    else
+                    {
+                        target_new = Repository.Where(o => o.Sort == current.Sort - 1)
+                                             .First(o => new
+                                             {
+                                                 o.Id,
+                                                 o.Sort
+                                             });
+                    }
+
+                    string target_newId = target_new.Id;
+                    int target_newSort = target_new.Sort;
+
+                    if (Repository.UpdateDiy
+                             .Where(o => o.Id == target_newId)
+                             .Set(o => o.Sort, current.Sort)
+                             .ExecuteAffrows() < 0
+                        || Repository.UpdateDiy
+                             .Where(o => o.Id == current.Id)
+                             .Set(o => o.Sort, target_newSort)
+                             .ExecuteAffrows() < 0)
+                        throw new MessageException("<#=Options.Table.Remark#>排序失败.");
+<#
+        }
+#>
+
+                _ = OperationRecordBusiness.Create(new Common_OperationRecord
+                {
+                    DataType = nameof(<#=Options.Table.Name#>),
+                    DataId = <#WritePrimaryField("target", " + ");#>,
+                    Explain = $"<#=Options.Table.Remark#>拖动排序[@字段说明#待完善@]."
+                });
+            });
+
+            if (!success)
+                throw ex;
+        }
+<#
+    }
+    
+    if(Functions.ContainsKey(Function.Import))
+    {
+#>
+
+        public Task DownloadTemplate(string version = ExcelVersion.xlsx, bool autogenerateTemplate = false)
+        {
+            if(autogenerateTemplate)
+            {
+                #region 直接发送预制模板
+
+                var response = HttpContextAccessor.HttpContext.Response;
+                response.Headers.Add("Content-Disposition", $"attachment; filename=\"{UrlEncoder.Default.Encode("<#=Options.Table.Remark#>导入模板")}.{version}\"");
+                var filePath = PathHelper.GetAbsolutePath($"~/template/<#=Options.Table.Remark#>导入模板.{version}");
+                if (!File.Exists(filePath))
+                {
+                    response.StatusCode = StatusCodes.Status404NotFound;
+                    throw new MessageException("模板文件不存在或已被移除.");
+                }
+                await response.SendFileAsync(filePath);
+
+                #endregion
+            }
+            else
+            {
+                #region 自动生成模板
+
+                var table = new DataTable("<#=Options.Table.Remark#>导入模板");
+
+                typeof(<#=Options.Table.Name#>)
+                    .GetProperties()
+                    .ForEach(o =>
+                    {
+                        if (!o.HasTag(typeof(<#=Functions[Function.Import]#>).GetMainTag()))
+                            return;
+
+                        var attr = o.GetCustomAttribute<DescriptionAttribute>();
+                        if (attr == null)
+                            return;
+
+                        table.Columns.Add(attr.Description, o.PropertyType);
+                    });
+
+                var bytes = table.DataTableToExcelBytes(true, version == ExcelVersion.xlsx);
+                response.StatusCode = StatusCodes.Status200OK;
+                response.ContentType = "application/octet-stream";
+                response.ContentLength = bytes.Length;
+                response.Body.Write(bytes);
+
+                #endregion
+            }
+        }
+
+        public ImportResult Import(IFormFile file, bool autogenerateTemplate = false)
+        {
+            DataTable table;
+
+            try
+            {
+                table = file.OpenReadStream()
+                                .ReadExcel(true, file.ContentType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", 1);
+            }
+            catch (Exception _ex)
+            {
+                throw new MessageException("导入失败, 文件有误（请检查格式）.", _ex);
+            }
+
+            var entityList = new List<<#=Options.Table.Name#>>();
+
+            var errors = new List<ErrorInfo>();
+
+            for (int i = 0; i < table.Rows.Count; i++)
+            {
+                var row = table.Rows[i];
+                var entity = new <#=Options.Table.Name#>();
+
+                var _errors = new List<ErrorInfo>();
+
+                entity.GetType().GetProperties().ForEach(o =>
+                {
+                    if (!o.HasTag(typeof(<#=Functions[Function.Import]#>).GetMainTag()))
+                        return;
+
+                    var attr = o.GetCustomAttribute<DescriptionAttribute>();
+                    if (attr == null)
+                        return;
+
+                    if (!table.Columns.Contains(attr.Description))
+                    {
+                        _errors.Add(new ErrorInfo(i + 3, attr.Description, "未找到该列。"));
+                        return;
+                    }
+
+                    try
+                    {
+                        if (o.PropertyType == typeof(bool))
+                            o.SetValue(entity, row[attr.Description].ToString() == "是");
+                        else if (o.PropertyType == typeof(string))
+                        {
+                            var attrColumn = o.GetCustomAttribute<ColumnAttribute>();
+                            if (attrColumn == null)
+                                return;
+
+                            var value = row[attr.Description].ToString();
+                            if (Encoding.ASCII.GetBytes(value).Sum(c => c == 63 ? 2 : 1) > attrColumn.StringLength)
+                            {
+                                _errors.Add(new ErrorInfo(i + 3, attr.Description, $"数据长度过长, 不可超过{attrColumn.StringLength}个字符（其中每个中文占两个字符）。"));
+                                return;
+                            }
+                            o.SetValue(entity, value);
+                        }
+                        else
+                            o.SetValue(entity, row[attr.Description].ChangeType(o.PropertyType));
+                    }
+                    catch (Exception ex)
+                    {
+                        _errors.Add(new ErrorInfo(i + 3, attr.Description, "数据格式有误。"));
+                    }
+                });
+
+                if (_errors.Any())
+                {
+                    errors.AddRange(_errors);
+                    continue;
+                }
+
+                //@数据验证#待完善@
+<#
+        foreach (var field in RequiredKeys)
+        {
+            var i = 0;
+#>
+
+                <#=i > 0 ? "if" : "else if"#> (entity.<#=field.Name#>.IsNullOrWhiteSpace())
+                {
+                    errors.Add(new ErrorInfo(i + 3, "<#=field.Remark#>", "内容不能为空。"));
+                    continue;
+                }
+<#
+            i++;
+        }
+#>
+
+                entityList.Add(entity);
+            }
+
+            if (errors.Any())
+                return new ImportResult(errors);
+
+            (bool success, Exception ex) = Orm.RunTransaction(() =>
+            {
+                var newDataList = new List<<#=Options.Table.Name#>>();
+                var editDataList = new List<<#=Options.Table.Name#>>();
+            
+                var orList = new List<Common_OperationRecord>();
+
+                entityList.ForEach(entity =>
+                {
+                    //@数据匹配#待完善@
+                    //var idSelect = Repository.Where(o => o.Name == entity.Name);
+                    //if (idSelect.Any())
+                    //{
+                    //    entity.Id = idSelect.ToOne(o => o.Id);
+                    //    editDataList.Add(entity.ModifyEntity());
+                    //
+                    //    orList.Add(new Common_OperationRecord
+                    //    {
+                    //        DataType = nameof(<#=Options.Table.Name#>),
+                    //        DataId = <#WritePrimaryField("entity", " + ");#>,
+                    //        Explain = $"导入数据（更新）<#=Options.Table.Remark#>[@字段说明#待完善@]."
+                    //    });
+                    //}
+                    //else
+                    //{
+                    //    newDataList.Add(entity.InitEntity());
+                    //
+                    //    orList.Add(new Common_OperationRecord
+                    //    {
+                    //        DataType = nameof(<#=Options.Table.Name#>),
+                    //        DataId = <#WritePrimaryField("entity", " + ");#>,
+                    //        Explain = $"导入数据（新增）<#=Options.Table.Remark#>[@字段说明#待完善@]."
+                    //    });
+                    //}
+                });
+
+                if (editDataList.Any())
+                    if (Repository.UpdateDiy
+                         .SetSource(editDataList)
+                         .UpdateColumns(typeof(<#=Functions[Function.Import]#>).GetNamesWithTagAndOther(false, "_Edit").ToArray())
+                         .ExecuteAffrows() <= 0)
+                        throw new ApplicationException("<#=Options.Table.Remark#>更改失败.");
+
+                if (newDataList.Any())
+                    Repository.Insert(newDataList);
+
+                var orIds = OperationRecordBusiness.Create(orList);
+            });
+
+            if (!success)
+                throw new ApplicationException("<#=Options.Table.Remark#>导入失败.", ex);
+
+            return new ImportResult(newDataList.Count, editDataList.Count, errors);
+        }
+<#
+    }
+    
+    if(Functions.ContainsKey(Function.Export))
+    {
+#>
+
+        public void Export(string version = ExcelVersion.xlsx, string paginationJson = null)
+        {
+            PaginationDTO pagination;
+            if (!paginationJson.IsNullOrWhiteSpace())
+                pagination = paginationJson.ToObject<PaginationDTO>();
+            else
+                pagination = new PaginationDTO { PageIndex = -1 };
+
+            var list = GetList(pagination);
+
+            //动态生成模板
+            var table = new DataTable("<#=Options.Table.Remark#>");
+
+            var propDic = new Dictionary<string, PropertyInfo>();
+
+            //生成列
+            typeof(<#=Options.Table.Name#>)
+                .GetProperties()
+                .ForEach(o =>
+                {
+                    if (!o.HasTag(typeof(<#=Functions[Function.Export]#>).GetMainTag()))
+                        return;
+
+                    var attr = o.GetCustomAttribute<DescriptionAttribute>();
+                    if (attr == null)
+                        return;
+
+                    propDic.Add(attr.Description, o);
+                    table.Columns.Add(attr.Description, typeof(string));
+                });
+
+            //生成数据
+            list?.ForEach(o =>
+            {
+                var row = table.NewRow();
+
+                propDic.ForEach(d =>
+                {
+                    var value = d.Value.GetValue(o);
+                    if (value == null)
+                        return;
+
+                    if (d.Value.PropertyType == typeof(bool))
+                        row[d.Key] = (bool)value == true ? "是" : "否";
+                    else if (d.Key.Contains("附件"))
+                        row[d.Key] = string.Join(" \r\n",
+                                                value.ToString()
+                                                .Split(',')
+                                                .Select(e => $"{Config.WebRootUrl}/file/download/{e}"));
+                    else if (d.Value.PropertyType == typeof(DateTime) || d.Value.PropertyType == typeof(DateTime?))
+                    {
+                        var attr = d.Value.GetCustomAttribute<JsonConverterAttribute>();
+                        if (attr == null)
+                            row[d.Key] = ((DateTime)value).ToString("yyyy-MM-dd");
+                        else
+                            row[d.Key] = ((DateTime)value).ToString((string)attr.ConverterParameters[0]);
+                    }
+                    else
+                        row[d.Key] = value.ToJson().TrimStart('"').TrimEnd('"');
+                });
+
+                table.Rows.Add(row);
+            });
+
+            var bytes = table.DataTableToExcelBytes(true, version == ExcelVersion.xlsx);
+
+            var response = HttpContextAccessor.HttpContext.Response;
+            response.Headers.Add("Content-Disposition", $"attachment; filename=\"{UrlEncoder.Default.Encode("<#=Options.Table.Remark#>")}.{version}\"");
+            response.StatusCode = StatusCodes.Status200OK;
+            response.ContentType = "application/octet-stream";
+            response.ContentLength = bytes.Length;
+            response.Body.Write(bytes);
+        }
+<#
+    }
+#>
+
+        #endregion
+    }
+}
+
+<#+
+    /// <summary>
+    /// 主键元祖参数
+    /// </summary>
+    private void WritePrimaryTupleParams()
+    {
+        var i = 0;
+
+        if(PrimaryKeys.Count > 1)
+        {
+#>(<#+
+        }
+
+        foreach (var field in PrimaryKeys)
+        {
+#><#=i > 0 ? ", " : ""#><#=field.Type#><#+
+            i++;
+        }
+
+        if(PrimaryKeys.Count > 1)
+        {
+#>)<#+
+        }
+    }
+
+    /// <summary>
+    /// 主键元祖参数名称
+    /// </summary>
+    private void WritePrimaryTupleParamsName()
+    {
+        var i = 0;
+
+        if(PrimaryKeys.Count > 1)
+        {
+#>(<#+
+        }
+
+        foreach (var field in PrimaryKeys)
+        {
+#><#=i > 0 ? ", " : ""#><#=field.Name.ToLower()#><#+
+            i++;
+        }
+
+        if(PrimaryKeys.Count > 1)
+        {
+#>)<#+
+        }
+    }
+
+    /// <summary>
+    /// 主键字段拼接
+    /// </summary>
+    private void WritePrimaryField(string obj, string symbol)
+    {
+        var i = 0;
+        foreach (var field in PrimaryKeys)
+        {
+#><#=i > 0 ? symbol : ""#><#=obj#>.<#=field.Name#><#+
+            i++;
+        }
+    }
+
+    /// <summary>
+    /// 主键参数
+    /// </summary>
+    private void WritePrimaryParams()
+    {
+        var i = 0;
+        foreach (var field in PrimaryKeys)
+        {
+#><#=i > 0 ? ", " : ""#><#=field.Type#> <#=field.Name.ToLower()#><#+
+            i++;
+        }
+    }
+
+    /// <summary>
+    /// 主键字段Linq拼接
+    /// </summary>
+    private void WritePrimaryFieldLinq(string obj)
+    {
+        var i = 0;
+        foreach (var field in PrimaryKeys)
+        {
+#><#=i > 0 ? " && " : ""#><#=obj#>.<#=field.Name#> == <#=field.Name.ToLower()#><#+
+            i++;
+        }
+    }
+#>

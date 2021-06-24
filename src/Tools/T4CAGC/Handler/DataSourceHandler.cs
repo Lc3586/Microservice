@@ -21,6 +21,17 @@ namespace T4CAGC.Handler
         #region 私有成员
 
         /// <summary>
+        /// 分析名称
+        /// </summary>
+        /// <param name="table">数据表信息</param>
+        static void AnalysisName(this TableInfo table)
+        {
+            var index = table.Name.IndexOf('_');
+            table.ModuleName = table.Name.Substring(0, index);
+            table.ReducedName = table.Name[(index + 1)..];
+        }
+
+        /// <summary>
         /// 是否存在
         /// </summary>
         /// <param name="value"></param>
@@ -28,7 +39,7 @@ namespace T4CAGC.Handler
         /// <returns></returns>
         static bool Exist(this string value, string keyword)
         {
-            return value.Contains($"${keyword}");
+            return value == $"${keyword}" || value.Contains($"${keyword}[");
         }
 
         /// <summary>
@@ -183,29 +194,47 @@ namespace T4CAGC.Handler
                     for (; columnIndex < columnsCount; columnIndex++)
                     {
                         var value = tables.Rows[rowIndex][columnIndex].ToString();
-                        if (value.Exist(SettingKeyword.表))
-                        {
+
+                        if (value.Exist(SettingKeyword.普通表))
                             tableInfo = new TableInfo();
+                        else if (value.Exist(SettingKeyword.FreeSql表))
+                            tableInfo = new TableInfo { FreeSql = true };
+                        else if (value.Exist(SettingKeyword.Elasticsearch字段属性))
+                            tableInfo = new TableInfo { Elasticsearch = true };
+                        else if (value.Exist(SettingKeyword.树状结构表))
+                            tableInfo = new TableInfo { Tree = true };
+                        else
+                            continue;
 
-                            if (!value.TryMatch(SettingKeyword.表, out string tableName, out string remark))
-                            {
-                                if (!value.TryMatch(SettingKeyword.树状结构表, out tableName, out remark))
-                                    SettingKeyword.表.SettingException();
-
+                        if (!value.TryMatch(SettingKeyword.普通表, out string tableName, out string remark))
+                        {
+                            if (value.TryMatch(SettingKeyword.树状结构表, out tableName, out remark))
                                 tableInfo.Tree = true;
+                            else
+                            {
+                                if (value.TryMatch(SettingKeyword.FreeSql表, out tableName, out remark))
+                                    tableInfo.FreeSql = true;
+                                else
+                                {
+                                    if (value.TryMatch(SettingKeyword.Elasticsearch表, out tableName, out remark))
+                                        tableInfo.Elasticsearch = true;
+                                    else
+                                        SettingKeyword.普通表.SettingException();
+                                }
                             }
-
-                            if (specifyTable?.Contains(tableName) == false
-                                || ignoreTable?.Contains(tableName) == true
-                                || tableInfos.Any(o => o.Name == tableName))
-                                //未指定的表 或者 忽略的表 或者 冗余数据
-                                continue;
-
-                            tableInfo.Name = tableName;
-                            tableInfo.Remark = remark;
-
-                            return true;
                         }
+
+                        if (specifyTable?.Contains(tableName) == false
+                            || ignoreTable?.Contains(tableName) == true
+                            || tableInfos.Any(o => o.Name == tableName))
+                            //未指定的表 或者 忽略的表 或者 冗余数据
+                            continue;
+
+                        tableInfo.Name = tableName;
+                        tableInfo.AnalysisName();
+                        tableInfo.Remark = remark;
+
+                        return true;
                     }
 
                     if (columnIndex == columnsCount)
@@ -239,9 +268,13 @@ namespace T4CAGC.Handler
                             //无效内容
                             continue;
 
-                        if (value.Exist(SettingKeyword.表))
+                        if (value.Exist(SettingKeyword.普通表)
+                            || value.Exist(SettingKeyword.FreeSql表)
+                            || value.Exist(SettingKeyword.Elasticsearch字段属性))
                         {
-                            if (value.Exist(SettingKeyword.表, tableInfo.Name))
+                            if (value.Exist(SettingKeyword.普通表, tableInfo.Name)
+                                || value.Exist(SettingKeyword.FreeSql表, tableInfo.Name)
+                                || value.Exist(SettingKeyword.Elasticsearch字段属性, tableInfo.Name))
                                 //冗余数据
                                 continue;
                             else
@@ -302,9 +335,13 @@ namespace T4CAGC.Handler
                             //无效内容
                             continue;
 
-                        if (value.Exist(SettingKeyword.表))
+                        if (value.Exist(SettingKeyword.普通表)
+                            || value.Exist(SettingKeyword.FreeSql表)
+                            || value.Exist(SettingKeyword.Elasticsearch字段属性))
                         {
-                            if (value.Exist(SettingKeyword.表, tableInfo.Name))
+                            if (value.Exist(SettingKeyword.普通表, tableInfo.Name)
+                                || value.Exist(SettingKeyword.FreeSql表, tableInfo.Name)
+                                || value.Exist(SettingKeyword.Elasticsearch字段属性, tableInfo.Name))
                                 //冗余数据
                                 continue;
                             else
@@ -362,7 +399,8 @@ namespace T4CAGC.Handler
                                 if (!value.TryMatch(SettingKeyword.类型, out string dataType))
                                     SettingKeyword.索引.SettingException();
 
-                                fieldInfo.DataType = dataType.GetCsType();
+                                fieldInfo.Type = dataType;
+                                fieldInfo.CsType = dataType.GetCsType();
                             }
                             else if (value.Exist(SettingKeyword.长度))
                             {
@@ -397,21 +435,35 @@ namespace T4CAGC.Handler
                                 if (!value.TryMatch(SettingKeyword.标签, out string tags))
                                     SettingKeyword.标签.SettingException();
 
-                                fieldInfo.Tag = tags.Split(',').ToList();
+                                fieldInfo.Tags = tags.Split(',').ToList();
                             }
-                            else if (value.Exist(SettingKeyword.接口框架数据格式化))
+                            else if (value.Exist(SettingKeyword.接口架构属性))
                             {
-                                if (!value.TryMatch(SettingKeyword.接口框架数据格式化, out string oasf))
-                                    SettingKeyword.接口框架数据格式化.SettingException();
+                                if (!value.TryMatch(SettingKeyword.接口架构属性, out string oas))
+                                    SettingKeyword.接口架构属性.SettingException();
 
-                                fieldInfo.OASF = oasf;
+                                fieldInfo.OAS = oas.Split(',');
+                            }
+                            else if (value.Exist(SettingKeyword.接口架构时间格式化))
+                            {
+                                if (!value.TryMatch(SettingKeyword.接口架构时间格式化, out string oasdtf))
+                                    SettingKeyword.接口架构时间格式化.SettingException();
+
+                                fieldInfo.OASDTF = oasdtf;
+                            }
+                            else if (value.Exist(SettingKeyword.Elasticsearch字段属性))
+                            {
+                                if (!value.TryMatch(SettingKeyword.Elasticsearch字段属性, out string nest))
+                                    SettingKeyword.Elasticsearch字段属性.SettingException();
+
+                                fieldInfo.NEST = nest;
                             }
                             else if (value.Exist(SettingKeyword.映射))
                             {
                                 if (!value.TryMatch(SettingKeyword.映射, out string mapType, out string mapField))
                                     SettingKeyword.映射.SettingException();
 
-                                fieldInfo.Map.Add(mapType.GetCsType(), mapField);
+                                fieldInfo.Maps.Add(mapType.GetCsType(), mapField);
                             }
                             else if (value.Exist(SettingKeyword.常量))
                             {
@@ -420,10 +472,10 @@ namespace T4CAGC.Handler
                                     if (!value.TryMatch(SettingKeyword.常量, out @const))
                                         SettingKeyword.常量.SettingException();
 
-                                    @const.Split(',').ForEach(o => fieldInfo.Const.Add(o, o));
+                                    @const.Split(',').ForEach(o => fieldInfo.Consts.Add(o, o));
                                 }
                                 else
-                                    fieldInfo.Const.Add(@const, constValue);
+                                    fieldInfo.Consts.Add(@const, constValue);
                             }
                             else if (value.Exist(SettingKeyword.枚举))
                             {
@@ -432,10 +484,10 @@ namespace T4CAGC.Handler
                                     if (!value.TryMatch(SettingKeyword.枚举, out @enum))
                                         SettingKeyword.枚举.SettingException();
 
-                                    @enum.Split(',').ForEach(o => fieldInfo.Enum.Add(o, null));
+                                    @enum.Split(',').ForEach(o => fieldInfo.Enums.Add(o, null));
                                 }
                                 else
-                                    fieldInfo.Enum.Add(@enum, enumValue.ToInt());
+                                    fieldInfo.Enums.Add(@enum, enumValue.ToInt());
                             }
 
                             #endregion
@@ -532,10 +584,27 @@ namespace T4CAGC.Handler
                     for (; columnIndex < columnsCount; columnIndex++)
                     {
                         var value = tables.Rows[rowIndex][columnIndex].ToString();
-                        if (value.Exist(SettingKeyword.表))
+                        if (value.Exist(SettingKeyword.普通表))
                         {
-                            if (!value.TryMatch(SettingKeyword.表, out string tableName, out string remark))
-                                SettingKeyword.表.SettingException();
+                            tableInfo = new TableInfo();
+
+                            if (!value.TryMatch(SettingKeyword.普通表, out string tableName, out string remark))
+                            {
+                                if (value.TryMatch(SettingKeyword.树状结构表, out tableName, out remark))
+                                    tableInfo.Tree = true;
+                                else
+                                {
+                                    if (value.TryMatch(SettingKeyword.FreeSql表, out tableName, out remark))
+                                        tableInfo.FreeSql = true;
+                                    else
+                                    {
+                                        if (value.TryMatch(SettingKeyword.Elasticsearch表, out tableName, out remark))
+                                            tableInfo.Elasticsearch = true;
+                                        else
+                                            SettingKeyword.普通表.SettingException();
+                                    }
+                                }
+                            }
 
                             if (specifyTable?.Contains(tableName) == false
                                 || ignoreTable?.Contains(tableName) == true
@@ -543,12 +612,9 @@ namespace T4CAGC.Handler
                                 //未指定的表 或者 忽略的表 或者 冗余数据
                                 continue;
 
-                            tableInfo = new TableInfo
-                            {
-                                Name = tableName,
-                                Remark = remark,
-                                Fields = new List<FieldInfo>()
-                            };
+                            tableInfo.Name = tableName;
+                            tableInfo.AnalysisName();
+                            tableInfo.Remark = remark;
 
                             return true;
                         }
@@ -585,9 +651,9 @@ namespace T4CAGC.Handler
                             //无效内容
                             continue;
 
-                        if (value.Exist(SettingKeyword.表))
+                        if (value.Exist(SettingKeyword.普通表))
                         {
-                            if (value.Exist(SettingKeyword.表, tableInfo.Name))
+                            if (value.Exist(SettingKeyword.普通表, tableInfo.Name))
                                 //冗余数据
                                 continue;
                             else
@@ -648,9 +714,9 @@ namespace T4CAGC.Handler
                             //无效内容
                             continue;
 
-                        if (value.Exist(SettingKeyword.表))
+                        if (value.Exist(SettingKeyword.普通表))
                         {
-                            if (value.Exist(SettingKeyword.表, tableInfo.Name))
+                            if (value.Exist(SettingKeyword.普通表, tableInfo.Name))
                                 //冗余数据
                                 continue;
                             else
@@ -708,7 +774,8 @@ namespace T4CAGC.Handler
                                 if (!value.TryMatch(SettingKeyword.类型, out string dataType))
                                     SettingKeyword.索引.SettingException();
 
-                                fieldInfo.DataType = dataType.GetCsType();
+                                fieldInfo.Type = dataType;
+                                fieldInfo.CsType = dataType.GetCsType();
                             }
                             else if (value.Exist(SettingKeyword.长度))
                             {
@@ -743,14 +810,28 @@ namespace T4CAGC.Handler
                                 if (!value.TryMatch(SettingKeyword.标签, out string tags))
                                     SettingKeyword.标签.SettingException();
 
-                                fieldInfo.Tag = tags.Split(',').ToList();
+                                fieldInfo.Tags = tags.Split(',').ToList();
                             }
-                            else if (value.Exist(SettingKeyword.接口框架数据格式化))
+                            else if (value.Exist(SettingKeyword.接口架构属性))
                             {
-                                if (!value.TryMatch(SettingKeyword.接口框架数据格式化, out string oasf))
-                                    SettingKeyword.接口框架数据格式化.SettingException();
+                                if (!value.TryMatch(SettingKeyword.接口架构属性, out string oas))
+                                    SettingKeyword.接口架构属性.SettingException();
 
-                                fieldInfo.OASF = oasf;
+                                fieldInfo.OAS = oas.Split(',');
+                            }
+                            else if (value.Exist(SettingKeyword.接口架构时间格式化))
+                            {
+                                if (!value.TryMatch(SettingKeyword.接口架构时间格式化, out string oasdtf))
+                                    SettingKeyword.接口架构时间格式化.SettingException();
+
+                                fieldInfo.OASDTF = oasdtf;
+                            }
+                            else if (value.Exist(SettingKeyword.Elasticsearch字段属性))
+                            {
+                                if (!value.TryMatch(SettingKeyword.Elasticsearch字段属性, out string nest))
+                                    SettingKeyword.Elasticsearch字段属性.SettingException();
+
+                                fieldInfo.NEST = nest;
                             }
 
                             #endregion
@@ -839,7 +920,8 @@ namespace T4CAGC.Handler
                                     Name = column.Name,
                                     Remark = column.Coment,
                                     DbType = column.DbTypeText,
-                                    DataType = column.CsType,
+                                    Type = column.CsType.Name,
+                                    CsType = column.CsType,
                                     Primary = column.IsPrimary,
                                     Nullable = column.IsNullable,
                                     Length = column.MaxLength
@@ -849,6 +931,8 @@ namespace T4CAGC.Handler
                             })
                             .ToList()
                     };
+
+                    tableInfo.AnalysisName();
 
                     return tableInfo;
                 })

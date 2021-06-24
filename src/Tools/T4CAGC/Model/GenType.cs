@@ -6,28 +6,52 @@
     public enum GenType
     {
         /// <summary>
-        /// 全部
+        /// 完整项目
         /// </summary>
-        All,
+        CompleteProject,
         /// <summary>
-        /// 接口项目
+        /// 小型项目
         /// </summary>
-        Api,
+        SmallProject,
         /// <summary>
-        /// 业务类库
+        /// 充实项目
+        /// </summary>
+        EnrichmentProject,
+        /// <summary>
+        /// 控制器类
+        /// </summary>
+        Controller,
+        /// <summary>
+        /// 业务实现类
+        /// </summary>
+        Implementation,
+        /// <summary>
+        /// 业务接口类
+        /// </summary>
+        Interface,
+        /// <summary>
+        /// 业务实现类&业务接口类
         /// </summary>
         Business,
         /// <summary>
-        /// 业务模型类库
+        /// 业务模型类
+        /// </summary>
+        DTO,
+        /// <summary>
+        /// 常量定义类
+        /// </summary>
+        Const,
+        /// <summary>
+        /// 枚举定义类
+        /// </summary>
+        Enum,
+        /// <summary>
+        /// 业务模型类&常量定义类&枚举定义类
         /// </summary>
         Model,
         /// <summary>
-        /// 实体类库
+        /// 实体模型类
         /// </summary>
-        Entity,
-        /// <summary>
-        /// 单个项目
-        /// </summary>
-        Single
+        Entity
     }
 }
