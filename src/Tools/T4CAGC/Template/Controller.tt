@@ -43,14 +43,14 @@ namespace Api.Controllers
 #>
 
         /// <summary>
-        /// 获取<#=field.Remark#>集合
+        /// 获取所有<#=field.Remark#>
         /// </summary>
         /// <returns></returns>
-        [HttpPost("<#=field.Name.ToLower()#>-list")]
+        [HttpPost("all-<#=field.Name.ToLower()#>")]
         [SwaggerResponse((int)HttpStatusCode.OK, "<#=field.Remark#>", typeof(List<string>))]
-        public async Task<object> Get<#=field.Name#>List()
+        public async Task<object> GetAll<#=field.Name#>()
         {
-            return await Task.FromResult(Success(<#=Options.Table.ReducedName#>Business.Get<#=field.Name#>List()));
+            return await Task.FromResult(Success(<#=Options.Table.ReducedName#>Business.GetAll<#=field.Name#>()));
         }
 <#
         }
@@ -60,14 +60,14 @@ namespace Api.Controllers
 #>
 
         /// <summary>
-        /// 获取<#=field.Remark#>字典
+        /// 获取所有<#=field.Remark#>
         /// </summary>
         /// <returns></returns>
-        [HttpPost("<#=field.Name.ToLower()#>-dic")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "<#=field.Remark#>", typeof(Dictionary<string, int>))]
-        public async Task<object> Get<#=field.Name#>Dic()
+        [HttpPost("all-<#=field.Name.ToLower()#>")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "{名称: 值}", typeof(Dictionary<string, string>))]
+        public async Task<object> GetAll<#=field.Name#>()
         {
-            return await Task.FromResult(Success(<#=Options.Table.ReducedName#>Business.Get<#=field.Name#>Dic()));
+            return await Task.FromResult(Success(<#=Options.Table.ReducedName#>Business.GetAll<#=field.Name#>()));
         }
 <#
         }

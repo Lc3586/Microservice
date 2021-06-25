@@ -50,9 +50,9 @@ namespace T4CAGC.Template
             #line default
             #line hidden
             this.Write("≣|\r\n|*\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tby  LCTR\t\t   ≣|\r\n|* ___________________________________" +
-                    "_____________________________________________________________≣|\r\n\\*/\r\n");
+                    "_____________________________________________________________≣|\r\n\\*/\r\n\r\n\r\n\r\n");
             
-            #line 11 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
+            #line 14 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
 
 	foreach (var @namespace in NameSpaces?.OrderBy(o => o))
 	{
@@ -62,14 +62,14 @@ namespace T4CAGC.Template
             #line hidden
             this.Write("using ");
             
-            #line 15 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
+            #line 18 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
             this.Write(this.ToStringHelper.ToStringWithCulture(@namespace));
             
             #line default
             #line hidden
             this.Write(";\r\n");
             
-            #line 16 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
+            #line 19 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
 
 	}
 
@@ -173,49 +173,50 @@ namespace T4CAGC.Template
             
             #line default
             #line hidden
-            this.Write("\r\n        /// <summary>\r\n        /// 获取");
+            this.Write("\r\n        /// <summary>\r\n        /// 获取所有");
             
             #line 46 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(field.Remark));
             
             #line default
             #line hidden
-            this.Write("集合\r\n        /// </summary>\r\n        /// <returns></returns>\r\n        [HttpPost(\"");
+            this.Write("\r\n        /// </summary>\r\n        /// <returns></returns>\r\n        [HttpPost(\"all" +
+                    "-");
             
             #line 49 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(field.Name.ToLower()));
             
             #line default
             #line hidden
-            this.Write("-list\")]\r\n        [SwaggerResponse((int)HttpStatusCode.OK, \"");
+            this.Write("\")]\r\n        [SwaggerResponse((int)HttpStatusCode.OK, \"");
             
             #line 50 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(field.Remark));
             
             #line default
             #line hidden
-            this.Write("\", typeof(List<string>))]\r\n        public async Task<object> Get");
+            this.Write("\", typeof(List<string>))]\r\n        public async Task<object> GetAll");
             
             #line 51 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(field.Name));
             
             #line default
             #line hidden
-            this.Write("List()\r\n        {\r\n            return await Task.FromResult(Success(");
+            this.Write("()\r\n        {\r\n            return await Task.FromResult(Success(");
             
             #line 53 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName));
             
             #line default
             #line hidden
-            this.Write("Business.Get");
+            this.Write("Business.GetAll");
             
             #line 53 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(field.Name));
             
             #line default
             #line hidden
-            this.Write("List()));\r\n        }\r\n");
+            this.Write("()));\r\n        }\r\n");
             
             #line 55 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 
@@ -227,49 +228,44 @@ namespace T4CAGC.Template
             
             #line default
             #line hidden
-            this.Write("\r\n        /// <summary>\r\n        /// 获取");
+            this.Write("\r\n        /// <summary>\r\n        /// 获取所有");
             
             #line 63 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(field.Remark));
             
             #line default
             #line hidden
-            this.Write("字典\r\n        /// </summary>\r\n        /// <returns></returns>\r\n        [HttpPost(\"");
+            this.Write("\r\n        /// </summary>\r\n        /// <returns></returns>\r\n        [HttpPost(\"all" +
+                    "-");
             
             #line 66 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(field.Name.ToLower()));
             
             #line default
             #line hidden
-            this.Write("-dic\")]\r\n        [SwaggerResponse((int)HttpStatusCode.OK, \"");
-            
-            #line 67 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(field.Remark));
-            
-            #line default
-            #line hidden
-            this.Write("\", typeof(Dictionary<string, int>))]\r\n        public async Task<object> Get");
+            this.Write("\")]\r\n        [SwaggerResponse((int)HttpStatusCode.OK, \"{名称: 值}\", typeof(Dictionar" +
+                    "y<string, string>))]\r\n        public async Task<object> GetAll");
             
             #line 68 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(field.Name));
             
             #line default
             #line hidden
-            this.Write("Dic()\r\n        {\r\n            return await Task.FromResult(Success(");
+            this.Write("()\r\n        {\r\n            return await Task.FromResult(Success(");
             
             #line 70 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName));
             
             #line default
             #line hidden
-            this.Write("Business.Get");
+            this.Write("Business.GetAll");
             
             #line 70 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(field.Name));
             
             #line default
             #line hidden
-            this.Write("Dic()));\r\n        }\r\n");
+            this.Write("()));\r\n        }\r\n");
             
             #line 72 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 

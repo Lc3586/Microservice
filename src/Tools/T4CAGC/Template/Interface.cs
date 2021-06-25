@@ -49,9 +49,9 @@ namespace T4CAGC.Template
             #line default
             #line hidden
             this.Write("≣|\r\n|*\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tby  LCTR\t\t   ≣|\r\n|* ___________________________________" +
-                    "_____________________________________________________________≣|\r\n\\*/\r\n");
+                    "_____________________________________________________________≣|\r\n\\*/\r\n\r\n\r\n\r\n");
             
-            #line 11 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
+            #line 14 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
 
 	foreach (var @namespace in NameSpaces?.OrderBy(o => o))
 	{
@@ -61,14 +61,14 @@ namespace T4CAGC.Template
             #line hidden
             this.Write("using ");
             
-            #line 15 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
+            #line 18 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
             this.Write(this.ToStringHelper.ToStringWithCulture(@namespace));
             
             #line default
             #line hidden
             this.Write(";\r\n");
             
-            #line 16 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
+            #line 19 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
 
 	}
 
@@ -108,22 +108,22 @@ namespace T4CAGC.Template
             
             #line default
             #line hidden
-            this.Write("\r\n        /// <summary>\r\n        /// 获取");
+            this.Write("\r\n        /// <summary>\r\n        /// 获取所有");
             
             #line 23 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(field.Remark));
             
             #line default
             #line hidden
-            this.Write("集合\r\n        /// </summary>\r\n        /// <returns></returns>\r\n        List<string>" +
-                    " Get");
+            this.Write("\r\n        /// </summary>\r\n        /// <returns></returns>\r\n        List<string> G" +
+                    "etAll");
             
             #line 26 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(field.Name));
             
             #line default
             #line hidden
-            this.Write("List();\r\n");
+            this.Write("();\r\n");
             
             #line 27 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 
@@ -135,22 +135,22 @@ namespace T4CAGC.Template
             
             #line default
             #line hidden
-            this.Write("\r\n        /// <summary>\r\n        /// 获取");
+            this.Write("\r\n        /// <summary>\r\n        /// 获取所有");
             
             #line 35 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(field.Remark));
             
             #line default
             #line hidden
-            this.Write("字典\r\n        /// </summary>\r\n        /// <returns></returns>\r\n        Dictionary<s" +
-                    "tring, int> Get");
+            this.Write("字典\r\n        /// </summary>\r\n        /// <returns>{名称: 值}</returns>\r\n        Dicti" +
+                    "onary<string, string> GetAll");
             
             #line 38 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(field.Name));
             
             #line default
             #line hidden
-            this.Write("Dic();\r\n");
+            this.Write("();\r\n");
             
             #line 39 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 

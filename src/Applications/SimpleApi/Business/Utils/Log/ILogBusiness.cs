@@ -22,13 +22,13 @@ namespace Business.Utils.Log
         /// 获取所有日志级别
         /// </summary>
         /// <returns></returns>
-        public List<string> GetLogLevels();
+        List<string> GetLogLevels();
 
         /// <summary>
         /// 获取所有日志类型
         /// </summary>
         /// <returns></returns>
-        public List<string> GetLogTypes();
+        List<string> GetLogTypes();
 
         /// <summary>
         /// 获取日志文件列表

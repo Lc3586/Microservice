@@ -1,0 +1,132 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>自动生成代码</title>
+    <script src="../../vue/vue.global.prod.js"></script>
+
+    <script src="../../utils/axios.min.js"></script>
+
+    <link href="../../element-plus/theme-chalk/element-plus.index.css" rel="stylesheet" />
+    <script src="../../element-plus/element-plus.index.full.js"></script>
+    <script src="../../element-plus/element-plus.es.js"></script>
+    <script src="../../element-plus/element-plus.zh-cn.js"></script>
+    <script src="../../element-plus/dayjs.zh-cn.js"></script>
+
+    <script src="../../utils/signalr.min.js"></script>
+
+    <script src="../../utils/lodash.min.js"></script>
+
+    <link href="cagc.css" rel="stylesheet" />
+    <script src="cagc.js"></script>
+</head>
+<body>
+    <div id="app">
+        <el-container class="full_container" v-loading="loading">
+            <el-header><i :class="overall.state"></i><span class="overall_title">{{overall.title}}</span> <span class="overall_explain">{{overall.explain}}</span></el-header>
+            <el-container class="main_container">
+                <el-tabs tab-position="left" v-model="config.configType" @tab-click="tabsChanged">
+                    <el-tab-pane label="默认配置" class="output_pane" name="Default" v-loading="output.loading">
+                        <div class="tool">
+                            <el-switch class="item"
+                                       v-model="output.scroll"
+                                       active-color="#13ce66"
+                                       inactive-color="#ff4949"
+                                       active-text="滚动"
+                                       inactive-text="停留"
+                                       @change="output.scrollLocked = !output.scrollLocked">
+                            </el-switch>
+                            <el-button class="item"
+                                       type="danger"
+                                       @click="output.list = []">清空</el-button>
+                        </div>
+                        <div class="options">
+                            <el-collapse v-model="config.activeNames">
+                                <el-collapse-item title="使用CSV文件自动生成代码" name="csv">
+                                    <el-steps :active="config.step" simple>
+                                        <el-step title="选择生成类型" icon="el-icon-edit"></el-step>
+                                        <el-step title="上传CSV文件" icon="el-icon-upload"></el-step>
+                                    </el-steps>
+
+                                    <div style="margin: 15px 0;"></div>
+                                    <el-radio-group v-model="config.genType" @change="genTypeChange" v-show="config.step == 1" size="small">
+                                        <el-radio v-for="(val, key) in config.types" :label="val" border>{{key}}</el-radio>
+                                    </el-radio-group>
+
+                                    <div class="" v-show="config.step == 2">
+                                        <el-upload class="upload-file"
+                                                   ref="upload-file"
+                                                   drag
+                                                   :action="config.apiUrls.generateByCSV + '?genType=' + config.genType"
+                                                   multiple
+                                                   :before-upload="generateByCSVBefore"
+                                                   :on-progress="generateByCSVProgress"
+                                                   :on-success="generateByCSVSuccess"
+                                                   :on-error="generateByCSVError">
+                                            <i class="el-icon-upload"></i>
+                                            <div class="el-upload__text">将CSV文件拖到此处，或<em>点击上传</em></div>
+                                            <template #tip>
+                                                <div class="el-upload__tip">
+                                                    只能上传 CSV 文件，且不超过 500kb,上传后自动开始成功代码
+                                                </div>
+                                            </template>
+                                        </el-upload>
+                                        <el-progress v-show="config.uploading"
+                                                     :text-inside="true"
+                                                     :stroke-width="18"
+                                                     :percentage="config.uploadPercentage"></el-progress>
+
+                                        <el-button class="download" @click="download" v-show="config.download" type="primary">下载</el-button>
+                                    </div>
+
+                                    <div class="step-btn">
+                                        <el-button class="next" @click="nextStep" v-show="config.step == 1" type="success">下一步</el-button>
+                                        <el-button class="prev" @click="nextStep" v-show="config.step == 2" type="success">上一步</el-button>
+                                    </div>
+                                </el-collapse-item>
+                            </el-collapse>
+                            <el-input type="textarea"
+                                      :autosize="{ minRows: 1, maxRows: 6}"
+                                      placeholder="搜索输出的内容"
+                                      v-model="output.search">
+                            </el-input>
+                        </div>
+                        <div class="block" ref="output" @mouseenter="mouseenterOutput" @mouseleave="mouseleaveOutput">
+                            <p v-for="(info, index) in output.list.filter(data =>
+                                    !output.search || !data.content.includes(output.search))"
+                               v-html="info.content">
+                            </p>
+                        </div>
+                    </el-tab-pane>
+                    <el-tab-pane label="自定义配置" name="Custom">
+
+                    </el-tab-pane>
+                </el-tabs>
+            </el-container>
+        </el-container>
+
+        <!--SA身份验证-->
+        <el-dialog title="SA身份验证"
+                   v-model="sa.show"
+                   :width="350"
+                   :close-on-click-modal="false"
+                   :close-on-press-escape="false"
+                   :show-close="false"
+                   v-loading="sa.loading">
+            <el-form :model="sa">
+                <el-form-item label="用户名" :label-width="200">
+                    <el-input type="text" v-model="sa.username" :maxlength="20" size="medium"></el-input>
+                </el-form-item>
+                <el-form-item label="密码" :label-width="200">
+                    <el-input type="text" v-model="sa.password" :maxlength="25" size="medium" show-password></el-input>
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <span class="dialog-footer">
+                    <el-button type="primary" @click="saLogin">登录</el-button>
+                </span>
+            </template>
+        </el-dialog>
+    </div>
+</body>
+</html>

@@ -26,7 +26,19 @@ namespace T4CAGC
         #region 配置
 
         [Option("-c|--ConfigPath", Description = "配置文件路径: 不指定时使用默认配置.")]
-        public string ConfigPath { get; } = null;
+        public string ConfigPath { get; } = "jsonconfig/generateconfig.json";
+
+        [Option("-l|--LoggerType", Description = "日志类型（默认Console）.")]
+        public LoggerType LoggerType { get; } = LoggerType.Console;
+
+        [Option("-s|--DataSource", Description = "数据源: CSV文件路径、数据库连接字符串.")]
+        public string DataSource { get; }
+
+        [Option("-t|--DataSourceType", Description = "数据源类型（默认CSV文件）.")]
+        public DataSourceType DataSourceType { get; } = DataSourceType.CSV;
+
+        [Option("-g|--GenType", Description = "生成类型（默认EnrichmentProject）.")]
+        public GenType GenType { get; } = GenType.EnrichmentProject;
 
         [Option("-p|--OutputPath", Description = "输出路径")]
         public string OutputPath { get; }
@@ -35,8 +47,8 @@ namespace T4CAGC
 
         #region 参数
 
-        //[Argument(1, Description = "数据源: CSV文件路径、数据库连接字符串.")]
-        //string DataSource { get; }
+        [Argument(1, Description = "覆盖已有文件（默认不覆盖）.")]
+        bool OverlayFile { get; } = false;
 
         #endregion
 
@@ -44,8 +56,8 @@ namespace T4CAGC
         {
             try
             {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                    Console.SetBufferSize(150, Console.BufferHeight);
+                //if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                //    Console.SetBufferSize(150, Console.BufferHeight);
 
                 #region 欢迎语
 
@@ -89,8 +101,34 @@ namespace T4CAGC
                     return 1;
                 }
 
-                if (!OutputPath.IsNullOrWhiteSpace())
-                    config.OutputPath = OutputPath;
+                $"版本: {config.Version}.\r\n".ConsoleWrite();
+
+                if (DataSource.IsNullOrWhiteSpace())
+                {
+                    $"未设置数据源.".ConsoleWrite();
+                    return 1;
+                }
+
+                config.DataSource = DataSource;
+                $"数据源: {DataSource}.\r\n".ConsoleWrite();
+
+                config.DataSourceType = DataSourceType;
+                $"数据源类型: {DataSourceType}.\r\n".ConsoleWrite();
+
+                if (OutputPath.IsNullOrWhiteSpace())
+                {
+                    $"未设置输出路径.".ConsoleWrite();
+                    return 1;
+                }
+
+                config.OutputPath = OutputPath;
+                $"输出路径: {OutputPath}.\r\n".ConsoleWrite();
+                config.GenType = GenType;
+                $"生成类型: {GenType}.\r\n".ConsoleWrite();
+                config.OverlayFile = OverlayFile;
+                $"{(OverlayFile ? "允许" : "禁止")}覆盖已有文件.\r\n".ConsoleWrite();
+                config.LoggerType = LoggerType;
+                $"日志组件类型: {GenType}.\r\n".ConsoleWrite();
 
                 var services = new ServiceCollection();
 

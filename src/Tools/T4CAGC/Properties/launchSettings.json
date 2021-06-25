@@ -2,7 +2,7 @@
   "profiles": {
     "T4CAGC": {
       "commandName": "Project",
-      "commandLineArgs": "-c F:\\图锐信息\\项目框架学习\\GitHub社区项目\\Microservice\\src\\Tools\\T4CAGC\\jsonconfig/generateconfig.json"
+      "commandLineArgs": "-c \"jsonconfig/generateconfig.json\" -s \"F:\\图锐信息\\项目框架学习\\GitHub社区项目\\Microservice\\src\\Applications\\SimpleApi\\Api\\CAGC/Temp\\2021-06-25\\EnrichmentProject\\637602354832321980\\数据结构(2021年6月25日 143649).csv\" -p \"F:\\图锐信息\\项目框架学习\\GitHub社区项目\\Microservice\\src\\Applications\\SimpleApi\\Api\\CAGC/Temp\\2021-06-25\\EnrichmentProject\\637602354832321980\\output\" true"
     }
   }
 }

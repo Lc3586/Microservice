@@ -1,6 +1,5 @@
 ﻿using Microservice.Library.Cache.Model;
 using Microservice.Library.Configuration.Annotations;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -246,6 +245,33 @@ namespace Model.Utils.Config
         /// 需要记录的日志的最低等级
         /// </summary>
         public int MinLogLevel { get; set; } = 3;//LogLevel.Warning;
+
+        #endregion
+
+        #region T4CAGC
+
+        /// <summary>
+        /// 自动生成代码应用程序文件
+        /// </summary>
+        public string T4CAGCFile { get; set; }
+
+        /// <summary>
+        /// 自动生成代码应用程序文件绝对路径
+        /// </summary>
+        public string AbsoluteT4CAGCFile
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(T4CAGCFile) && string.IsNullOrWhiteSpace(_AbsoluteT4CAGCFile))
+                    _AbsoluteT4CAGCFile = Path.GetFullPath(T4CAGCFile, AppContext.BaseDirectory);
+                return _AbsoluteT4CAGCFile;
+            }
+        }
+
+        /// <summary>
+        /// 自动生成代码应用程序文件绝对路径
+        /// </summary>
+        private string _AbsoluteT4CAGCFile { get; set; }
 
         #endregion
 

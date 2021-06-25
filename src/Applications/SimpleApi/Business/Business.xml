@@ -174,6 +174,29 @@
             处理转发
             </summary>
         </member>
+        <member name="T:Business.Hub.CAGCHub">
+            <summary>
+            代码自动生成信息推送
+            </summary>
+        </member>
+        <member name="F:Business.Hub.CAGCHub.Users">
+            <summary>
+            用户集合
+            </summary>
+            <remarks>{UserId, ConnectionId}</remarks>
+        </member>
+        <member name="M:Business.Hub.CAGCHub.Open">
+            <summary>
+            开始接收
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Hub.CAGCHub.Close">
+            <summary>
+            停止接收
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:Business.Hub.LogHub">
             <summary>
             日志中心
@@ -2249,6 +2272,62 @@
             执行与释放或重置非托管资源关联的应用程序定义的任务。
             </summary>
             <exception cref="T:System.NotImplementedException"></exception>
+        </member>
+        <member name="T:Business.Utils.CAGC.CAGCBusiness">
+            <summary>
+            自动生成代码业务类
+            </summary>
+        </member>
+        <member name="F:Business.Utils.CAGC.CAGCBusiness.T4CAGCFile">
+            <summary>
+            应用程序文件绝对路径
+            </summary>
+        </member>
+        <member name="F:Business.Utils.CAGC.CAGCBusiness.TempDir">
+            <summary>
+            缓存目录绝对路径
+            </summary>
+        </member>
+        <member name="M:Business.Utils.CAGC.CAGCBusiness.CallEXE(System.String)">
+            <summary>
+            调用应用程序
+            </summary>
+            <param name="arguments">命令参数</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Utils.CAGC.CAGCBusiness.SendSignalrInfo(System.String,System.String)">
+            <summary>
+            发送信息
+            </summary>
+            <param name="data">数据</param>
+            <param name="method">方法</param>
+            <returns></returns>
+        </member>
+        <member name="T:Business.Utils.CAGC.ICAGCBusiness">
+            <summary>
+            自动生成代码业务接口类
+            </summary>
+        </member>
+        <member name="M:Business.Utils.CAGC.ICAGCBusiness.GetGenTypes">
+            <summary>
+            获取所有生成类型
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Utils.CAGC.ICAGCBusiness.GenerateByCSV(Microsoft.AspNetCore.Http.IFormFile,System.String)">
+            <summary>
+            使用CSV文件生成代码
+            </summary>
+            <param name="file">CSV文件</param>
+            <param name="genType">生成类型</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Utils.CAGC.ICAGCBusiness.Download(System.String)">
+            <summary>
+            下载已生成的代码文件
+            </summary>
+            <param name="key">用于下载文件的key</param>
+            <returns></returns>
         </member>
         <member name="T:Business.Utils.CAS.CASHelper">
             <summary>

@@ -1,0 +1,160 @@
+﻿/*头部样式*/
+.el-header {
+    text-align: left;
+    line-height: 60px;
+    color: #586069;
+    font-weight: 400;
+}
+
+    .el-header i {
+        font-size: 39px;
+    }
+
+    .el-header .overall_title {
+        font-size: 30px;
+    }
+
+    .el-header .overall_explain {
+        font-size: 20px;
+    }
+
+/*设置行*/
+.el-row {
+    min-height: 50px;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+/*容器样式*/
+body > .full_container {
+    margin-bottom: 40px;
+}
+
+.main_container {
+    height: calc(100vh - 80px);
+}
+
+.el-tabs__content {
+    height: 100%;
+}
+
+.el-tabs {
+    width: 100%;
+}
+
+/*标签内容页的统一样式*/
+.el-tab-pane {
+    height: 100%;
+    overflow-x: hidden;
+}
+
+/*标签内容页-实时日志部分的样式*/
+.output_pane {
+    overflow: visible;
+    padding-top: 20px !important;
+}
+
+    .output_pane .options {
+        position: fixed;
+        margin-top: -20px;
+        display: contents;
+    }
+
+    .output_pane textarea {
+        margin-bottom: 10px;
+    }
+
+    .output_pane .tool {
+        position: fixed;
+        right: 20px;
+        margin-top: -60px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+        .output_pane .tool .max-slider {
+            min-width: 300px;
+        }
+
+    .output_pane .item {
+        margin-right: 20px;
+    }
+
+    .output_pane .block {
+        background: #24292e;
+        overflow-y: auto;
+        padding-top: 30px;
+        padding-bottom: 50px;
+        margin-top: 20px;
+        border-radius: 4px !important;
+        height: 45%;
+    }
+
+    .output_pane p {
+        line-height: 20px;
+        color: #fafbfc;
+        white-space: pre-wrap;
+        color: #e1e4e8;
+        font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace !important;
+        font-size: 12px !important;
+    }
+
+/*日志状态的图标样式*/
+.block i {
+    background-color: white;
+    border-radius: 20px;
+    transition: color .15s linear;
+    font-size: 32px;
+}
+
+/*一般日志的图标*/
+.el-icon-info {
+    color: #5e6d82;
+}
+
+/*正常日志的图标*/
+.el-icon-success {
+    color: #28a745;
+}
+
+/*警告日志的图标*/
+.el-icon-warning {
+    color: #ffc107;
+}
+
+/*异常日志的图标*/
+.el-icon-error {
+    color: #cb2431;
+}
+
+.el-dialog__body {
+    min-height: 300px;
+}
+
+/*单选按钮*/
+.el-radio {
+    margin-top: 10px;
+}
+
+/*步骤条按钮*/
+.step-btn button {
+    margin: 12px;
+}
+
+.step-btn .next {
+    float: right;
+}
+
+.step-btn .prev {
+    float: left;
+}
+
+.step-btn .download {
+    float: right;
+}
+
+/*文件上传标签*/
+.upload-file {
+    text-align: center;
+}

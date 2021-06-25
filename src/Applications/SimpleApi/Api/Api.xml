@@ -1816,6 +1816,32 @@
             <param name="pagination">分页参数</param>
             <returns></returns>
         </member>
+        <member name="T:Api.Controllers.Utils.CAGCController">
+            <summary>
+            自动生成代码接口
+            </summary>
+        </member>
+        <member name="M:Api.Controllers.Utils.CAGCController.GetGenTypes">
+            <summary>
+            获取所有生成类型
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.Utils.CAGCController.GenerateByCSV(Microsoft.AspNetCore.Http.IFormFile,System.String)">
+            <summary>
+            使用CSV文件生成代码
+            </summary>
+            <param name="file">CSV文件</param>
+            <param name="genType">生成类型</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.Utils.CAGCController.Download(System.String)">
+            <summary>
+            下载已生成的代码文件
+            </summary>
+            <param name="key">用于下载文件的key</param>
+            <returns></returns>
+        </member>
         <member name="T:Api.Controllers.Utils.CASController">
             <summary>
             CAS认证接口

@@ -43,6 +43,11 @@ namespace Api.Configures
             {
                 option.ClientTimeoutInterval = TimeSpan.FromSeconds(30);
                 option.EnableDetailedErrors = config.RunMode != RunMode.Publish && config.RunMode != RunMode.Publish_Swagger;
+            })
+            .AddHubOptions<CAGCHub>(option =>
+            {
+                option.ClientTimeoutInterval = TimeSpan.FromSeconds(30);
+                option.EnableDetailedErrors = config.RunMode != RunMode.Publish && config.RunMode != RunMode.Publish_Swagger;
             });
 
             $"初始化{LogForwardHandler.Name}.".ConsoleWrite();
@@ -68,6 +73,7 @@ namespace Api.Configures
             {
                 endpoints.MapHub<LogHub>("/loghub");
                 endpoints.MapHub<WeChatServiceHub>("/wechathub");
+                endpoints.MapHub<CAGCHub>("/cagchub");
             });
 
             $"启动{LogForwardHandler.Name}.".ConsoleWrite();

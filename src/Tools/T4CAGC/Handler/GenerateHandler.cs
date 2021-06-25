@@ -385,6 +385,8 @@ namespace T4CAGC.Handler
                         throw new ApplicationException($"不支持的生成类型 {Config.GenType}");
                 }
             }
+
+            Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, "生成结束.");
         }
     }
 }

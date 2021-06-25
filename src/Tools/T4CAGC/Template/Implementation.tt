@@ -112,7 +112,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
         {
 #>
 
-        public List<string> Get<#=field.Name#>List()
+        public List<string> GetAll<#=field.Name#>()
         {
             return typeof(<#=field.Name#>).GetFields().Select(o => (string)o.GetValue(null)).ToList();
         }
@@ -123,9 +123,23 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
         {
 #>
 
-        public Dictionary<string, int> Get<#=field.Name#>Dic()
+        public Dictionary<string, string> GetAll<#=field.Name#>()
         {
-            return Enum.GetValues<<#=field.Name#>>().ToDictionary(k => k.ToString(), v => (int)v);
+            var nameAndDescriptionDic = new Dictionary<string, string>();
+
+            var type = typeof(<#=field.Name#>);
+
+            foreach (var item in Enum.GetValues<<#=field.Name#>>())
+            {
+                var attr = type.GetField(item.ToString()).GetCustomAttribute<DescriptionAttribute>();
+
+                if (attr == null)
+                    nameAndDescriptionDic.Add(item.ToString(), ((int)item).ToString());
+                else
+                    nameAndDescriptionDic.Add(attr.Description, item.ToString());
+            }
+
+            return nameAndDescriptionDic;
         }
 <#
         }

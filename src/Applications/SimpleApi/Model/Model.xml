@@ -1144,6 +1144,63 @@
             用户类型
             </summary>
         </member>
+        <member name="T:Model.Utils.CAGC.GenType">
+            <summary>
+            生成类型
+            </summary>
+        </member>
+        <member name="F:Model.Utils.CAGC.GenType.CompleteProject">
+            <summary>
+            完整项目
+            </summary>
+        </member>
+        <member name="F:Model.Utils.CAGC.GenType.SmallProject">
+            <summary>
+            小型项目
+            </summary>
+        </member>
+        <member name="F:Model.Utils.CAGC.GenType.EnrichmentProject">
+            <summary>
+            充实项目
+            </summary>
+        </member>
+        <member name="F:Model.Utils.CAGC.GenType.Controller">
+            <summary>
+            控制器类
+            </summary>
+        </member>
+        <member name="F:Model.Utils.CAGC.GenType.Implementation">
+            <summary>
+            业务实现类
+            </summary>
+        </member>
+        <member name="F:Model.Utils.CAGC.GenType.Interface">
+            <summary>
+            业务接口类
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "F:Model.Utils.CAGC.GenType.Business" -->
+        <member name="F:Model.Utils.CAGC.GenType.DTO">
+            <summary>
+            业务模型类
+            </summary>
+        </member>
+        <member name="F:Model.Utils.CAGC.GenType.Const">
+            <summary>
+            常量定义类
+            </summary>
+        </member>
+        <member name="F:Model.Utils.CAGC.GenType.Enum">
+            <summary>
+            枚举定义类
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "F:Model.Utils.CAGC.GenType.Model" -->
+        <member name="F:Model.Utils.CAGC.GenType.Entity">
+            <summary>
+            实体模型类
+            </summary>
+        </member>
         <member name="T:Model.Utils.CAS.CASDTO.AuthorizedInfo">
             <summary>
             验证后的身份信息
@@ -1922,6 +1979,21 @@
         <member name="P:Model.Utils.Config.SystemConfig.MinLogLevel">
             <summary>
             需要记录的日志的最低等级
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Config.SystemConfig.T4CAGCFile">
+            <summary>
+            自动生成代码应用程序文件
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Config.SystemConfig.AbsoluteT4CAGCFile">
+            <summary>
+            自动生成代码应用程序文件绝对路径
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Config.SystemConfig._AbsoluteT4CAGCFile">
+            <summary>
+            自动生成代码应用程序文件绝对路径
             </summary>
         </member>
         <member name="P:Model.Utils.Config.SystemConfig.EnableSwagger">
@@ -3243,6 +3315,11 @@
         <member name="P:Model.Utils.SampleAuthentication.SampleAuthenticationDTO.LogoutRequest.ReturnUrl">
             <summary>
             登出后跳转地址
+            </summary>
+        </member>
+        <member name="T:Model.Utils.SignalR.CAGCHubMethod">
+            <summary>
+            代码自动生成信息推送前端方法
             </summary>
         </member>
         <member name="T:Model.Utils.SignalR.LogHubMethod">

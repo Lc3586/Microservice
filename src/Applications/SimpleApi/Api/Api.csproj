@@ -20,12 +20,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="CAGC\**" />
     <Compile Remove="log\**" />
     <Compile Remove="wwwroot\upload\**" />
+    <Content Remove="CAGC\**" />
     <Content Remove="log\**" />
     <Content Remove="wwwroot\upload\**" />
+    <EmbeddedResource Remove="CAGC\**" />
     <EmbeddedResource Remove="log\**" />
     <EmbeddedResource Remove="wwwroot\upload\**" />
+    <None Remove="CAGC\**" />
     <None Remove="log\**" />
     <None Remove="wwwroot\upload\**" />
   </ItemGroup>
@@ -449,6 +453,15 @@
     <Content Update="wwwroot\element-plus\element-plus.index.full.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Update="wwwroot\plug-in\cagc\cagc.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\plug-in\cagc\cagc.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\plug-in\cagc\cagc.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Update="wwwroot\plug-in\wechat\confirm.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -471,6 +484,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="wwwroot\swagger\extensions\backToTop.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\swagger\extensions\cagc.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="wwwroot\swagger\extensions\quickNavigation.js">

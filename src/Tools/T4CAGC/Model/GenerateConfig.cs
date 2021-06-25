@@ -74,7 +74,7 @@ namespace T4CAGC.Model
         public GenType GenType { get; set; } = GenType.EnrichmentProject;
 
         /// <summary>
-        /// 覆盖文件
+        /// 覆盖已有文件
         /// </summary>
         public bool OverlayFile { get; set; }
 

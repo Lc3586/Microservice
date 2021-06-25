@@ -20,10 +20,10 @@ namespace Business.Interface.<#=Options.Table.ModuleName#>
 #>
 
         /// <summary>
-        /// 获取<#=field.Remark#>集合
+        /// 获取所有<#=field.Remark#>
         /// </summary>
         /// <returns></returns>
-        List<string> Get<#=field.Name#>List();
+        List<string> GetAll<#=field.Name#>();
 <#
         }
         
@@ -32,10 +32,10 @@ namespace Business.Interface.<#=Options.Table.ModuleName#>
 #>
 
         /// <summary>
-        /// 获取<#=field.Remark#>字典
+        /// 获取所有<#=field.Remark#>字典
         /// </summary>
-        /// <returns></returns>
-        Dictionary<string, int> Get<#=field.Name#>Dic();
+        /// <returns>{名称: 值}</returns>
+        Dictionary<string, string> GetAll<#=field.Name#>();
 <#
         }
     }

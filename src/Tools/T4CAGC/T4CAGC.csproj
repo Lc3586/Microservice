@@ -29,16 +29,17 @@
 
   <ItemGroup>
     <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="3.1.0" />
-    <PackageReference Include="Microservice.Library.Cache" Version="0.0.0-gf58a743371-alpha" />
-    <PackageReference Include="Microservice.Library.Configuration" Version="0.0.0-gf58a743371-alpha" />
-    <PackageReference Include="Microservice.Library.ConsoleTool" Version="0.0.0-gf58a743371-alpha" />
-    <PackageReference Include="Microservice.Library.File" Version="0.0.0-gf58a743371-alpha" />
-    <PackageReference Include="Microservice.Library.FreeSql" Version="0.0.0-gf58a743371-alpha" />
-    <PackageReference Include="Microservice.Library.Http" Version="0.0.0-gf58a743371-alpha" />
-    <PackageReference Include="Microservice.Library.NLogger" Version="0.0.0-gf58a743371-alpha" />
-    <PackageReference Include="Microservice.Library.OfficeDocuments" Version="0.0.0-g004c4ebb96-alpha" />
-    <PackageReference Include="Microservice.Library.OpenApi" Version="0.0.0-g004c4ebb96-alpha" />
+    <PackageReference Include="Microservice.Library.Cache" Version="0.0.0.3699-alpha-g730eb3154a" />
+    <PackageReference Include="Microservice.Library.Configuration" Version="0.0.0.3699-alpha-g730eb3154a" />
+    <PackageReference Include="Microservice.Library.ConsoleTool" Version="0.0.0.3699-alpha-g730eb3154a" />
+    <PackageReference Include="Microservice.Library.File" Version="0.0.0.3699-alpha-g730eb3154a" />
+    <PackageReference Include="Microservice.Library.FreeSql" Version="0.0.0.3699-alpha-g730eb3154a" />
+    <PackageReference Include="Microservice.Library.Http" Version="0.0.0.3699-alpha-g730eb3154a" />
+    <PackageReference Include="Microservice.Library.NLogger" Version="0.0.0.3699-alpha-g730eb3154a" />
+    <PackageReference Include="Microservice.Library.OfficeDocuments" Version="0.0.0.3699-alpha-g730eb3154a" />
+    <PackageReference Include="Microservice.Library.OpenApi" Version="0.0.0.3699-alpha-g730eb3154a" />
     <PackageReference Include="System.CodeDom" Version="5.0.0" />
+    <PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -96,6 +97,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="jsonconfig\generateconfig.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Template\Implementation.tt">
       <LastGenOutput>Implementation.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
