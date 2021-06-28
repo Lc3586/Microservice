@@ -32,6 +32,7 @@
             generateByCSVProgress,
             generateByCSVSuccess,
             generateByCSVError,
+            reUpload,
             download,
             refreshTemp,
             clearTemp
@@ -87,6 +88,7 @@
                 downloadKey: null
             },
             output: {
+                show: false,
                 init: false,
                 loading: true,
                 scroll: true,
@@ -100,7 +102,8 @@
                 loading: false,
                 explain: '',
                 Size: '',
-                disable: false
+                disable: false,
+                refresDisable: false
             },
             version: {
                 init: false,
@@ -200,14 +203,13 @@
         switch (configType) {
             case 'Default':
             default:
-                if (main.output.init) {
+                if (!main.output.init)
+                    connectToCAGCHub();
+                if (main.output.show)
                     main.$nextTick(() => {
                         var container = main.$refs['output'].parentElement;
                         container.scrollTop = container.scrollHeight;
                     });
-                    return;
-                }
-                connectToCAGCHub();
                 break;
             case 'Custom':
                 ElementPlus.ElMessage('暂不支持.');
@@ -254,7 +256,7 @@
             main.overall.explain = '正在尝试重新连接...';
         });
         main.output.connection.onreconnected(connectionId => {
-            console.info(connectionId);
+            //console.info(connectionId);
             main.overall.title = '连接已恢复';
             main.overall.explain = '已重新连接至服务器';
         });
@@ -352,6 +354,8 @@
     function generateByCSVBefore(file) {
         main.config.uploadPercentage = 0;
         main.config.uploading = true;
+        main.config.step = 3;
+        main.output.show = true;
     }
 
     /**
@@ -374,12 +378,13 @@
         main.$refs['upload-file'].clearFiles();
         main.config.uploading = false;
 
-        ElementPlus.ElMessage("操作成功, 请点击下载按钮下载生成的文件.");
-
         if (response.Success) {
+            ElementPlus.ElMessage("操作成功, 请点击下载按钮下载生成的文件.");
             main.config.download = true;
             main.config.downloadKey = response.Data;
         }
+        else
+            ElementPlus.ElMessage(response.Message);
     }
 
     /**
@@ -391,9 +396,15 @@
     function generateByCSVError(err, file, fileList) {
         main.$refs['upload-file'].clearFiles();
         main.config.uploading = false;
-        console.info(err);
-        console.info(fileList);
-        console.info(file);
+    }
+
+    /**
+     * 重新上传
+     * */
+    function reUpload() {
+        main.config.download = false;
+        main.output.show = false;
+        main.config.step = 2;
     }
 
     /**
@@ -408,6 +419,7 @@
      * */
     function getTempInfo() {
         main.temp.disable = true;
+        main.temp.refresDisable = true;
         main.temp.loading = true;
 
         axios.get(apiUrls.getTempInfo)
@@ -422,6 +434,8 @@
                 else {
                     ElementPlus.ElMessage(response.data.Message);
                 }
+
+                main.temp.refresDisable = false;
                 main.temp.loading = false;
             })
             .catch((error) => {
@@ -442,17 +456,22 @@
      * */
     function clearTemp() {
         main.temp.disable = true;
+        main.temp.refresDisable = true;
 
         axios.get(apiUrls.clearTemp)
             .then((response) => {
+                main.temp.loading = false;
                 ElementPlus.ElMessage(response.data.Message);
                 if (response.data.Success) {
                     getTempInfo();
                 }
-                else
-                    main.temp.loading = false;
+                else {
+                    main.temp.refresDisable = false;
+                    main.temp.disable = false;
+                }
             })
             .catch((error) => {
+                main.temp.refresDisable = false;
                 main.temp.disable = false;
                 main.temp.loading = false;
                 ElementPlus.ElMessage('清理缓存时发生异常.');

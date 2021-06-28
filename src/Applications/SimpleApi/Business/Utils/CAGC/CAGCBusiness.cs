@@ -281,6 +281,7 @@ namespace Business.Utils.CAGC
             }
 
             var arguments = "-c \"jsonconfig/generateconfig.json\" "
+                         + $"-g \"{genType}\" "
                          + $"-s \"{dataSourceFile}\" "
                          + $"-p \"{outputPath}\" true";
 

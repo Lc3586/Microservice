@@ -89,7 +89,7 @@ body > .full_container {
         padding-bottom: 50px;
         margin-top: 20px;
         border-radius: 4px !important;
-        height: 45%;
+        height: 60%;
     }
 
     .output_pane p {
@@ -101,6 +101,12 @@ body > .full_container {
         color: #e1e4e8;
         font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace !important;
         font-size: 12px !important;
+    }
+
+    /*搜索操作匹配到的关键词*/
+    .output_pane .keyword {
+        color: yellow;
+        background-color: black;
     }
 
 /*日志状态的图标样式*/
@@ -153,7 +159,11 @@ body > .full_container {
     float: left;
 }
 
-.download {
+.step-btn .reUpload {
+    float: right;
+}
+
+.step-btn .download {
     float: right;
 }
 
@@ -174,13 +184,13 @@ body > .full_container {
         font-size: 39px;
     }
 
-/*缓存信息的图标样式*/
-.temp-header i {
-    background-color: white;
-    border-radius: 20px;
-    transition: color .15s linear;
-    font-size: 32px;
-}
+    /*缓存信息的图标样式*/
+    .temp-header i {
+        background-color: white;
+        border-radius: 20px;
+        transition: color .15s linear;
+        font-size: 32px;
+    }
 
 .temp-tool {
     float: right;

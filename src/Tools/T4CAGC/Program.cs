@@ -128,7 +128,7 @@ namespace T4CAGC
                 config.OverlayFile = OverlayFile;
                 $"{(OverlayFile ? "允许" : "禁止")}覆盖已有文件.\r\n".ConsoleWrite();
                 config.LoggerType = LoggerType;
-                $"日志组件类型: {GenType}.\r\n".ConsoleWrite();
+                $"日志组件类型: {LoggerType}.\r\n".ConsoleWrite();
 
                 var services = new ServiceCollection();
 

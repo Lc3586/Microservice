@@ -3,6 +3,8 @@ using Microservice.Library.Extension;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
+using System.Net;
 using System.Text;
 using T4CAGC.Log;
 using T4CAGC.Model;
@@ -66,19 +68,31 @@ namespace T4CAGC.Handler
         /// <summary>
         /// 生成完整项目
         /// </summary>
-        /// <param name="table">表数据</param>
         /// <param name="outputPath">输出路径</param>
-        static void GenerateCompleteProject(TableInfo table, string outputPath)
+        static void GenerateCompleteProject(string outputPath)
         {
-            throw new ApplicationException("暂不支持生成完整项目.");
+            var projectCodeZipFile = new FileInfo(Path.Combine(AppContext.BaseDirectory, "CompleteProjectCode.zip"));
+            if (!projectCodeZipFile.Exists)
+            {
+                Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"项目代码文件不存在: {projectCodeZipFile.FullName}.");
+
+                if (Config.CompleteProjectCodeZipUri.IsNullOrWhiteSpace())
+                    throw new ApplicationException("未设置项目代码下载地址.");
+
+                using var client = new WebClient();
+                client.DownloadFile(Config.CompleteProjectCodeZipUri, projectCodeZipFile.FullName);
+            }
+
+            Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"正在解压缩项目代码: {projectCodeZipFile.FullName}.");
+
+            ZipFile.ExtractToDirectory(projectCodeZipFile.FullName, outputPath, Config.OverlayFile);
         }
 
         /// <summary>
         /// 生成小型项目
         /// </summary>
-        /// <param name="table">表数据</param>
         /// <param name="outputPath">输出路径</param>
-        static void GenerateSmallProject(TableInfo table, string outputPath)
+        static void GenerateSmallProject(string outputPath)
         {
             throw new ApplicationException("暂不支持生成小型项目.");
         }
@@ -99,7 +113,7 @@ namespace T4CAGC.Handler
             var businessPath = Path.Combine(outputPath, "Business");
             GenerateBusiness(table, businessPath);
 
-            var controllerPath = Path.Combine(outputPath, "Controller");
+            var controllerPath = Path.Combine(outputPath, "Api", "Controller");
             GenerateController(table, controllerPath);
         }
 
@@ -110,7 +124,7 @@ namespace T4CAGC.Handler
         /// <param name="outputPath">输出路径</param>
         static void GenerateConfigures(TableInfo table, string outputPath)
         {
-
+            throw new ApplicationException("暂不支持生成配置类.");
         }
 
         /// <summary>
@@ -338,6 +352,11 @@ namespace T4CAGC.Handler
 
             Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"生成类型为: {Config.GenType}.");
 
+            if (Config.GenType == GenType.CompleteProject)
+                GenerateCompleteProject(Config.OutputPath);
+            else if (Config.GenType == GenType.SmallProject)
+                GenerateSmallProject(Config.OutputPath);
+
             foreach (var table in Tables)
             {
                 Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"正在处理: {table.Remark} {table.Name}.");
@@ -345,11 +364,7 @@ namespace T4CAGC.Handler
                 switch (Config.GenType)
                 {
                     case GenType.CompleteProject:
-                        GenerateCompleteProject(table, Config.OutputPath);
-                        break;
                     case GenType.SmallProject:
-                        GenerateSmallProject(table, Config.OutputPath);
-                        break;
                     case GenType.EnrichmentProject:
                         GenerateEnrichmentProject(table, Config.OutputPath);
                         break;

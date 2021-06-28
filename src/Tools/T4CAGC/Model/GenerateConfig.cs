@@ -79,6 +79,11 @@ namespace T4CAGC.Model
         public bool OverlayFile { get; set; }
 
         /// <summary>
+        /// 完整项目代码下载地址
+        /// </summary>
+        public string CompleteProjectCodeZipUri { get; set; }
+
+        /// <summary>
         /// 指定表
         /// </summary>
         public List<string> SpecifyTable { get; set; }

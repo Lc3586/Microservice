@@ -91,6 +91,12 @@ body > .full_container {
         height: 78%;
     }
 
+    /*搜索操作匹配到的关键词*/
+    .reallog_pane .keyword {
+        color: yellow;
+        background-color: black;
+    }
+
     .reallog_pane .el-timeline-item__timestamp {
         line-height: 20px;
         color: #fafbfc;

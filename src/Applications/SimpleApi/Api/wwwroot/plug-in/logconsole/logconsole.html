@@ -113,7 +113,7 @@
                         </div>
                         <div class="block" ref="realLog" @mouseenter="mouseenterConsole" @mouseleave="mouseleaveConsole">
                             <el-timeline>
-                                <el-timeline-item v-for="(log, index) in logReal.list.filter(data => !logReal.search || !data.content.includes(logReal.search))"
+                                <el-timeline-item v-for="(log, index) in logReal.list.filter(data => !logReal.search || data.content.includes(logReal.search))"
                                                   :key="index"
                                                   :icon="log.icon"
                                                   :type="log.type"
@@ -121,7 +121,7 @@
                                                   :size="log.size"
                                                   :timestamp="log.timestamp"
                                                   placement="top">
-                                    <p v-html="log.content"></p>
+                                    <p v-html="!logReal.search ? log.content : log.content.replace(new RegExp(logReal.search, 'g'), `<span class='keyword'>${logReal.search}</span>`)"></p>
                                 </el-timeline-item>
                             </el-timeline>
                         </div>

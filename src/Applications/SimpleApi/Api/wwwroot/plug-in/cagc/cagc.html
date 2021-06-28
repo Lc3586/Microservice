@@ -27,7 +27,7 @@
             <el-container class="main_container">
                 <el-tabs tab-position="left" v-model="config.configType" @tab-click="tabsChanged">
                     <el-tab-pane label="默认配置" class="output_pane" name="Default" v-loading="output.loading">
-                        <div class="tool">
+                        <div class="tool" v-show="output.show">
                             <el-switch class="item"
                                        v-model="output.scroll"
                                        active-color="#13ce66"
@@ -46,6 +46,7 @@
                                     <el-steps :active="config.step" simple>
                                         <el-step title="选择生成类型" icon="el-icon-edit"></el-step>
                                         <el-step title="上传CSV文件" icon="el-icon-upload"></el-step>
+                                        <el-step title="等待代码生成结束" icon="el-icon-loading"></el-step>
                                     </el-steps>
 
                                     <div style="margin: 15px 0;"></div>
@@ -76,25 +77,28 @@
                                                      :stroke-width="18"
                                                      :percentage="config.uploadPercentage"></el-progress>
 
-                                        <el-button class="download" @click="download" v-show="config.download" type="primary">下载</el-button>
                                     </div>
 
                                     <div class="step-btn">
                                         <el-button class="next" @click="nextStep" v-show="config.step == 1" type="success">下一步</el-button>
                                         <el-button class="prev" @click="nextStep" v-show="config.step == 2" type="success">上一步</el-button>
+
+                                        <el-button class="reUpload" @click="reUpload" v-show="config.download" type="warning">重新上传</el-button>
+                                        <el-button class="download" @click="download" v-show="config.download" type="primary">下载</el-button>
                                     </div>
                                 </el-collapse-item>
                             </el-collapse>
                             <el-input type="textarea"
                                       :autosize="{ minRows: 1, maxRows: 6}"
                                       placeholder="搜索输出的内容"
+                                      v-show="output.show"
                                       v-model="output.search">
                             </el-input>
                         </div>
-                        <div class="block" ref="output" @mouseenter="mouseenterOutput" @mouseleave="mouseleaveOutput">
+                        <div class="block" ref="output" @mouseenter="mouseenterOutput" @mouseleave="mouseleaveOutput" v-show="output.show">
                             <p v-for="(info, index) in output.list.filter(data =>
-                                    !output.search || !data.content.includes(output.search))"
-                               v-html="info.content">
+                                    !output.search || data.content.includes(output.search))"
+                               v-html="!output.search ? info.content : info.content.replace(new RegExp(output.search, 'g'), `<span class='keyword'>${output.search}</span>`)">
                             </p>
                         </div>
                     </el-tab-pane>
@@ -110,7 +114,7 @@
                                     <div class="temp-tool">
                                         <el-button type="primary"
                                                    round
-                                                   :disabled="temp.disable"
+                                                   :disabled="temp.refresDisable"
                                                    @click="refreshTemp">刷新</el-button>
                                         <el-button type="danger"
                                                    round
