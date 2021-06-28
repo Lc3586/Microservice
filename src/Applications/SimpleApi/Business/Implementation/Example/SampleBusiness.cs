@@ -210,59 +210,63 @@ namespace Business.Implementation.Example
                 throw ex;
         }
 
-        public async Task DownloadTemplate(string version = "xlsx")
+        public async Task DownloadTemplate(string version = "xlsx", bool autogenerateTemplate = false)
         {
-            #region 方式一: 直接发送预处理好的模板
-
             var response = HttpContextAccessor.HttpContext.Response;
-            response.Headers.Add("Content-Disposition", $"attachment; filename=\"{UrlEncoder.Default.Encode("示例导入模板")}.{version}\"");
-            var filePath = PathHelper.GetAbsolutePath($"~/template/示例导入模板.{version}");
-            if (!File.Exists(filePath))
+
+            if (autogenerateTemplate)
             {
-                response.StatusCode = StatusCodes.Status404NotFound;
-                throw new MessageException("模板文件不存在或已被移除.");
-            }
-            await response.SendFileAsync(filePath);
+                #region 方式一: 直接发送预制模板
 
-            #endregion
-
-            return;
-
-            #region 方式二: 自动生成模板
-
-            var table = new DataTable("示例导入模板");
-
-            typeof(Sample_DB)
-                .GetProperties()
-                .ForEach(o =>
+                response.Headers.Add("Content-Disposition", $"attachment; filename=\"{UrlEncoder.Default.Encode("示例导入模板")}.{version}\"");
+                var filePath = PathHelper.GetAbsolutePath($"~/template/示例导入模板.{version}");
+                if (!File.Exists(filePath))
                 {
-                    if (!o.HasTag(typeof(Create).GetMainTag()))
-                        return;
+                    response.StatusCode = StatusCodes.Status404NotFound;
+                    throw new MessageException("模板文件不存在或已被移除.");
+                }
+                await response.SendFileAsync(filePath);
 
-                    var attr = o.GetCustomAttribute<DescriptionAttribute>();
-                    if (attr == null)
-                        return;
+                #endregion
+            }
+            else
+            {
+                #region 方式二: 自动生成模板
 
-                    table.Columns.Add(attr.Description, o.PropertyType);
-                });
+                var table = new DataTable("示例导入模板");
 
-            var bytes = table.DataTableToExcelBytes(true, version == ExcelVersion.xlsx);
-            response.StatusCode = StatusCodes.Status200OK;
-            response.ContentType = "application/octet-stream";
-            response.ContentLength = bytes.Length;
-            response.Body.Write(bytes);
+                typeof(Sample_DB)
+                    .GetProperties()
+                    .ForEach(o =>
+                    {
+                        if (!o.HasTag(typeof(Create).GetMainTag()))
+                            return;
 
-            #endregion
+                        var attr = o.GetCustomAttribute<DescriptionAttribute>();
+                        if (attr == null)
+                            return;
+
+                        table.Columns.Add(attr.Description, o.PropertyType);
+                    });
+
+                var bytes = table.DataTableToExcelBytes(true, version == ExcelVersion.xlsx);
+                response.StatusCode = StatusCodes.Status200OK;
+                response.ContentType = "application/octet-stream";
+                response.ContentLength = bytes.Length;
+                response.Body.Write(bytes);
+
+                #endregion
+            }
         }
 
-        public ImportResult Import(IFormFile file)
+        public ImportResult Import(IFormFile file, bool autogenerateTemplate = false)
         {
             DataTable table;
 
             try
             {
                 table = file.OpenReadStream()
-                                .ReadExcel(true, file.ContentType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", 1);
+                                .ReadExcel(true, file.ContentType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", autogenerateTemplate ? 0 : 1);
             }
             catch (Exception _ex)
             {
@@ -316,7 +320,7 @@ namespace Business.Implementation.Example
                         else
                             o.SetValue(entity, row[attr.Description].ChangeType(o.PropertyType));
                     }
-                    catch (Exception ex)
+                    catch
                     {
                         _errors.Add(new ErrorInfo(i + 3, attr.Description, "数据格式有误。"));
                     }

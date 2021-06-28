@@ -30,7 +30,7 @@
         /// </summary>
         Interface,
         /// <summary>
-        /// 业务实现类&业务接口类
+        /// 业务实现类&amp;业务接口类
         /// </summary>
         Business,
         /// <summary>
@@ -46,7 +46,7 @@
         /// </summary>
         Enum,
         /// <summary>
-        /// 业务模型类&常量定义类&枚举定义类
+        /// 业务模型类&amp;常量定义类&amp;枚举定义类
         /// </summary>
         Model,
         /// <summary>

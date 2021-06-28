@@ -1209,7 +1209,11 @@
             业务接口类
             </summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "F:Model.Utils.CAGC.GenType.Business" -->
+        <member name="F:Model.Utils.CAGC.GenType.Business">
+            <summary>
+            业务实现类&amp;业务接口类
+            </summary>
+        </member>
         <member name="F:Model.Utils.CAGC.GenType.DTO">
             <summary>
             业务模型类
@@ -1225,7 +1229,11 @@
             枚举定义类
             </summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "F:Model.Utils.CAGC.GenType.Model" -->
+        <member name="F:Model.Utils.CAGC.GenType.Model">
+            <summary>
+            业务模型类&amp;常量定义类&amp;枚举定义类
+            </summary>
+        </member>
         <member name="F:Model.Utils.CAGC.GenType.Entity">
             <summary>
             实体模型类

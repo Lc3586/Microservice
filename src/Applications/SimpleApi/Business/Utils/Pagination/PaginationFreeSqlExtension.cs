@@ -129,7 +129,9 @@ namespace Business.Utils.Pagination
 
             string where = string.Empty;
 
+#pragma warning disable CS0618 // 类型或成员已过时
             Check(pagination.Filter);
+#pragma warning restore CS0618 // 类型或成员已过时
 
             if (!pagination.FilterToSql(ref where, alias))
                 throw new MessageException("搜索条件不支持");

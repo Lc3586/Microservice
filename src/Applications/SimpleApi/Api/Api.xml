@@ -722,22 +722,32 @@
             <param name="enable">设置状态</param>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.SampleController.DownloadTemplate(System.String)">
+        <member name="M:Api.Controllers.SampleController.DownloadTemplate(System.String,System.Boolean)">
             <summary>
             下载导入模板
             </summary>
             <param name="version">
-            Excel文件版本,
-            xls(2003),
-            (默认)xlsx(2007)
+            <para>指定Excel文件版本</para>
+            <para><see cref="F:Model.Utils.OfficeDocuments.ExcelVersion.xls"/>: 2003版本</para>
+            <para>(默认)<see cref="F:Model.Utils.OfficeDocuments.ExcelVersion.xlsx"/>: 2007及以上版本</para>
+            </param>
+            <param name="autogenerateTemplate">
+            <para>指明要使用的模板类型</para>
+            <para>true: 自动生成模板</para>
+            <para>(默认)false: 使用预制模板</para>
             </param>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.SampleController.Import(Microsoft.AspNetCore.Http.IFormFile)">
+        <member name="M:Api.Controllers.SampleController.Import(Microsoft.AspNetCore.Http.IFormFile,System.Boolean)">
             <summary>
             导入
             </summary>
             <param name="file">Execl文件</param>
+            <param name="autogenerateTemplate">
+            <para>指明所使用的模板类型</para>
+            <para>true: 自动生成的模板</para>
+            <para>(默认)false: 预制模板</para>
+            </param>
             <returns></returns>
         </member>
         <member name="M:Api.Controllers.SampleController.Export(System.String,System.String)">

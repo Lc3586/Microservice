@@ -752,11 +752,12 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
 
         public Task DownloadTemplate(string version = ExcelVersion.xlsx, bool autogenerateTemplate = false)
         {
+            var response = HttpContextAccessor.HttpContext.Response;
+
             if(autogenerateTemplate)
             {
                 #region 直接发送预制模板
 
-                var response = HttpContextAccessor.HttpContext.Response;
                 response.Headers.Add("Content-Disposition", $"attachment; filename=\"{UrlEncoder.Default.Encode("<#=Options.Table.Remark#>导入模板")}.{version}\"");
                 var filePath = PathHelper.GetAbsolutePath($"~/template/<#=Options.Table.Remark#>导入模板.{version}");
                 if (!File.Exists(filePath))
@@ -805,7 +806,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
             try
             {
                 table = file.OpenReadStream()
-                                .ReadExcel(true, file.ContentType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", 1);
+                                .ReadExcel(true, file.ContentType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", autogenerateTemplate ? 0 : 1);
             }
             catch (Exception _ex)
             {

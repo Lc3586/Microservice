@@ -220,28 +220,38 @@ namespace Api.Controllers
         /// 下载导入模板
         /// </summary>
         /// <param name="version">
-        /// Excel文件版本,
-        /// xls(2003),
-        /// (默认)xlsx(2007)
+        /// <para>指定Excel文件版本</para>
+        /// <para><see cref="ExcelVersion.xls"/>: 2003版本</para>
+        /// <para>(默认)<see cref="ExcelVersion.xlsx"/>: 2007及以上版本</para>
+        /// </param>
+        /// <param name="autogenerateTemplate">
+        /// <para>指明要使用的模板类型</para>
+        /// <para>true: 自动生成模板</para>
+        /// <para>(默认)false: 使用预制模板</para>
         /// </param>
         /// <returns></returns>
         [HttpGet("downloadtemplate")]
-        public async Task DownloadTemplate(string version = ExcelVersion.xlsx)
+        public async Task DownloadTemplate(string version = ExcelVersion.xlsx, bool autogenerateTemplate = false)
         {
-            await SampleBusiness.DownloadTemplate(version);
+            await SampleBusiness.DownloadTemplate(version, autogenerateTemplate);
         }
 
         /// <summary>
         /// 导入
         /// </summary>
         /// <param name="file">Execl文件</param>
+        /// <param name="autogenerateTemplate">
+        /// <para>指明所使用的模板类型</para>
+        /// <para>true: 自动生成的模板</para>
+        /// <para>(默认)false: 预制模板</para>
+        /// </param>
         /// <returns></returns>
         [HttpPost("import")]
         [SwaggerResponse((int)HttpStatusCode.OK, "导入结果", typeof(ImportResult))]
         [Consumes("multipart/form-data")]
-        public async Task<object> Import(IFormFile file)
+        public async Task<object> Import(IFormFile file, bool autogenerateTemplate = false)
         {
-            return await Task.FromResult(ResponseDataFactory.Success(SampleBusiness.Import(file)));
+            return await Task.FromResult(ResponseDataFactory.Success(SampleBusiness.Import(file, autogenerateTemplate)));
         }
 
         /// <summary>

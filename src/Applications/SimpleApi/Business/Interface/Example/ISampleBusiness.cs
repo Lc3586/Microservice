@@ -73,19 +73,29 @@ namespace Business.Interface.Example
         /// 下载导入模板
         /// </summary>
         /// <param name="version">
-        /// Excel文件版本,
-        /// <see cref="ExcelVersion.xls"/>2003,(默认)
-        /// <seealso cref="ExcelVersion.xlsx"/>2007
+        /// <para>指定Excel文件版本</para>
+        /// <para><see cref="ExcelVersion.xls"/>: 2003版本</para>
+        /// <para>(默认)<see cref="ExcelVersion.xlsx"/>: 2007及以上版本</para>
+        /// </param>
+        /// <param name="autogenerateTemplate">
+        /// <para>指明要使用的模板类型</para>
+        /// <para>true: 自动生成模板</para>
+        /// <para>(默认)false: 使用预制模板</para>
         /// </param>
         /// <returns></returns>
-        Task DownloadTemplate(string version = ExcelVersion.xlsx);
+        Task DownloadTemplate(string version = ExcelVersion.xlsx, bool autogenerateTemplate = false);
 
         /// <summary>
         /// 数据导入
         /// </summary>
         /// <param name="file">Execl文件</param>
+        /// <param name="autogenerateTemplate">
+        /// <para>指明所使用的模板类型</para>
+        /// <para>true: 自动生成的模板</para>
+        /// <para>(默认)false: 预制模板</para>
+        /// </param>
         /// <returns></returns>
-        ImportResult Import(IFormFile file);
+        ImportResult Import(IFormFile file, bool autogenerateTemplate = false);
 
         /// <summary>
         /// 导出
