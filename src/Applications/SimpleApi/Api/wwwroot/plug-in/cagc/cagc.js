@@ -374,7 +374,7 @@
         main.$refs['upload-file'].clearFiles();
         main.config.uploading = false;
 
-        ElementPlus.ElMessage(response.Message);
+        ElementPlus.ElMessage("操作成功, 请点击下载按钮下载生成的文件.");
 
         if (response.Success) {
             main.config.download = true;

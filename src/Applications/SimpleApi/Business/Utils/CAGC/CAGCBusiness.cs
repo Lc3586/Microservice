@@ -43,7 +43,7 @@ namespace Business.Utils.CAGC
             CAGCHub = cagcHub;
 
             CAGCFile = Config.AbsoluteCAGCFile;
-            TempDir = Path.Combine(Config.AbsoluteStorageDirectory, "CAGC/Temp", DateTime.Now.ToString("yyyy-MM-dd"));
+            TempDir = Path.Combine(Config.AbsoluteStorageDirectory, "CAGC", "Temp", DateTime.Now.ToString("yyyy-MM-dd"));
         }
 
         #endregion
