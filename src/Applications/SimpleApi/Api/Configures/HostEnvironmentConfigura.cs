@@ -34,7 +34,7 @@ namespace Api.Configures
             {
                 "当前为开发环境(Development).".ConsoleWrite();
 
-                config.AbsoluteStorageDirectory = webHostEnvironment.ContentRootPath;
+                //config.AbsoluteStorageDirectory = webHostEnvironment.ContentRootPath;
                 config.AbsoluteWWWRootDirectory = webHostEnvironment.WebRootPath;
             }
             else
