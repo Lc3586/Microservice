@@ -2,6 +2,7 @@
 using Business.Utils.CAGC;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Model.Utils.CAGC.CAGCDTO;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Net;
@@ -63,6 +64,28 @@ namespace Api.Controllers.Utils
         public async Task Download(string key)
         {
             await CAGCBusiness.Download(key);
+        }
+
+        /// <summary>
+        /// 获取临时文件信息
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("temp-info")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "返回信息", typeof(TempInfo))]
+        public async Task<object> GetTempInfo()
+        {
+            return await Task.FromResult(Success(CAGCBusiness.GetTempInfo()));
+        }
+
+        /// <summary>
+        /// 清理临时文件
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("clear-temp")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "返回信息", typeof(ClearnTempResult))]
+        public async Task<object> ClearTemp()
+        {
+            return await Task.FromResult(Success(CAGCBusiness.ClearTemp()));
         }
     }
 }

@@ -8,6 +8,7 @@ using Microservice.Library.FreeSql.Gen;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using Model.Utils.CAGC;
+using Model.Utils.CAGC.CAGCDTO;
 using Model.Utils.Log;
 using Model.Utils.SignalR;
 using System;
@@ -91,28 +92,35 @@ namespace Business.Utils.CAGC
             process.StartInfo.Arguments = arguments;
             process.Start();
 
-            //            while (!process.StandardOutput.EndOfStream)
-            //            {
-            //                var output = await process.StandardOutput.ReadLineAsync();
+            var index = 0;
+            var lines = new string[10];
+            while (!process.StandardOutput.EndOfStream)
+            {
+                lines[index] = process.StandardOutput.ReadLine();
+#if DEBUG
+                Console.WriteLine(lines[index]);
+#endif
+                index++;
 
-            ////#if DEBUG
-            ////                Console.Write(output);
-            ////#endif
+                if (process.StandardOutput.EndOfStream || index == lines.Length)
+                {
+                    var content = string.Join("\r\n", lines, 0, index);
+                    await SendSignalrInfo(content, CAGCHubMethod.Info);
+                    index = 0;
+                }
+            }
 
-            //                await SendSignalrInfo(output, CAGCHubMethod.Info);
-            //            }
-
-            var output = await process.StandardOutput.ReadToEndAsync();
-            var error = await process.StandardError.ReadToEndAsync();
+            //var output = await process.StandardOutput.ReadToEndAsync();
+            var error = process.StandardError.ReadToEnd();
 
 #if DEBUG
-            Console.Write(output);
+            //Console.Write(output);
             Console.Write(error);
 #endif
 
             process.WaitForExit();
 
-            await SendSignalrInfo(output, CAGCHubMethod.Info);
+            //await SendSignalrInfo(output, CAGCHubMethod.Info);
             await SendSignalrInfo(error, CAGCHubMethod.Error);
         }
 
@@ -145,6 +153,40 @@ namespace Business.Utils.CAGC
                     $"处理SignalR代码自动生成信息推送时异常.",
                     data,
                     ex);
+            }
+        }
+
+        /// <summary>
+        /// 遍历文件夹
+        /// </summary>
+        /// <param name="directory">文件夹</param>
+        /// <param name="fileCount">文件数量</param>
+        /// <param name="fileLength">文件总字节数</param>
+        /// <param name="delete">删除文件夹</param>
+        void ErgodicDirectorie(DirectoryInfo directory, out int fileCount, out long fileLength, bool delete = false)
+        {
+            fileCount = 0;
+            fileLength = 0;
+            var directories = directory.GetDirectories();
+            foreach (var deep_directory in directories)
+            {
+                ErgodicDirectorie(deep_directory, out int deep_fileCount, out long deep_fileLength, delete);
+                fileCount += deep_fileCount;
+                fileLength += deep_fileLength;
+
+                if (delete)
+                    deep_directory.Delete();
+            }
+
+            var files = directory.GetFiles();
+
+            foreach (var file in files)
+            {
+                fileCount++;
+                fileLength += file.Length;
+
+                if (delete)
+                    file.Delete();
             }
         }
 
@@ -218,6 +260,28 @@ namespace Business.Utils.CAGC
             response.ContentLength = zipFile.GetFileBytes();
 
             await response.SendFileAsync(zipFile);
+        }
+
+        public TempInfo GetTempInfo()
+        {
+            ErgodicDirectorie(new DirectoryInfo(TempDir), out int count, out long length);
+
+            return new TempInfo
+            {
+                OccupiedSpace = length.GetFileSize(),
+                FileCount = count
+            };
+        }
+
+        public ClearnTempResult ClearTemp()
+        {
+            ErgodicDirectorie(new DirectoryInfo(TempDir), out int count, out long length, true);
+
+            return new ClearnTempResult
+            {
+                FreeSpace = length.GetFileSize(),
+                FileCount = count
+            };
         }
 
         #endregion

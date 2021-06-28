@@ -7,7 +7,9 @@
         genTypes: '/cagc/gen-types',
         generateByCSV: '/cagc/generate-by-csv',
         download: '/cagc/download',
-        cagcHub: '/cagchub'
+        cagcHub: '/cagchub',
+        getTempInfo: '/cagc/temp-info',
+        clearTemp: '/cagc/clear-temp'
     };
 
     //vue实例
@@ -29,7 +31,9 @@
             generateByCSVProgress,
             generateByCSVSuccess,
             generateByCSVError,
-            download
+            download,
+            refreshTemp,
+            clearTemp
         },
         watch: {
             'output.list': {
@@ -90,6 +94,12 @@
                 connection: null,
                 list: [],
                 search: ''
+            },
+            temp: {
+                loading: false,
+                explain: '',
+                Size: '',
+                disable: false
             }
         };
     }
@@ -195,6 +205,9 @@
                 break;
             case 'Custom':
                 ElementPlus.ElMessage('暂不支持.');
+                break;
+            case "Temp":
+                getTempInfo();
                 break;
         }
     }
@@ -351,12 +364,12 @@
         main.$refs['upload-file'].clearFiles();
         main.config.uploading = false;
 
+        ElementPlus.ElMessage(response.Message);
+
         if (response.Success) {
             main.config.download = true;
             main.config.downloadKey = response.Data;
         }
-        else
-            ElementPlus.ElMessage(response.Message);
     }
 
     /**
@@ -378,5 +391,61 @@
      * */
     function download() {
         window.open(`${apiUrls.download}/${main.config.downloadKey}`);
+    }
+
+    /**
+     * 获取缓存信息
+     * */
+    function getTempInfo() {
+        main.temp.disable = true;
+        main.temp.loading = true;
+
+        axios.get(apiUrls.getTempInfo)
+            .then((response) => {
+                if (response.data.Success) {
+                    main.temp.Size = response.data.Data.OccupiedSpace;
+                    main.temp.explain = `占用空间${main.temp.Size}, 包含${response.data.Data.FileCount}个文件.`;
+
+                    if (response.data.Data.FileCount > 0)
+                        main.temp.disable = false
+                }
+                else {
+                    ElementPlus.ElMessage(response.data.Message);
+                }
+                main.temp.loading = false;
+            })
+            .catch((error) => {
+                main.temp.loading = false;
+                ElementPlus.ElMessage('获取缓存信息时发生异常.');
+            });
+    }
+
+    /**
+     * 刷新缓存信息
+     * */
+    function refreshTemp() {
+        getTempInfo();
+    }
+
+    /**
+     * 清理缓存
+     * */
+    function clearTemp() {
+        main.temp.disable = true;
+
+        axios.get(apiUrls.clearTemp)
+            .then((response) => {
+                ElementPlus.ElMessage(response.data.Message);
+                if (response.data.Success) {
+                    getTempInfo();
+                }
+                else
+                    main.temp.loading = false;
+            })
+            .catch((error) => {
+                main.temp.disable = false;
+                main.temp.loading = false;
+                ElementPlus.ElMessage('清理缓存时发生异常.');
+            });
     }
 }

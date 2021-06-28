@@ -1842,6 +1842,18 @@
             <param name="key">用于下载文件的key</param>
             <returns></returns>
         </member>
+        <member name="M:Api.Controllers.Utils.CAGCController.GetTempInfo">
+            <summary>
+            获取临时文件信息
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.Utils.CAGCController.ClearTemp">
+            <summary>
+            清理临时文件
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:Api.Controllers.Utils.CASController">
             <summary>
             CAS认证接口

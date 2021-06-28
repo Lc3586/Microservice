@@ -101,6 +101,26 @@
                     <el-tab-pane label="自定义配置" name="Custom">
 
                     </el-tab-pane>
+                    <el-tab-pane label="缓存文件" name="Temp">
+                        <el-card class="temp-card"
+                                 shadow="hover">
+                            <template #header>
+                                <div class="temp-header" v-loading="temp.loading">
+                                    <i class="el-icon-folder-opened"></i><span>{{temp.explain}}</span>
+                                    <div class="temp-tool">
+                                        <el-button type="primary"
+                                                   round
+                                                   :disabled="temp.disable"
+                                                   @click="refreshTemp">刷新</el-button>
+                                        <el-button type="danger"
+                                                   round
+                                                   :disabled="temp.disable"
+                                                   @click="clearTemp">清理</el-button>
+                                    </div>
+                                </div>
+                            </template>
+                        </el-card>
+                    </el-tab-pane>
                 </el-tabs>
             </el-container>
         </el-container>

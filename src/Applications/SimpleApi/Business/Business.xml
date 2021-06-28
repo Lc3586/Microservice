@@ -2303,6 +2303,15 @@
             <param name="method">方法</param>
             <returns></returns>
         </member>
+        <member name="M:Business.Utils.CAGC.CAGCBusiness.ErgodicDirectorie(System.IO.DirectoryInfo,System.Int32@,System.Int64@,System.Boolean)">
+            <summary>
+            遍历文件夹
+            </summary>
+            <param name="directory">文件夹</param>
+            <param name="fileCount">文件数量</param>
+            <param name="fileLength">文件总字节数</param>
+            <param name="delete">删除文件夹</param>
+        </member>
         <member name="T:Business.Utils.CAGC.ICAGCBusiness">
             <summary>
             自动生成代码业务接口类
@@ -2327,6 +2336,18 @@
             下载已生成的代码文件
             </summary>
             <param name="key">用于下载文件的key</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Utils.CAGC.ICAGCBusiness.GetTempInfo">
+            <summary>
+            获取临时文件信息
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Utils.CAGC.ICAGCBusiness.ClearTemp">
+            <summary>
+            清理临时文件
+            </summary>
             <returns></returns>
         </member>
         <member name="T:Business.Utils.CAS.CASHelper">

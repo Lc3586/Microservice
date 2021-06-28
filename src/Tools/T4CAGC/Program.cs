@@ -74,18 +74,18 @@ namespace T4CAGC
                 "      @@@                 =@@^        ,@@@@@@]]@@@@@@`   @@@^           ,@@@^    ,@@@@@@]]@@@@@@@@@      ,@@@@@@]]@@@@@@`".ConsoleWrite(ConsoleColor.Green);
                 "      [[[                 ,[[`           [\\@@@@@@/`     ,[[[             ,[[[       ,\\@@@@@@/`  ,[[         [\\@@@@@@/`\r\n\r\n\r\n\r\n\r\n\r\n\r\n".ConsoleWrite(ConsoleColor.Magenta);
 
-                "\t]]]]]]]]]]]`      ]]]]            ,]]]`\t\t,]]`                  ]/@@@@@@]`      ]]]]]]]]]]]]]]]]]]   ]]]]]]]]]]]]]`".ConsoleWrite(ConsoleColor.Cyan);
-                "\t@@@@@@@@@@@@@@`    \\@@@`         =@@@^\t\t=@@^               ,@@@@@@[[@@@@@@`   @@@@@@@@@@@@@@@@@@   @@@@@@@@@@@@@@@@`".ConsoleWrite(ConsoleColor.Cyan);
-                "\t@@@        ,@@@^    =@@@^       /@@@`  \t\t=@@^              @@@@`        ,@@@^         =@@^          @@@          ,@@@^".ConsoleWrite(ConsoleColor.Cyan);
-                "\t@@@         =@@^      @@@\\     @@@/   \t\t=@@^             @@@/           ,@@@         =@@^          @@@           =@@^".ConsoleWrite(ConsoleColor.Cyan);
-                "\t@@@        /@@@        \\@@@` ,@@@`    \t\t=@@^            =@@@                         =@@^          @@@           @@@^".ConsoleWrite(ConsoleColor.Cyan);
-                "\t@@@@@@@@@@@@@^          ,@@@@@@@       \t\t=@@^            =@@^                         =@@^          @@@]]]]]]]/@@@@@`".ConsoleWrite(ConsoleColor.Cyan);
-                "\t@@@      ,[\\@@@\\          \\@@@/     \t\t=@@^            =@@^                         =@@^          @@@@@@@@@@@@@@".ConsoleWrite(ConsoleColor.Cyan);
-                "\t@@@          @@@^          @@@         \t\t=@@^            =@@@                         =@@^          @@@        ,@@@^".ConsoleWrite(ConsoleColor.Cyan);
-                "\t@@@          =@@^          @@@         \t\t=@@^             @@@\\           =@@@         =@@^          @@@          @@@^".ConsoleWrite(ConsoleColor.Cyan);
-                "\t@@@         /@@@`          @@@         \t\t=@@^              @@@@`        ,@@@^         =@@^          @@@          ,@@@`".ConsoleWrite(ConsoleColor.Cyan);
-                "\t@@@@@@@@@@@@@@@`           @@@         \t\t=@@@@@@@@@@@@@     ,@@@@@@]]@@@@@@`          =@@^          @@@           =@@@ ".ConsoleWrite(ConsoleColor.Cyan);
-                "\t[[[[[[[[[[[[               [[[         \t\t,[[[[[[[[[[[[[        [\\@@@@@@/`             ,[[`          [[[            [[[`\r\n\r\n\r\n\r\n\r\n\r\n\r\n".ConsoleWrite(ConsoleColor.Cyan);
+                "\t\t\t]]]]]]]]]]]`      ]]]]            ,]]]`\t\t,]]`                  ]/@@@@@@]`      ]]]]]]]]]]]]]]]]]]   ]]]]]]]]]]]]]`".ConsoleWrite(ConsoleColor.Cyan);
+                "\t\t\t@@@@@@@@@@@@@@`    \\@@@`         =@@@^\t\t=@@^               ,@@@@@@[[@@@@@@`   @@@@@@@@@@@@@@@@@@   @@@@@@@@@@@@@@@@`".ConsoleWrite(ConsoleColor.Cyan);
+                "\t\t\t@@@        ,@@@^    =@@@^       /@@@`  \t\t=@@^              @@@@`        ,@@@^         =@@^          @@@          ,@@@^".ConsoleWrite(ConsoleColor.Cyan);
+                "\t\t\t@@@         =@@^      @@@\\     @@@/   \t\t=@@^             @@@/           ,@@@         =@@^          @@@           =@@^".ConsoleWrite(ConsoleColor.Cyan);
+                "\t\t\t@@@        /@@@        \\@@@` ,@@@`    \t\t=@@^            =@@@                         =@@^          @@@           @@@^".ConsoleWrite(ConsoleColor.Cyan);
+                "\t\t\t@@@@@@@@@@@@@^          ,@@@@@@@       \t\t=@@^            =@@^                         =@@^          @@@]]]]]]]/@@@@@`".ConsoleWrite(ConsoleColor.Cyan);
+                "\t\t\t@@@      ,[\\@@@\\          \\@@@/     \t\t=@@^            =@@^                         =@@^          @@@@@@@@@@@@@@".ConsoleWrite(ConsoleColor.Cyan);
+                "\t\t\t@@@          @@@^          @@@         \t\t=@@^            =@@@                         =@@^          @@@        ,@@@^".ConsoleWrite(ConsoleColor.Cyan);
+                "\t\t\t@@@          =@@^          @@@         \t\t=@@^             @@@\\           =@@@         =@@^          @@@          @@@^".ConsoleWrite(ConsoleColor.Cyan);
+                "\t\t\t@@@         /@@@`          @@@         \t\t=@@^              @@@@`        ,@@@^         =@@^          @@@          ,@@@`".ConsoleWrite(ConsoleColor.Cyan);
+                "\t\t\t@@@@@@@@@@@@@@@`           @@@         \t\t=@@@@@@@@@@@@@     ,@@@@@@]]@@@@@@`          =@@^          @@@           =@@@ ".ConsoleWrite(ConsoleColor.Cyan);
+                "\t\t\t[[[[[[[[[[[[               [[[         \t\t,[[[[[[[[[[[[[        [\\@@@@@@/`             ,[[`          [[[            [[[`\r\n\r\n\r\n\r\n\r\n\r\n\r\n".ConsoleWrite(ConsoleColor.Cyan);
 
                 #endregion
 

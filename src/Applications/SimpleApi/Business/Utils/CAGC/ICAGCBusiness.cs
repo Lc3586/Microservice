@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Model.Utils.CAGC.CAGCDTO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -29,5 +30,17 @@ namespace Business.Utils.CAGC
         /// <param name="key">用于下载文件的key</param>
         /// <returns></returns>
         Task Download(string key);
+
+        /// <summary>
+        /// 获取临时文件信息
+        /// </summary>
+        /// <returns></returns>
+        TempInfo GetTempInfo();
+
+        /// <summary>
+        /// 清理临时文件
+        /// </summary>
+        /// <returns></returns>
+        ClearnTempResult ClearTemp();
     }
 }

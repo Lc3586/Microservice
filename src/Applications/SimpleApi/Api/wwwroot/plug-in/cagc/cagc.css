@@ -92,6 +92,8 @@ body > .full_container {
     }
 
     .output_pane p {
+        margin-top: 0px;
+        margin-bottom: 0px;
         line-height: 20px;
         color: #fafbfc;
         white-space: pre-wrap;
@@ -150,11 +152,35 @@ body > .full_container {
     float: left;
 }
 
-.step-btn .download {
+.download {
     float: right;
 }
 
 /*文件上传标签*/
 .upload-file {
     text-align: center;
+}
+
+/*头部样式*/
+.temp-header {
+    text-align: left;
+    line-height: 60px;
+    color: #586069;
+    font-weight: 400;
+}
+
+    .temp-header i {
+        font-size: 39px;
+    }
+
+/*缓存信息的图标样式*/
+.temp-header i {
+    background-color: white;
+    border-radius: 20px;
+    transition: color .15s linear;
+    font-size: 32px;
+}
+
+.temp-tool {
+    float: right;
 }

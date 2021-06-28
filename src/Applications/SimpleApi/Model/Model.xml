@@ -1144,6 +1144,36 @@
             用户类型
             </summary>
         </member>
+        <member name="T:Model.Utils.CAGC.CAGCDTO.TempInfo">
+            <summary>
+            临时文件信息
+            </summary>
+        </member>
+        <member name="P:Model.Utils.CAGC.CAGCDTO.TempInfo.OccupiedSpace">
+            <summary>
+            占用空间
+            </summary>
+        </member>
+        <member name="P:Model.Utils.CAGC.CAGCDTO.TempInfo.FileCount">
+            <summary>
+            文件数量
+            </summary>
+        </member>
+        <member name="T:Model.Utils.CAGC.CAGCDTO.ClearnTempResult">
+            <summary>
+            清理临时文件返回信息
+            </summary>
+        </member>
+        <member name="P:Model.Utils.CAGC.CAGCDTO.ClearnTempResult.FreeSpace">
+            <summary>
+            释放空间
+            </summary>
+        </member>
+        <member name="P:Model.Utils.CAGC.CAGCDTO.ClearnTempResult.FileCount">
+            <summary>
+            文件数量
+            </summary>
+        </member>
         <member name="T:Model.Utils.CAGC.GenType">
             <summary>
             生成类型
