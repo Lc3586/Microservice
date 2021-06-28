@@ -205,6 +205,10 @@ namespace Business.Utils.CAGC
         {
             fileCount = 0;
             fileLength = 0;
+
+            if (!directory.Exists)
+                return;
+
             var directories = directory.GetDirectories();
             foreach (var deep_directory in directories)
             {
