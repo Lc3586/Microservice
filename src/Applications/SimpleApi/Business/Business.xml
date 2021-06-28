@@ -2288,7 +2288,7 @@
             自动生成代码业务类
             </summary>
         </member>
-        <member name="F:Business.Utils.CAGC.CAGCBusiness.T4CAGCFile">
+        <member name="F:Business.Utils.CAGC.CAGCBusiness.CAGCFile">
             <summary>
             应用程序文件绝对路径
             </summary>
@@ -2298,9 +2298,23 @@
             缓存目录绝对路径
             </summary>
         </member>
+        <member name="M:Business.Utils.CAGC.CAGCBusiness.GetProcess(System.String)">
+            <summary>
+            获取进程
+            </summary>
+            <param name="arguments">参数</param>
+            <returns></returns>
+        </member>
         <member name="M:Business.Utils.CAGC.CAGCBusiness.CallEXE(System.String)">
             <summary>
             调用应用程序
+            </summary>
+            <param name="arguments">命令参数</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Utils.CAGC.CAGCBusiness.CallEXEAndGetOutput(System.String)">
+            <summary>
+            调用应用程序并返回输出信息
             </summary>
             <param name="arguments">命令参数</param>
             <returns></returns>
@@ -2326,6 +2340,12 @@
             <summary>
             自动生成代码业务接口类
             </summary>
+        </member>
+        <member name="M:Business.Utils.CAGC.ICAGCBusiness.GetVersionInfo">
+            <summary>
+            获取自动生成代码应用程序版本信息
+            </summary>
+            <returns></returns>
         </member>
         <member name="M:Business.Utils.CAGC.ICAGCBusiness.GetGenTypes">
             <summary>

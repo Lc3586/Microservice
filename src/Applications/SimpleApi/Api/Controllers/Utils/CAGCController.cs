@@ -31,6 +31,17 @@ namespace Api.Controllers.Utils
         #endregion
 
         /// <summary>
+        /// 获取自动生成代码应用程序版本信息
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("version-info")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "版本信息", typeof(string))]
+        public async Task<object> GetVersionInfo()
+        {
+            return Success<string>(await CAGCBusiness.GetVersionInfo());
+        }
+
+        /// <summary>
         /// 获取所有生成类型
         /// </summary>
         /// <returns></returns>

@@ -2019,17 +2019,22 @@
             需要记录的日志的最低等级
             </summary>
         </member>
-        <member name="P:Model.Utils.Config.SystemConfig.T4CAGCFile">
+        <member name="P:Model.Utils.Config.SystemConfig.EnableCAGC">
+            <summary>
+            启用自动生成代码应用程序
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Config.SystemConfig.CAGCFile">
             <summary>
             自动生成代码应用程序文件
             </summary>
         </member>
-        <member name="P:Model.Utils.Config.SystemConfig.AbsoluteT4CAGCFile">
+        <member name="P:Model.Utils.Config.SystemConfig.AbsoluteCAGCFile">
             <summary>
             自动生成代码应用程序文件绝对路径
             </summary>
         </member>
-        <member name="P:Model.Utils.Config.SystemConfig._AbsoluteT4CAGCFile">
+        <member name="P:Model.Utils.Config.SystemConfig._AbsoluteCAGCFile">
             <summary>
             自动生成代码应用程序文件绝对路径
             </summary>

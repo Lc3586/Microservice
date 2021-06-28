@@ -121,6 +121,11 @@
                             </template>
                         </el-card>
                     </el-tab-pane>
+                    <el-tab-pane label="版本信息" class="output_pane" name="Version" v-loading="version.loading">
+                        <div class="block">
+                            <p v-html="version.content"></p>
+                        </div>
+                    </el-tab-pane>
                 </el-tabs>
             </el-container>
         </el-container>

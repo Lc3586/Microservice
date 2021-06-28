@@ -55,6 +55,12 @@ namespace Api
                     .Select(o => o.RelativePath));
             }
 
+            if (!Config.EnableCAGC)
+            {
+                removePaths.AddRange(context.ApiDescriptions.Where(o => o.RelativePath.IndexOf("cagc/") == 0)
+                    .Select(o => o.RelativePath));
+            }
+
             if (removePaths.Any())
                 removePaths.ForEach(o => swaggerDoc.Paths.Remove($"/{o}"));
         }

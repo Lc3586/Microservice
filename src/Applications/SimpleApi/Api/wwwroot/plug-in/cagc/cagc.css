@@ -48,7 +48,7 @@ body > .full_container {
     overflow-x: hidden;
 }
 
-/*标签内容页-实时日志部分的样式*/
+/*标签内容页-输出部分的样式*/
 .output_pane {
     overflow: visible;
     padding-top: 20px !important;
@@ -82,6 +82,7 @@ body > .full_container {
     }
 
     .output_pane .block {
+        padding-left: 20px;
         background: #24292e;
         overflow-y: auto;
         padding-top: 30px;

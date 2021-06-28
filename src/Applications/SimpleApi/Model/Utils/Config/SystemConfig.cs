@@ -248,30 +248,35 @@ namespace Model.Utils.Config
 
         #endregion
 
-        #region T4CAGC
+        #region 自动生成代码应用程序
+
+        /// <summary>
+        /// 启用自动生成代码应用程序
+        /// </summary>
+        public bool EnableCAGC { get; set; }
 
         /// <summary>
         /// 自动生成代码应用程序文件
         /// </summary>
-        public string T4CAGCFile { get; set; }
+        public string CAGCFile { get; set; }
 
         /// <summary>
         /// 自动生成代码应用程序文件绝对路径
         /// </summary>
-        public string AbsoluteT4CAGCFile
+        public string AbsoluteCAGCFile
         {
             get
             {
-                if (!string.IsNullOrWhiteSpace(T4CAGCFile) && string.IsNullOrWhiteSpace(_AbsoluteT4CAGCFile))
-                    _AbsoluteT4CAGCFile = Path.GetFullPath(T4CAGCFile, AppContext.BaseDirectory);
-                return _AbsoluteT4CAGCFile;
+                if (!string.IsNullOrWhiteSpace(CAGCFile) && string.IsNullOrWhiteSpace(_AbsoluteCAGCFile))
+                    _AbsoluteCAGCFile = Path.GetFullPath(CAGCFile, AppContext.BaseDirectory);
+                return _AbsoluteCAGCFile;
             }
         }
 
         /// <summary>
         /// 自动生成代码应用程序文件绝对路径
         /// </summary>
-        private string _AbsoluteT4CAGCFile { get; set; }
+        private string _AbsoluteCAGCFile { get; set; }
 
         #endregion
 

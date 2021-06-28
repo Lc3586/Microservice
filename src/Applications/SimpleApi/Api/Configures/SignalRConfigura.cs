@@ -25,30 +25,33 @@ namespace Api.Configures
         {
             "注册SignalR服务.".ConsoleWrite();
 
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy(nameof(SignalRHubRequirement), policy =>
+            var builder = services.AddAuthorization(options =>
+                 {
+                     options.AddPolicy(nameof(SignalRHubRequirement), policy =>
+                     {
+                         policy.Requirements.Add(new SignalRHubRequirement());
+                     });
+                 }).AddScoped<IAuthorizationHandler, SignalRHubHandler<SignalRHubRequirement>>()
+                 .AddSignalR()
+                 .AddHubOptions<LogHub>(option =>
+                 {
+                     option.ClientTimeoutInterval = TimeSpan.FromSeconds(30);
+                     option.EnableDetailedErrors = config.RunMode != RunMode.Publish && config.RunMode != RunMode.Publish_Swagger;
+                 });
+
+            if (config.EnableWeChatService)
+                builder.AddHubOptions<WeChatServiceHub>(option =>
                 {
-                    policy.Requirements.Add(new SignalRHubRequirement());
+                    option.ClientTimeoutInterval = TimeSpan.FromSeconds(30);
+                    option.EnableDetailedErrors = config.RunMode != RunMode.Publish && config.RunMode != RunMode.Publish_Swagger;
                 });
-            })
-            .AddScoped<IAuthorizationHandler, SignalRHubHandler<SignalRHubRequirement>>()
-            .AddSignalR()
-            .AddHubOptions<LogHub>(option =>
-            {
-                option.ClientTimeoutInterval = TimeSpan.FromSeconds(30);
-                option.EnableDetailedErrors = config.RunMode != RunMode.Publish && config.RunMode != RunMode.Publish_Swagger;
-            })
-            .AddHubOptions<WeChatServiceHub>(option =>
-            {
-                option.ClientTimeoutInterval = TimeSpan.FromSeconds(30);
-                option.EnableDetailedErrors = config.RunMode != RunMode.Publish && config.RunMode != RunMode.Publish_Swagger;
-            })
-            .AddHubOptions<CAGCHub>(option =>
-            {
-                option.ClientTimeoutInterval = TimeSpan.FromSeconds(30);
-                option.EnableDetailedErrors = config.RunMode != RunMode.Publish && config.RunMode != RunMode.Publish_Swagger;
-            });
+
+            if (config.EnableCAGC)
+                builder.AddHubOptions<CAGCHub>(option =>
+                {
+                    option.ClientTimeoutInterval = TimeSpan.FromSeconds(30);
+                    option.EnableDetailedErrors = config.RunMode != RunMode.Publish && config.RunMode != RunMode.Publish_Swagger;
+                });
 
             $"初始化{LogForwardHandler.Name}.".ConsoleWrite();
             services.AddSingleton(new LogForwardHandler());
@@ -72,8 +75,10 @@ namespace Api.Configures
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHub<LogHub>("/loghub");
-                endpoints.MapHub<WeChatServiceHub>("/wechathub");
-                endpoints.MapHub<CAGCHub>("/cagchub");
+                if (config.EnableWeChatService)
+                    endpoints.MapHub<WeChatServiceHub>("/wechathub");
+                if (config.EnableCAGC)
+                    endpoints.MapHub<CAGCHub>("/cagchub");
             });
 
             $"启动{LogForwardHandler.Name}.".ConsoleWrite();

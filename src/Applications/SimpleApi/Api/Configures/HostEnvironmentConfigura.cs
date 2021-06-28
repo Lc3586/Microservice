@@ -42,7 +42,9 @@ namespace Api.Configures
                 $"当前为{webHostEnvironment.EnvironmentName}环境.".ConsoleWrite();
 
                 //转移静态文件目录
-                if (Directory.Exists(webHostEnvironment.WebRootPath))
+                if (webHostEnvironment.WebRootPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).ToUpperInvariant()
+                    != config.AbsoluteWWWRootDirectory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).ToUpperInvariant()
+                        && Directory.Exists(webHostEnvironment.WebRootPath))
                     webHostEnvironment.WebRootPath.CopyTo(config.AbsoluteWWWRootDirectory, true, true);
 
                 webHostEnvironment.ContentRootPath = config.AbsoluteStorageDirectory;

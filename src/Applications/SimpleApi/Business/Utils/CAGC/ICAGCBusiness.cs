@@ -11,6 +11,12 @@ namespace Business.Utils.CAGC
     public interface ICAGCBusiness
     {
         /// <summary>
+        /// 获取自动生成代码应用程序版本信息
+        /// </summary>
+        /// <returns></returns>
+        Task<string> GetVersionInfo();
+
+        /// <summary>
         /// 获取所有生成类型
         /// </summary>
         /// <returns></returns>

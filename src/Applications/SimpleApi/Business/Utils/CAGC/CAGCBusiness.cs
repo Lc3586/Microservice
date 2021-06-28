@@ -42,7 +42,7 @@ namespace Business.Utils.CAGC
             HttpContextAccessor = httpContextAccessor;
             CAGCHub = cagcHub;
 
-            T4CAGCFile = Config.AbsoluteT4CAGCFile;
+            CAGCFile = Config.AbsoluteCAGCFile;
             TempDir = Path.Combine(Config.AbsoluteStorageDirectory, "CAGC/Temp", DateTime.Now.ToString("yyyy-MM-dd"));
         }
 
@@ -61,7 +61,7 @@ namespace Business.Utils.CAGC
         /// <summary>
         /// 应用程序文件绝对路径
         /// </summary>
-        readonly string T4CAGCFile;
+        readonly string CAGCFile;
 
         /// <summary>
         /// 缓存目录绝对路径
@@ -69,16 +69,16 @@ namespace Business.Utils.CAGC
         readonly string TempDir;
 
         /// <summary>
-        /// 调用应用程序
+        /// 获取进程
         /// </summary>
-        /// <param name="arguments">命令参数</param>
+        /// <param name="arguments">参数</param>
         /// <returns></returns>
-        async Task CallEXE(string arguments)
+        Process GetProcess(string arguments)
         {
-            if (!T4CAGCFile.Exists())
-                throw new ApplicationException($"未找到应用程序文件: {T4CAGCFile}.");
+            if (!CAGCFile.Exists())
+                throw new ApplicationException($"未找到自动生成代码应用程序文件: {CAGCFile}.");
 
-            using var process = new Process();
+            var process = new Process();
             process.StartInfo.CreateNoWindow = true;
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
@@ -88,8 +88,20 @@ namespace Business.Utils.CAGC
             process.StartInfo.RedirectStandardError = true;
             //process.StartInfo.StandardErrorEncoding = new UTF8Encoding(true);
 
-            process.StartInfo.FileName = T4CAGCFile;
+            process.StartInfo.FileName = CAGCFile;
             process.StartInfo.Arguments = arguments;
+
+            return process;
+        }
+
+        /// <summary>
+        /// 调用应用程序
+        /// </summary>
+        /// <param name="arguments">命令参数</param>
+        /// <returns></returns>
+        async Task CallEXE(string arguments)
+        {
+            using var process = GetProcess(arguments);
             process.Start();
 
             var index = 0;
@@ -122,6 +134,32 @@ namespace Business.Utils.CAGC
 
             //await SendSignalrInfo(output, CAGCHubMethod.Info);
             await SendSignalrInfo(error, CAGCHubMethod.Error);
+        }
+
+        /// <summary>
+        /// 调用应用程序并返回输出信息
+        /// </summary>
+        /// <param name="arguments">命令参数</param>
+        /// <returns></returns>
+        async Task<string> CallEXEAndGetOutput(string arguments)
+        {
+            using var process = GetProcess(arguments);
+            process.Start();
+
+            var output = await process.StandardOutput.ReadToEndAsync();
+            var error = await process.StandardError.ReadToEndAsync();
+
+#if DEBUG
+            Console.Write(output);
+            Console.Write(error);
+#endif
+
+            process.WaitForExit();
+
+            if (!error.IsNullOrWhiteSpace())
+                throw new ApplicationException(error);
+
+            return output;
         }
 
         /// <summary>
@@ -193,6 +231,13 @@ namespace Business.Utils.CAGC
         #endregion
 
         #region 公共
+
+        public async Task<string> GetVersionInfo()
+        {
+            var arguments = "-v";
+
+            return await CallEXEAndGetOutput(arguments);
+        }
 
         public Dictionary<string, string> GetGenTypes()
         {

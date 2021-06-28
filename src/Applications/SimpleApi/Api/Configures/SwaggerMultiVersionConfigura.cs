@@ -197,6 +197,12 @@ namespace Api.Configures
                             if (!config.EnableJWT)
                                 continue;
                         }
+                        else if (file.Name.Contains("cagc"))
+                        {
+                            //自动生成代码应用程序脚本
+                            if (!config.EnableCAGC)
+                                continue;
+                        }
 
                         string key = string.Empty;
                         if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))

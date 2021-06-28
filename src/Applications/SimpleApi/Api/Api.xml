@@ -1831,6 +1831,12 @@
             自动生成代码接口
             </summary>
         </member>
+        <member name="M:Api.Controllers.Utils.CAGCController.GetVersionInfo">
+            <summary>
+            获取自动生成代码应用程序版本信息
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:Api.Controllers.Utils.CAGCController.GetGenTypes">
             <summary>
             获取所有生成类型

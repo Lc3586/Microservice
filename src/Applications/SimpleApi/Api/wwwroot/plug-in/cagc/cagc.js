@@ -9,7 +9,8 @@
         download: '/cagc/download',
         cagcHub: '/cagchub',
         getTempInfo: '/cagc/temp-info',
-        clearTemp: '/cagc/clear-temp'
+        clearTemp: '/cagc/clear-temp',
+        getVersionInfo: '/cagc/version-info'
     };
 
     //vue实例
@@ -100,6 +101,11 @@
                 explain: '',
                 Size: '',
                 disable: false
+            },
+            version: {
+                init: false,
+                loading: false,
+                content: ''
             }
         };
     }
@@ -208,6 +214,10 @@
                 break;
             case "Temp":
                 getTempInfo();
+                break;
+            case "Version":
+                if (!main.version.init)
+                    getVersionInfo();
                 break;
         }
     }
@@ -446,6 +456,29 @@
                 main.temp.disable = false;
                 main.temp.loading = false;
                 ElementPlus.ElMessage('清理缓存时发生异常.');
+            });
+    }
+
+    /**
+     * 获取版本信息
+     * */
+    function getVersionInfo() {
+        main.version.loading = true;
+
+        axios.get(apiUrls.getVersionInfo)
+            .then((response) => {
+                if (response.data.Success) {
+                    main.version.init = true;
+                    main.version.content = response.data.Data;
+                }
+                else {
+                    ElementPlus.ElMessage(response.data.Message);
+                }
+                main.version.loading = false;
+            })
+            .catch((error) => {
+                main.version.loading = false;
+                ElementPlus.ElMessage('获取版本信息时发生异常.');
             });
     }
 }
