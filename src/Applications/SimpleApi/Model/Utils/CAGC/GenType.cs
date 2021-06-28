@@ -18,9 +18,9 @@ namespace Model.Utils.CAGC
         [Description("小型项目")]
         SmallProject,
         /// <summary>
-        /// 充实项目
+        /// 填充项目
         /// </summary>
-        [Description("充实项目")]
+        [Description("填充项目")]
         EnrichmentProject,
         /// <summary>
         /// 控制器类

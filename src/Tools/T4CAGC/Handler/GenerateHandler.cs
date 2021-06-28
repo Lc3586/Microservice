@@ -84,7 +84,7 @@ namespace T4CAGC.Handler
         }
 
         /// <summary>
-        /// 充实项目
+        /// 填充项目
         /// </summary>
         /// <param name="table">表数据</param>
         /// <param name="outputPath">输出路径</param>

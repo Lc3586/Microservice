@@ -1191,7 +1191,7 @@
         </member>
         <member name="F:Model.Utils.CAGC.GenType.EnrichmentProject">
             <summary>
-            充实项目
+            填充项目
             </summary>
         </member>
         <member name="F:Model.Utils.CAGC.GenType.Controller">
