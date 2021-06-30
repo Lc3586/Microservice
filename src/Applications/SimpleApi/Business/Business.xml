@@ -321,27 +321,6 @@
             存储路径根目录绝对路径
             </summary>
         </member>
-        <member name="M:Business.Implementation.Common.FileBusiness.Save(ImageProcessorCore.Image,System.String)">
-            <summary>
-            保存
-            </summary>
-            <param name="image">图像</param>
-            <param name="path">绝对路径</param>
-        </member>
-        <member name="M:Business.Implementation.Common.FileBusiness.Save(System.Byte[],System.String)">
-            <summary>
-            保存
-            </summary>
-            <param name="bytes">文件</param>
-            <param name="path">绝对路径</param>
-        </member>
-        <member name="M:Business.Implementation.Common.FileBusiness.Save(System.IO.Stream,System.String)">
-            <summary>
-            保存
-            </summary>
-            <param name="stream">流</param>
-            <param name="path">绝对路径</param>
-        </member>
         <member name="M:Business.Implementation.Common.FileBusiness.GetPreviewImage(System.String)">
             <summary>
             获取预览图
@@ -349,52 +328,11 @@
             <param name="extension">文件后缀</param>
             <returns></returns>
         </member>
-        <member name="M:Business.Implementation.Common.FileBusiness.ResponseImage(ImageProcessorCore.Image)">
-            <summary>
-            输出图片
-            </summary>
-            <param name="img"></param>
-        </member>
-        <member name="M:Business.Implementation.Common.FileBusiness.Response(System.IO.Stream)">
-            <summary>
-            输出
-            </summary>
-            <param name="stream">流</param>
-        </member>
-        <member name="M:Business.Implementation.Common.FileBusiness.ResponseFile(System.String,System.Nullable{System.Int64})">
-            <summary>
-            输出文件
-            </summary>
-            <param name="path">文件路径</param>
-            <param name="bytes">总字节数</param>
-        </member>
-        <member name="M:Business.Implementation.Common.FileBusiness.IsResponseRangeBytes(System.Int64,System.Int64@,System.Int64@)">
-            <summary>
-            是否需要分段输出数据
-            </summary>
-            <param name="bytes">总字节数</param>
-            <param name="start">开始位置</param>
-            <param name="count">输出字节数</param>
-            <returns></returns>
-        </member>
         <member name="M:Business.Implementation.Common.FileBusiness.CheckFileStateResponseWhenError(System.String)">
             <summary>
             输出错误
             </summary>
             <param name="fileState"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Business.Implementation.Common.FileBusiness.DeleteFile(System.String)">
-            <summary>
-            删除文件
-            </summary>
-            <param name="path"></param>
-        </member>
-        <member name="M:Business.Implementation.Common.FileBusiness.GetMD5(System.IO.Stream)">
-            <summary>
-            获取MD5
-            </summary>
-            <param name="stream"></param>
             <returns></returns>
         </member>
         <member name="M:Business.Implementation.Common.FileBusiness.GetFileState(System.String,System.Boolean,System.Nullable{System.Int32})">
@@ -451,6 +389,76 @@
             <param name="contentType">文件内容类型</param>
             <param name="extension">文件扩展名</param>
             <param name="path">路径</param>
+        </member>
+        <member name="M:Business.Implementation.Common.FileBusiness.Save(ImageProcessorCore.Image,System.String)">
+            <summary>
+            保存
+            </summary>
+            <param name="image">图像</param>
+            <param name="path">绝对路径</param>
+        </member>
+        <member name="M:Business.Implementation.Common.FileBusiness.Save(System.Byte[],System.String)">
+            <summary>
+            保存
+            </summary>
+            <param name="bytes">文件</param>
+            <param name="path">绝对路径</param>
+        </member>
+        <member name="M:Business.Implementation.Common.FileBusiness.Save(System.IO.Stream,System.String)">
+            <summary>
+            保存
+            </summary>
+            <param name="stream">流</param>
+            <param name="path">绝对路径</param>
+        </member>
+        <member name="M:Business.Implementation.Common.FileBusiness.ResponseImage(Microsoft.AspNetCore.Http.HttpRequest,Microsoft.AspNetCore.Http.HttpResponse,ImageProcessorCore.Image)">
+            <summary>
+            输出图片
+            </summary>
+            <param name="request">Http请求对象</param>
+            <param name="response">Http响应对象</param>
+            <param name="img"></param>
+        </member>
+        <member name="M:Business.Implementation.Common.FileBusiness.Response(Microsoft.AspNetCore.Http.HttpRequest,Microsoft.AspNetCore.Http.HttpResponse,System.IO.Stream)">
+            <summary>
+            输出
+            </summary>
+            <param name="request">Http请求对象</param>
+            <param name="response">Http响应对象</param>
+            <param name="stream">流</param>
+        </member>
+        <member name="M:Business.Implementation.Common.FileBusiness.ResponseFile(Microsoft.AspNetCore.Http.HttpRequest,Microsoft.AspNetCore.Http.HttpResponse,System.String,System.Nullable{System.Int64})">
+            <summary>
+            输出文件
+            </summary>
+            <param name="request">Http请求对象</param>
+            <param name="response">Http响应对象</param>
+            <param name="path">文件路径</param>
+            <param name="bytes">总字节数</param>
+        </member>
+        <member name="M:Business.Implementation.Common.FileBusiness.IsResponseRangeBytes(Microsoft.AspNetCore.Http.HttpRequest,Microsoft.AspNetCore.Http.HttpResponse,System.Int64,System.Int64@,System.Int64@)">
+            <summary>
+            是否需要分段输出数据
+            </summary>
+            <param name="request">Http请求对象</param>
+            <param name="response">Http响应对象</param>
+            <param name="bytes">总字节数</param>
+            <param name="start">开始位置</param>
+            <param name="count">输出字节数</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Implementation.Common.FileBusiness.DeleteFile(System.String)">
+            <summary>
+            删除文件
+            </summary>
+            <param name="path"></param>
+        </member>
+        <member name="M:Business.Implementation.Common.FileBusiness.GetMD5(System.IO.Stream)">
+            <summary>
+            获取MD5
+            </summary>
+            <param name="stream"></param>
+            <returns></returns>
         </member>
         <member name="T:Business.Implementation.Common.OperationRecordBusiness">
             <summary>
@@ -2286,11 +2294,6 @@
         <member name="T:Business.Utils.CAGC.CAGCBusiness">
             <summary>
             自动生成代码业务类
-            </summary>
-        </member>
-        <member name="F:Business.Utils.CAGC.CAGCBusiness.CAGCFile">
-            <summary>
-            应用程序文件绝对路径
             </summary>
         </member>
         <member name="F:Business.Utils.CAGC.CAGCBusiness.TempDir">

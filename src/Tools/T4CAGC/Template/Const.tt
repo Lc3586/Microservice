@@ -9,7 +9,7 @@ namespace Model.<#=Options.ModuleName#>
     /// <summary>
     /// <#=Options.TableRemark#> <#=Options.Field.Remark#>
     /// </summary>
-    public static class <#=Options.ModuleName#>_<#=Options.Field.Name#>
+    public static class <#=Options.ReducedName#>_<#=Options.Field.Name#>
     {
 <#
 	foreach (var @const in Options.Field.Consts.OrderBy(o => o.Key))

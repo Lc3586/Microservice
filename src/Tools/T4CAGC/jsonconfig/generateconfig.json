@@ -1,6 +1,7 @@
 ﻿{
   "Config": {
     "Version": "v0.0.0.1",
-    "CompleteProjectCodeZipUri": "https://codeload.github.com/Lc3586/Microservice/zip/refs/heads/master"
+    "CompleteProjectCodeZipFile": "../CompleteProjectCode.zip",
+    "CompleteProjectCodeZipDownloadUri": null
   }
 }

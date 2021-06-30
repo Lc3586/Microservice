@@ -1857,6 +1857,16 @@
             系统配置
             </summary>
         </member>
+        <member name="P:Model.Utils.Config.SystemConfig.CurrentOS">
+            <summary>
+            当前操作系统平台
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Config.SystemConfig._CurrentOS">
+            <summary>
+            当前操作系统平台
+            </summary>
+        </member>
         <member name="P:Model.Utils.Config.SystemConfig.StorageDirectory">
             <summary>
             数据存储根目录
@@ -2024,21 +2034,6 @@
             启用自动生成代码应用程序
             </summary>
         </member>
-        <member name="P:Model.Utils.Config.SystemConfig.CAGCFile">
-            <summary>
-            自动生成代码应用程序文件
-            </summary>
-        </member>
-        <member name="P:Model.Utils.Config.SystemConfig.AbsoluteCAGCFile">
-            <summary>
-            自动生成代码应用程序文件绝对路径
-            </summary>
-        </member>
-        <member name="P:Model.Utils.Config.SystemConfig._AbsoluteCAGCFile">
-            <summary>
-            自动生成代码应用程序文件绝对路径
-            </summary>
-        </member>
         <member name="P:Model.Utils.Config.SystemConfig.EnableSwagger">
             <summary>
             启用Swagger
@@ -2169,6 +2164,22 @@
             <summary>
             Signalr允许跨域
             </summary>
+        </member>
+        <member name="P:Model.Utils.Config.SystemConfig.FileList">
+            <summary>
+            文件清单
+            <para>[{文件名 : [{平台 : 文件路径}]}]</para>
+            </summary>
+            <remarks>
+            
+            </remarks>
+        </member>
+        <member name="M:Model.Utils.Config.SystemConfig.GetFileAbsolutePath(System.String)">
+            <summary>
+            获取文件清单中文件的绝对路径
+            </summary>
+            <param name="filename">文件名</param>
+            <returns></returns>
         </member>
         <member name="T:Model.Utils.Config.WeChatServiceSetting">
             <summary>

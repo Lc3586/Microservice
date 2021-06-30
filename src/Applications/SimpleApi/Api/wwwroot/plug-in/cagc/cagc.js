@@ -85,7 +85,8 @@
                 uploading: false,
                 uploadPercentage: 0,
                 download: false,
-                downloadKey: null
+                downloadKey: null,
+                reUpload: false
             },
             output: {
                 show: false,
@@ -241,7 +242,7 @@
     }
 
     /**
-     * 连接至日志中心
+     * 连接至Hub
      * */
     function connectToCAGCHub() {
         main.output.loading = true;
@@ -259,34 +260,15 @@
             //console.info(connectionId);
             main.overall.title = '连接已恢复';
             main.overall.explain = '已重新连接至服务器';
+
+            openOutput();
         });
         main.output.connection.onclose(() => {
             main.overall.title = '连接已关闭';
             main.overall.explain = '...';
         });
 
-        main.output.connection.on("ReceiveInfo", data => {
-            if (!main.output.receive)
-                return;
-
-            main.output.list.push({
-                content: data,
-                icon: 'el-icon-info',
-                size: 'large',
-                timestamp: dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss.SSS')
-            });
-        });
-        main.output.connection.on("ReceiveError", data => {
-            if (!main.output.receive)
-                return;
-
-            main.output.list.push({
-                content: data,
-                icon: 'el-icon-error',
-                size: 'large',
-                timestamp: dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss.SSS')
-            });
-        });
+        registerHubMethod();
 
         main.output.connection
             .start()
@@ -299,6 +281,35 @@
 
                 openOutput();
             });
+    }
+
+    /**
+     * 注册Hub方法
+     * */
+    function registerHubMethod() {
+        main.output.connection.on("ReceiveInfo", data => {
+            if (!main.output.receive)
+                return;
+
+            main.output.list.push({
+                content: data,
+                icon: 'el-icon-info',
+                size: 'large',
+                timestamp: dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss.SSS')
+            });
+        });
+
+        main.output.connection.on("ReceiveError", data => {
+            if (!main.output.receive)
+                return;
+
+            main.output.list.push({
+                content: data,
+                icon: 'el-icon-error',
+                size: 'large',
+                timestamp: dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss.SSS')
+            });
+        });
     }
 
     /**
@@ -378,6 +389,8 @@
         main.$refs['upload-file'].clearFiles();
         main.config.uploading = false;
 
+        main.config.reUpload = true;
+
         if (response.Success) {
             ElementPlus.ElMessage("操作成功, 请点击下载按钮下载生成的文件.");
             main.config.download = true;
@@ -402,6 +415,7 @@
      * 重新上传
      * */
     function reUpload() {
+        main.config.reUpload = false;
         main.config.download = false;
         main.output.show = false;
         main.config.step = 2;

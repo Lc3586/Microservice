@@ -128,15 +128,25 @@ namespace T4CAGC.Template
 
                 if (o.Virtual)
                 {
-                    attributes.AddWhenNotContains($"OpenApiIgnore");
-                    attributes.AddWhenNotContains($"JsonIgnore");
-                    attributes.AddWhenNotContains($"XmlIgnore");
+                    NameSpaces.AddWhenNotContains("Microservice.Library.OpenApi.Annotations");
+                    attributes.AddWhenNotContains("OpenApiIgnore");
+                    NameSpaces.AddWhenNotContains("Newtonsoft.Json");
+                    attributes.AddWhenNotContains("JsonIgnore");
+                    NameSpaces.AddWhenNotContains("System.Xml.Serialization");
+                    attributes.AddWhenNotContains("XmlIgnore");
 
-                    if (o.FK || o.FRK)
-                        attributes.AddWhenNotContains($"Navigate(nameof({o.KValue}))");
+                    NameSpaces.AddWhenNotContains($"Entity.{o.Bind.Split('_')[0]}");
+
+                    if (!o.FK)
+                    {
+                        NameSpaces.AddWhenNotContains($"Entity.{o.KValue.Split('.')[0].Split('_')[0]}");
+                        NameSpaces.AddWhenNotContains("System.Collections.Generic");
+                    }
 
                     if (o.RK)
                         attributes.AddWhenNotContains($"Navigate(ManyToMany = typeof({o.KValue}))");
+                    else
+                        attributes.AddWhenNotContains($"Navigate(nameof({o.KValue}))");
                 }
 
                 #endregion
@@ -245,6 +255,9 @@ namespace T4CAGC.Template
                     FieldWithAttributes.GetAndAddWhenNotContains_ReferenceType(o.Name).AddWhenNotContains(attributes);
                 });
             }
+
+            //清理冗余命名空间
+            NameSpaces.Remove($"Entity.{Options.Table.ModuleName}");
         }
     }
 }

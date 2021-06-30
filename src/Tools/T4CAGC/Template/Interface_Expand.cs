@@ -53,15 +53,15 @@ namespace T4CAGC.Template
         /// </summary>
         void AnalysisTable()
         {
-            if (!Options.Table.Fields.Any_Ex(o => o.Primary))
+            if (Options.Table.RelationshipTable)
             {
-                Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"表信息中未找到主键, 已跳过.", Options.Table.Name);
+                Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"表信息中存在联合主键, 且没有其他字段, 可能为关系表, 已跳过.", Options.Table.Name);
                 Ignore = true;
                 return;
             }
-            else if (Options.Table.Fields.Count(o => o.Primary) == Options.Table.Fields.Count)
+            else if (!Options.Table.Fields.Any_Ex(o => o.Primary))
             {
-                Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"表信息中存在联合主键, 且没有其他字段, 可能为关系表, 已跳过.", Options.Table.Name);
+                Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"表信息中未找到主键, 已跳过.", Options.Table.Name);
                 Ignore = true;
                 return;
             }
@@ -70,6 +70,9 @@ namespace T4CAGC.Template
                 NameSpaces.AddWhenNotContains($"Model.{Options.Table.ModuleName}");
 
             NameSpaces.AddWhenNotContains($"Model.{Options.Table.ModuleName}.{Options.Table.ReducedName}DTO");
+
+            NameSpaces.AddWhenNotContains("System.Collections.Generic");
+            Functions.GetAndAddWhenNotContains(Function.Delete);
 
             Options.Table.Fields.ForEach(o =>
             {
@@ -98,12 +101,6 @@ namespace T4CAGC.Template
                         Functions.GetAndAddWhenNotContains(Function.Create, tag);
                     else if (tag_lower.Contains("edit"))
                         Functions.GetAndAddWhenNotContains(Function.Edit, tag);
-                    else if (tag_lower.Contains("delete"))
-                    {
-                        NameSpaces.AddWhenNotContains("System.Collections.Generic");
-
-                        Functions.GetAndAddWhenNotContains(Function.Delete, tag);
-                    }
                     else if (tag_lower.Contains("enable"))
                     {
                         if (Options.Table.Fields.Count(field => field.Primary) > 1)

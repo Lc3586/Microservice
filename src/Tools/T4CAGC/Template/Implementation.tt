@@ -114,7 +114,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
 
         public List<string> GetAll<#=field.Name#>()
         {
-            return typeof(<#=field.Name#>).GetFields().Select(o => (string)o.GetValue(null)).ToList();
+            return typeof(<#=Options.Table.ReducedName#>_<#=field.Name#>).GetFields().Select(o => (string)o.GetValue(null)).ToList();
         }
 <#
         }
@@ -127,9 +127,9 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
         {
             var nameAndDescriptionDic = new Dictionary<string, string>();
 
-            var type = typeof(<#=field.Name#>);
+            var type = typeof(<#=Options.Table.ReducedName#>_<#=field.Name#>);
 
-            foreach (var item in Enum.GetValues<<#=field.Name#>>())
+            foreach (var item in Enum.GetValues<<#=Options.Table.ReducedName#>_<#=field.Name#>>())
             {
                 var attr = type.GetField(item.ToString()).GetCustomAttribute<DescriptionAttribute>();
 
@@ -205,6 +205,16 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
             (bool success, Exception ex) = Orm.RunTransaction(() =>
             {
 <#
+        if(Functions.ContainsKey(Function.Enable))
+        {
+#>
+
+                newData.<#=FunctionsWithField[Function.Enable].Name#> = true;
+<#
+        }
+#>
+
+<#
         if(Options.Table.Tree)
         {
 #>
@@ -235,7 +245,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
             {
 #>
 
-                newData.<#=FunctionsWithField[Function.Sort].Name#> = Repository.Max(o => o.<#=FunctionsWithField[Function.Sort].Name#>) + 1;
+                newData.<#=FunctionsWithField[Function.Sort].Name#> = Repository.Select.Max(o => o.<#=FunctionsWithField[Function.Sort].Name#>) + 1;
 <#
             }
         }
@@ -382,7 +392,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
 
             (bool success, Exception ex) = Orm.RunTransaction(() =>
             {
-                if (Repository.Delete(o => keys.Contains(<#WritePrimaryField("c", " + ");#>)) <= 0)
+                if (Repository.Delete(o => keys.Contains(<#WritePrimaryField("o", " + ");#>)) <= 0)
                     throw new MessageException("未删除任何数据");
 
                 var orIds = OperationRecordBusiness.Create(orList);
@@ -483,7 +493,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
         else
         {
 #>
-                    SortMethod.top => Repository.OrderBy(o => o.Sort)
+                    SortMethod.top => Repository.Select.OrderBy(o => o.Sort)
 <#
         }
 #>
@@ -496,14 +506,14 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
         if(Options.Table.Tree)
         {
 #>
-                    SortMethod.up => Repository.Where(o => o.ParentId == current.ParentId && o.Sort < current.Sort)
+                    SortMethod.up => Repository.Select.Where(o => o.ParentId == current.ParentId && o.Sort < current.Sort)
                                                 .OrderByDescending(o => o.Sort)
 <#
         }
         else
         {
 #>
-                    SortMethod.up => Repository.OrderByDescending(o => o.Sort)
+                    SortMethod.up => Repository.Select.OrderByDescending(o => o.Sort)
 <#
         }
 #>
@@ -516,14 +526,14 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
         if(Options.Table.Tree)
         {
 #>
-                    SortMethod.down => Repository.Where(o => o.ParentId == current.ParentId && o.Sort > current.Sort)
+                    SortMethod.down => Repository.Select.Where(o => o.ParentId == current.ParentId && o.Sort > current.Sort)
                                                 .OrderBy(o => o.Sort)
 <#
         }
         else
         {
 #>
-                    SortMethod.down => Repository.OrderBy(o => o.Sort)
+                    SortMethod.down => Repository.Select.OrderBy(o => o.Sort)
 <#
         }
 #>
@@ -536,14 +546,14 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
         if(Options.Table.Tree)
         {
 #>
-                    SortMethod.low => Repository.Where(o => o.ParentId == current.ParentId)
+                    SortMethod.low => Repository.Select.Where(o => o.ParentId == current.ParentId)
                                                 .OrderByDescending(o => o.Sort)
 <#
         }
         else
         {
 #>
-                    SortMethod.down => Repository.OrderByDescending(o => o.Sort)
+                    SortMethod.low => Repository.Select.OrderByDescending(o => o.Sort)
 <#
         }
 #>
@@ -750,7 +760,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
     {
 #>
 
-        public Task DownloadTemplate(string version = ExcelVersion.xlsx, bool autogenerateTemplate = false)
+        public async Task DownloadTemplate(string version = ExcelVersion.xlsx, bool autogenerateTemplate = false)
         {
             var response = HttpContextAccessor.HttpContext.Response;
 
@@ -895,6 +905,8 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
             if (errors.Any())
                 return new ImportResult(errors);
 
+            var result = new ImportResult(0, 0);
+
             (bool success, Exception ex) = Orm.RunTransaction(() =>
             {
                 var newDataList = new List<<#=Options.Table.Name#>>();
@@ -931,6 +943,9 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
                     //}
                 });
 
+                result.AddTotal = newDataList.Count;
+                result.UpdateTotal = editDataList.Count;
+
                 if (editDataList.Any())
                     if (Repository.UpdateDiy
                          .SetSource(editDataList)
@@ -947,7 +962,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
             if (!success)
                 throw new ApplicationException("<#=Options.Table.Remark#>导入失败.", ex);
 
-            return new ImportResult(newDataList.Count, editDataList.Count, errors);
+            return result;
         }
 <#
     }

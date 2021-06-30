@@ -92,8 +92,7 @@ namespace T4CAGC
                 "程序启动中.".ConsoleWrite();
                 "正在读取配置.".ConsoleWrite();
 
-                var config = new ConfigHelper(ConfigPath)
-                    .GetModel<GenerateConfig>("Config");
+                var config = new ConfigHelper(ConfigPath).GetModel<GenerateConfig>("Config");
 
                 if (config == null)
                 {
@@ -175,113 +174,5 @@ namespace T4CAGC
                 message += $" {GetExceptionAllMsg(ex.InnerException)}";
             return message;
         }
-
-        ///// <summary>
-        ///// 获取命令参数
-        ///// </summary>
-        ///// <param name="input">输入</param>
-        ///// <param name="modular">输出：模块</param>
-        ///// <param name="method">输出：方法</param>
-        ///// <param name="args">输出：参数</param>
-        //private static void GetParam(string input, out string modular, out string method, out List<Arg_internal> args)
-        //{
-        //    modular = input.Substring(0, input.IndexOfN2L(" "));
-        //    input = input.Substring(modular.Length).TrimStart(' ');
-        //    if (input == "-h" || input == "--help")
-        //    {
-        //        method = input;
-        //        args = null;
-        //        return;
-        //    }
-        //    method = input.IndexOf('-') == 0 ? string.Empty : input.Substring(0, input.IndexOfN2L(" "));
-        //    var _args = input.Length > 0 ? (method == string.Empty ? input : input.Substring(method.Length)) : string.Empty;
-        //    args = Regex.Matches(_args + ' ', @"-(.*?)[\s\:\=](.*?)\s").Where(o => o.Groups != null && o.Groups.Count >= 2).Select(o => new Arg_internal() { Name = o.Groups[1].Value, Value = o.Groups[2].Value }).ToList();
-        //}
-
-        ///// <summary>
-        ///// 处理命令
-        ///// </summary>
-        ///// <param name="modular">模块</param>
-        ///// <param name="method">方法</param>
-        ///// <param name="args">参数</param>
-        ///// <returns></returns>
-        //public static ProgramState Handler(string modular, string method, List<Arg_internal> args)
-        //{
-        //    try
-        //    {
-
-        //        switch (modular)
-        //        {
-        //            case "exit":
-        //                "Exit!".ConsoleWrite(ConsoleColor.White, "info");
-        //                return ProgramState.Exit;
-        //            case "-h":
-        //            case "--help":
-        //                _CommandConfig.Description.ConsoleWrite(ConsoleColor.Cyan, "help");
-        //                goto end;
-        //        }
-
-        //        var Modular = _CommandConfig.Modulars.FirstOrDefault(o => o.Name == modular);
-        //        if (Modular == null)
-        //            goto mismatch_modular;
-
-        //        if (method == "-h" || method == "--help")
-        //        {
-        //            Modular.Description.ConsoleWrite(ConsoleColor.Cyan, "help");
-        //            goto end;
-        //        }
-
-        //        var Method = Modular.Methods.FirstOrDefault(o => o.Name == method);
-        //        if (Method == null)
-        //            goto mismatch_method;
-
-        //        var assembly = Modular.Path.IsNullOrEmpty() ? Assembly.GetExecutingAssembly() : Assembly.LoadFile($"{AppContext.BaseDirectory}\\{Modular.Path}");
-
-        //        var obj = Method.Static ? null : assembly.CreateInstance(Method.TypeName, true, BindingFlags.Default, null, Method.IConfig ? new object[] { Configuration } : null, null, null);
-
-        //        args = args.Where(o => o.Method_match.Contains(method)).ToList();
-        //        var Params = new object[0];
-
-        //        if (Method.Arg2Model != null)
-        //        {
-        //            var TargetAssembly = Method.Arg2Model.Path.IsNullOrEmpty() ? Assembly.GetExecutingAssembly() : Assembly.LoadFile($"{AppContext.BaseDirectory}\\{Method.Arg2Model.Path}");
-        //            var TargetObj = TargetAssembly.CreateInstance(Method.Arg2Model.TypeName, true);
-
-        //            foreach (var prop in TargetAssembly.GetType(Method.Arg2Model.TypeName).GetProperties())
-        //            {
-        //                var arg = args.Find(o => o.Name_Lower == prop.Name.ToLower());
-        //                if (arg == null || arg.Value == null)
-        //                    continue;
-        //                prop.SetValue(TargetObj, arg.Value);
-        //            }
-        //            Params = new object[] { TargetObj };
-        //        }
-        //        else
-        //        {
-        //            Params = args.Select(o => o.Value).ToArray();
-        //        }
-
-        //        if (Method.Async)
-        //            (assembly.GetType(Method.TypeName).GetMethod(Method.SpecifiedName).Invoke(obj, Params) as Task).Wait();
-        //        else
-        //            assembly.GetType(Method.TypeName).GetMethod(Method.SpecifiedName).Invoke(obj, Params);
-        //        goto end;
-
-        //        mismatch_modular:
-        //        "无效指令!\t输入 -h|--help 获取帮助信息".ConsoleWrite(ConsoleColor.Yellow, "warn");
-        //        goto end;
-        //        mismatch_method:
-        //        $"无效指令!\t输入 {modular} -h|--help 获取帮助信息".ConsoleWrite(ConsoleColor.Yellow, "warn");
-
-        //        end:
-        //        return ProgramState.Standby;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        "T4 Code Automatic Generation Console Handler Error!".ConsoleWrite(ConsoleColor.Red, "error");
-        //        ex.ConsoleWrite(ConsoleColor.Red, "error");
-        //        return ProgramState.Error;
-        //    }
-        //}
     }
 }

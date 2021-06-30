@@ -5,7 +5,7 @@
 <#@ import namespace="Microservice.Library.Extension" #>
 <#@ include file=".\Reuseable\BaseHead.ttinclude" #>
 
-namespace Api.Controllers
+namespace Api.Controllers.<#=Options.Table.ModuleName#>
 {
     /// <summary>
     /// <#=Options.Table.Remark#>接口
@@ -21,7 +21,7 @@ namespace Api.Controllers
         /// 
         /// </summary>
         /// <param name="<#=Options.Table.ReducedName.ToLower()#>Business"></param>
-        public SampleController(I<#=Options.Table.ReducedName#>Business <#=Options.Table.ReducedName.ToLower()#>Business)
+        public <#=Options.Table.ReducedName#>Controller(I<#=Options.Table.ReducedName#>Business <#=Options.Table.ReducedName.ToLower()#>Business)
         {
             <#=Options.Table.ReducedName#>Business = <#=Options.Table.ReducedName.ToLower()#>Business;
         }
@@ -164,7 +164,9 @@ namespace Api.Controllers
         /// <summary>
         /// 删除数据
         /// </summary>
-<#WritePrimaryListParamsRemark();#>
+<#
+        WritePrimaryListParamsRemark();
+#>
         /// <returns></returns>
         [HttpPost("delete")]
         public async Task<object> Delete(IEnumerable<string> keys)
@@ -356,13 +358,15 @@ namespace Api.Controllers
     /// </summary>
     private void WritePrimaryListParamsRemark()
     {
-#>/// <param name="keys"><#+
+#>
+        /// <param name="keys">[<#+
         var i = 0;
         foreach (var field in PrimaryKeys)
         {
-#>[[<#=i > 0 ? " + " : ""#><#=field.Remark#>]]<#+
+#><#=i > 0 ? " + " : ""#><#=field.Remark#><#+
             i++;
         }
-#></param><#+
+#>]</param>
+<#+
     }
 #>

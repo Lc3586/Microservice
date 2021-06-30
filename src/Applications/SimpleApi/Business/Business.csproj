@@ -25,16 +25,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.33" />
-    <PackageReference Include="Microservice.Library.File" Version="0.0.0.3699-alpha-g730eb3154a" />
-    <PackageReference Include="Microservice.Library.NLogger" Version="0.0.0.3699-alpha-g730eb3154a" />
-    <PackageReference Include="Microservice.Library.OfficeDocuments" Version="0.0.0.3699-alpha-g730eb3154a" />
-    <PackageReference Include="Microservice.Library.SelectOption" Version="0.0.0.3699-alpha-g730eb3154a" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.34" />
+    <PackageReference Include="Microservice.Library.File" Version="0.0.0.46446-alpha-g6eb55bb61b" />
+    <PackageReference Include="Microservice.Library.NLogger" Version="0.0.0.7522-alpha-g621d2e688e" />
+    <PackageReference Include="Microservice.Library.OfficeDocuments" Version="0.0.0.7522-alpha-g621d2e688e" />
+    <PackageReference Include="Microservice.Library.SelectOption" Version="0.0.0.7522-alpha-g621d2e688e" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.1.0" />
     <PackageReference Include="NewId" Version="3.0.3" />
-    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.9" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.10" />
   </ItemGroup>
 
 </Project>

@@ -71,21 +71,23 @@ namespace T4CAGC.Handler
         /// <param name="outputPath">输出路径</param>
         static void GenerateCompleteProject(string outputPath)
         {
-            var projectCodeZipFile = new FileInfo(Path.Combine(AppContext.BaseDirectory, "CompleteProjectCode.zip"));
+            var projectCodeZipFile = new FileInfo(Path.GetFullPath(Config.CompleteProjectCodeZipFile, AppContext.BaseDirectory));
             if (!projectCodeZipFile.Exists)
             {
                 Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"项目代码文件不存在: {projectCodeZipFile.FullName}.");
 
-                if (Config.CompleteProjectCodeZipUri.IsNullOrWhiteSpace())
+                if (Config.CompleteProjectCodeZipDownloadUri.IsNullOrWhiteSpace())
                     throw new ApplicationException("未设置项目代码下载地址.");
 
                 using var client = new WebClient();
-                client.DownloadFile(Config.CompleteProjectCodeZipUri, projectCodeZipFile.FullName);
+                client.DownloadFile(Config.CompleteProjectCodeZipDownloadUri, projectCodeZipFile.FullName);
             }
 
             Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"正在解压缩项目代码: {projectCodeZipFile.FullName}.");
 
-            ZipFile.ExtractToDirectory(projectCodeZipFile.FullName, outputPath, Config.OverlayFile);
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
+            ZipFile.ExtractToDirectory(projectCodeZipFile.FullName, outputPath, Encoding.GetEncoding("GB2312"), Config.OverlayFile);
         }
 
         /// <summary>
@@ -113,7 +115,7 @@ namespace T4CAGC.Handler
             var businessPath = Path.Combine(outputPath, "Business");
             GenerateBusiness(table, businessPath);
 
-            var controllerPath = Path.Combine(outputPath, "Api", "Controller");
+            var controllerPath = Path.Combine(outputPath, "Api", "Controllers");
             GenerateController(table, controllerPath);
         }
 
@@ -200,11 +202,11 @@ namespace T4CAGC.Handler
         /// <param name="outputPath">输出路径</param>
         static void GenerateBusiness(TableInfo table, string outputPath)
         {
-            var implementationPath = Path.Combine(outputPath, "Implementation");
-            GenerateImplementation(table, implementationPath);
-
             var interfacePath = Path.Combine(outputPath, "Interface");
             GenerateInterface(table, interfacePath);
+
+            var implementationPath = Path.Combine(outputPath, "Implementation");
+            GenerateImplementation(table, implementationPath);
         }
 
         /// <summary>
@@ -222,6 +224,10 @@ namespace T4CAGC.Handler
                 Version = Config.Version,
                 Table = table
             });
+
+            if (tt.Ignore)
+                return;
+
             OutputToFile(tt, filename);
         }
 
@@ -233,6 +239,17 @@ namespace T4CAGC.Handler
         static void GenerateConst(TableInfo table, string outputPath)
         {
             Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"正在生成常量定义类: {table.Remark} {table.Name}.");
+
+            if (table.RelationshipTable)
+            {
+                Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"表信息中存在联合主键, 且没有其他字段, 可能为关系表, 已跳过.", table.Name);
+                return;
+            }
+            else if (!table.Fields.Any_Ex(o => o.Primary))
+            {
+                Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"表信息中未找到主键, 已跳过.", table.Name);
+                return;
+            }
 
             table.Fields.ForEach(o =>
             {
@@ -248,6 +265,7 @@ namespace T4CAGC.Handler
                     ModuleName = table.ModuleName,
                     Field = o
                 });
+
                 OutputToFile(tt, filename);
             });
         }
@@ -261,13 +279,24 @@ namespace T4CAGC.Handler
         {
             Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"正在生成枚举定义类: {table.Remark} {table.Name}.");
 
+            if (table.RelationshipTable)
+            {
+                Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"表信息中存在联合主键, 且没有其他字段, 可能为关系表, 已跳过.", table.Name);
+                return;
+            }
+            else if (!table.Fields.Any_Ex(o => o.Primary))
+            {
+                Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"表信息中未找到主键, 已跳过.", table.Name);
+                return;
+            }
+
             table.Fields.ForEach(o =>
             {
                 if (!o.Enums.Any_Ex())
                     return;
 
                 var filename = Path.Combine(outputPath, table.ModuleName, $"{table.ReducedName}_{o.Name}.cs");
-                var tt = new T4CAGC.Template.Enum(new EnumOptions
+                var tt = new Template.Enum(new EnumOptions
                 {
                     Version = Config.Version,
                     TableRemark = table.Remark,
@@ -275,6 +304,7 @@ namespace T4CAGC.Handler
                     ModuleName = table.ModuleName,
                     Field = o
                 });
+
                 OutputToFile(tt, filename);
             });
         }

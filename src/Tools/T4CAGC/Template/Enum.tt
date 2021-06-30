@@ -9,7 +9,7 @@ namespace Model.<#=Options.ModuleName#>
     /// <summary>
     /// <#=Options.TableRemark#> <#=Options.Field.Remark#>
     /// </summary>
-    public enum <#=Options.ModuleName#>_<#=Options.Field.Name#>
+    public enum <#=Options.ReducedName#>_<#=Options.Field.Name#>
     {
 <#
 	foreach (var @enum in Options.Field.Enums.OrderBy(o => o.Key))

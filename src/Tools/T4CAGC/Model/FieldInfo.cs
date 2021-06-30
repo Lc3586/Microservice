@@ -79,6 +79,11 @@ namespace T4CAGC.Model
         public Type CsType { get; set; } = typeof(string);
 
         /// <summary>
+        /// 数据类型关键字
+        /// </summary>
+        public string CsTypeKeyword { get; set; } = "string";
+
+        /// <summary>
         /// 长度
         /// </summary>
         public int Length { get; set; }

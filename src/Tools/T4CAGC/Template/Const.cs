@@ -49,9 +49,9 @@ namespace T4CAGC.Template
             #line default
             #line hidden
             this.Write("≣|\r\n|*\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tby  LCTR\t\t   ≣|\r\n|* ___________________________________" +
-                    "_____________________________________________________________≣|\r\n\\*/\r\n");
+                    "_____________________________________________________________≣|\r\n\\*/\r\n\r\n\r\n\r\n");
             
-            #line 11 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
+            #line 14 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
 
 	foreach (var @namespace in NameSpaces?.OrderBy(o => o))
 	{
@@ -61,14 +61,14 @@ namespace T4CAGC.Template
             #line hidden
             this.Write("using ");
             
-            #line 15 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
+            #line 18 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
             this.Write(this.ToStringHelper.ToStringWithCulture(@namespace));
             
             #line default
             #line hidden
             this.Write(";\r\n");
             
-            #line 16 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
+            #line 19 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
 
 	}
 
@@ -99,7 +99,7 @@ namespace T4CAGC.Template
             this.Write("\r\n    /// </summary>\r\n    public static class ");
             
             #line 12 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Const.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(Options.ModuleName));
+            this.Write(this.ToStringHelper.ToStringWithCulture(Options.ReducedName));
             
             #line default
             #line hidden

@@ -38,9 +38,9 @@
     <Content Remove="jsonconfig\database.json" />
     <Content Remove="jsonconfig\soap.json" />
     <Content Remove="jsonconfig\wechatservice.json" />
-    <Content Remove="wwwroot\ffmpeg\ffmpeg.exe" />
-    <Content Remove="wwwroot\ffmpeg\ffplay.exe" />
-    <Content Remove="wwwroot\ffmpeg\ffprobe.exe" />
+    <Content Remove="ffmpeg\ffmpeg.exe" />
+    <Content Remove="ffmpeg\ffplay.exe" />
+    <Content Remove="ffmpeg\ffprobe.exe" />
     <Content Remove="wwwroot\filestate\不可用.jpg" />
     <Content Remove="wwwroot\filestate\处理中.jpg" />
     <Content Remove="wwwroot\filestate\已删除.jpg" />
@@ -135,15 +135,6 @@
     </None>
     <None Include="jsonconfig\soap.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="wwwroot\ffmpeg\ffmpeg.exe">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Include="wwwroot\ffmpeg\ffplay.exe">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Include="wwwroot\ffmpeg\ffprobe.exe">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Include="wwwroot\filestate\不可用.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -410,6 +401,15 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Update="Dockerfile.published">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ffmpeg\ffmpeg.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ffmpeg\ffplay.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ffmpeg\ffprobe.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="linux\run.sh">

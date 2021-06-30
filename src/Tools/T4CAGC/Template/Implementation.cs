@@ -302,6 +302,13 @@ WritePrimaryTupleParams();
             this.Write("()\r\n        {\r\n            return typeof(");
             
             #line 117 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName));
+            
+            #line default
+            #line hidden
+            this.Write("_");
+            
+            #line 117 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(field.Name));
             
             #line default
@@ -329,11 +336,25 @@ WritePrimaryTupleParams();
                     "ing>();\r\n\r\n            var type = typeof(");
             
             #line 130 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName));
+            
+            #line default
+            #line hidden
+            this.Write("_");
+            
+            #line 130 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(field.Name));
             
             #line default
             #line hidden
             this.Write(");\r\n\r\n            foreach (var item in Enum.GetValues<");
+            
+            #line 132 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName));
+            
+            #line default
+            #line hidden
+            this.Write("_");
             
             #line 132 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(field.Name));
@@ -533,6 +554,32 @@ WritePrimaryTupleParamsName();
             
             #line 207 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
+        if(Functions.ContainsKey(Function.Enable))
+        {
+
+            
+            #line default
+            #line hidden
+            this.Write("\r\n                newData.");
+            
+            #line 212 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(FunctionsWithField[Function.Enable].Name));
+            
+            #line default
+            #line hidden
+            this.Write(" = true;\r\n");
+            
+            #line 213 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+
+        }
+
+            
+            #line default
+            #line hidden
+            this.Write("\r\n");
+            
+            #line 217 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+
         if(Options.Table.Tree)
         {
 
@@ -553,7 +600,7 @@ WritePrimaryTupleParamsName();
                 }
 ");
             
-            #line 223 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 233 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
             if(Functions.ContainsKey(Function.Sort))
             {
@@ -563,21 +610,21 @@ WritePrimaryTupleParamsName();
             #line hidden
             this.Write("\r\n                newData.");
             
-            #line 228 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 238 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(FunctionsWithField[Function.Sort].Name));
             
             #line default
             #line hidden
             this.Write(" = Repository.Where(o => o.ParentId == editData.ParentId).Max(o => o.");
             
-            #line 228 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 238 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(FunctionsWithField[Function.Sort].Name));
             
             #line default
             #line hidden
             this.Write(") + 1;\r\n");
             
-            #line 229 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 239 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
             }
         }
@@ -591,21 +638,21 @@ WritePrimaryTupleParamsName();
             #line hidden
             this.Write("\r\n                newData.");
             
-            #line 238 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 248 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(FunctionsWithField[Function.Sort].Name));
             
             #line default
             #line hidden
-            this.Write(" = Repository.Max(o => o.");
+            this.Write(" = Repository.Select.Max(o => o.");
             
-            #line 238 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 248 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(FunctionsWithField[Function.Sort].Name));
             
             #line default
             #line hidden
             this.Write(") + 1;\r\n");
             
-            #line 239 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 249 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
             }
         }
@@ -617,21 +664,21 @@ WritePrimaryTupleParamsName();
                     "tionRecordBusiness.Create(new Common_OperationRecord\r\n                {\r\n       " +
                     "             DataType = nameof(");
             
-            #line 248 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 258 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Name));
             
             #line default
             #line hidden
             this.Write("),\r\n                    DataId = ");
             
-            #line 249 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 259 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 WritePrimaryField("newData", " + ");
             
             #line default
             #line hidden
             this.Write(",\r\n                    Explain = $\"创建");
             
-            #line 250 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 260 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
             
             #line default
@@ -639,14 +686,14 @@ WritePrimaryField("newData", " + ");
             this.Write("[@字段说明#待完善@].\"\r\n                });\r\n            });\r\n\r\n            if (!success)" +
                     "\r\n                throw new MessageException(\"创建");
             
-            #line 255 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 265 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
             
             #line default
             #line hidden
             this.Write("失败\", ex);\r\n        }\r\n");
             
-            #line 257 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 267 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
     }
 
@@ -658,21 +705,21 @@ WritePrimaryField("newData", " + ");
             #line hidden
             this.Write("\r\n        public ");
             
-            #line 264 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 274 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Functions[Function.Edit]));
             
             #line default
             #line hidden
             this.Write(" GetEdit(");
             
-            #line 264 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 274 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 WritePrimaryParams();
             
             #line default
             #line hidden
             this.Write(")\r\n        {\r\n");
             
-            #line 266 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 276 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
     if(PrimaryKeys.Count > 1)
     {
@@ -682,14 +729,14 @@ WritePrimaryParams();
             #line hidden
             this.Write("            var entity = Repository.Where(o => ");
             
-            #line 270 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 280 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 WritePrimaryFieldLinq("o");
             
             #line default
             #line hidden
             this.Write(").GetAndCheckNull();\r\n");
             
-            #line 271 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 281 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
     }
     else
@@ -700,14 +747,14 @@ WritePrimaryFieldLinq("o");
             #line hidden
             this.Write("            var entity = Repository.GetAndCheckNull(");
             
-            #line 276 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 286 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 WritePrimaryTupleParamsName();
             
             #line default
             #line hidden
             this.Write(");\r\n");
             
-            #line 277 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 287 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
     }
 
@@ -716,21 +763,21 @@ WritePrimaryTupleParamsName();
             #line hidden
             this.Write("\r\n            var result = Mapper.Map<");
             
-            #line 281 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 291 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Functions[Function.Edit]));
             
             #line default
             #line hidden
             this.Write(">(entity);\r\n\r\n            return result;\r\n        }\r\n\r\n        public void Edit(");
             
-            #line 286 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 296 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Functions[Function.Edit]));
             
             #line default
             #line hidden
             this.Write(" data)\r\n        {\r\n            var editData = Mapper.Map<");
             
-            #line 288 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 298 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Name));
             
             #line default
@@ -738,7 +785,7 @@ WritePrimaryTupleParamsName();
             this.Write(">(data).ModifyEntity();\r\n\r\n            //@数据验证#待完善@\r\n            //if (Repository" +
                     ".Where(o => ");
             
-            #line 291 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 301 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Tree ? "o.ParentId == editData.ParentId && " : ""));
             
             #line default
@@ -746,21 +793,21 @@ WritePrimaryTupleParamsName();
             this.Write("o.Name == newData.Name && o.Id != editData.Id).Any())\r\n            //    throw ne" +
                     "w MessageException($\"");
             
-            #line 292 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 302 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Tree ? "当前层级" : ""));
             
             #line default
             #line hidden
             this.Write("已存在名称为{newData.Name}的");
             
-            #line 292 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 302 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
             
             #line default
             #line hidden
             this.Write(".\");\r\n\r\n            var entity = Repository.GetAndCheckNull(");
             
-            #line 294 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 304 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 WritePrimaryField("editData", ", ");
             
             #line default
@@ -768,7 +815,7 @@ WritePrimaryField("editData", ", ");
             this.Write(");\r\n\r\n            var changed_ = string.Join(\",\",\r\n                              " +
                     "         entity.GetPropertyValueChangeds<");
             
-            #line 297 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 307 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Name));
             
             #line default
@@ -777,7 +824,7 @@ WritePrimaryField("editData", ", ");
                     "n\\t {p.Description}：{p.FormerValue} 更改为 {p.CurrentValue}\"));\r\n\r\n            (boo" +
                     "l success, Exception ex) = Orm.RunTransaction(() =>\r\n            {\r\n");
             
-            #line 302 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 312 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
         if(Options.Table.Tree)
         {
@@ -801,7 +848,7 @@ WritePrimaryField("editData", ", ");
                     }
 ");
             
-            #line 320 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 330 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
     if(Functions.ContainsKey(Function.Sort))
     {
@@ -812,21 +859,21 @@ WritePrimaryField("editData", ", ");
             this.Write("\r\n                    if (Repository.UpdateDiy\r\n                             .Whe" +
                     "re(o => o.ParentId == entity.ParentId && o.Id != entity.Id && o.");
             
-            #line 326 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 336 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(FunctionsWithField[Function.Sort].Name));
             
             #line default
             #line hidden
             this.Write(" > editData.");
             
-            #line 326 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 336 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(FunctionsWithField[Function.Sort].Name));
             
             #line default
             #line hidden
             this.Write(")\r\n                             .Set(o => o.");
             
-            #line 327 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 337 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(FunctionsWithField[Function.Sort].Name));
             
             #line default
@@ -834,21 +881,21 @@ WritePrimaryField("editData", ", ");
             this.Write(" - 1)\r\n                             .ExecuteAffrows() < 0)\r\n                     " +
                     "   throw new MessageException(\"重新排序失败.\");\r\n\r\n                    editData.");
             
-            #line 331 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 341 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(FunctionsWithField[Function.Sort].Name));
             
             #line default
             #line hidden
             this.Write(" = Repository.Where(o => o.ParentId == editData.ParentId).Max(o => o.");
             
-            #line 331 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 341 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(FunctionsWithField[Function.Sort].Name));
             
             #line default
             #line hidden
             this.Write(") + 1;\r\n");
             
-            #line 332 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 342 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
     }
 
@@ -857,7 +904,7 @@ WritePrimaryField("editData", ", ");
             #line hidden
             this.Write("                }\r\n");
             
-            #line 336 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 346 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
         }
 
@@ -867,7 +914,7 @@ WritePrimaryField("editData", ", ");
             this.Write("\r\n                if (Repository.UpdateDiy\r\n                      .SetSource(edit" +
                     "Data)\r\n                      .UpdateColumns(typeof(");
             
-            #line 342 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 352 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Functions[Function.Edit]));
             
             #line default
@@ -875,7 +922,7 @@ WritePrimaryField("editData", ", ");
             this.Write(").GetNamesWithTagAndOther(false, \"_Edit\").ToArray())\r\n                      .Exec" +
                     "uteAffrows() <= 0)\r\n                    throw new MessageException(\"修改");
             
-            #line 344 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 354 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
             
             #line default
@@ -883,21 +930,21 @@ WritePrimaryField("editData", ", ");
             this.Write("失败\");\r\n\r\n                var orId = OperationRecordBusiness.Create(new Common_Ope" +
                     "rationRecord\r\n                {\r\n                    DataType = nameof(");
             
-            #line 348 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 358 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Name));
             
             #line default
             #line hidden
             this.Write("),\r\n                    DataId = ");
             
-            #line 349 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 359 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 WritePrimaryField("editData", " + ");
             
             #line default
             #line hidden
             this.Write(",\r\n                    Explain = $\"修改");
             
-            #line 350 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 360 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
             
             #line default
@@ -906,7 +953,7 @@ WritePrimaryField("editData", " + ");
                     "        });\r\n            });\r\n\r\n            if (!success)\r\n                throw" +
                     " ex;\r\n        }\r\n");
             
-            #line 358 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 368 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
     }
 
@@ -919,14 +966,14 @@ WritePrimaryField("editData", " + ");
             this.Write("\r\n        public void Delete(List<string> keys)\r\n        {\r\n            var entit" +
                     "yList = Repository.Select.Where(c => keys.Contains(");
             
-            #line 367 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 377 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 WritePrimaryField("c", " + ");
             
             #line default
             #line hidden
             this.Write(")).ToList(c => new { ");
             
-            #line 367 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 377 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 WritePrimaryField("c", ", ");
             
             #line default
@@ -943,21 +990,21 @@ WritePrimaryField("c", ", ");
                 {
                     DataType = nameof(");
             
-            #line 377 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 387 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Name));
             
             #line default
             #line hidden
             this.Write("),\r\n                    DataId = ");
             
-            #line 378 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 388 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 WritePrimaryField("entity", " + ");
             
             #line default
             #line hidden
             this.Write(",\r\n                    Explain = $\"删除");
             
-            #line 379 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 389 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
             
             #line default
@@ -966,8 +1013,8 @@ WritePrimaryField("entity", " + ");
                     "Exception ex) = Orm.RunTransaction(() =>\r\n            {\r\n                if (Rep" +
                     "ository.Delete(o => keys.Contains(");
             
-            #line 385 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
-WritePrimaryField("c", " + ");
+            #line 395 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+WritePrimaryField("o", " + ");
             
             #line default
             #line hidden
@@ -975,14 +1022,14 @@ WritePrimaryField("c", " + ");
                     "       var orIds = OperationRecordBusiness.Create(orList);\r\n            });\r\n\r\n " +
                     "           if (!success)\r\n                throw new MessageException(\"删除");
             
-            #line 392 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 402 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
             
             #line default
             #line hidden
             this.Write("失败\", ex);\r\n        }\r\n");
             
-            #line 394 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 404 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
     }
 
@@ -991,7 +1038,7 @@ WritePrimaryField("c", " + ");
             #line hidden
             this.Write("\r\n        #endregion\r\n\r\n        #region 拓展功能\r\n");
             
-            #line 401 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 411 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
     if(Functions.ContainsKey(Function.Enable))
     {
@@ -1001,14 +1048,14 @@ WritePrimaryField("c", " + ");
             #line hidden
             this.Write("\r\n        public void Enable(");
             
-            #line 406 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 416 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 WritePrimaryParams();
             
             #line default
             #line hidden
             this.Write(", bool enable)\r\n        {\r\n");
             
-            #line 408 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 418 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
     if(PrimaryKeys.Count > 1)
     {
@@ -1018,14 +1065,14 @@ WritePrimaryParams();
             #line hidden
             this.Write("            var entity = Repository.Where(o => ");
             
-            #line 412 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 422 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 WritePrimaryFieldLinq("o");
             
             #line default
             #line hidden
             this.Write(").GetAndCheckNull();\r\n");
             
-            #line 413 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 423 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
     }
     else
@@ -1036,14 +1083,14 @@ WritePrimaryFieldLinq("o");
             #line hidden
             this.Write("            var entity = Repository.GetAndCheckNull(");
             
-            #line 418 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 428 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 WritePrimaryTupleParamsName();
             
             #line default
             #line hidden
             this.Write(");\r\n");
             
-            #line 419 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 429 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
     }
 
@@ -1052,7 +1099,7 @@ WritePrimaryTupleParamsName();
             #line hidden
             this.Write("\r\n            entity.");
             
-            #line 423 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 433 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(FunctionsWithField[Function.Enable].Name));
             
             #line default
@@ -1061,7 +1108,7 @@ WritePrimaryTupleParamsName();
                     "\r\n            {\r\n                if (Repository.Update(entity) <= 0)\r\n          " +
                     "          throw new MessageException($\"{(enable ? \"启用\" : \"禁用\")}");
             
-            #line 428 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 438 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
             
             #line default
@@ -1069,21 +1116,21 @@ WritePrimaryTupleParamsName();
             this.Write("失败\");\r\n\r\n                var orId = OperationRecordBusiness.Create(new Common_Ope" +
                     "rationRecord\r\n                {\r\n                    DataType = nameof(");
             
-            #line 432 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 442 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Name));
             
             #line default
             #line hidden
             this.Write("),\r\n                    DataId = ");
             
-            #line 433 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 443 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 WritePrimaryField("entity", " + ");
             
             #line default
             #line hidden
             this.Write(",\r\n                    Explain = $\"{(enable ? \"启用\" : \"禁用\")}");
             
-            #line 434 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 444 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
             
             #line default
@@ -1091,7 +1138,7 @@ WritePrimaryField("entity", " + ");
             this.Write("[@字段说明#待完善@].\"\r\n                });\r\n            });\r\n\r\n            if (!success)" +
                     "\r\n                throw ex;\r\n        }\r\n");
             
-            #line 441 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 451 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
     }
     
@@ -1113,7 +1160,7 @@ WritePrimaryField("entity", " + ");
                                         o.Id,
 ");
             
-            #line 457 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 467 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
         if(Options.Table.Tree)
         {
@@ -1123,7 +1170,7 @@ WritePrimaryField("entity", " + ");
             #line hidden
             this.Write("                                        o.ParentId,\r\n");
             
-            #line 462 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 472 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
         }
 
@@ -1142,7 +1189,7 @@ WritePrimaryField("entity", " + ");
                 {
 ");
             
-            #line 475 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 485 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
         if(Options.Table.Tree)
         {
@@ -1154,7 +1201,7 @@ WritePrimaryField("entity", " + ");
                     ".ParentId)\r\n                                                .OrderBy(o => o.Sort" +
                     ")\r\n");
             
-            #line 481 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 491 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
         }
         else
@@ -1163,9 +1210,9 @@ WritePrimaryField("entity", " + ");
             
             #line default
             #line hidden
-            this.Write("                    SortMethod.top => Repository.OrderBy(o => o.Sort)\r\n");
+            this.Write("                    SortMethod.top => Repository.Select.OrderBy(o => o.Sort)\r\n");
             
-            #line 487 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 497 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
         }
 
@@ -1179,7 +1226,7 @@ WritePrimaryField("entity", " + ");
                                                 }),
 ");
             
-            #line 495 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 505 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
         if(Options.Table.Tree)
         {
@@ -1187,11 +1234,11 @@ WritePrimaryField("entity", " + ");
             
             #line default
             #line hidden
-            this.Write("                    SortMethod.up => Repository.Where(o => o.ParentId == current." +
-                    "ParentId && o.Sort < current.Sort)\r\n                                            " +
-                    "    .OrderByDescending(o => o.Sort)\r\n");
+            this.Write("                    SortMethod.up => Repository.Select.Where(o => o.ParentId == c" +
+                    "urrent.ParentId && o.Sort < current.Sort)\r\n                                     " +
+                    "           .OrderByDescending(o => o.Sort)\r\n");
             
-            #line 501 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 511 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
         }
         else
@@ -1200,9 +1247,10 @@ WritePrimaryField("entity", " + ");
             
             #line default
             #line hidden
-            this.Write("                    SortMethod.up => Repository.OrderByDescending(o => o.Sort)\r\n");
+            this.Write("                    SortMethod.up => Repository.Select.OrderByDescending(o => o.S" +
+                    "ort)\r\n");
             
-            #line 507 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 517 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
         }
 
@@ -1216,7 +1264,7 @@ WritePrimaryField("entity", " + ");
                                                }),
 ");
             
-            #line 515 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 525 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
         if(Options.Table.Tree)
         {
@@ -1224,11 +1272,11 @@ WritePrimaryField("entity", " + ");
             
             #line default
             #line hidden
-            this.Write("                    SortMethod.down => Repository.Where(o => o.ParentId == curren" +
-                    "t.ParentId && o.Sort > current.Sort)\r\n                                          " +
-                    "      .OrderBy(o => o.Sort)\r\n");
+            this.Write("                    SortMethod.down => Repository.Select.Where(o => o.ParentId ==" +
+                    " current.ParentId && o.Sort > current.Sort)\r\n                                   " +
+                    "             .OrderBy(o => o.Sort)\r\n");
             
-            #line 521 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 531 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
         }
         else
@@ -1237,9 +1285,9 @@ WritePrimaryField("entity", " + ");
             
             #line default
             #line hidden
-            this.Write("                    SortMethod.down => Repository.OrderBy(o => o.Sort)\r\n");
+            this.Write("                    SortMethod.down => Repository.Select.OrderBy(o => o.Sort)\r\n");
             
-            #line 527 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 537 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
         }
 
@@ -1253,7 +1301,7 @@ WritePrimaryField("entity", " + ");
                                                  }),
 ");
             
-            #line 535 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 545 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
         if(Options.Table.Tree)
         {
@@ -1261,11 +1309,11 @@ WritePrimaryField("entity", " + ");
             
             #line default
             #line hidden
-            this.Write("                    SortMethod.low => Repository.Where(o => o.ParentId == current" +
-                    ".ParentId)\r\n                                                .OrderByDescending(o" +
-                    " => o.Sort)\r\n");
+            this.Write("                    SortMethod.low => Repository.Select.Where(o => o.ParentId == " +
+                    "current.ParentId)\r\n                                                .OrderByDesce" +
+                    "nding(o => o.Sort)\r\n");
             
-            #line 541 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 551 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
         }
         else
@@ -1274,10 +1322,10 @@ WritePrimaryField("entity", " + ");
             
             #line default
             #line hidden
-            this.Write("                    SortMethod.down => Repository.OrderByDescending(o => o.Sort)\r" +
-                    "\n");
+            this.Write("                    SortMethod.low => Repository.Select.OrderByDescending(o => o." +
+                    "Sort)\r\n");
             
-            #line 547 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 557 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
         }
 
@@ -1305,7 +1353,7 @@ WritePrimaryField("entity", " + ");
                          .ExecuteAffrows() < 0)
                     throw new MessageException(""");
             
-            #line 569 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 579 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
             
             #line default
@@ -1313,21 +1361,21 @@ WritePrimaryField("entity", " + ");
             this.Write("排序失败.\");\r\n\r\n                var orId = OperationRecordBusiness.Create(new Common_" +
                     "OperationRecord\r\n                {\r\n                    DataType = nameof(");
             
-            #line 573 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 583 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Name));
             
             #line default
             #line hidden
             this.Write("),\r\n                    DataId = ");
             
-            #line 574 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 584 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 WritePrimaryField("target", " + ");
             
             #line default
             #line hidden
             this.Write(",\r\n                    Explain = $\"");
             
-            #line 575 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 585 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
             
             #line default
@@ -1336,7 +1384,7 @@ WritePrimaryField("target", " + ");
                     "        if (!success)\r\n                throw ex;\r\n        }\r\n\r\n        public vo" +
                     "id DragSort(");
             
-            #line 583 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 593 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Tree ? "TreeDragSort" : "DragSort"));
             
             #line default
@@ -1352,7 +1400,7 @@ WritePrimaryField("target", " + ");
                                         o.Id,
 ");
             
-            #line 592 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 602 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
         if(Options.Table.Tree)
         {
@@ -1362,7 +1410,7 @@ WritePrimaryField("target", " + ");
             #line hidden
             this.Write("                                        o.ParentId,\r\n");
             
-            #line 597 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 607 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
         }
 
@@ -1381,7 +1429,7 @@ WritePrimaryField("target", " + ");
                                         o.Id,
 ");
             
-            #line 610 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 620 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
         if(Options.Table.Tree)
         {
@@ -1391,7 +1439,7 @@ WritePrimaryField("target", " + ");
             #line hidden
             this.Write("                                        o.ParentId,\r\n");
             
-            #line 615 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 625 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
         }
 
@@ -1408,7 +1456,7 @@ WritePrimaryField("target", " + ");
             {
 ");
             
-            #line 626 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 636 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
         if(Options.Table.Tree)
         {
@@ -1439,7 +1487,7 @@ WritePrimaryField("target", " + ");
                     ", target_newSort)\r\n                             .ExecuteAffrows() < 0)\r\n        " +
                     "                throw new MessageException(\"");
             
-            #line 666 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 676 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
             
             #line default
@@ -1469,14 +1517,14 @@ WritePrimaryField("target", " + ");
                                 .ExecuteAffrows() <= 0)
                         throw new MessageException(""");
             
-            #line 689 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 699 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
             
             #line default
             #line hidden
             this.Write("排序失败.\");\r\n\r\n                    #endregion\r\n                }\r\n");
             
-            #line 693 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 703 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
         }
         else
@@ -1506,14 +1554,14 @@ WritePrimaryField("target", " + ");
                     "                            .ExecuteAffrows() < 0)\r\n                        thro" +
                     "w new MessageException(\"");
             
-            #line 730 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 740 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
             
             #line default
             #line hidden
             this.Write("排序失败.\");\r\n");
             
-            #line 731 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 741 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
         }
 
@@ -1523,21 +1571,21 @@ WritePrimaryField("target", " + ");
             this.Write("\r\n                _ = OperationRecordBusiness.Create(new Common_OperationRecord\r\n" +
                     "                {\r\n                    DataType = nameof(");
             
-            #line 737 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 747 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Name));
             
             #line default
             #line hidden
             this.Write("),\r\n                    DataId = ");
             
-            #line 738 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 748 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 WritePrimaryField("target", " + ");
             
             #line default
             #line hidden
             this.Write(",\r\n                    Explain = $\"");
             
-            #line 739 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 749 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
             
             #line default
@@ -1545,7 +1593,7 @@ WritePrimaryField("target", " + ");
             this.Write("拖动排序[@字段说明#待完善@].\"\r\n                });\r\n            });\r\n\r\n            if (!succ" +
                     "ess)\r\n                throw ex;\r\n        }\r\n");
             
-            #line 746 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 756 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
     }
     
@@ -1556,7 +1604,7 @@ WritePrimaryField("target", " + ");
             #line default
             #line hidden
             this.Write(@"
-        public Task DownloadTemplate(string version = ExcelVersion.xlsx, bool autogenerateTemplate = false)
+        public async Task DownloadTemplate(string version = ExcelVersion.xlsx, bool autogenerateTemplate = false)
         {
             var response = HttpContextAccessor.HttpContext.Response;
 
@@ -1566,7 +1614,7 @@ WritePrimaryField("target", " + ");
 
                 response.Headers.Add(""Content-Disposition"", $""attachment; filename=\""{UrlEncoder.Default.Encode(""");
             
-            #line 761 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 771 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
             
             #line default
@@ -1574,7 +1622,7 @@ WritePrimaryField("target", " + ");
             this.Write("导入模板\")}.{version}\\\"\");\r\n                var filePath = PathHelper.GetAbsolutePath" +
                     "($\"~/template/");
             
-            #line 762 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 772 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
             
             #line default
@@ -1595,14 +1643,14 @@ WritePrimaryField("target", " + ");
 
                 var table = new DataTable(""");
             
-            #line 776 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 786 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
             
             #line default
             #line hidden
             this.Write("导入模板\");\r\n\r\n                typeof(");
             
-            #line 778 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 788 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Name));
             
             #line default
@@ -1610,7 +1658,7 @@ WritePrimaryField("target", " + ");
             this.Write(")\r\n                    .GetProperties()\r\n                    .ForEach(o =>\r\n     " +
                     "               {\r\n                        if (!o.HasTag(typeof(");
             
-            #line 782 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 792 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Functions[Function.Import]));
             
             #line default
@@ -1651,7 +1699,7 @@ WritePrimaryField("target", " + ");
 
             var entityList = new List<");
             
-            #line 816 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 826 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Name));
             
             #line default
@@ -1660,7 +1708,7 @@ WritePrimaryField("target", " + ");
                     " = 0; i < table.Rows.Count; i++)\r\n            {\r\n                var row = table" +
                     ".Rows[i];\r\n                var entity = new ");
             
-            #line 823 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 833 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Name));
             
             #line default
@@ -1669,7 +1717,7 @@ WritePrimaryField("target", " + ");
                     "tity.GetType().GetProperties().ForEach(o =>\r\n                {\r\n                " +
                     "    if (!o.HasTag(typeof(");
             
-            #line 829 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 839 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Functions[Function.Import]));
             
             #line default
@@ -1700,7 +1748,7 @@ WritePrimaryField("target", " + ");
                     "     {\r\n                    errors.AddRange(_errors);\r\n                    conti" +
                     "nue;\r\n                }\r\n\r\n                //@数据验证#待完善@\r\n");
             
-            #line 876 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 886 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
         foreach (var field in RequiredKeys)
         {
@@ -1711,14 +1759,14 @@ WritePrimaryField("target", " + ");
             #line hidden
             this.Write("\r\n                ");
             
-            #line 882 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 892 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(i > 0 ? "if" : "else if"));
             
             #line default
             #line hidden
             this.Write(" (entity.");
             
-            #line 882 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 892 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(field.Name));
             
             #line default
@@ -1726,14 +1774,14 @@ WritePrimaryField("target", " + ");
             this.Write(".IsNullOrWhiteSpace())\r\n                {\r\n                    errors.Add(new Err" +
                     "orInfo(i + 3, \"");
             
-            #line 884 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 894 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(field.Remark));
             
             #line default
             #line hidden
             this.Write("\", \"内容不能为空。\"));\r\n                    continue;\r\n                }\r\n");
             
-            #line 887 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 897 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
             i++;
         }
@@ -1748,18 +1796,20 @@ WritePrimaryField("target", " + ");
             if (errors.Any())
                 return new ImportResult(errors);
 
+            var result = new ImportResult(0, 0);
+
             (bool success, Exception ex) = Orm.RunTransaction(() =>
             {
                 var newDataList = new List<");
             
-            #line 900 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 912 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Name));
             
             #line default
             #line hidden
             this.Write(">();\r\n                var editDataList = new List<");
             
-            #line 901 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 913 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Name));
             
             #line default
@@ -1781,21 +1831,21 @@ WritePrimaryField("target", " + ");
                     //    {
                     //        DataType = nameof(");
             
-            #line 916 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 928 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Name));
             
             #line default
             #line hidden
             this.Write("),\r\n                    //        DataId = ");
             
-            #line 917 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 929 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 WritePrimaryField("entity", " + ");
             
             #line default
             #line hidden
             this.Write(",\r\n                    //        Explain = $\"导入数据（更新）");
             
-            #line 918 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 930 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
             
             #line default
@@ -1811,21 +1861,21 @@ WritePrimaryField("entity", " + ");
                     //    {
                     //        DataType = nameof(");
             
-            #line 927 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 939 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Name));
             
             #line default
             #line hidden
             this.Write("),\r\n                    //        DataId = ");
             
-            #line 928 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 940 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 WritePrimaryField("entity", " + ");
             
             #line default
             #line hidden
             this.Write(",\r\n                    //        Explain = $\"导入数据（新增）");
             
-            #line 929 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 941 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
             
             #line default
@@ -1835,12 +1885,15 @@ WritePrimaryField("entity", " + ");
                     //}
                 });
 
+                result.AddTotal = newDataList.Count;
+                result.UpdateTotal = editDataList.Count;
+
                 if (editDataList.Any())
                     if (Repository.UpdateDiy
                          .SetSource(editDataList)
                          .UpdateColumns(typeof(");
             
-            #line 937 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 952 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Functions[Function.Import]));
             
             #line default
@@ -1848,7 +1901,7 @@ WritePrimaryField("entity", " + ");
             this.Write(").GetNamesWithTagAndOther(false, \"_Edit\").ToArray())\r\n                         .E" +
                     "xecuteAffrows() <= 0)\r\n                        throw new ApplicationException(\"");
             
-            #line 939 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 954 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
             
             #line default
@@ -1864,15 +1917,14 @@ WritePrimaryField("entity", " + ");
             if (!success)
                 throw new ApplicationException(""");
             
-            #line 948 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 963 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
             
             #line default
             #line hidden
-            this.Write("导入失败.\", ex);\r\n\r\n            return new ImportResult(newDataList.Count, editDataLi" +
-                    "st.Count, errors);\r\n        }\r\n");
+            this.Write("导入失败.\", ex);\r\n\r\n            return result;\r\n        }\r\n");
             
-            #line 952 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 967 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
     }
     
@@ -1896,7 +1948,7 @@ WritePrimaryField("entity", " + ");
             //动态生成模板
             var table = new DataTable(""");
             
-            #line 970 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 985 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
             
             #line default
@@ -1904,7 +1956,7 @@ WritePrimaryField("entity", " + ");
             this.Write("\");\r\n\r\n            var propDic = new Dictionary<string, PropertyInfo>();\r\n\r\n     " +
                     "       //生成列\r\n            typeof(");
             
-            #line 975 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 990 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Name));
             
             #line default
@@ -1912,7 +1964,7 @@ WritePrimaryField("entity", " + ");
             this.Write(")\r\n                .GetProperties()\r\n                .ForEach(o =>\r\n             " +
                     "   {\r\n                    if (!o.HasTag(typeof(");
             
-            #line 979 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 994 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Functions[Function.Export]));
             
             #line default
@@ -1945,7 +1997,7 @@ WritePrimaryField("entity", " + ");
                     "           response.Headers.Add(\"Content-Disposition\", $\"attachment; filename=\\\"" +
                     "{UrlEncoder.Default.Encode(\"");
             
-            #line 1026 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 1041 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
             
             #line default
@@ -1955,7 +2007,7 @@ WritePrimaryField("entity", " + ");
                     "nse.ContentLength = bytes.Length;\r\n            response.Body.Write(bytes);\r\n    " +
                     "    }\r\n");
             
-            #line 1032 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            #line 1047 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
     }
 
@@ -1966,7 +2018,7 @@ WritePrimaryField("entity", " + ");
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 1040 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1055 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
     /// <summary>
     /// 主键元祖参数
@@ -1982,14 +2034,14 @@ WritePrimaryField("entity", " + ");
         #line default
         #line hidden
         
-        #line 1050 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1065 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 this.Write("(");
 
         
         #line default
         #line hidden
         
-        #line 1050 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1065 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
         }
 
@@ -2000,21 +2052,21 @@ this.Write("(");
         #line default
         #line hidden
         
-        #line 1055 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1070 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(i > 0 ? ", " : ""));
 
         
         #line default
         #line hidden
         
-        #line 1055 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1070 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(field.Type));
 
         
         #line default
         #line hidden
         
-        #line 1055 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1070 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
             i++;
         }
@@ -2026,14 +2078,14 @@ this.Write(this.ToStringHelper.ToStringWithCulture(field.Type));
         #line default
         #line hidden
         
-        #line 1061 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1076 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 this.Write(")");
 
         
         #line default
         #line hidden
         
-        #line 1061 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1076 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
         }
     }
@@ -2052,14 +2104,14 @@ this.Write(")");
         #line default
         #line hidden
         
-        #line 1074 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1089 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 this.Write("(");
 
         
         #line default
         #line hidden
         
-        #line 1074 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1089 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
         }
 
@@ -2070,21 +2122,21 @@ this.Write("(");
         #line default
         #line hidden
         
-        #line 1079 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1094 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(i > 0 ? ", " : ""));
 
         
         #line default
         #line hidden
         
-        #line 1079 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1094 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(field.Name.ToLower()));
 
         
         #line default
         #line hidden
         
-        #line 1079 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1094 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
             i++;
         }
@@ -2096,14 +2148,14 @@ this.Write(this.ToStringHelper.ToStringWithCulture(field.Name.ToLower()));
         #line default
         #line hidden
         
-        #line 1085 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1100 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 this.Write(")");
 
         
         #line default
         #line hidden
         
-        #line 1085 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1100 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
         }
     }
@@ -2121,35 +2173,35 @@ this.Write(")");
         #line default
         #line hidden
         
-        #line 1097 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1112 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(i > 0 ? symbol : ""));
 
         
         #line default
         #line hidden
         
-        #line 1097 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1112 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(obj));
 
         
         #line default
         #line hidden
         
-        #line 1097 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1112 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 this.Write(".");
 
         
         #line default
         #line hidden
         
-        #line 1097 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1112 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(field.Name));
 
         
         #line default
         #line hidden
         
-        #line 1097 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1112 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
             i++;
         }
@@ -2168,35 +2220,35 @@ this.Write(this.ToStringHelper.ToStringWithCulture(field.Name));
         #line default
         #line hidden
         
-        #line 1110 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1125 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(i > 0 ? ", " : ""));
 
         
         #line default
         #line hidden
         
-        #line 1110 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1125 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(field.Type));
 
         
         #line default
         #line hidden
         
-        #line 1110 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1125 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 this.Write(" ");
 
         
         #line default
         #line hidden
         
-        #line 1110 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1125 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(field.Name.ToLower()));
 
         
         #line default
         #line hidden
         
-        #line 1110 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1125 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
             i++;
         }
@@ -2215,49 +2267,49 @@ this.Write(this.ToStringHelper.ToStringWithCulture(field.Name.ToLower()));
         #line default
         #line hidden
         
-        #line 1123 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1138 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(i > 0 ? " && " : ""));
 
         
         #line default
         #line hidden
         
-        #line 1123 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1138 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(obj));
 
         
         #line default
         #line hidden
         
-        #line 1123 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1138 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 this.Write(".");
 
         
         #line default
         #line hidden
         
-        #line 1123 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1138 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(field.Name));
 
         
         #line default
         #line hidden
         
-        #line 1123 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1138 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 this.Write(" == ");
 
         
         #line default
         #line hidden
         
-        #line 1123 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1138 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(field.Name.ToLower()));
 
         
         #line default
         #line hidden
         
-        #line 1123 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1138 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
             i++;
         }

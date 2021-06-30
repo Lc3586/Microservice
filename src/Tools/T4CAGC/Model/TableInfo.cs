@@ -46,5 +46,10 @@ namespace T4CAGC.Model
         /// 字段集合
         /// </summary>
         public List<FieldInfo> Fields { get; set; } = new List<FieldInfo>();
+
+        /// <summary>
+        /// 关系表
+        /// </summary>
+        public bool RelationshipTable { get; set; }
     }
 }

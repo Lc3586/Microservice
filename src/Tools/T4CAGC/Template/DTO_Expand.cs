@@ -1,6 +1,7 @@
 ﻿using Microservice.Library.Extension;
 using System.Collections.Generic;
 using T4CAGC.Extension;
+using T4CAGC.Log;
 
 namespace T4CAGC.Template
 {
@@ -18,6 +19,11 @@ namespace T4CAGC.Template
             Options = options;
             AnalysisTable();
         }
+
+        /// <summary>
+        /// 跳过此次生成
+        /// </summary>
+        public bool Ignore = false;
 
         /// <summary>
         /// 选项
@@ -49,6 +55,19 @@ namespace T4CAGC.Template
         /// </summary>
         void AnalysisTable()
         {
+            if (Options.Table.RelationshipTable)
+            {
+                Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"表信息中存在联合主键, 且没有其他字段, 可能为关系表, 已跳过.", Options.Table.Name);
+                Ignore = true;
+                return;
+            }
+            else if (!Options.Table.Fields.Any_Ex(o => o.Primary))
+            {
+                Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"表信息中未找到主键, 已跳过.", Options.Table.Name);
+                Ignore = true;
+                return;
+            }
+
             NameSpaces.AddWhenNotContains($"Entity.{Options.Table.ModuleName}");
             NameSpaces.AddWhenNotContains($"Microservice.Library.DataMapping.Annotations");
             NameSpaces.AddWhenNotContains($"Microservice.Library.OpenApi.Annotations");

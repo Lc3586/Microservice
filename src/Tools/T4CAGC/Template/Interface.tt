@@ -106,7 +106,9 @@ namespace Business.Interface.<#=Options.Table.ModuleName#>
         /// <summary>
         /// 删除
         /// </summary>
-<#WritePrimaryListParamsRemark();#>
+<#
+        WritePrimaryListParamsRemark();
+#>
         /// <returns></returns>
         void Delete(List<string> keys);
 <#
@@ -240,13 +242,15 @@ namespace Business.Interface.<#=Options.Table.ModuleName#>
     /// </summary>
     private void WritePrimaryListParamsRemark()
     {
-#>/// <param name="keys"><#+
+#>
+        /// <param name="keys">[<#+
         var i = 0;
         foreach (var field in PrimaryKeys)
         {
-#>[[<#=i > 0 ? " + " : ""#><#=field.Remark#>]]<#+
+#><#=i > 0 ? " + " : ""#><#=field.Remark#><#+
             i++;
         }
-#></param><#+
+#>]</param>
+<#+
     }
 #>

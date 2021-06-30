@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Business.Hub;
+using Business.Implementation.Common;
 using Business.Utils.Log;
 using Microservice.Library.DataMapping.Gen;
 using Microservice.Library.Extension;
@@ -19,6 +20,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
@@ -42,8 +44,7 @@ namespace Business.Utils.CAGC
             HttpContextAccessor = httpContextAccessor;
             CAGCHub = cagcHub;
 
-            CAGCFile = Config.AbsoluteCAGCFile;
-            TempDir = Path.Combine(Config.AbsoluteStorageDirectory, "CAGC", "Temp", DateTime.Now.ToString("yyyy-MM-dd"));
+            TempDir = Path.Combine(Config.AbsoluteStorageDirectory, "CAGC", "Temp");
         }
 
         #endregion
@@ -59,11 +60,6 @@ namespace Business.Utils.CAGC
         readonly IHubContext<CAGCHub> CAGCHub;
 
         /// <summary>
-        /// 应用程序文件绝对路径
-        /// </summary>
-        readonly string CAGCFile;
-
-        /// <summary>
         /// 缓存目录绝对路径
         /// </summary>
         readonly string TempDir;
@@ -75,8 +71,7 @@ namespace Business.Utils.CAGC
         /// <returns></returns>
         Process GetProcess(string arguments)
         {
-            if (!CAGCFile.Exists())
-                throw new ApplicationException($"未找到自动生成代码应用程序文件: {CAGCFile}.");
+            var filePath = Config.GetFileAbsolutePath("CAGC");
 
             var process = new Process();
             process.StartInfo.CreateNoWindow = true;
@@ -88,7 +83,7 @@ namespace Business.Utils.CAGC
             process.StartInfo.RedirectStandardError = true;
             //process.StartInfo.StandardErrorEncoding = new UTF8Encoding(true);
 
-            process.StartInfo.FileName = CAGCFile;
+            process.StartInfo.FileName = filePath;
             process.StartInfo.Arguments = arguments;
 
             return process;
@@ -264,7 +259,7 @@ namespace Business.Utils.CAGC
 
         public async Task<string> GenerateByCSV(IFormFile file, string genType)
         {
-            var path = Path.Combine(TempDir, genType, DateTime.Now.Ticks.ToString());
+            var path = Path.Combine(TempDir, DateTime.Now.ToString("yyyy-MM-dd"), genType, DateTime.Now.Ticks.ToString());
             var dataSourceFile = Path.Combine(path, file.FileName);
             var outputPath = Path.Combine(path, "output");
 
@@ -292,14 +287,16 @@ namespace Business.Utils.CAGC
 
             var zipFile = Path.Combine(path, "output.zip");
 
-            ZipFile.CreateFromDirectory(outputPath, zipFile, CompressionLevel.Fastest, true);
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            return Path.GetRelativePath(Path.Combine(Config.AbsoluteStorageDirectory, "CAGC/Temp"), zipFile).Base64Encode();
+            ZipFile.CreateFromDirectory(outputPath, zipFile, CompressionLevel.Fastest, true, Encoding.GetEncoding("GB2312"));
+
+            return Path.GetRelativePath(Path.Combine(Config.AbsoluteStorageDirectory, "CAGC", "Temp"), zipFile).Base64Encode();
         }
 
         public async Task Download(string key)
         {
-            var zipFile = Path.GetFullPath(key.Base64Decode(), Path.Combine(Config.AbsoluteStorageDirectory, "CAGC/Temp"));
+            var zipFile = Path.GetFullPath(key.Base64Decode(), Path.Combine(Config.AbsoluteStorageDirectory, "CAGC", "Temp"));
 
             if (!zipFile.Exists())
                 throw new MessageException("文件不存在或已被移除, 请尝试重新生成.");
@@ -307,9 +304,8 @@ namespace Business.Utils.CAGC
             var response = HttpContextAccessor.HttpContext.Response;
             response.ContentType = "text/plain";
             response.Headers.Add("Content-Disposition", $"attachment; filename=\"{UrlEncoder.Default.Encode("生成文件.zip")}\"");
-            response.ContentLength = zipFile.GetFileBytes();
 
-            await response.SendFileAsync(zipFile);
+            await FileBusiness.ResponseFile(HttpContextAccessor.HttpContext.Request, HttpContextAccessor.HttpContext.Response, zipFile);
         }
 
         public TempInfo GetTempInfo()

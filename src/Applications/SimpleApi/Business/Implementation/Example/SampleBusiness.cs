@@ -349,25 +349,30 @@ namespace Business.Implementation.Example
             if (errors.Any())
                 return new ImportResult(errors);
 
-            var newDataList = new List<Sample_DB>();
-            var editDataList = new List<Sample_DB>();
-
-            entityList.ForEach(entity =>
-            {
-                var idSelect = Repository.Where(o => o.Name == entity.Name);
-                if (idSelect.Any())
-                {
-                    entity.Id = idSelect.ToOne(o => o.Id);
-                    editDataList.Add(entity.ModifyEntity());
-                }
-                else
-                {
-                    newDataList.Add(entity.InitEntity());
-                }
-            });
+            var result = new ImportResult(0, 0);
 
             (bool success, Exception ex) = Orm.RunTransaction(() =>
             {
+                var newDataList = new List<Sample_DB>();
+                var editDataList = new List<Sample_DB>();
+
+                entityList.ForEach(entity =>
+                {
+                    var idSelect = Repository.Where(o => o.Name == entity.Name);
+                    if (idSelect.Any())
+                    {
+                        entity.Id = idSelect.ToOne(o => o.Id);
+                        editDataList.Add(entity.ModifyEntity());
+                    }
+                    else
+                    {
+                        newDataList.Add(entity.InitEntity());
+                    }
+                });
+
+                result.AddTotal = newDataList.Count;
+                result.UpdateTotal = editDataList.Count;
+
                 if (editDataList.Any())
                     if (Repository.UpdateDiy
                          .SetSource(editDataList)
@@ -382,7 +387,7 @@ namespace Business.Implementation.Example
             if (!success)
                 throw new ApplicationException("示例导入失败.", ex);
 
-            return new ImportResult(newDataList.Count, editDataList.Count, errors);
+            return result;
         }
 
         public void Export(string version = "xlsx", string paginationJson = null)

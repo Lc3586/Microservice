@@ -69,23 +69,24 @@ namespace T4CAGC.Template
         /// </summary>
         void AnalysisTable()
         {
-            if (!Options.Table.Fields.Any_Ex(o => o.Primary))
-            {
-                Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"表信息中未找到主键, 已跳过.", Options.Table.Name);
-                Ignore = true;
-                return;
-            }
-            else if (Options.Table.Fields.Count(o => o.Primary) == Options.Table.Fields.Count)
+            if (Options.Table.RelationshipTable)
             {
                 Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"表信息中存在联合主键, 且没有其他字段, 可能为关系表, 已跳过.", Options.Table.Name);
                 Ignore = true;
                 return;
             }
+            else if (!Options.Table.Fields.Any_Ex(o => o.Primary))
+            {
+                Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"表信息中未找到主键, 已跳过.", Options.Table.Name);
+                Ignore = true;
+                return;
+            }
+
 
             if (Options.Table.Fields.Any(o => o.Consts.Any_Ex() || o.Enums.Any_Ex()))
                 NameSpaces.AddWhenNotContains($"Model.{Options.Table.ModuleName}");
 
-            NameSpaces.AddWhenNotContains($"Entity.{Options.Table.ModuleName}.{Options.Table.ReducedName}DTO");
+            NameSpaces.AddWhenNotContains($"Entity.{Options.Table.ModuleName}");
             NameSpaces.AddWhenNotContains($"Model.{Options.Table.ModuleName}.{Options.Table.ReducedName}DTO");
             NameSpaces.AddWhenNotContains($"Business.Interface.{Options.Table.ModuleName}");
             NameSpaces.AddWhenNotContains("Business.Interface.Common");
@@ -98,6 +99,8 @@ namespace T4CAGC.Template
             NameSpaces.AddWhenNotContains("Microservice.Library.DataMapping.Gen");
             NameSpaces.AddWhenNotContains("Microservice.Library.OpenApi.Extention");
             NameSpaces.AddWhenNotContains("Business.Utils");
+
+            Functions.GetAndAddWhenNotContains(Function.Delete);
 
             if (Options.Table.FreeSql)
             {
@@ -126,6 +129,7 @@ namespace T4CAGC.Template
 
                     if (tag_lower.Contains("list"))
                     {
+                        NameSpaces.AddWhenNotContains("Business.Utils.Pagination");
                         NameSpaces.AddWhenNotContains("Model.Utils.Pagination");
 
                         Functions.GetAndAddWhenNotContains(Function.List, tag);
@@ -138,10 +142,6 @@ namespace T4CAGC.Template
                         Functions.GetAndAddWhenNotContains(Function.Create, tag);
                     else if (tag_lower.Contains("edit"))
                         Functions.GetAndAddWhenNotContains(Function.Edit, tag);
-                    else if (tag_lower.Contains("delete"))
-                    {
-                        Functions.GetAndAddWhenNotContains(Function.Delete, tag);
-                    }
                     else if (tag_lower.Contains("enable"))
                     {
                         if (o.CsType == typeof(bool))
@@ -151,6 +151,7 @@ namespace T4CAGC.Template
                     }
                     else if (tag_lower.Contains("sort"))
                     {
+                        NameSpaces.AddWhenNotContains("Model.Utils.Sort");
                         NameSpaces.AddWhenNotContains("Model.Utils.Sort.SortParamsDTO");
 
                         if (o.CsType == typeof(int))
@@ -160,15 +161,18 @@ namespace T4CAGC.Template
                     }
                     else if (tag_lower.Contains("import"))
                     {
+                        NameSpaces.AddWhenNotContains("FreeSql.DataAnnotations");
                         NameSpaces.AddWhenNotContains("System.Data");
+                        NameSpaces.AddWhenNotContains("System.Text.Encodings.Web");
                         NameSpaces.AddWhenNotContains("Microsoft.AspNetCore.Http");
+                        NameSpaces.AddWhenNotContains("Microservice.Library.Http");
+                        NameSpaces.AddWhenNotContains("Microservice.Library.OfficeDocuments");
                         NameSpaces.AddWhenNotContains("Model.Utils.OfficeDocuments");
                         NameSpaces.AddWhenNotContains("Model.Utils.OfficeDocuments.ExcelDTO");
                         NameSpaces.AddWhenNotContains("System.Threading.Tasks");
                         NameSpaces.AddWhenNotContains("System.ComponentModel");
                         NameSpaces.AddWhenNotContains("System.Text");
                         NameSpaces.AddWhenNotContains("System.Reflection");
-                        NameSpaces.AddWhenNotContains("Newtonsoft.Json");
                         NameSpaces.AddWhenNotContains("System.IO");
 
                         Functions.GetAndAddWhenNotContains(Function.Import, tag);
@@ -176,29 +180,18 @@ namespace T4CAGC.Template
                     else if (tag_lower.Contains("export"))
                     {
                         NameSpaces.AddWhenNotContains("System.Data");
+                        NameSpaces.AddWhenNotContains("Microservice.Library.OfficeDocuments");
                         NameSpaces.AddWhenNotContains("Model.Utils.Pagination");
                         NameSpaces.AddWhenNotContains("Model.Utils.OfficeDocuments");
                         NameSpaces.AddWhenNotContains("System.ComponentModel");
                         NameSpaces.AddWhenNotContains("System.Reflection");
                         NameSpaces.AddWhenNotContains("System.Text.Encodings.Web");
-                        NameSpaces.AddWhenNotContains("Newtonsoft.Json");
                         NameSpaces.AddWhenNotContains("System.IO");
 
                         Functions.GetAndAddWhenNotContains(Function.Export, tag);
                     }
                 });
             });
-
-            if (PrimaryKeys.Count == 0)
-            {
-                Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"表信息中未找到主键, 已跳过.", Options.Table.Name);
-                return;
-            }
-            else if (PrimaryKeys.Count == Options.Table.Fields.Count)
-            {
-                Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"表信息中存在联合主键, 且没有其他字段, 可能为关系表, 已跳过.", Options.Table.Name);
-                return;
-            }
         }
     }
 }

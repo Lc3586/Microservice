@@ -139,8 +139,47 @@ namespace T4CAGC.Handler
                 "string" => typeof(string),
                 "date" => typeof(DateTime),
                 "datetime" => typeof(DateTime),
+                "time" => typeof(TimeSpan),
                 "guid" => typeof(Guid),
                 _ => Type.GetType(typeName, false, true)
+            };
+
+            if (type == null && @throw)
+                throw new ApplicationException($"无效的类型名称{typeName}.");
+
+            return type;
+        }
+
+        /// <summary>
+        /// 获取类型关键字名称
+        /// </summary>
+        /// <param name="typeName"></param>
+        /// <param name="throw">错误时抛出异常</param>
+        static string GetCsTypeKeyword(this string typeName, bool @throw = true)
+        {
+            var type_lower = typeName.ToLower();
+            var type = type_lower switch
+            {
+                "bool" or
+                "byte" or
+                "sbyte" or
+                "char" or
+                "decimal" or
+                "double" or
+                "float" or
+                "int" or
+                "uint" or
+                "long" or
+                "ulong" or
+                "object" or
+                 "short" or
+                "ushort" or
+               "string" => type_lower,
+                "date" or
+                "datetime" => "DateTime",
+                "time" => "TimeSpan",
+                "guid" => "Guid",
+                _ => type_lower
             };
 
             if (type == null && @throw)
@@ -177,6 +216,10 @@ namespace T4CAGC.Handler
                 while (NextTable(out TableInfo tableInfo))
                 {
                     SetTableInfo(tableInfo);
+
+                    if (!tableInfo.Fields.Any_Ex(o => !o.Primary && !o.Virtual))
+                        tableInfo.RelationshipTable = true;
+
                     tableInfos.Add(tableInfo);
                 }
             }
@@ -401,6 +444,7 @@ namespace T4CAGC.Handler
 
                                 fieldInfo.Type = dataType;
                                 fieldInfo.CsType = dataType.GetCsType();
+                                fieldInfo.CsTypeKeyword = dataType.GetCsTypeKeyword();
                             }
                             else if (value.Exist(SettingKeyword.长度))
                             {

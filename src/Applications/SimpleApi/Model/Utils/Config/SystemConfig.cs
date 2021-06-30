@@ -3,6 +3,7 @@ using Microservice.Library.Configuration.Annotations;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace Model.Utils.Config
 {
@@ -12,6 +13,34 @@ namespace Model.Utils.Config
     public class SystemConfig
     {
         #region 基础
+
+        /// <summary>
+        /// 当前操作系统平台
+        /// </summary>
+        public string CurrentOS
+        {
+            get
+            {
+                if (_CurrentOS != null)
+                    return _CurrentOS;
+
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    _CurrentOS = OSPlatform.Windows.ToString();
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                    _CurrentOS = OSPlatform.Linux.ToString();
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                    _CurrentOS = OSPlatform.OSX.ToString();
+                else
+                    throw new ApplicationException("无法获取当前的操作系统平台.");
+
+                return _CurrentOS;
+            }
+        }
+
+        /// <summary>
+        /// 当前操作系统平台
+        /// </summary>
+        private string _CurrentOS { get; set; }
 
         /// <summary>
         /// 数据存储根目录
@@ -255,29 +284,6 @@ namespace Model.Utils.Config
         /// </summary>
         public bool EnableCAGC { get; set; }
 
-        /// <summary>
-        /// 自动生成代码应用程序文件
-        /// </summary>
-        public string CAGCFile { get; set; }
-
-        /// <summary>
-        /// 自动生成代码应用程序文件绝对路径
-        /// </summary>
-        public string AbsoluteCAGCFile
-        {
-            get
-            {
-                if (!string.IsNullOrWhiteSpace(CAGCFile) && string.IsNullOrWhiteSpace(_AbsoluteCAGCFile))
-                    _AbsoluteCAGCFile = Path.GetFullPath(CAGCFile, AppContext.BaseDirectory);
-                return _AbsoluteCAGCFile;
-            }
-        }
-
-        /// <summary>
-        /// 自动生成代码应用程序文件绝对路径
-        /// </summary>
-        private string _AbsoluteCAGCFile { get; set; }
-
         #endregion
 
         #region Swagger
@@ -468,6 +474,54 @@ namespace Model.Utils.Config
         /// Signalr允许跨域
         /// </summary>
         public bool SignalrCors { get; set; }
+
+        #endregion
+
+        #region 文件清单
+
+        /// <summary>
+        /// 文件清单
+        /// <para>[{文件名 : [{平台 : 文件路径}]}]</para>
+        /// </summary>
+        /// <remarks>
+        /// 
+        /// </remarks>
+        [JsonConfig("jsonconfig/filelist.json", "FileList")]
+        public Dictionary<string, Dictionary<string, string>> FileList { get; set; }
+
+        private Dictionary<string, Dictionary<string, string>> FileAbsolutePathList { get; set; } = new Dictionary<string, Dictionary<string, string>>();
+
+        /// <summary>
+        /// 获取文件清单中文件的绝对路径
+        /// </summary>
+        /// <param name="filename">文件名</param>
+        /// <returns></returns>
+        public string GetFileAbsolutePath(string filename)
+        {
+            string result;
+            if (FileAbsolutePathList.ContainsKey(filename) && FileAbsolutePathList[filename].ContainsKey(CurrentOS))
+                result = FileAbsolutePathList[filename][CurrentOS];
+            else
+            {
+                if (!FileList.ContainsKey(filename))
+                    throw new ApplicationException("未在jsonconfig/filelist.json中配置{filename}文件");
+
+                if (!FileList[filename].ContainsKey(CurrentOS))
+                    throw new ApplicationException($"未找到符合当前系统【{CurrentOS}】版本的{filename}文件");
+
+                result = Path.GetFullPath(FileList[filename][CurrentOS], AppContext.BaseDirectory);
+
+                if (!FileAbsolutePathList.ContainsKey(filename))
+                    FileAbsolutePathList.Add(filename, new Dictionary<string, string>());
+
+                FileAbsolutePathList[filename].Add(CurrentOS, result);
+            }
+
+            if (!File.Exists(result))
+                throw new ApplicationException($"指定目录下未找到{filename}文件: {result}.");
+
+            return result;
+        }
 
         #endregion
     }

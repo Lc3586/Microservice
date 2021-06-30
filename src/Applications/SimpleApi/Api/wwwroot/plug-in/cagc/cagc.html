@@ -83,7 +83,7 @@
                                         <el-button class="next" @click="nextStep" v-show="config.step == 1" type="success">下一步</el-button>
                                         <el-button class="prev" @click="nextStep" v-show="config.step == 2" type="success">上一步</el-button>
 
-                                        <el-button class="reUpload" @click="reUpload" v-show="config.download" type="warning">重新上传</el-button>
+                                        <el-button class="reUpload" @click="reUpload" v-show="config.reUpload" type="warning">重新上传</el-button>
                                         <el-button class="download" @click="download" v-show="config.download" type="primary">下载</el-button>
                                     </div>
                                 </el-collapse-item>

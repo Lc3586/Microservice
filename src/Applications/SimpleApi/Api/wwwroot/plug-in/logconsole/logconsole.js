@@ -516,6 +516,8 @@
             console.info(connectionId);
             main.overall.title = '连接已恢复';
             main.overall.explain = '已重新连接至服务器';
+
+            initHubMethod();
         });
         main.logReal.connection.onclose(() => {
             main.overall.title = '连接已关闭';
@@ -549,19 +551,26 @@
                 main.logReal.loading = false;
                 main.logReal.init = true;
 
-                startRealLog(() => {
-                    setRealLogSetting('AddLevels', main.logReal.levels, () => {
-                        main.logReal.levels_history = main.logReal.levels;
-                    }, () => {
-                        main.logReal.levels = [];
-                    });
-                    setRealLogSetting('AddTypes', main.logReal.types, () => {
-                        main.logReal.types_history = main.logReal.types;
-                    }, () => {
-                        main.logReal.types = [];
-                    });
-                });
+                initHubMethod();
             });
+    }
+
+    /**
+     * 初始化Hub方法
+     * */
+    function initHubMethod() {
+        startRealLog(() => {
+            setRealLogSetting('AddLevels', main.logReal.levels, () => {
+                main.logReal.levels_history = main.logReal.levels;
+            }, () => {
+                main.logReal.levels = [];
+            });
+            setRealLogSetting('AddTypes', main.logReal.types, () => {
+                main.logReal.types_history = main.logReal.types;
+            }, () => {
+                main.logReal.types = [];
+            });
+        });
     }
 
     /**
