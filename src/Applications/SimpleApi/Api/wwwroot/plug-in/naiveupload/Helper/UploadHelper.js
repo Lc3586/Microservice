@@ -265,19 +265,16 @@ var UploadHelper = (function () {
                                 reject(e_4);
                                 return [2];
                             case 3:
-                                console.info(chunk.Blob.size, buffer.byteLength);
-                                _a.label = 4;
-                            case 4:
-                                _a.trys.push([4, 6, , 7]);
+                                _a.trys.push([3, 5, , 6]);
                                 return [4, this.WorkerPostMessage(handlerIndex, { Type: "ChunkFile", Data: { Key: validation.Key, MD5: chunk.MD5, Buffer: buffer } }, onProgress)];
-                            case 5:
+                            case 4:
                                 _a.sent();
-                                return [3, 7];
-                            case 6:
+                                return [3, 6];
+                            case 5:
                                 e_5 = _a.sent();
                                 reject(e_5);
                                 return [2];
-                            case 7:
+                            case 6:
                                 resolve();
                                 return [2];
                         }
@@ -468,14 +465,15 @@ var UploadHelper = (function () {
                                                 return [2];
                                             case 13:
                                                 this.ChunkHandlerQueue.push(chunk);
-                                                console.info(this.ChunkHandlerQueue.length);
                                                 this.DelayTimes++;
                                                 if (this.DelayTimes >= this.ChunkHandlerQueue.length) {
                                                     this.DelayTimes = 0;
                                                     chunk.Forced = true;
                                                 }
                                                 return [3, 15];
-                                            case 14: return [3, 15];
+                                            case 14:
+                                                handlerProgress({ Loaded: chunk.Blob.size, Total: chunk.Blob.size });
+                                                return [3, 15];
                                             case 15:
                                                 next();
                                                 return [2];

@@ -263,7 +263,7 @@ class UploadHelper {
                 reject(e);
                 return;
             }
-            console.info(chunk.Blob.size, buffer.byteLength);
+
             try {
                 await this.WorkerPostMessage(
                     handlerIndex,
@@ -470,7 +470,7 @@ class UploadHelper {
                             return;
                         case PreUploadChunkFileState.推迟上传:
                             this.ChunkHandlerQueue.push(chunk);
-                            console.info(this.ChunkHandlerQueue.length);
+
                             this.DelayTimes++;
                             if (this.DelayTimes >= this.ChunkHandlerQueue.length) {
                                 this.DelayTimes = 0;
@@ -478,6 +478,7 @@ class UploadHelper {
                             }
                             break;
                         case PreUploadChunkFileState.跳过:
+                            handlerProgress({ Loaded: chunk.Blob.size, Total: chunk.Blob.size });
                             break;
                     }
 

@@ -5,7 +5,7 @@ class UploadProgress {
     /**
      * 准备完成数
      */
-    PreLoaded: number;
+    PreLoaded?: number;
 
     /**
      * 已完成数
