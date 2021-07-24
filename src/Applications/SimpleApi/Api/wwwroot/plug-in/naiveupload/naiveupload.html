@@ -1,0 +1,187 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>文件上传</title>
+
+    <link href="naiveupload.css" rel="stylesheet" />
+</head>
+<body>
+    <div id="app">
+        <el-container class="main_container">
+            <el-container class="main_container">
+                <el-tabs tab-position="left" v-model="config.type" @tab-click="TabsChanged">
+                    <el-tab-pane label="单文件上传" class="tab-pane" name="Single">
+                        <template>
+                            <p>上传</p>
+                        </template>
+                    </el-tab-pane>
+                    <el-tab-pane label="多文件上传" class="tab-pane" name="Multiple">
+                        <div class="tab-pane-tool" v-show="config.type=='Multiple'">
+                            <el-switch class="item"
+                                       v-model="multipleUpload.settings.Theme"
+                                       active-color="#00bcd4"
+                                       inactive-color="#ff9800"
+                                       active-text="清单式主题"
+                                       inactive-text="卡片式主题"
+                                       active-value="detailedly"
+                                       inactive-value="card"
+                                       @change="multipleUpload.settings.Theme == 'detailedly' ? 'card' : 'detailedly'">
+                            </el-switch>
+                            <el-button class="item"
+                                       type="danger"
+                                       @click="Clean">清空</el-button>
+                            <el-button class="item"
+                                       type="warning"
+                                       @click="Pause">暂停</el-button>
+                            <el-button class="item"
+                                       type="success"
+                                       @click="Continues">恢复</el-button>
+                            <el-button class="item"
+                                       type="primary"
+                                       @click="Start">开始</el-button>
+                        </div>
+
+                        <div class="upload-container">
+                            <div :class="GetSelectCLass()"
+                                 v-on:drop="DropFile"
+                                 v-on:dragover="AllowDrop"
+                                 :title="GetSelectTitle()">
+                                <div class="upload-btn"
+                                     v-on:click="ChosingFile">
+                                    <input type="file"
+                                           ref="fileInput"
+                                           :accept="multipleUpload.settings.Accept.join(', ')"
+                                           :multiple="multipleUpload.settings.MultipleSelect ? 'multiple' : null"
+                                           v-on:change="ChoseFile">
+                                    <div class="upload-drag-container">
+                                        <p class="upload-icon icon-inbox"></p>
+                                        <p class="upload-text" v-html="multipleUpload.settings.Explain"></p>
+                                        <p class="upload-hint" v-html="multipleUpload.settings.Tip"></p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="upload-list"
+                                 ref="uploadList"
+                                 v-on:mouseenter="multipleUpload.scrollLock=false"
+                                 v-on:mouseleave="multipleUpload.scrollLock=true">
+                                <div :class="GetListCLass()">
+                                    <div v-for="(file, index) in multipleUpload.files.filter(data => !data.Canceled)"
+                                         :class="GetContainerClass(file)"
+                                         :title="GetContainerTitle(file)"
+                                         v-on:mouseenter="file.Hover=true"
+                                         v-on:mouseleave="file.Hover=false"
+                                         :ref="'file_container_' + index">
+                                        <div class="item-body">
+                                            <div class="item-image">
+                                                <img :src="file.Thumbnail"
+                                                     onerror="javascript: this.src = '/filestate/图裂.jpg';"
+                                                     loading="lazy"
+                                                     :alt="GetFilename(file)">
+                                            </div>
+
+                                            <span class="item-tools"
+                                                  v-if="ShowTools(file)">
+                                                <span class="upload-icon icon-rename"
+                                                      title="重命名"
+                                                      v-on:click="rename(file)"
+                                                      v-if="EnableRename(file)"></span>
+                                                <span class="upload-icon icon-view"
+                                                      title="查看"
+                                                      v-if="EnableView(file)"
+                                                      v-on:click="View(file)"></span>
+                                                <span class="upload-icon icon-remove"
+                                                      title="删除"
+                                                      v-on:click="Remove(index)"></span>
+                                            </span>
+
+                                            <div v-if="multipleUpload.settings.Theme=='card'"
+                                                 class="item-info">
+                                                <span class="single-text-omitted item-name"
+                                                      :title="file.FileType + '\r\n' + file.Size + '\r\n' + GetFilename(file)"
+                                                      v-html="GetFilename(file)"
+                                                      v-if="!file.Rename"></span>
+                                                <input class="item-rename-input"
+                                                       type="text"
+                                                       v-if="file.Rename"
+                                                       v-model="file.Name"
+                                                       ref="renameInput"
+                                                       v-on:keydown="RenameKeydown(file, $event)"
+                                                       v-on:blur="file.Rename=false" />
+                                            </div>
+                                            <div v-if="multipleUpload.settings.Theme=='detailedly'"
+                                                 class="item-info">
+                                                <span class="single-text-omitted item-name">
+                                                    名称：<span :title="GetFilename(file)"
+                                                             v-html="GetFilename(file)"
+                                                             v-if="!file.Rename"></span>
+                                                    <input class="item-rename-input"
+                                                           type="text"
+                                                           v-if="file.Rename"
+                                                           v-model="file.Name"
+                                                           ref="renameInput"
+                                                           v-on:keydown="Rename(file, $event)"
+                                                           v-on:blur="file.Rename=false" />
+                                                </span>
+
+                                                <span class="single-text-omitted item-size">
+                                                    大小：<span :title="file.Size"
+                                                             v-html="file.Size"></span>
+                                                </span>
+
+                                                <span class="single-text-omitted item-filetype">
+                                                    类型：<span :title="file.FileType"
+                                                             v-html="file.FileType"></span>
+                                                </span>
+                                            </div>
+
+                                            <div class="item-loading"
+                                                 v-if="ShowLoading(file)"
+                                                 :style="GetLoadingStyle(file)"
+                                                 :title="GetLoadingTitle(file)">
+                                            </div>
+                                            <div v-if="file.Done" class="item-sub sub-done">
+                                                完成
+                                            </div>
+                                            <div v-if="file.Error" class="item-sub sub-error">
+                                                错误
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </el-tab-pane>
+                </el-tabs>
+            </el-container>
+        </el-container>
+
+        <!--SA身份验证-->
+        <el-dialog title="SA身份验证"
+                   v-model="sa.show"
+                   :width="350"
+                   :close-on-click-modal="false"
+                   :close-on-press-escape="false"
+                   :show-close="false"
+                   v-loading="sa.loading">
+            <el-form :model="sa">
+                <el-form-item label="用户名" :label-width="200">
+                    <el-input type="text" v-model="sa.username" :maxlength="20" size="medium"></el-input>
+                </el-form-item>
+                <el-form-item label="密码" :label-width="200">
+                    <el-input type="text" v-model="sa.password" :maxlength="25" size="medium" show-password></el-input>
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <span class="dialog-footer">
+                    <el-button type="primary" @click="SALogin">登录</el-button>
+                </span>
+            </template>
+        </el-dialog>
+    </div>
+
+    <script src="../../utils/import-file.js"></script>
+    <script src="NaiveUpload.js"></script>
+</body>
+</html>

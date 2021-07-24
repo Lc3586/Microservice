@@ -65,7 +65,11 @@ namespace Api.Controllers.Utils
         [SwaggerResponse((int)HttpStatusCode.OK, "令牌信息", typeof(TokenInfo))]
         public object GetToken([FromBody] LoginRequest data = null)
         {
-            var authenticationInfo = UserBusiness.Login(data.Account, data.Password);
+            AuthenticationInfo authenticationInfo;
+            if (Operator.IsAuthenticated)
+                authenticationInfo = Operator.AuthenticationInfo;
+            else
+                authenticationInfo = UserBusiness.Login(data.Account, data.Password);
 
             var claims = UserBusiness.CreateClaims(authenticationInfo, "JWT");
 

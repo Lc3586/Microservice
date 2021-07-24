@@ -400,7 +400,10 @@ namespace Business.Implementation.System
 
             editData.Password = $"{entity.Account}{data.OldPassword}".ToMD5String();
 
-            if (!Operator.IsSuperAdmin && !entity.Password.Equals(editData.Password))
+            if (!Operator.IsSuperAdmin && entity.Id != Operator.AuthenticationInfo.Id)
+                throw new MessageException("您只能修改自己的密码.");
+
+            if (!entity.Password.Equals(editData.Password))
                 throw new MessageException("原密码有误.");
 
             editData.Password = $"{entity.Account}{data.NewPassword}".ToMD5String();
@@ -411,14 +414,37 @@ namespace Business.Implementation.System
                 {
                     DataType = nameof(System_User),
                     DataId = entity.Id,
-                    Explain = $"更新密码[账号 {entity.Account}, 姓名 {entity.Name}]."
+                    Explain = $"修改密码[账号 {entity.Account}, 姓名 {entity.Name}]."
                 });
 
                 if (Repository.UpdateDiy
-                      .SetSource(editData.ModifyEntity())
+                      .SetSource(editData)
                       .UpdateColumns(typeof(UpdatePassword).GetNamesWithTagAndOther(false, "_Edit").ToArray())
                       .ExecuteAffrows() <= 0)
-                    throw new MessageException("更新密码失败");
+                    throw new MessageException("修改密码失败");
+            });
+
+            if (!success)
+                throw ex;
+        }
+
+        public void ResetPassword(string id, string newPassword)
+        {
+            var entity = Repository.GetAndCheckNull(id).ModifyEntity();
+
+            entity.Password = $"{entity.Account}{newPassword}".ToMD5String();
+
+            (bool success, Exception ex) = Orm.RunTransaction(() =>
+            {
+                var orId = OperationRecordBusiness.Create(new Common_OperationRecord
+                {
+                    DataType = nameof(System_User),
+                    DataId = entity.Id,
+                    Explain = $"重置密码[账号 {entity.Account}, 姓名 {entity.Name}]."
+                });
+
+                if (Repository.Update(entity) <= 0)
+                    throw new MessageException("重置密码失败");
             });
 
             if (!success)

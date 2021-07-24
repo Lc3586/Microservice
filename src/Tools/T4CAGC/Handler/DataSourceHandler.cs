@@ -244,26 +244,22 @@ namespace T4CAGC.Handler
                             tableInfo = new TableInfo { FreeSql = true };
                         else if (value.Exist(SettingKeyword.Elasticsearch字段属性))
                             tableInfo = new TableInfo { Elasticsearch = true };
-                        else if (value.Exist(SettingKeyword.树状结构表))
-                            tableInfo = new TableInfo { Tree = true };
                         else
                             continue;
 
+                        if (value.Exist(SettingKeyword.树状结构))
+                            tableInfo.Tree = true;
+
                         if (!value.TryMatch(SettingKeyword.普通表, out string tableName, out string remark))
                         {
-                            if (value.TryMatch(SettingKeyword.树状结构表, out tableName, out remark))
-                                tableInfo.Tree = true;
+                            if (value.TryMatch(SettingKeyword.FreeSql表, out tableName, out remark))
+                                tableInfo.FreeSql = true;
                             else
                             {
-                                if (value.TryMatch(SettingKeyword.FreeSql表, out tableName, out remark))
-                                    tableInfo.FreeSql = true;
+                                if (value.TryMatch(SettingKeyword.Elasticsearch表, out tableName, out remark))
+                                    tableInfo.Elasticsearch = true;
                                 else
-                                {
-                                    if (value.TryMatch(SettingKeyword.Elasticsearch表, out tableName, out remark))
-                                        tableInfo.Elasticsearch = true;
-                                    else
-                                        SettingKeyword.普通表.SettingException();
-                                }
+                                    SettingKeyword.普通表.SettingException();
                             }
                         }
 
@@ -634,7 +630,7 @@ namespace T4CAGC.Handler
 
                             if (!value.TryMatch(SettingKeyword.普通表, out string tableName, out string remark))
                             {
-                                if (value.TryMatch(SettingKeyword.树状结构表, out tableName, out remark))
+                                if (value.TryMatch(SettingKeyword.树状结构, out tableName, out remark))
                                     tableInfo.Tree = true;
                                 else
                                 {

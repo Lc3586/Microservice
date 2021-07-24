@@ -96,11 +96,13 @@
             关闭
             </summary>
         </member>
-        <member name="M:Business.Handler.ChunkFileMergeHandler.Add(System.String,System.String,System.Int32,System.Int32)">
+        <member name="M:Business.Handler.ChunkFileMergeHandler.Add(System.String,System.String,System.String,System.String,System.Int32,System.Int32)">
             <summary>
             新增合并任务
             </summary>
             <param name="md5">文件MD5值</param>
+            <param name="type">文件类型</param>
+            <param name="extension">文件拓展名</param>
             <param name="name">文件名(不包括拓展名)</param>
             <param name="specs">分片文件规格</param>
             <param name="total">分片文件总数</param>
@@ -321,9 +323,9 @@
             存储路径根目录绝对路径
             </summary>
         </member>
-        <member name="M:Business.Implementation.Common.FileBusiness.GetPreviewImage(System.String)">
+        <member name="M:Business.Implementation.Common.FileBusiness.GetFileTypeImage(System.String)">
             <summary>
-            获取预览图
+            获取文件类型预览图
             </summary>
             <param name="extension">文件后缀</param>
             <returns></returns>
@@ -360,12 +362,12 @@
             <param name="state">状态<see cref="T:Model.Common.FileState"/></param>
             <returns></returns>
         </member>
-        <member name="M:Business.Implementation.Common.FileBusiness.FileExists(Model.Common.FileDTO.FileInfo)">
+        <member name="M:Business.Implementation.Common.FileBusiness.FileExists(System.String,Entity.Common.Common_File@)">
             <summary>
             文件是否已存在
             </summary>
-            <remarks>需要先计算MD5值</remarks>
-            <param name="file"></param>
+            <param name="md5">文件MD5值</param>
+            <param name="file">文件信息</param>
             <returns></returns>
         </member>
         <member name="M:Business.Implementation.Common.FileBusiness.AddChunkFile(System.String,System.String,System.String,System.Int32,System.Int32,System.String)">
@@ -379,16 +381,33 @@
             <param name="specs">分片文件规格</param>
             <param name="path">路径</param>
         </member>
-        <member name="M:Business.Implementation.Common.FileBusiness.UpdateChunkFile(System.String,System.String,System.Int64,System.String,System.String,System.String)">
+        <member name="M:Business.Implementation.Common.FileBusiness.UpdateChunkFile(System.String,System.String,System.Int64,System.String)">
             <summary>
             更新分片文件信息
             </summary>
             <param name="taskKey">任务标识</param>
             <param name="md5">分片MD5值</param>
             <param name="bytes">字节数</param>
-            <param name="contentType">文件内容类型</param>
-            <param name="extension">文件扩展名</param>
             <param name="path">路径</param>
+        </member>
+        <member name="M:Business.Implementation.Common.FileBusiness.SingleChunkFile(System.String,System.String,System.IO.Stream)">
+            <summary>
+            上传单个分片文件
+            </summary>
+            <param name="key">上传标识</param>
+            <param name="md5">分片文件MD5值</param>
+            <param name="stream"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Implementation.Common.FileBusiness.SingleFile(System.IO.Stream,System.String,System.String,System.String)">
+            <summary>
+            上传单个文件
+            </summary>
+            <param name="stream"></param>
+            <param name="type">文件类型</param>
+            <param name="extension">文件拓展名</param>
+            <param name="filename">文件重命名</param>
+            <returns></returns>
         </member>
         <member name="M:Business.Implementation.Common.FileBusiness.Save(ImageProcessorCore.Image,System.String)">
             <summary>
@@ -410,6 +429,14 @@
             </summary>
             <param name="stream">流</param>
             <param name="path">绝对路径</param>
+        </member>
+        <member name="M:Business.Implementation.Common.FileBusiness.Response(Microsoft.AspNetCore.Http.HttpResponse,System.Int32,System.String)">
+            <summary>
+            输出
+            </summary>
+            <param name="response">Http响应对象</param>
+            <param name="statusCode">状态码</param>
+            <param name="message">消息</param>
         </member>
         <member name="M:Business.Implementation.Common.FileBusiness.ResponseImage(Microsoft.AspNetCore.Http.HttpRequest,Microsoft.AspNetCore.Http.HttpResponse,ImageProcessorCore.Image)">
             <summary>
@@ -452,6 +479,13 @@
             删除文件
             </summary>
             <param name="path"></param>
+        </member>
+        <member name="M:Business.Implementation.Common.FileBusiness.GetMD5(System.String)">
+            <summary>
+            获取MD5
+            </summary>
+            <param name="path"></param>
+            <returns></returns>
         </member>
         <member name="M:Business.Implementation.Common.FileBusiness.GetMD5(System.IO.Stream)">
             <summary>
@@ -707,6 +741,34 @@
             <param name="ids">id集合</param>
             <returns></returns>
         </member>
+        <member name="M:Business.Interface.Common.IFileBusiness.GetFileTypeByExtension(System.String)">
+            <summary>
+            获取文件类型
+            </summary>
+            <param name="extension">文件拓展名</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Interface.Common.IFileBusiness.GetFileTypeByMIME(System.String)">
+            <summary>
+            获取文件类型
+            </summary>
+            <param name="mime">MIME类型</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Interface.Common.IFileBusiness.GetFileTypeImageUrl(System.String)">
+            <summary>
+            获取文件类型预览图链接地址
+            </summary>
+            <param name="extension">文件拓展名</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Interface.Common.IFileBusiness.GetFileSize(System.String)">
+            <summary>
+            获取文件大小
+            </summary>
+            <param name="length">文件字节数</param>
+            <returns></returns>
+        </member>
         <member name="M:Business.Interface.Common.IFileBusiness.ValidationFileMD5(System.String,System.String)">
             <summary>
             文件MD5值校验
@@ -715,7 +777,7 @@
             <param name="filename">文件重命名</param>
             <returns></returns>
         </member>
-        <member name="M:Business.Interface.Common.IFileBusiness.PreUploadChunkFile(System.String,System.String,System.Int32,System.Int32)">
+        <member name="M:Business.Interface.Common.IFileBusiness.PreUploadChunkFile(System.String,System.String,System.Int32,System.Int32,System.Boolean)">
             <summary>
             预备上传分片文件
             </summary>
@@ -723,6 +785,7 @@
             <param name="md5">分片文件MD5值</param>
             <param name="index">分片文件索引</param>
             <param name="specs">分片文件规格</param>
+            <param name="forced">强制上传</param>
             <returns><see cref="T:Model.Common.FileState"/>文件状态</returns>
         </member>
         <member name="M:Business.Interface.Common.IFileBusiness.SingleChunkFile(System.String,System.String,Microsoft.AspNetCore.Http.IFormFile)">
@@ -735,13 +798,24 @@
             <param name="file">分片文件</param>
             <returns></returns>
         </member>
-        <member name="M:Business.Interface.Common.IFileBusiness.UploadChunkFileFinished(System.String,System.Int32,System.Int32,System.String)">
+        <member name="M:Business.Interface.Common.IFileBusiness.SingleChunkFileByArrayBuffer(System.String,System.String)">
+            <summary>
+            单分片文件上传
+            </summary>
+            <remarks>单个上传</remarks>
+            <param name="key">上传标识</param>
+            <param name="md5">分片文件MD5值</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Interface.Common.IFileBusiness.UploadChunkFileFinished(System.String,System.Int32,System.Int32,System.String,System.String,System.String)">
             <summary>
             分片文件全部上传完毕
             </summary>
             <param name="file_md5">文件MD5值</param>
             <param name="specs">分片文件规格</param>
             <param name="total">分片文件总数</param>
+            <param name="type">文件类型</param>
+            <param name="extension">文件拓展名</param>
             <param name="filename">文件重命名</param>
             <returns></returns>
         </member>
@@ -753,13 +827,13 @@
             <param name="filename">文件重命名</param>
             <returns></returns>
         </member>
-        <member name="M:Business.Interface.Common.IFileBusiness.SingleFileFromUrl(System.String,System.Boolean,System.String)">
+        <member name="M:Business.Interface.Common.IFileBusiness.SingleFileFromUrl(System.String,System.String,System.Boolean)">
             <summary>
             通过外链上传单个文件
             </summary>
             <param name="url">外链地址</param>
-            <param name="download">是否下载资源</param>
             <param name="filename">文件重命名</param>
+            <param name="download">是否下载资源</param>
             <returns></returns>
         </member>
         <member name="M:Business.Interface.Common.IFileBusiness.SingleFile(Microsoft.AspNetCore.Http.IFormFile,System.String)">
@@ -767,6 +841,15 @@
             上传单个文件
             </summary>
             <param name="file">文件</param>
+            <param name="filename">文件重命名</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Interface.Common.IFileBusiness.SingleFileByArrayBuffer(System.String,System.String,System.String)">
+            <summary>
+            上传单个文件
+            </summary>
+            <param name="type">上传标识</param>
+            <param name="extension">文件拓展名</param>
             <param name="filename">文件重命名</param>
             <returns></returns>
         </member>
@@ -2031,9 +2114,16 @@
         </member>
         <member name="M:Business.Interface.System.IUserBusiness.UpdatePassword(Model.System.UserDTO.UpdatePassword)">
             <summary>
-            更新密码
+            修改密码
             </summary>
             <param name="data">数据</param>
+        </member>
+        <member name="M:Business.Interface.System.IUserBusiness.ResetPassword(System.String,System.String)">
+            <summary>
+            重置密码
+            </summary>
+            <param name="id">用户Id</param>
+            <param name="newPassword">新密码</param>
         </member>
         <member name="M:Business.Interface.System.IUserBusiness.CreateClaims(Model.Utils.SampleAuthentication.SampleAuthenticationDTO.AuthenticationInfo,System.String)">
             <summary>

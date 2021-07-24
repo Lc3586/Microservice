@@ -80,10 +80,17 @@ namespace Business.Interface.System
         void Enable(string id, bool enable);
 
         /// <summary>
-        /// 更新密码
+        /// 修改密码
         /// </summary>
         /// <param name="data">数据</param>
         void UpdatePassword(UpdatePassword data);
+
+        /// <summary>
+        /// 重置密码
+        /// </summary>
+        /// <param name="id">用户Id</param>
+        /// <param name="newPassword">新密码</param>
+        void ResetPassword(string id, string newPassword);
 
         /// <summary>
         /// 获取声明信息

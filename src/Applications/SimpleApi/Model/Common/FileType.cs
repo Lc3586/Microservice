@@ -12,7 +12,7 @@ namespace Model.Common
         /// </summary>
         /// <param name="extension">文件扩展名(.jpg)</param>
         /// <returns></returns>
-        public static string GetFileType(string extension)
+        public static string GetFileTypeByExtension(string extension)
         {
             switch (extension)
             {
@@ -69,11 +69,19 @@ namespace Model.Common
                 case ".xlsx":
                 case ".csv":
                     return 电子表格;
+                case ".pdf":
                 case ".doc":
                 case ".docx":
-                case ".pdf":
                     return 电子文档;
                 case ".txt":
+                case ".js":
+                case ".css":
+                case ".cs":
+                case ".html":
+                case ".vue":
+                case ".ts":
+                case ".xml":
+                case ".json":
                     return 文本文件;
                 case ".zip":
                 case ".rar":
@@ -81,6 +89,50 @@ namespace Model.Common
                     return 压缩包;
                 default:
                     return 未知;
+            }
+        }
+
+        /// <summary>
+        /// 获取文件类型
+        /// </summary>
+        /// <param name="mimetype">MIME类型</param>
+        /// <returns></returns>
+        public static string GetFileTypeByMIME(string mimetype)
+        {
+            if (mimetype.StartsWith("image/"))
+                return 图片;
+            else if (mimetype.StartsWith("audio/"))
+                return 音频;
+            else if (mimetype.StartsWith("video/"))
+                return 视频;
+            else if (mimetype.StartsWith("text/"))
+                return 文本文件;
+            else
+            {
+                switch (mimetype)
+                {
+                    case "application/ogg":
+                        return 音频;
+                    case "application/mp4":
+                        return 视频;
+                    case "application/vnd.ms-excel":
+                    case "vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+                        return 电子表格;
+                    case "application/pdf":
+                    case "application/msword":
+                    case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+                        return 电子文档;
+                    case "application/json":
+                    case "application/javascript":
+                        return 文本文件;
+                    case "application/x-tar":
+                    case "application/zip":
+                    case "application/x-compressed":
+                    case "application/x-zip-compressed":
+                        return 压缩包;
+                    default:
+                        return 未知;
+                }
             }
         }
 

@@ -140,7 +140,7 @@ namespace Api.Controllers
         }
 
         /// <summary>
-        /// 更新密码
+        /// 修改密码
         /// </summary>
         /// <param name="data">数据</param>
         /// <returns></returns>
@@ -148,6 +148,19 @@ namespace Api.Controllers
         public async Task<object> UpdatePassword([FromBody] UpdatePassword data)
         {
             UserBusiness.UpdatePassword(data);
+            return await Task.FromResult(Success());
+        }
+
+        /// <summary>
+        /// 重置密码
+        /// </summary>
+        /// <param name="id">用户Id</param>
+        /// <param name="newPassword">新密码</param>
+        /// <returns></returns>
+        [HttpGet("reset-password/{id}")]
+        public async Task<object> ResetPassword(string id, string newPassword)
+        {
+            UserBusiness.ResetPassword(id, newPassword);
             return await Task.FromResult(Success());
         }
 

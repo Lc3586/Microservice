@@ -224,6 +224,11 @@
             当前成员映射选项
             </summary>
         </member>
+        <member name="T:Model.Common.FileExtensionState">
+            <summary>
+            文件拓展信息状态
+            </summary>
+        </member>
         <member name="T:Model.Common.FileState">
             <summary>
             文件状态
@@ -234,11 +239,18 @@
             文件类型
             </summary>
         </member>
-        <member name="M:Model.Common.FileType.GetFileType(System.String)">
+        <member name="M:Model.Common.FileType.GetFileTypeByExtension(System.String)">
             <summary>
             获取文件类型
             </summary>
             <param name="extension">文件扩展名(.jpg)</param>
+            <returns></returns>
+        </member>
+        <member name="M:Model.Common.FileType.GetFileTypeByMIME(System.String)">
+            <summary>
+            获取文件类型
+            </summary>
+            <param name="mimetype">MIME类型</param>
             <returns></returns>
         </member>
         <member name="T:Model.Common.OperationRecordDTO.List">

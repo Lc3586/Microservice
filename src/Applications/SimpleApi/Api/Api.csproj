@@ -19,6 +19,10 @@
     <DocumentationFile>Api.xml</DocumentationFile>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <TypeScriptCompileOnSaveEnabled>True</TypeScriptCompileOnSaveEnabled>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="CAGC\**" />
     <Compile Remove="log\**" />
@@ -107,6 +111,65 @@
     <Content Remove="wwwroot\filetypes\xmind.png" />
     <Content Remove="wwwroot\filetypes\xml.png" />
     <Content Remove="wwwroot\filetypes\zip.png" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Helper\FileReadHelper.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Helper\FileReadHelper.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Helper\HashHelper.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Helper\HashHelper.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Helper\HashWorker.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Helper\HashWorker.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Helper\UploadHelper.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Helper\UploadHelper.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Helper\UploadWorker.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Helper\UploadWorker.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\ApiUri.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\ApiUri.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\ChunkFile.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\ChunkFile.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\FileInfo.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\FileInfo.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\FIleType.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\FIleType.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\MultipleUploadSetting.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\MultipleUploadSetting.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\PreUploadChunkFileResponse.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\PreUploadChunkFileResponse.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\PreUploadChunkFileState.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\PreUploadChunkFileState.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\RawFile.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\RawFile.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\ResponseData.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\ResponseData.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\SelectedFile.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\SelectedFile.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\TokenInfo.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\TokenInfo.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadProgress.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadProgress.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadTheme.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadTheme.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerCancelMessage.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerCancelMessage.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerChunkFileMessage.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerChunkFileMessage.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerFileMessage.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerFileMessage.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerMessage.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerMessage.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerMessageType.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerMessageType.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerNoticeMessage.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerNoticeMessage.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerNoticeMessageType.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerNoticeMessageType.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerSetUpAxiosMessage.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerSetUpAxiosMessage.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\ValidationMD5Response.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\ValidationMD5Response.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\naiveupload.css" />
+    <Content Remove="wwwroot\plug-in\naiveupload\naiveupload.html" />
+    <Content Remove="wwwroot\plug-in\naiveupload\NaiveUpload.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\NaiveUpload.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\test.ts" />
     <Content Remove="wwwroot\plug-in\systemconsole\systemconsole.css" />
     <Content Remove="wwwroot\plug-in\systemconsole\systemconsole.html" />
     <Content Remove="wwwroot\plug-in\systemconsole\systemconsole.js" />
@@ -114,6 +177,7 @@
     <Content Remove="wwwroot\swagger\custom-javascript.js" />
     <Content Remove="wwwroot\swagger\custom-stylesheet.css" />
     <Content Remove="wwwroot\swagger\extensions\jwt.js" />
+    <Content Remove="wwwroot\swagger\extensions\naiveUpload.js" />
     <Content Remove="wwwroot\swagger\extensions\quickInput.js" />
     <Content Remove="wwwroot\swagger\extensions\systemConsole.js" />
     <Content Remove="wwwroot\swagger\ignore\swagger-ui-bundle-debug.js" />
@@ -334,6 +398,180 @@
     <None Include="wwwroot\filetypes\zip.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="wwwroot\plug-in\naiveupload\Helper\FileReadHelper.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Helper\FileReadHelper.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Helper\HashHelper.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Helper\HashHelper.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Helper\HashWorker.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Helper\HashWorker.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Helper\UploadHelper.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Helper\UploadHelper.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Helper\UploadWorker.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Helper\UploadWorker.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\ApiUri.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\ApiUri.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\ChunkFile.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\ChunkFile.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\FileInfo.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\FileInfo.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\FIleType.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\FIleType.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\MultipleUploadSetting.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\MultipleUploadSetting.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\PreUploadChunkFileResponse.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\PreUploadChunkFileResponse.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\PreUploadChunkFileState.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\PreUploadChunkFileState.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\RawFile.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\RawFile.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\ResponseData.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\ResponseData.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\SelectedFile.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\SelectedFile.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\TokenInfo.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\TokenInfo.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadProgress.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadProgress.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadTheme.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadTheme.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadWorkerCancelMessage.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadWorkerCancelMessage.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadWorkerChunkFileMessage.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadWorkerChunkFileMessage.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadWorkerFileMessage.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadWorkerFileMessage.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadWorkerMessage.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadWorkerMessage.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadWorkerMessageType.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadWorkerMessageType.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadWorkerNoticeMessage.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadWorkerNoticeMessage.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadWorkerNoticeMessageType.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadWorkerNoticeMessageType.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadWorkerSetUpAxiosMessage.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadWorkerSetUpAxiosMessage.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\ValidationMD5Response.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\ValidationMD5Response.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\naiveupload.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\naiveupload.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\NaiveUpload.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\NaiveUpload.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="wwwroot\plug-in\systemconsole\systemconsole.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -347,6 +585,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="wwwroot\swagger\extensions\jwt.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\swagger\extensions\naiveUpload.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="wwwroot\swagger\extensions\quickInput.js">
@@ -421,11 +662,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="GSS.Authentication.CAS.AspNetCore" Version="4.1.2" />
-    <PackageReference Include="GSS.Authentication.CAS.DistributedCache" Version="4.1.2" />
+    <PackageReference Include="GSS.Authentication.CAS.AspNetCore" Version="5.0.0" />
+    <PackageReference Include="GSS.Authentication.CAS.DistributedCache" Version="5.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="5.0.1" />
+    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.3.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.13" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.4" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.1.4" />
@@ -461,6 +706,24 @@
     </Content>
     <Content Update="wwwroot\plug-in\cagc\cagc.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\plug-in\naiveupload\Model\UploadWorkerMessagePostFile - 复制 - 复制.js">
+      <DependentUpon>UploadWorkerMessagePostFile - 复制.js</DependentUpon>
+    </Content>
+    <Content Update="wwwroot\plug-in\naiveupload\Model\UploadWorkerMessagePostFile - 复制 - 复制.js.map">
+      <DependentUpon>UploadWorkerMessagePostFile - 复制.js.map</DependentUpon>
+    </Content>
+    <Content Update="wwwroot\plug-in\naiveupload\Model\UploadWorkerMessagePostFile - 复制%282%29.js">
+      <DependentUpon>UploadWorkerFileMessage.js</DependentUpon>
+    </Content>
+    <Content Update="wwwroot\plug-in\naiveupload\Model\UploadWorkerMessagePostFile - 复制%282%29.js.map">
+      <DependentUpon>UploadWorkerFileMessage.js.map</DependentUpon>
+    </Content>
+    <Content Update="wwwroot\plug-in\naiveupload\Model\UploadWorkerMessagePostFile - 复制.js">
+      <DependentUpon>UploadWorkerFileMessage.js</DependentUpon>
+    </Content>
+    <Content Update="wwwroot\plug-in\naiveupload\Model\UploadWorkerMessagePostFile - 复制.js.map">
+      <DependentUpon>UploadWorkerFileMessage.js.map</DependentUpon>
     </Content>
     <Content Update="wwwroot\plug-in\wechat\confirm.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -572,6 +835,26 @@
     </Content>
   </ItemGroup>
 
-  <ProjectExtensions><VisualStudio><UserProperties jsonconfig_4database_1json__JsonSchema="https://json.schemastore.org/appsettings" jsonconfig_4swagger_1json__JsonSchema="https://json.schemastore.org/appsettings" jsonconfig_4wechatservice_1json__JsonSchema="https://json.schemastore.org/appsettings" /></VisualStudio></ProjectExtensions>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties jsonconfig_4database_1json__JsonSchema="https://json.schemastore.org/appsettings" jsonconfig_4swagger_1json__JsonSchema="https://json.schemastore.org/appsettings" jsonconfig_4wechatservice_1json__JsonSchema="https://json.schemastore.org/appsettings" />
+    </VisualStudio>
+  </ProjectExtensions>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <TypeScriptTarget>ES5</TypeScriptTarget>
+    <TypeScriptJSXEmit>React</TypeScriptJSXEmit>
+    <TypeScriptModuleKind>None</TypeScriptModuleKind>
+    <TypeScriptCompileOnSaveEnabled>True</TypeScriptCompileOnSaveEnabled>
+    <TypeScriptNoImplicitAny>False</TypeScriptNoImplicitAny>
+    <TypeScriptRemoveComments>True</TypeScriptRemoveComments>
+    <TypeScriptOutFile />
+    <TypeScriptOutDir />
+    <TypeScriptGeneratesDeclarations>False</TypeScriptGeneratesDeclarations>
+    <TypeScriptNoEmitOnError>True</TypeScriptNoEmitOnError>
+    <TypeScriptSourceMap>True</TypeScriptSourceMap>
+    <TypeScriptMapRoot />
+    <TypeScriptSourceRoot />
+  </PropertyGroup>
 
 </Project>

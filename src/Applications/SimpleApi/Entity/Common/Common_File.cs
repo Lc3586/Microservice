@@ -3,6 +3,8 @@ using Microservice.Library.OpenApi.JsonExtension;
 using Microservice.Library.OpenApi.Annotations;
 using Newtonsoft.Json;
 using System;
+using System.Xml.Serialization;
+using System.Collections.Generic;
 
 namespace Entity.Common
 {
@@ -17,7 +19,6 @@ namespace Entity.Common
     [Index("C_F_idx_04", nameof(Extension) + " ASC")]
     [Index("C_F_idx_05", nameof(ServerKey) + " ASC")]
     [Index("C_F_idx_06", nameof(MD5) + " ASC")]
-    [Index("C_F_idx_07", nameof(CreatorId) + " ASC")]
     [Index("C_F_idx_08", nameof(CreateTime) + " DESC")]
     public class Common_File
     {
@@ -53,7 +54,7 @@ namespace Entity.Common
         /// 内容类型
         /// </summary>
         [OpenApiSubTag("List", "Detail", "FileInfo")]
-        [Column(StringLength = 50)]
+        [Column(StringLength = 100)]
         public string ContentType { get; set; }
 
         /// <summary>
@@ -106,7 +107,7 @@ namespace Entity.Common
         /// 文件大小
         /// </summary>
         [OpenApiSubTag("List", "Detail", "FileInfo")]
-        [Column(IsNullable = true)]
+        [Column(StringLength = 100, IsNullable = true)]
         public string Size { get; set; }
 
         /// <summary>
@@ -117,25 +118,24 @@ namespace Entity.Common
         public string State { get; set; }
 
         /// <summary>
-        /// 创建者
-        /// </summary>
-        [OpenApiSubTag("_List")]
-        [Column(StringLength = 50)]
-        public string CreatorId { get; set; }
-
-        /// <summary>
-        /// 创建者名称
-        /// </summary>
-        [OpenApiSubTag("List", "Detail", "FileInfo")]
-        [Column(StringLength = 30)]
-        public string CreatorName { get; set; }
-
-        /// <summary>
         /// 创建时间
         /// </summary>
         [OpenApiSubTag("List", "Detail", "FileInfo")]
         [OpenApiSchema(OpenApiSchemaType.@string, OpenApiSchemaFormat.string_datetime)]
         [JsonConverter(typeof(DateTimeConverter), "yyyy-MM-dd HH:mm:ss")]
         public DateTime CreateTime { get; set; }
+
+        #region 关联
+
+        /// <summary>
+        /// 相关文件拓展信息
+        /// </summary>
+        [Navigate(nameof(Common_FileExtension.FileId))]
+        [OpenApiIgnore]
+        [JsonIgnore]
+        [XmlIgnore]
+        public virtual ICollection<Common_FileExtension> Common_FileExtensions { get; set; }
+
+        #endregion
     }
 }

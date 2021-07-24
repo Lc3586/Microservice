@@ -47,6 +47,34 @@ namespace Business.Interface.Common
         #region 文件操作
 
         /// <summary>
+        /// 获取文件类型
+        /// </summary>
+        /// <param name="extension">文件拓展名</param>
+        /// <returns></returns>
+        string GetFileTypeByExtension(string extension);
+
+        /// <summary>
+        /// 获取文件类型
+        /// </summary>
+        /// <param name="mime">MIME类型</param>
+        /// <returns></returns>
+        string GetFileTypeByMIME(string mime);
+
+        /// <summary>
+        /// 获取文件类型预览图链接地址
+        /// </summary>
+        /// <param name="extension">文件拓展名</param>
+        /// <returns></returns>
+        Task GetFileTypeImageUrl(string extension);
+
+        /// <summary>
+        /// 获取文件大小
+        /// </summary>
+        /// <param name="length">文件字节数</param>
+        /// <returns></returns>
+        string GetFileSize(string length);
+
+        /// <summary>
         /// 文件MD5值校验
         /// </summary>
         /// <param name="md5">文件MD5值</param>
@@ -61,8 +89,9 @@ namespace Business.Interface.Common
         /// <param name="md5">分片文件MD5值</param>
         /// <param name="index">分片文件索引</param>
         /// <param name="specs">分片文件规格</param>
+        /// <param name="forced">强制上传</param>
         /// <returns><see cref="Model.Common.FileState"/>文件状态</returns>
-        PreUploadChunkFileResponse PreUploadChunkFile(string file_md5, string md5, int index, int specs);
+        PreUploadChunkFileResponse PreUploadChunkFile(string file_md5, string md5, int index, int specs, bool forced = false);
 
         /// <summary>
         /// 单分片文件上传
@@ -75,14 +104,25 @@ namespace Business.Interface.Common
         Task SingleChunkFile(string key, string md5, IFormFile file);
 
         /// <summary>
+        /// 单分片文件上传
+        /// </summary>
+        /// <remarks>单个上传</remarks>
+        /// <param name="key">上传标识</param>
+        /// <param name="md5">分片文件MD5值</param>
+        /// <returns></returns>
+        Task SingleChunkFileByArrayBuffer(string key, string md5);
+
+        /// <summary>
         /// 分片文件全部上传完毕
         /// </summary>
         /// <param name="file_md5">文件MD5值</param>
         /// <param name="specs">分片文件规格</param>
         /// <param name="total">分片文件总数</param>
+        /// <param name="type">文件类型</param>
+        /// <param name="extension">文件拓展名</param>
         /// <param name="filename">文件重命名</param>
         /// <returns></returns>
-        FileInfo UploadChunkFileFinished(string file_md5, int specs, int total, string filename = null);
+        FileInfo UploadChunkFileFinished(string file_md5, int specs, int total, string type, string extension, string filename);
 
         /// <summary>
         /// 通过Base64字符串上传单个图片
@@ -96,10 +136,10 @@ namespace Business.Interface.Common
         /// 通过外链上传单个文件
         /// </summary>
         /// <param name="url">外链地址</param>
-        /// <param name="download">是否下载资源</param>
         /// <param name="filename">文件重命名</param>
+        /// <param name="download">是否下载资源</param>
         /// <returns></returns>
-        Task<FileInfo> SingleFileFromUrl(string url, bool download = false, string filename = null);
+        Task<FileInfo> SingleFileFromUrl(string url, string filename, bool download = false);
 
         /// <summary>
         /// 上传单个文件
@@ -108,6 +148,15 @@ namespace Business.Interface.Common
         /// <param name="filename">文件重命名</param>
         /// <returns></returns>
         Task<FileInfo> SingleFile(IFormFile file, string filename = null);
+
+        /// <summary>
+        /// 上传单个文件
+        /// </summary>
+        /// <param name="type">上传标识</param>
+        /// <param name="extension">文件拓展名</param>
+        /// <param name="filename">文件重命名</param>
+        /// <returns></returns>
+        Task<FileInfo> SingleFileByArrayBuffer(string type, string extension, string filename);
 
         /// <summary>
         /// 预览

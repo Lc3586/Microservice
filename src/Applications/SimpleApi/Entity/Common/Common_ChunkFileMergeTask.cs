@@ -15,6 +15,7 @@ namespace Entity.Common
     [Index("C_CFMT_idx_02", nameof(MD5) + " ASC")]
     [Index("C_CFMT_idx_03", nameof(Specs) + " ASC")]
     [Index("C_CFMT_idx_04", nameof(Total) + " ASC")]
+    [Index("C_CFMT_idx_03", nameof(CurrentChunkIndex) + " ASC")]
     [Index("C_CFMT_idx_05", nameof(State) + " ASC")]
     public class Common_ChunkFileMergeTask
     {
@@ -47,11 +48,39 @@ namespace Entity.Common
         public string Name { get; set; }
 
         /// <summary>
-        /// 完整名称
+        /// 内容类型
         /// </summary>
-        [OpenApiSubTag("List", "Detail", "FileInfo")]
-        [Column(StringLength = 300)]
-        public string FullName { get; set; }
+        [OpenApiSubTag("List", "Detail")]
+        [Column(StringLength = 50)]
+        public string ContentType { get; set; }
+
+        /// <summary>
+        /// 文件扩展名
+        /// </summary>
+        [OpenApiSubTag("List", "Detail")]
+        [Column(StringLength = 30)]
+        public string Extension { get; set; }
+
+        /// <summary>
+        /// 字节数
+        /// </summary>
+        [OpenApiSubTag("List", "Detail")]
+        [Column(IsNullable = true)]
+        public long? Bytes { get; set; }
+
+        /// <summary>
+        /// 文件大小
+        /// </summary>
+        [OpenApiSubTag("List", "Detail")]
+        [Column(StringLength = 100, IsNullable = true)]
+        public string Size { get; set; }
+
+        /// <summary>
+        /// 合并后的文件路径
+        /// </summary>
+        [OpenApiSubTag("List", "Detail")]
+        [Column(StringLength = -1)]
+        public string Path { get; set; }
 
         /// <summary>
         /// 分片规格
@@ -82,43 +111,8 @@ namespace Entity.Common
         /// 信息
         /// </summary>
         [OpenApiSubTag("List", "Detail")]
-        [Column(StringLength = 300)]
-        public string Info { get; set; }
-
-        /// <summary>
-        /// 内容类型
-        /// </summary>
-        [OpenApiSubTag("List", "Detail")]
-        [Column(StringLength = 50)]
-        public string ContentType { get; set; }
-
-        /// <summary>
-        /// 文件扩展名
-        /// </summary>
-        [OpenApiSubTag("List", "Detail")]
-        [Column(StringLength = 30)]
-        public string Extension { get; set; }
-
-        /// <summary>
-        /// 字节数
-        /// </summary>
-        [OpenApiSubTag("List", "Detail")]
-        [Column(IsNullable = true)]
-        public long? Bytes { get; set; }
-
-        /// <summary>
-        /// 文件大小
-        /// </summary>
-        [OpenApiSubTag("List", "Detail")]
-        [Column(IsNullable = true)]
-        public string Size { get; set; }
-
-        /// <summary>
-        /// 合并后的文件路径
-        /// </summary>
-        [OpenApiSubTag("List", "Detail")]
         [Column(StringLength = -1)]
-        public string Path { get; set; }
+        public string Info { get; set; }
 
         /// <summary>
         /// 创建时间

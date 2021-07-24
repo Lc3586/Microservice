@@ -373,15 +373,43 @@
             <param name="ids">id集合</param>
             <returns></returns>
         </member>
+        <member name="M:Api.Controllers.FileController.GetFileTypeByExtension(System.String)">
+            <summary>
+            获取文件类型
+            </summary>
+            <param name="extension">文件拓展名</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.FileController.GetFileTypeByMIME(System.String)">
+            <summary>
+            获取文件类型
+            </summary>
+            <param name="mimetype">MIME类型</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.FileController.GetFileTypeImageUrl(System.String)">
+            <summary>
+            获取文件类型预览图链接地址
+            </summary>
+            <param name="extension">文件拓展名</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.FileController.GetFileSize(System.String)">
+            <summary>
+            获取文件大小
+            </summary>
+            <param name="length">文件字节数</param>
+            <returns></returns>
+        </member>
         <member name="M:Api.Controllers.FileController.ValidationFileMD5(System.String,System.String)">
             <summary>
             文件MD5值校验
             </summary>
-            <param name="md5"></param>
-            <param name="filename">文件重命名</param>
+            <param name="md5">文件MD5值</param>
+            <param name="filename">文件名</param>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.FileController.PreUploadChunkFile(System.String,System.String,System.Int32,System.Int32)">
+        <member name="M:Api.Controllers.FileController.PreUploadChunkFile(System.String,System.String,System.Int32,System.Int32,System.Boolean)">
             <summary>
             分片MD5值校验
             </summary>
@@ -389,25 +417,36 @@
             <param name="md5">分片文件MD5值</param>
             <param name="index">分片文件索引</param>
             <param name="specs">分片文件规格</param>
+            <param name="forced">强制上传</param>
             <returns></returns>
         </member>
         <member name="M:Api.Controllers.FileController.SingleChunkFile(System.String,System.String,Microsoft.AspNetCore.Http.IFormFile)">
             <summary>
-            单分片文件上传
+            上传单个分片文件
             </summary>
             <param name="key">上传标识</param>
             <param name="md5">分片文件MD5值</param>
             <param name="file">分片文件</param>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.FileController.UploadChunkFileFinished(System.String,System.Int32,System.Int32,System.String)">
+        <member name="M:Api.Controllers.FileController.SingleChunkFileByArrayBuffer(System.String,System.String)">
+            <summary>
+            上传单个分片文件
+            </summary>
+            <param name="key">上传标识</param>
+            <param name="md5">分片文件MD5值</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.FileController.UploadChunkFileFinished(System.String,System.Int32,System.Int32,System.String,System.String,System.String)">
             <summary>
             分片文件全部上传完毕
             </summary>
             <param name="file_md5">文件MD5值</param>
             <param name="specs">分片文件规格</param>
             <param name="total">分片文件总数</param>
-            <param name="filename">文件重命名</param>
+            <param name="type">文件类型</param>
+            <param name="extension">文件拓展名</param>
+            <param name="filename">文件名</param>
             <returns></returns>
         </member>
         <member name="M:Api.Controllers.FileController.SingleImageFromBase64(System.String,System.String)">
@@ -415,16 +454,16 @@
             通过Base64字符串上传单个图片
             </summary>
             <param name="base64">Base64字符串</param>
-            <param name="filename">文件重命名</param>
+            <param name="filename">文件名</param>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.FileController.SingleFileFromUrl(System.String,System.Boolean,System.String)">
+        <member name="M:Api.Controllers.FileController.SingleFileFromUrl(System.String,System.String,System.Boolean)">
             <summary>
             通过外链上传单个文件
             </summary>
             <param name="url">外链地址</param>
+            <param name="filename">文件名</param>
             <param name="download">是否下载资源</param>
-            <param name="filename">文件重命名</param>
             <returns></returns>
         </member>
         <member name="M:Api.Controllers.FileController.SingleFile(Microsoft.AspNetCore.Http.IFormFile,System.String)">
@@ -432,7 +471,16 @@
             上传单个文件
             </summary>
             <param name="file">分片文件</param>
-            <param name="filename">文件重命名</param>
+            <param name="filename">文件名</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.FileController.SingleFileByArrayBuffer(System.String,System.String,System.String)">
+            <summary>
+            上传单个文件
+            </summary>
+            <param name="type">上传标识</param>
+            <param name="extension">文件拓展名</param>
+            <param name="filename">文件名</param>
             <returns></returns>
         </member>
         <member name="M:Api.Controllers.FileController.Preview(System.String,System.Int32,System.Int32,System.Nullable{System.TimeSpan})">
@@ -1654,9 +1702,17 @@
         </member>
         <member name="M:Api.Controllers.UserController.UpdatePassword(Model.System.UserDTO.UpdatePassword)">
             <summary>
-            更新密码
+            修改密码
             </summary>
             <param name="data">数据</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.UserController.ResetPassword(System.String,System.String)">
+            <summary>
+            重置密码
+            </summary>
+            <param name="id">用户Id</param>
+            <param name="newPassword">新密码</param>
             <returns></returns>
         </member>
         <member name="T:Api.Controllers.Utils.BaseApiController">

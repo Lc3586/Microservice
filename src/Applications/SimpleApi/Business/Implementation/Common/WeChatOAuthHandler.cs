@@ -219,7 +219,7 @@ namespace Business.Implementation.Common
         /// <returns>文件Id</returns>
         async Task<string> SaveFile(string uri)
         {
-            var file = await FileBusiness.SingleFileFromUrl($"{uri.Substring(0, uri.LastIndexOf('/'))}/0", true);
+            var file = await FileBusiness.SingleFileFromUrl($"{uri.Substring(0, uri.LastIndexOf('/'))}/0", Guid.NewGuid().ToString(), true);
 
             return file.Id;
         }

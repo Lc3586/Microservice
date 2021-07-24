@@ -4,6 +4,7 @@ using Entity.Common;
 using FreeSql;
 using Microservice.Library.Container;
 using Microservice.Library.Extension;
+using Microservice.Library.Extension.Helper;
 using Microservice.Library.File;
 using Microservice.Library.FreeSql.Gen;
 using Microservice.Library.Http;
@@ -172,9 +173,9 @@ namespace Business.Handler
         /// <returns></returns>
         bool GetChunkFiles(Common_ChunkFileMergeTask task, out List<(string Id, string Path)> allChunkFiles, out List<(string Id, int Index, long Bytes, string Path)> needChunkFiles)
         {
-            var select = Repository_FileChunk.Where(o => o.FileMD5 == task.MD5 && o.ServerKey == task.ServerKey && o.Specs == task.Specs && o.State == $"{FileState.可用}");
+            var where = LinqHelper.True<Common_ChunkFile>().AndAlso(o => o.FileMD5 == task.MD5 && o.ServerKey == task.ServerKey && o.Specs == task.Specs && o.State == $"{FileState.可用}");
 
-            if (select.GroupBy(o => o.Index).Count() != task.Total)
+            if (Repository_FileChunk.Where(where).GroupBy(o => o.Index).Count() != task.Total)
             {
                 //IdQueue.Enqueue(task.Id);
 
@@ -194,7 +195,7 @@ namespace Business.Handler
                 return false;
             }
 
-            var _allChunkFiles = select.ToList(o => new { o.Id, o.Index, o.Bytes, o.Path });
+            var _allChunkFiles = Repository_FileChunk.Where(where).ToList(o => new { o.Id, o.Index, o.Bytes, o.Path });
 
             _allChunkFiles.RemoveAll(o =>
             {
@@ -234,12 +235,12 @@ namespace Business.Handler
                                             .ToList();
 
             //获取文件信息
-            var id = needChunkFiles.First().Id;
-            var fileInfo = Repository_FileChunk.Where(o => o.Id == id)
-                                            .ToOne(o => new { o.ContentType, o.Extension });
-            task.ContentType = fileInfo.ContentType;
-            task.Extension = fileInfo.Extension;
-            task.FullName = $"{task.Name}{task.Extension}";
+            //var id = needChunkFiles.First().Id;
+            //var fileInfo = Repository_FileChunk.Where(o => o.Id == id)
+            //                                .ToOne(o => new { o.ContentType, o.Extension });
+            //task.ContentType = fileInfo.ContentType;
+            //task.Extension = fileInfo.Extension;
+            //task.FullName = $"{task.Name}{task.Extension}";
 
             return true;
         }
@@ -300,7 +301,8 @@ namespace Business.Handler
                     .Set(o => o.State, FileState.可用)
                     .Set(o => o.ContentType, task.ContentType)
                     .Set(o => o.Extension, task.Extension)
-                    .Set(o => o.FileType, FileType.GetFileType(task.Extension))
+                    .Set(o => o.Name, task.Name)
+                    .Set(o => o.FileType, FileType.GetFileTypeByExtension(task.Extension))
                     .Set(o => o.Bytes, task.Bytes)
                     .Set(o => o.Size, task.Size)
                     .Set(o => o.Path, task.Path)
@@ -374,12 +376,15 @@ namespace Business.Handler
 
             StartTime = DateTime.Now;
 
-            //将未完成的任务添加至队列
-            Repository_ChunkFileMergeTask.Where(o => o.State != $"{CFMTState.已完成}" && o.ServerKey == Config.ServerKey)
-                .ToList(o => o.Id)
-                .ForEach(o => IdQueue.Enqueue(o));
+            ////将未完成的任务添加至队列
+            //Repository_ChunkFileMergeTask.Where(o => o.State != $"{CFMTState.已完成}" && o.ServerKey == Config.ServerKey)
+            //    .ToList(o => o.Id)
+            //    .ForEach(o => IdQueue.Enqueue(o));
 
             Run();
+
+            ////开始合并
+            //TCS?.SetResult(true);
         }
 
         /// <summary>
@@ -401,19 +406,24 @@ namespace Business.Handler
         /// 新增合并任务
         /// </summary>
         /// <param name="md5">文件MD5值</param>
+        /// <param name="type">文件类型</param>
+        /// <param name="extension">文件拓展名</param>
         /// <param name="name">文件名(不包括拓展名)</param>
         /// <param name="specs">分片文件规格</param>
         /// <param name="total">分片文件总数</param>
-        public void Add(string md5, string name, int specs, int total)
+        public void Add(string md5, string type, string extension, string name, int specs, int total)
         {
             var newTask = new Common_ChunkFileMergeTask
             {
                 ServerKey = Config.ServerKey,
                 MD5 = md5,
+                ContentType = type,
+                Extension = extension,
                 Name = name,
                 Specs = specs,
                 Total = total,
-                State = CFMTState.等待处理
+                State = CFMTState.等待处理,
+                CurrentChunkIndex = -1
             }.InitEntityWithoutOP();
 
             Repository_ChunkFileMergeTask.Insert(newTask);

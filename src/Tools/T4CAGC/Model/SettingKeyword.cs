@@ -11,7 +11,7 @@
 
         public const string Elasticsearch表 = "ESTable";
 
-        public const string 树状结构表 = "TreeTable";
+        public const string 树状结构 = "Tree";
 
         public const string 字段 = "Field";
 

@@ -9,14 +9,14 @@ namespace Model.Common
     /// </summary>
     public static class FileState
     {
-        public const string 未上传 = "none";
+        public const string 未上传 = "未上传";
 
-        public const string 上传中 = "uploading";
+        public const string 上传中 = "上传中";
 
-        public const string 处理中 = "processing";
+        public const string 处理中 = "处理中";
 
-        public const string 可用 = "available";
+        public const string 可用 = "可用";
 
-        public const string 已删除 = "deleted";
+        public const string 已删除 = "已删除";
     }
 }

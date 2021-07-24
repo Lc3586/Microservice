@@ -114,9 +114,29 @@
             名称
             </summary>
         </member>
-        <member name="P:Entity.Common.Common_ChunkFileMergeTask.FullName">
+        <member name="P:Entity.Common.Common_ChunkFileMergeTask.ContentType">
             <summary>
-            完整名称
+            内容类型
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_ChunkFileMergeTask.Extension">
+            <summary>
+            文件扩展名
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_ChunkFileMergeTask.Bytes">
+            <summary>
+            字节数
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_ChunkFileMergeTask.Size">
+            <summary>
+            文件大小
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_ChunkFileMergeTask.Path">
+            <summary>
+            合并后的文件路径
             </summary>
         </member>
         <member name="P:Entity.Common.Common_ChunkFileMergeTask.Specs">
@@ -142,31 +162,6 @@
         <member name="P:Entity.Common.Common_ChunkFileMergeTask.Info">
             <summary>
             信息
-            </summary>
-        </member>
-        <member name="P:Entity.Common.Common_ChunkFileMergeTask.ContentType">
-            <summary>
-            内容类型
-            </summary>
-        </member>
-        <member name="P:Entity.Common.Common_ChunkFileMergeTask.Extension">
-            <summary>
-            文件扩展名
-            </summary>
-        </member>
-        <member name="P:Entity.Common.Common_ChunkFileMergeTask.Bytes">
-            <summary>
-            字节数
-            </summary>
-        </member>
-        <member name="P:Entity.Common.Common_ChunkFileMergeTask.Size">
-            <summary>
-            文件大小
-            </summary>
-        </member>
-        <member name="P:Entity.Common.Common_ChunkFileMergeTask.Path">
-            <summary>
-            合并后的文件路径
             </summary>
         </member>
         <member name="P:Entity.Common.Common_ChunkFileMergeTask.CreateTime">
@@ -325,19 +320,74 @@
             状态
             </summary>
         </member>
-        <member name="P:Entity.Common.Common_File.CreatorId">
+        <member name="P:Entity.Common.Common_File.CreateTime">
+            <summary>
+            创建时间
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_File.Common_FileExtensions">
+            <summary>
+            相关文件拓展信息
+            </summary>
+        </member>
+        <member name="T:Entity.Common.Common_FileExtension">
+            <summary>
+            文件拓展信息
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_FileExtension.Id">
+            <summary>
+            Id
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_FileExtension.FileId">
+            <summary>
+            文件Id
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_FileExtension.Name">
+            <summary>
+            文件重命名
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_FileExtension.State">
+            <summary>
+            状态
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_FileExtension.CreatorId">
             <summary>
             创建者
             </summary>
         </member>
-        <member name="P:Entity.Common.Common_File.CreatorName">
+        <member name="P:Entity.Common.Common_FileExtension.CreatorName">
             <summary>
             创建者名称
             </summary>
         </member>
-        <member name="P:Entity.Common.Common_File.CreateTime">
+        <member name="P:Entity.Common.Common_FileExtension.CreateTime">
             <summary>
             创建时间
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_FileExtension.ModifiedById">
+            <summary>
+            最近编辑者
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_FileExtension.ModifiedByName">
+            <summary>
+            最近编辑者名称
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_FileExtension.ModifyTime">
+            <summary>
+            最近编辑时间
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_FileExtension.Common_File">
+            <summary>
+            文件信息
             </summary>
         </member>
         <member name="T:Entity.Common.Common_OperationRecord">
