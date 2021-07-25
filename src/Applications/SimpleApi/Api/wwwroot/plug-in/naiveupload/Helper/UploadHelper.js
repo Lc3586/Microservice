@@ -362,7 +362,7 @@ var UploadHelper = (function () {
                                     return [2];
                                 }
                                 if (!file.NeedSection) return [3, 4];
-                                progress_1 = { PreLoaded: 0, Loaded: 0, Total: file.File.size };
+                                progress_1 = { PreLoaded: 0, Loaded: 0, Total: file.Size };
                                 upload_1 = function () { return __awaiter(_this, void 0, void 0, function () {
                                     var i, _a, e_8, handlerIndex, i, next, chunk, chunk_progress, handlerProgress, validation, e_9, proceed, _b;
                                     var _this = this;
@@ -372,13 +372,12 @@ var UploadHelper = (function () {
                                                 if (this.Finished) {
                                                     return [2];
                                                 }
-                                                if (!(this.DelayTimes == 0 && this.ChunkHandlerQueue.length === 0)) return [3, 5];
+                                                if (!(this.ChunkHandlerQueue.length === 0)) return [3, 5];
                                                 for (i = 0; i < this.ChunkHandler.length; i++) {
                                                     if (this.ChunkHandler[i]) {
                                                         return [2];
                                                     }
                                                 }
-                                                console.info(this.DelayTimes, this.ChunkHandlerQueue);
                                                 _c.label = 1;
                                             case 1:
                                                 _c.trys.push([1, 3, , 4]);
@@ -411,7 +410,7 @@ var UploadHelper = (function () {
                                                     upload_1();
                                                 };
                                                 chunk = this.ChunkHandlerQueue.shift();
-                                                chunk_progress = { PreLoaded: chunk.Blob.size, Loaded: 0, Total: chunk.Blob.size };
+                                                chunk_progress = { PreLoaded: chunk.Size, Loaded: 0, Total: chunk.Size };
                                                 handlerProgress = function (_chunk_progress) {
                                                     progress_1.Loaded += (_chunk_progress.Loaded - chunk_progress.Loaded);
                                                     chunk_progress.Loaded = _chunk_progress.Loaded;
@@ -472,7 +471,7 @@ var UploadHelper = (function () {
                                                 }
                                                 return [3, 15];
                                             case 14:
-                                                handlerProgress({ Loaded: chunk.Blob.size, Total: chunk.Blob.size });
+                                                handlerProgress({ Loaded: chunk.Size, Total: chunk.Size });
                                                 return [3, 15];
                                             case 15:
                                                 next();

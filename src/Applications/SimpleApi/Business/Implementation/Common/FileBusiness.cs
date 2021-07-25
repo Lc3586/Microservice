@@ -438,6 +438,14 @@ namespace Business.Implementation.Common
             return list;
         }
 
+        public void Rename(string id, string filename)
+        {
+            var file_extension = Repository_FileExtension.GetAndCheckNull(id, "文件不存在或已被删除.");
+            file_extension.Name = filename;
+            file_extension.ModifyEntity();
+            Repository_FileExtension.Update(file_extension);
+        }
+
         #endregion
 
         #region 文件操作接口

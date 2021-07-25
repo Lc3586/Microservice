@@ -4,6 +4,7 @@ var RawFile = (function () {
         this.Chunks = [];
         this.ChunkIndexQueue = [];
         this.File = file;
+        this.Size = file.size;
         this.ObjectURL = URL.createObjectURL(file);
     }
     return RawFile;

@@ -31,14 +31,12 @@ var ApiUri = (function () {
     ApiUri.SALogin = '/sa/login';
     ApiUri.GetToken = '/jwt/get-token';
     ApiUri.RefreshToken = '/jwt/refresh-token';
+    ApiUri.Rename = function (id, filename) { return "/file/rename/" + id + "?filename=" + filename; };
     ApiUri.FileTypeByExtension = function (extension) { return "/file/file-type-by-extension/" + extension; };
     ApiUri.FileTypeByMIME = function (mimetype) { return "/file/file-type-by-mimetype?mimetype=" + mimetype; };
     ApiUri.FileTypeImageUrl = function (extension) { return "/file/file-type-image/" + extension; };
     ApiUri.FileSize = function (length) { return "/file/file-size/" + length; };
-    ApiUri.ValidationFileMD5 = function (md5, filename) {
-        if (filename === void 0) { filename = null; }
-        return "/file/validation-file-md5/" + md5 + "?filename=" + filename;
-    };
+    ApiUri.ValidationFileMD5 = function (md5, filename) { return "/file/validation-file-md5/" + md5 + "?filename=" + filename; };
     return ApiUri;
 }());
 //# sourceMappingURL=ApiUri.js.map

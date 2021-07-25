@@ -70,8 +70,8 @@ class UploadWorker {
                     this.Self.postMessage({ Type: UploadWorkerNoticeMessageType.文件上传失败, MD5: md5, Message: response.data.Message });
             })
             .catch((e: Error) => {
-                delete this.CancelTokenList[md5];
                 console.error(e);
+                delete this.CancelTokenList[md5];
                 this.Self.postMessage({ Type: UploadWorkerNoticeMessageType.文件上传异常, MD5: md5, Message: e.message });
             });
     }
@@ -103,8 +103,8 @@ class UploadWorker {
                     this.Self.postMessage({ Type: UploadWorkerNoticeMessageType.文件上传失败, MD5: md5, Message: response.data.Message });
             })
             .catch(e => {
-                delete this.CancelTokenList[md5];
                 console.error(e);
+                delete this.CancelTokenList[md5];
                 this.Self.postMessage({ Type: UploadWorkerNoticeMessageType.文件上传异常, MD5: md5, Message: e.message });
             });
     }

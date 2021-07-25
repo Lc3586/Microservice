@@ -38,7 +38,7 @@ window.onDomLoaded(() => {
             }
         ],
         () => {
-            var open = (name, e) => {
+            let open = (name, e) => {
                 window.showDialog(
                     '文件上传',
                     [['iframe', '/plug-in/naiveupload/naiveupload.html']],
@@ -50,7 +50,7 @@ window.onDomLoaded(() => {
                         },
                         '调整大小': {
                             'click': () => {
-                                var state = $('#key_0').data('state');
+                                let state = $('#key_0').data('state');
                                 $('#key_0').data('state', state == 1 ? 0 : 1);
                                 //.animate({ 'height': (state == 1 ? 900 : 900) + 'px' });
                                 $('.modal-ux').animate({ 'width': state == 1 ? '100%' : '35%' });

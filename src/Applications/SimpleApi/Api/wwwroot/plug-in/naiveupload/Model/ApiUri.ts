@@ -23,6 +23,13 @@ class ApiUri {
     static RefreshToken: string = '/jwt/refresh-token';
 
     /**
+     * 文件重命名
+     * @param id Id
+     * @param filename 文件名
+     * */
+    static Rename: (id: string, filename: string) => string = (id: string, filename: string) => `/file/rename/${id}?filename=${filename}`;
+
+    /**
      * 获取文件类型
      * @param extension 文件拓展名
      * */
@@ -51,7 +58,7 @@ class ApiUri {
      * @param md5 文件哈希值
      * @param filename 文件重命名
      * */
-    static ValidationFileMD5: (md5: string, filename: string | null) => string = (md5: string, filename: string | null = null) => `/file/validation-file-md5/${md5}?filename=${filename}`;
+    static ValidationFileMD5: (md5: string, filename: string) => string = (md5: string, filename: string) => `/file/validation-file-md5/${md5}?filename=${filename}`;
 
     /**
      * 预上传分片文件
@@ -92,7 +99,7 @@ class ApiUri {
      * @param extension 文件拓展名
      * @param filename 文件重命名
      * */
-    static UploadChunkfileFinished(file_md5: string, specs: number, total: number, type: string, extension: string, filename?: string): string {
+    static UploadChunkfileFinished(file_md5: string, specs: number, total: number, type: string, extension: string, filename: string): string {
         return `/file/upload-chunkfile-finished/${file_md5}/${specs}/${total}?type=${type}&extension=${extension}&filename=${filename}`;
     }
 
@@ -100,7 +107,7 @@ class ApiUri {
      * 上传单个文件
      * @param filename 文件重命名
      * */
-    static SingleFile(filename?: string): string {
+    static SingleFile(filename: string): string {
         return `/file/upload-single-file?filename=${filename}`;
     }
 
@@ -110,7 +117,7 @@ class ApiUri {
      * @param extension 文件拓展名
      * @param filename 文件重命名
      * */
-    static SingleFileByArrayBuffer(type: string, extension: string, filename?: string): string {
+    static SingleFileByArrayBuffer(type: string, extension: string, filename: string): string {
         return `/file/upload-single-file-arraybuffer?type=${type}&extension=${extension}&filename=${filename}`;
     }
 

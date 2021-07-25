@@ -155,6 +155,7 @@ window.onload = function () {
                 EnableRename: EnableRename,
                 Rename: Rename,
                 RenameKeydown: RenameKeydown,
+                RenameDone: RenameDone,
                 EnableView: EnableView,
                 View: View,
                 Remove: Remove,
@@ -476,7 +477,7 @@ window.onload = function () {
                                     return __generator(this, function (_a) {
                                         switch (_a.label) {
                                             case 0:
-                                                percent = (blob.size / rawFile.File.size) * 100;
+                                                percent = (blob.size / rawFile.Size) * 100;
                                                 selectedFile.VirtualPercent = parseFloat((selectedFile.VirtualPercent + percent).toFixed(2));
                                                 _a.label = 1;
                                             case 1:
@@ -535,12 +536,12 @@ window.onload = function () {
                             count = 0;
                             _b.label = 8;
                         case 8:
-                            if (!(count < rawFile.File.size)) return [3, 10];
+                            if (!(count < rawFile.Size)) return [3, 10];
                             if (selectedFile.Canceled) {
                                 cancel();
                                 return [3, 10];
                             }
-                            blob = rawFile.File.slice(count, Math.min(count + bufferSize, rawFile.File.size));
+                            blob = rawFile.File.slice(count, Math.min(count + bufferSize, rawFile.Size));
                             count += blob.size;
                             return [4, handlerData(blob, false)];
                         case 9:
@@ -679,14 +680,14 @@ window.onload = function () {
         }
         function getChunks(selectedFile) {
             var file = getRawFile(selectedFile);
-            if (file.File.size > MultipleUploadSettings.ChunkSize) {
+            if (file.Size > MultipleUploadSettings.ChunkSize) {
                 file.NeedSection = true;
                 file.Specs = MultipleUploadSettings.ChunkSize;
             }
             else
                 return;
             var count = 0;
-            while (count < file.File.size) {
+            while (count < file.Size) {
                 file.ChunkIndexQueue.push(file.Chunks.length);
                 file.Chunks.push(new ChunkFile(file.Chunks.length, file.File.slice(count, count + MultipleUploadSettings.ChunkSize)));
                 count += MultipleUploadSettings.ChunkSize;
@@ -713,7 +714,7 @@ window.onload = function () {
             selectedFile.Thumbnail = getRawFile(selectedFile).ObjectURL;
         }
         function getFileSize(selectedFile) {
-            Axios.get(ApiUri.FileSize(getRawFile(selectedFile).File.size))
+            Axios.get(ApiUri.FileSize(getRawFile(selectedFile).Size))
                 .then(function (response) {
                 if (response.data.Success)
                     selectedFile.Size = response.data.Data;
@@ -756,7 +757,7 @@ window.onload = function () {
             return (selectedFile.Checking ? ('扫描中...' + selectedFile.Percent + '%') : '') + " " + (selectedFile.Uploading ? ('上传中...' + selectedFile.Percent + '%') : '');
         }
         function EnableRename(selectedFile) {
-            return !selectedFile.Uploading && !selectedFile.Uploaded;
+            return !selectedFile.Uploading;
         }
         function Rename(selectedFile) {
             selectedFile.Rename = true;
@@ -766,11 +767,35 @@ window.onload = function () {
         }
         function RenameKeydown(selectedFile, event) {
             if (event.keyCode == 13) {
-                selectedFile.Rename = false;
-                var rawFile = getRawFile(selectedFile);
-                rawFile.Extension = selectedFile.Extension;
-                rawFile.Name = selectedFile.Name;
+                RenameDone(selectedFile);
             }
+        }
+        function RenameDone(selectedFile) {
+            var rawFile = getRawFile(selectedFile);
+            var done = function (success) {
+                if (success) {
+                    rawFile.Name = selectedFile.Name;
+                    rawFile.FileInfo.Name = selectedFile.Name;
+                    selectedFile.Rename = false;
+                }
+                else
+                    selectedFile.Name = rawFile.Name;
+            };
+            if (selectedFile.Uploaded) {
+                Axios.get(ApiUri.Rename(rawFile.FileInfo.Id, selectedFile.Name))
+                    .then(function (response) {
+                    if (!response.data.Success)
+                        ElementPlus.ElMessage(response.data.Message);
+                    done(response.data.Success);
+                })
+                    .catch(function (error) {
+                    console.error(error);
+                    ElementPlus.ElMessage('文件重命名时发生异常.');
+                    done(false);
+                });
+            }
+            else
+                done(true);
         }
         function EnableView(selectedFile) {
             switch (selectedFile.FileType) {

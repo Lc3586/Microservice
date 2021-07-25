@@ -95,6 +95,21 @@ namespace Api.Controllers
             return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(FileBusiness.GetDetails(ids))));
         }
 
+        /// <summary>
+        /// 文件重命名
+        /// </summary>
+        /// <param name="id">Id</param>
+        /// <param name="filename">文件名</param>
+        /// <returns></returns>
+        [HttpGet("rename/{id}")]
+        [Consumes("application/json")]
+        [Produces("application/json")]
+        public async Task<object> Rename(string id, string filename)
+        {
+            FileBusiness.Rename(id, filename);
+            return await Task.FromResult(Success());
+        }
+
         #endregion
 
         #region 文件操作接口

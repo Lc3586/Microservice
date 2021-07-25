@@ -373,6 +373,14 @@
             <param name="ids">id集合</param>
             <returns></returns>
         </member>
+        <member name="M:Api.Controllers.FileController.Rename(System.String,System.String)">
+            <summary>
+            文件重命名
+            </summary>
+            <param name="id">Id</param>
+            <param name="filename">文件名</param>
+            <returns></returns>
+        </member>
         <member name="M:Api.Controllers.FileController.GetFileTypeByExtension(System.String)">
             <summary>
             获取文件类型

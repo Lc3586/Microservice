@@ -169,11 +169,11 @@ class HashHelper {
      */
     CloseAll() {
         if (this.EnableWorker && this.WorkerSupported) {
-            for (var i = 0; i < this.WorkerUnits.length; i++) {
+            for (let i = 0; i < this.WorkerUnits.length; i++) {
                 this.Close(i);
             }
         } else {
-            for (var i = 0; i < this.SparkUnits.length; i++) {
+            for (let i = 0; i < this.SparkUnits.length; i++) {
                 this.Close(i);
             }
         }

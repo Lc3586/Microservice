@@ -159,6 +159,7 @@
                     EnableRename,
                     Rename,
                     RenameKeydown,
+                    RenameDone,
                     EnableView,
                     View,
                     Remove,
@@ -614,7 +615,7 @@
                  * @param unitIndex 计算单元索引
                  */
                 const handlerData = async (blob: Blob, end: boolean, unitIndex: number = 0): Promise<boolean | string> => {
-                    const percent = (blob.size / rawFile.File.size) * 100;
+                    const percent = (blob.size / rawFile.Size) * 100;
 
                     selectedFile.VirtualPercent = parseFloat((selectedFile.VirtualPercent + percent).toFixed(2));
 
@@ -663,13 +664,13 @@
                 } else {
                     const bufferSize = 3 * 1024 * 1024;
                     let count = 0;
-                    while (count < rawFile.File.size) {
+                    while (count < rawFile.Size) {
                         if (selectedFile.Canceled) {
                             cancel();
                             break;
                         }
 
-                        const blob = rawFile.File.slice(count, Math.min(count + bufferSize, rawFile.File.size));
+                        const blob = rawFile.File.slice(count, Math.min(count + bufferSize, rawFile.Size));
                         count += blob.size;
                         if (!await handlerData(blob, false))
                             break;
@@ -847,7 +848,7 @@
              */
             function getChunks(selectedFile: SelectedFile) {
                 let file = getRawFile(selectedFile);
-                if (file.File.size > MultipleUploadSettings.ChunkSize) {
+                if (file.Size > MultipleUploadSettings.ChunkSize) {
                     file.NeedSection = true;
                     file.Specs = MultipleUploadSettings.ChunkSize;
                 }
@@ -855,7 +856,7 @@
                     return;
 
                 let count = 0;
-                while (count < file.File.size) {
+                while (count < file.Size) {
                     //切片索引添加至队列
                     file.ChunkIndexQueue.push(file.Chunks.length);
 
@@ -904,7 +905,7 @@
              * @param {any} selectedFile
              */
             function getFileSize(selectedFile: SelectedFile) {
-                Axios.get(ApiUri.FileSize(getRawFile(selectedFile).File.size))
+                Axios.get(ApiUri.FileSize(getRawFile(selectedFile).Size))
                     .then((response) => {
                         if (response.data.Success)
                             selectedFile.Size = response.data.Data;
@@ -1004,7 +1005,7 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
              * @param {any} selectedFile
              */
             function EnableRename(selectedFile: SelectedFile) {
-                return !selectedFile.Uploading && !selectedFile.Uploaded;
+                return !selectedFile.Uploading;
             }
 
             /**
@@ -1020,17 +1021,47 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
             }
 
             /**
-             * 重命名结束
+             * 确认重命名
              * @param {any} selectedFile
              * @param {any} event
              */
             function RenameKeydown(selectedFile: SelectedFile, event) {
                 if (event.keyCode == 13) {
-                    selectedFile.Rename = false;
-                    let rawFile = getRawFile(selectedFile);
-                    rawFile.Extension = selectedFile.Extension;
-                    rawFile.Name = selectedFile.Name;
+                    RenameDone(selectedFile);
                 }
+            }
+
+            /**
+             * 重命名结束
+             * @param selectedFile
+             */
+            function RenameDone(selectedFile: SelectedFile) {
+                let rawFile = getRawFile(selectedFile);
+
+                const done = (success) => {
+                    if (success) {
+                        rawFile.Name = selectedFile.Name;
+                        rawFile.FileInfo.Name = selectedFile.Name;
+                        selectedFile.Rename = false;
+                    }
+                    else
+                        selectedFile.Name = rawFile.Name;
+                }
+
+                if (selectedFile.Uploaded) {
+                    Axios.get(ApiUri.Rename(rawFile.FileInfo.Id, selectedFile.Name))
+                        .then((response) => {
+                            if (!response.data.Success)
+                                ElementPlus.ElMessage(response.data.Message);
+                            done(response.data.Success);
+                        })
+                        .catch((error) => {
+                            console.error(error);
+                            ElementPlus.ElMessage('文件重命名时发生异常.');
+                            done(false);
+                        });
+                } else
+                    done(true);
             }
 
             /**

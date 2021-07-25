@@ -31,8 +31,8 @@ var UploadWorker = (function () {
                 _this.Self.postMessage({ Type: "file-upload-fail", MD5: md5, Message: response.data.Message });
         })
             .catch(function (e) {
-            delete _this.CancelTokenList[md5];
             console.error(e);
+            delete _this.CancelTokenList[md5];
             _this.Self.postMessage({ Type: "file-upload-error", MD5: md5, Message: e.message });
         });
     };
@@ -54,8 +54,8 @@ var UploadWorker = (function () {
                 _this.Self.postMessage({ Type: "file-upload-fail", MD5: md5, Message: response.data.Message });
         })
             .catch(function (e) {
-            delete _this.CancelTokenList[md5];
             console.error(e);
+            delete _this.CancelTokenList[md5];
             _this.Self.postMessage({ Type: "file-upload-error", MD5: md5, Message: e.message });
         });
     };

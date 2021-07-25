@@ -9,6 +9,7 @@ var ChunkFile = (function () {
         this.Error = false;
         this.Index = index;
         this.Blob = blob;
+        this.Size = blob.size;
     }
     return ChunkFile;
 }());

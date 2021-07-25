@@ -8,6 +8,7 @@ class RawFile {
      */
     constructor(file: File) {
         this.File = file;
+        this.Size = file.size;
         this.ObjectURL = URL.createObjectURL(file);
     }
 
@@ -15,6 +16,11 @@ class RawFile {
      * 文件
      */
     File: File;
+
+    /***
+     * 字节数
+     */
+    Size: number;
 
     /**
      * 资源地址

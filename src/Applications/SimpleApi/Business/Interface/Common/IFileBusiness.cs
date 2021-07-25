@@ -42,6 +42,14 @@ namespace Business.Interface.Common
         /// <returns></returns>
         List<FileInfo> GetDetails(List<string> ids);
 
+        /// <summary>
+        /// 重命名
+        /// </summary>
+        /// <param name="id">id</param>
+        /// <param name="filename">文件名</param>
+        /// <returns></returns>
+        void Rename(string id, string filename);
+
         #endregion
 
         #region 文件操作

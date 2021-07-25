@@ -10,6 +10,7 @@ class ChunkFile {
     constructor(index: number, blob: Blob) {
         this.Index = index;
         this.Blob = blob;
+        this.Size = blob.size;
     }
 
     /***
@@ -21,6 +22,11 @@ class ChunkFile {
      * 二进制数据
      */
     Blob: Blob;
+
+    /***
+     * 字节数
+     */
+    Size: number;
 
     /***
      * 哈希值 

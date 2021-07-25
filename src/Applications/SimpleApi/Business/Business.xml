@@ -741,6 +741,14 @@
             <param name="ids">id集合</param>
             <returns></returns>
         </member>
+        <member name="M:Business.Interface.Common.IFileBusiness.Rename(System.String,System.String)">
+            <summary>
+            重命名
+            </summary>
+            <param name="id">id</param>
+            <param name="filename">文件名</param>
+            <returns></returns>
+        </member>
         <member name="M:Business.Interface.Common.IFileBusiness.GetFileTypeByExtension(System.String)">
             <summary>
             获取文件类型

@@ -88,7 +88,7 @@ class UploadHelper {
                         this.WorkerSupported = 'undefined' !== typeof Worker;
 
                         if (this.EnableWorker && this.WorkerSupported) {
-                            for (var i = 0; i < concurrent; i++) {
+                            for (let i = 0; i < concurrent; i++) {
                                 let worker = new Worker('Helper/UploadWorker.js');
                                 this.WorkerUnits.push({ worker: worker, used: false });
                                 try {
@@ -136,7 +136,7 @@ class UploadHelper {
      */
     async UseAxiosUploadFile(file: RawFile, onProgress: (progress: UploadProgress) => void) {
         const promise = new Promise<void>(async (resolve, reject) => {
-            var formData = new FormData();
+            let formData = new FormData();
             formData.append('file', file.File);
 
             this.AxiosInstance.post(
@@ -182,7 +182,7 @@ class UploadHelper {
         chunk: ChunkFile,
         onProgress: (progress: UploadProgress) => void) {
         const promise = new Promise<void>(async (resolve, reject) => {
-            var formData = new FormData();
+            let formData = new FormData();
             formData.append('file', chunk.Blob);
 
             this.AxiosInstance.post(
@@ -294,7 +294,6 @@ class UploadHelper {
 
         const promise = new Promise<FileInfo | void>((resolve, reject) => {
             unit.worker.onmessage = (event: MessageEvent<UploadWorkerNoticeMessage>) => {
-                //console.info(event.data);
                 switch (event.data.Type) {
                     case UploadWorkerNoticeMessageType.设置成功:
                         resolve();
@@ -366,7 +365,7 @@ class UploadHelper {
                 /**
                  * 整体进度
                  * */
-                let progress: UploadProgress = { PreLoaded: 0, Loaded: 0, Total: file.File.size };
+                let progress: UploadProgress = { PreLoaded: 0, Loaded: 0, Total: file.Size };
 
                 /**
                  * 上传分片文件
@@ -376,14 +375,13 @@ class UploadHelper {
                         return;
                     }
 
-                    if (this.DelayTimes == 0 && this.ChunkHandlerQueue.length === 0) {
+                    if (this.ChunkHandlerQueue.length === 0) {
                         for (let i = 0; i < this.ChunkHandler.length; i++) {
                             if (this.ChunkHandler[i]) {
                                 return;
                             }
                         }
 
-                        console.info(this.DelayTimes, this.ChunkHandlerQueue);
                         //所有分片全部上传完毕
                         try {
                             file.FileInfo = await this.UploadChunkFileFinished(file.MD5, file.Specs, file.Chunks.length, file.File.type, file.Extension, file.Name);
@@ -425,7 +423,7 @@ class UploadHelper {
                     /**
                      * 分片进度
                      * */
-                    let chunk_progress: UploadProgress = { PreLoaded: chunk.Blob.size, Loaded: 0, Total: chunk.Blob.size };
+                    let chunk_progress: UploadProgress = { PreLoaded: chunk.Size, Loaded: 0, Total: chunk.Size };
 
                     /**
                      * 处理分片进度
@@ -478,7 +476,7 @@ class UploadHelper {
                             }
                             break;
                         case PreUploadChunkFileState.跳过:
-                            handlerProgress({ Loaded: chunk.Blob.size, Total: chunk.Blob.size });
+                            handlerProgress({ Loaded: chunk.Size, Total: chunk.Size });
                             break;
                     }
 
@@ -596,11 +594,11 @@ class UploadHelper {
      */
     CloseAll() {
         if (this.EnableWorker && this.WorkerSupported) {
-            for (var i = 0; i < this.WorkerUnits.length; i++) {
+            for (let i = 0; i < this.WorkerUnits.length; i++) {
                 this.Close(i);
             }
         } else {
-            for (var i = 0; i < this.FileReaders.length; i++) {
+            for (let i = 0; i < this.FileReaders.length; i++) {
                 this.Close(i);
             }
         }

@@ -85,7 +85,7 @@
                                                   v-if="ShowTools(file)">
                                                 <span class="upload-icon icon-rename"
                                                       title="重命名"
-                                                      v-on:click="rename(file)"
+                                                      v-on:click="Rename(file)"
                                                       v-if="EnableRename(file)"></span>
                                                 <span class="upload-icon icon-view"
                                                       title="查看"
@@ -108,7 +108,7 @@
                                                        v-model="file.Name"
                                                        ref="renameInput"
                                                        v-on:keydown="RenameKeydown(file, $event)"
-                                                       v-on:blur="file.Rename=false" />
+                                                       v-on:blur="RenameDone(file)" />
                                             </div>
                                             <div v-if="multipleUpload.settings.Theme=='detailedly'"
                                                  class="item-info">
@@ -122,7 +122,7 @@
                                                            v-model="file.Name"
                                                            ref="renameInput"
                                                            v-on:keydown="Rename(file, $event)"
-                                                           v-on:blur="file.Rename=false" />
+                                                           v-on:blur="RenameDone(file)" />
                                                 </span>
 
                                                 <span class="single-text-omitted item-size">
