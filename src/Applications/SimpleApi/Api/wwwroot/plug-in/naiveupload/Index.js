@@ -132,7 +132,6 @@ window.onload = function () {
         var MultipleUploadSettings = new MultipleUploadSetting();
         MultipleUploadSettings.Axios = Axios;
         MultipleUploadSettings.Mode = "AMT";
-        MultipleUploadSettings.Limit = 50;
         MultipleUploadSettings.AfterCheckAll = function (files) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 ElementPlus.ElMessage('所有文件校验完毕.');
@@ -151,6 +150,10 @@ window.onload = function () {
             created: function () {
                 var _this = this;
                 Main = this;
+                if (this.config.type === 'Signle')
+                    MultipleUploadSettings.Limit = 1;
+                else if (this.config.type === 'Multiple')
+                    MultipleUploadSettings.Limit = 50;
                 Upload.Init(MultipleUploadSettings).then(function () {
                     Upload.SelectedFileList = _this.multipleUpload.files;
                 });
@@ -338,9 +341,14 @@ window.onload = function () {
             Main.config.type = tab.props.name;
             switch (tab.props.name) {
                 case 'Signle':
+                    if (Upload.SelectedFileList.length > 1)
+                        Upload.Clean();
+                    MultipleUploadSettings.Limit = 1;
+                    break;
                 default:
                     break;
                 case 'Multiple':
+                    MultipleUploadSettings.Limit = 50;
                     break;
             }
         }

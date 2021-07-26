@@ -43,7 +43,7 @@ class MultipleUploadSetting {
     /**
      * 附加说明
      */
-    Tip: string = '支持单次或批量上传。严禁上传存在违法违规内容的文件';
+    Tip: string = '严禁上传存在违法违规内容的文件';
 
     /**
      * 主题

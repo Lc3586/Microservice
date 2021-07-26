@@ -109,7 +109,6 @@
             let MultipleUploadSettings = new MultipleUploadSetting();
             MultipleUploadSettings.Axios = Axios;
             MultipleUploadSettings.Mode = UploadMode.手自一体;
-            MultipleUploadSettings.Limit = 50;
 
             MultipleUploadSettings.AfterCheckAll = async (files: RawFile[]) => {
                 ElementPlus.ElMessage('所有文件校验完毕.');
@@ -131,6 +130,11 @@
                 data: GetRenderData,
                 created() {
                     Main = this;
+
+                    if (this.config.type === 'Signle')
+                        MultipleUploadSettings.Limit = 1;
+                    else if (this.config.type === 'Multiple')
+                        MultipleUploadSettings.Limit = 50;
 
                     Upload.Init(MultipleUploadSettings).then(() => {
                         Upload.SelectedFileList = this.multipleUpload.files;
@@ -381,11 +385,15 @@
                 Main.config.type = tab.props.name;
                 switch (tab.props.name) {
                     case 'Signle':
+                        if (Upload.SelectedFileList.length > 1)
+                            Upload.Clean();
+                        MultipleUploadSettings.Limit = 1;
+                        break;
                     default:
 
                         break;
                     case 'Multiple':
-
+                        MultipleUploadSettings.Limit = 50;
                         break;
                 }
             }
