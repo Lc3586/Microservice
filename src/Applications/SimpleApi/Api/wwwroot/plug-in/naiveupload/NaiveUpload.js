@@ -127,7 +127,10 @@ var NaiveUpload = (function () {
         this.SelectedFileList[index].Canceled = true;
     };
     NaiveUpload.prototype.Clean = function () {
-        this.SelectedFileList.length = 0;
+        for (var _i = 0, _a = this.SelectedFileList; _i < _a.length; _i++) {
+            var file = _a[_i];
+            file.Canceled = true;
+        }
     };
     NaiveUpload.prototype.AppendFiles = function (files) {
         var _this = this;

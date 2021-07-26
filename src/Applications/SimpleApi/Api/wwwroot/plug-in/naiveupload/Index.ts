@@ -384,7 +384,7 @@
             function TabsChanged(tab) {
                 Main.config.type = tab.props.name;
                 switch (tab.props.name) {
-                    case 'Signle':
+                    case 'Single':
                         if (Upload.SelectedFileList.length > 1)
                             Upload.Clean();
                         MultipleUploadSettings.Limit = 1;

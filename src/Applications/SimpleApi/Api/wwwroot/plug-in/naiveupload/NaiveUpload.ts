@@ -153,7 +153,10 @@ class NaiveUpload {
      * 清空
      * */
     Clean(this: NaiveUpload) {
-        this.SelectedFileList.length = 0;
+        for (let file of this.SelectedFileList) {
+            file.Canceled = true;
+        }
+        //this.SelectedFileList.length = 0;
     }
 
     /**
