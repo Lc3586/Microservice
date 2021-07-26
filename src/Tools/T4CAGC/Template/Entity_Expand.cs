@@ -139,7 +139,8 @@ namespace T4CAGC.Template
 
                     if (!o.FK)
                     {
-                        NameSpaces.AddWhenNotContains($"Entity.{o.KValue.Split('.')[0].Split('_')[0]}");
+                        if (o.Bind != Options.Table.Name)
+                            NameSpaces.AddWhenNotContains($"Entity.{o.KValue.Split('.')[0].Split('_')[0]}");
                         NameSpaces.AddWhenNotContains("System.Collections.Generic");
                     }
 
@@ -177,9 +178,6 @@ namespace T4CAGC.Template
                     #region Column特性
 
                     var columnAttributes = new List<string>();
-                    if (!o.DbType.IsNullOrWhiteSpace())
-                        columnAttributes.Add($"DbType = \"{o.DbType}\"");
-
                     if (!o.DbType.IsNullOrWhiteSpace())
                         columnAttributes.Add($"DbType = \"{o.DbType}\"");
 
