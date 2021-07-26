@@ -53,11 +53,13 @@ var UploadHelper = (function () {
             var _this = this;
             return __generator(this, function (_a) {
                 promise = new Promise(function (resolve, reject) {
-                    window.importFile([
+                    ImportHelper.ImportFile([
                         {
-                            tag: 'script',
-                            type: 'text/javascript',
-                            src: 'Helper/FileReadHelper.js'
+                            Tag: "script",
+                            Attributes: {
+                                type: 'text/javascript',
+                                src: 'Helper/FileReadHelper.js'
+                            }
                         }
                     ], function () {
                         var setup = function () { return __awaiter(_this, void 0, void 0, function () {
@@ -113,11 +115,15 @@ var UploadHelper = (function () {
                             setup();
                         }
                         else {
-                            window.importFile([{
-                                    tag: 'script',
-                                    type: 'text/javascript',
-                                    src: '../../../utils/axios.min.js'
-                                }], function () {
+                            ImportHelper.ImportFile([
+                                {
+                                    Tag: "script",
+                                    Attributes: {
+                                        type: 'text/javascript',
+                                        src: '../../../utils/axios.min.js'
+                                    }
+                                }
+                            ], function () {
                                 _this.Axios = new window.axios;
                                 _this.AxiosInstance = _this.Axios.create({});
                                 setup();

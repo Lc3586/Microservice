@@ -35,37 +35,47 @@ class HashHelper {
      */
     async Init(count: number = 1, enableWorker: boolean = true) {
         const promise = new Promise<void>((resolve, reject) => {
-            (<any>window).importFile([{
-                tag: 'script',
-                type: 'text/javascript',
-                src: 'Helper/FileReadHelper.js'
-            }], () => {
-                while (this.FileReaders.length < count) {
-                    this.FileReaders.push(new FileReadHelper());
-                }
-
-                this.EnableWorker = enableWorker;
-                this.WorkerSupported = 'undefined' !== typeof Worker;
-
-                if (this.EnableWorker && this.WorkerSupported) {
-                    while (this.WorkerUnits.length < count) {
-                        this.WorkerUnits.push(new Worker('Helper/HashWorker.js'));
+            ImportHelper.ImportFile(
+                [
+                    {
+                        Tag: ImportFileTag.JS,
+                        Attributes: {
+                            type: 'text/javascript',
+                            src: 'Helper/FileReadHelper.js'
+                        }
+                    }],
+                () => {
+                    while (this.FileReaders.length < count) {
+                        this.FileReaders.push(new FileReadHelper());
                     }
 
-                    resolve();
-                } else {
-                    (<any>window).importFile([{
-                        tag: 'script',
-                        type: 'text/javascript',
-                        src: '../../../utils/spark-md5.min.js'
-                    }], () => {
-                        while (this.SparkUnits.length < count) {
-                            this.SparkUnits.push(new (<any>window).SparkMD5.ArrayBuffer());
+                    this.EnableWorker = enableWorker;
+                    this.WorkerSupported = 'undefined' !== typeof Worker;
+
+                    if (this.EnableWorker && this.WorkerSupported) {
+                        while (this.WorkerUnits.length < count) {
+                            this.WorkerUnits.push(new Worker('Helper/HashWorker.js'));
                         }
+
                         resolve();
-                    });
-                }
-            });
+                    } else {
+                        ImportHelper.ImportFile(
+                            [
+                                {
+                                    Tag: ImportFileTag.JS,
+                                    Attributes: {
+                                        type: 'text/javascript',
+                                        src: '../../../utils/spark-md5.min.js'
+                                    }
+                                }],
+                            () => {
+                                while (this.SparkUnits.length < count) {
+                                    this.SparkUnits.push(new (<any>window).SparkMD5.ArrayBuffer());
+                                }
+                                resolve();
+                            });
+                    }
+                });
         });
 
         return promise;

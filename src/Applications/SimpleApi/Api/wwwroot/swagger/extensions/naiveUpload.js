@@ -41,7 +41,7 @@ window.onDomLoaded(() => {
             let open = (name, e) => {
                 window.showDialog(
                     '文件上传',
-                    [['iframe', '/plug-in/naiveupload/naiveupload.html']],
+                    [['iframe', '/plug-in/naiveupload/index.html']],
                     {
                         '刷新': {
                             'click': () => {
@@ -58,7 +58,7 @@ window.onDomLoaded(() => {
                         },
                         '在新页面中打开': {
                             'click': () => {
-                                window.open('/plug-in/naiveupload/naiveupload.html');
+                                window.open('/plug-in/naiveupload/index.html');
                             }
                         }
                     }, true, false, true);

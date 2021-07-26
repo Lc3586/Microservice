@@ -71,12 +71,16 @@ class UploadHelper {
      */
     async Init(axios: any = null, headers: Record<string, string> = {} = null, concurrent: number, enableWorker: boolean = true) {
         const promise = new Promise<void>((resolve, reject) => {
-            (<any>window).importFile([
-                {
-                    tag: 'script',
-                    type: 'text/javascript',
-                    src: 'Helper/FileReadHelper.js'
-                }], () => {
+            ImportHelper.ImportFile(
+                [
+                    {
+                        Tag: ImportFileTag.JS,
+                        Attributes: {
+                            type: 'text/javascript',
+                            src: 'Helper/FileReadHelper.js'
+                        }
+                    }],
+                () => {
                     const setup = async () => {
                         if (headers != null) {
                             for (const key in headers) {
@@ -113,15 +117,20 @@ class UploadHelper {
                         this.AxiosInstance = this.Axios.create({});
                         setup();
                     } else {
-                        (<any>window).importFile([{
-                            tag: 'script',
-                            type: 'text/javascript',
-                            src: '../../../utils/axios.min.js'
-                        }], () => {
-                            this.Axios = new (<any>window).axios;
-                            this.AxiosInstance = this.Axios.create({});
-                            setup();
-                        });
+                        ImportHelper.ImportFile(
+                            [
+                                {
+                                    Tag: ImportFileTag.JS,
+                                    Attributes: {
+                                        type: 'text/javascript',
+                                        src: '../../../utils/axios.min.js'
+                                    }
+                                }],
+                            () => {
+                                this.Axios = new (<any>window).axios;
+                                this.AxiosInstance = this.Axios.create({});
+                                setup();
+                            });
                     }
                 });
         });

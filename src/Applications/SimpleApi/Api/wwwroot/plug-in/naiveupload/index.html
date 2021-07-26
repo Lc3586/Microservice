@@ -4,44 +4,140 @@
     <meta charset="utf-8" />
     <title>文件上传</title>
 
-    <link href="naiveupload.css" rel="stylesheet" />
+    <link href="index.css" rel="stylesheet" />
 </head>
 <body>
     <div id="app">
         <el-container class="main_container">
             <el-container class="main_container">
+                <div class="tab-pane-tool" v-show="config.type=='Single' || config.type=='Multiple'">
+                    <el-switch class="item"
+                               v-model="multipleUpload.settings.Theme"
+                               active-color="#00bcd4"
+                               inactive-color="#ff9800"
+                               active-text="清单式主题"
+                               inactive-text="卡片式主题"
+                               active-value="detailedly"
+                               inactive-value="card"
+                               @change="multipleUpload.settings.Theme == 'detailedly' ? 'card' : 'detailedly'">
+                    </el-switch>
+                    <el-button class="item"
+                               type="danger"
+                               @click="Clean">清空</el-button>
+                    <el-button class="item"
+                               type="warning"
+                               @click="Pause">暂停</el-button>
+                    <el-button class="item"
+                               type="success"
+                               @click="Continues">恢复</el-button>
+                    <el-button class="item"
+                               type="primary"
+                               @click="Start">开始</el-button>
+                </div>
                 <el-tabs tab-position="left" v-model="config.type" @tab-click="TabsChanged">
                     <el-tab-pane label="单文件上传" class="tab-pane" name="Single">
-                        <template>
-                            <p>上传</p>
-                        </template>
+                        <div :class="'upload-container independent ' + (multipleUpload.settings.Theme == 'detailedly' ? 'independent-detailedly' : 'independent-card')">
+                            <div v-if="multipleUpload.files.filter(data => !data.Canceled).length == 0"
+                                 class="upload-drag"
+                                 :title="GetSelectTitle()">
+                                <div class="upload-btn"
+                                     v-on:click="ChosingFile"
+                                     :title="multipleUpload.settings.Tip">
+                                    <input type="file"
+                                           ref="fileInput"
+                                           :accept="multipleUpload.settings.Accept.join(', ')"
+                                           v-on:change="ChoseFile">
+                                    <div class="upload-drag-container">
+                                        <p class="upload-icon icon-plus"></p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div v-for="(file, index) in multipleUpload.files.filter(data => !data.Canceled)"
+                                 :class="GetContainerClass(multipleUpload.files[index])"
+                                 :title="GetContainerTitle(multipleUpload.files[index])"
+                                 v-on:mouseenter="multipleUpload.files[index].Hover=true"
+                                 v-on:mouseleave="multipleUpload.files[index].Hover=false"
+                                 :ref="'file_container_' + index">
+                                <div class="item-body">
+                                    <div class="item-image">
+                                        <img :src="multipleUpload.files[index].Thumbnail"
+                                             onerror="javascript: this.src = '/filestate/图裂.jpg';"
+                                             loading="lazy"
+                                             :alt="GetFilename(multipleUpload.files[index])">
+                                    </div>
+
+                                    <span class="item-tools"
+                                          v-if="ShowTools(multipleUpload.files[index])">
+                                        <span class="upload-icon icon-rename"
+                                              title="重命名"
+                                              v-on:click="Rename(multipleUpload.files[index])"
+                                              v-if="EnableRename(multipleUpload.files[index])"></span>
+                                        <span class="upload-icon icon-view"
+                                              title="查看"
+                                              v-if="EnableView(multipleUpload.files[index])"
+                                              v-on:click="View(multipleUpload.files[index])"></span>
+                                        <span class="upload-icon icon-remove"
+                                              title="删除"
+                                              v-on:click="Remove(index)"></span>
+                                    </span>
+
+                                    <div v-if="multipleUpload.settings.Theme=='card'"
+                                         class="item-info">
+                                        <span class="single-text-omitted item-name"
+                                              :title="multipleUpload.files[index].FileType + '\r\n' + multipleUpload.files[index].Size + '\r\n' + GetFilename(multipleUpload.files[index])"
+                                              v-html="GetFilename(multipleUpload.files[index])"
+                                              v-if="!multipleUpload.files[index].Rename"></span>
+                                        <input class="item-rename-input"
+                                               type="text"
+                                               v-if="multipleUpload.files[index].Rename"
+                                               v-model="multipleUpload.files[index].Name"
+                                               ref="renameInput"
+                                               v-on:keydown="RenameKeydown(multipleUpload.files[index], $event)"
+                                               v-on:blur="RenameDone(multipleUpload.files[index])" />
+                                    </div>
+                                    <div v-if="multipleUpload.settings.Theme=='detailedly'"
+                                         class="item-info">
+                                        <span class="single-text-omitted item-name">
+                                            名称：<span :title="GetFilename(multipleUpload.files[index])"
+                                                     v-html="GetFilename(multipleUpload.files[index])"
+                                                     v-if="!multipleUpload.files[index].Rename"></span>
+                                            <input class="item-rename-input"
+                                                   type="text"
+                                                   v-if="multipleUpload.files[index].Rename"
+                                                   v-model="multipleUpload.files[index].Name"
+                                                   ref="renameInput"
+                                                   v-on:keydown="Rename(multipleUpload.files[index], $event)"
+                                                   v-on:blur="RenameDone(multipleUpload.files[index])" />
+                                        </span>
+
+                                        <span class="single-text-omitted item-size">
+                                            大小：<span :title="multipleUpload.files[index].Size"
+                                                     v-html="multipleUpload.files[index].Size"></span>
+                                        </span>
+
+                                        <span class="single-text-omitted item-filetype">
+                                            类型：<span :title="multipleUpload.files[index].FileType"
+                                                     v-html="multipleUpload.files[index].FileType"></span>
+                                        </span>
+                                    </div>
+
+                                    <div class="item-loading"
+                                         v-if="ShowLoading(multipleUpload.files[index])"
+                                         :style="GetLoadingStyle(multipleUpload.files[index]) "
+                                         :title="GetLoadingTitle(multipleUpload.files[index])">
+                                    </div>
+                                    <div v-if="multipleUpload.files[index].Done" class="item-sub sub-done">
+                                        完成
+                                    </div>
+                                    <div v-if="multipleUpload.files[index].Error" class="item-sub sub-error">
+                                        错误
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </el-tab-pane>
                     <el-tab-pane label="多文件上传" class="tab-pane" name="Multiple">
-                        <div class="tab-pane-tool" v-show="config.type=='Multiple'">
-                            <el-switch class="item"
-                                       v-model="multipleUpload.settings.Theme"
-                                       active-color="#00bcd4"
-                                       inactive-color="#ff9800"
-                                       active-text="清单式主题"
-                                       inactive-text="卡片式主题"
-                                       active-value="detailedly"
-                                       inactive-value="card"
-                                       @change="multipleUpload.settings.Theme == 'detailedly' ? 'card' : 'detailedly'">
-                            </el-switch>
-                            <el-button class="item"
-                                       type="danger"
-                                       @click="Clean">清空</el-button>
-                            <el-button class="item"
-                                       type="warning"
-                                       @click="Pause">暂停</el-button>
-                            <el-button class="item"
-                                       type="success"
-                                       @click="Continues">恢复</el-button>
-                            <el-button class="item"
-                                       type="primary"
-                                       @click="Start">开始</el-button>
-                        </div>
-
                         <div class="upload-container">
                             <div :class="GetSelectCLass()"
                                  v-on:drop="DropFile"
@@ -153,6 +249,12 @@
                             </div>
                         </div>
                     </el-tab-pane>
+                    <el-tab-pane label="文件库" class="tab-pane" name="Library">
+
+                    </el-tab-pane>
+                    <el-tab-pane label="大文件任务" class="tab-pane" name="Bigger">
+
+                    </el-tab-pane>
                 </el-tabs>
             </el-container>
         </el-container>
@@ -181,7 +283,7 @@
         </el-dialog>
     </div>
 
-    <script src="../../utils/import-file.js"></script>
-    <script src="NaiveUpload.js"></script>
+    <script src="Helper/ImportHelper.js"></script>
+    <script src="Index.js"></script>
 </body>
 </html>

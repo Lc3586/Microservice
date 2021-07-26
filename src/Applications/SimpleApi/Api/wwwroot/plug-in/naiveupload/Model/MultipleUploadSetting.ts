@@ -52,6 +52,12 @@ class MultipleUploadSetting {
     Theme: string = UploadTheme.卡片主题;
 
     /**
+     * 模式
+     * 默认自动挡
+     */
+    Mode: string = UploadMode.自动挡;
+
+    /**
      * 是否启用文件切片
      * 默认启用
      */
@@ -70,16 +76,33 @@ class MultipleUploadSetting {
     Retry: number = 3;
 
     /**
+     * Http请求工具
+     */
+    Axios: any;
+
+    /**
      * 请求头设置
      */
     Headers: Record<string, string> = {};//此类型等同于 { [P in string]: string }
 
     /**
-     * 文件上传前执行
+     * 文件校验前执行
      * @param file 文件
-     * @returns 是否上传
+     * @returns 是否保留该文件
      */
-    BeforeUpload?: (file: File) => Promise<boolean>;
+    BeforeCheck?: (file: File) => Promise<boolean>;
+
+    /**
+     * 文件校验结束后执行
+     * @param file 文件
+     */
+    AfterCheck?: (rawFile: RawFile) => Promise<void>;
+
+    /**
+     * 文件校验全部校验结束后执行
+     * @param files 文件集合
+     */
+    AfterCheckAll?: (rawFiles: RawFile[]) => Promise<void>;
 
     /**
      * 文件上传后执行
@@ -88,10 +111,11 @@ class MultipleUploadSetting {
     AfterUpload?: (rawFile: RawFile) => Promise<void>;
 
     /**
-     * 所有文件上传完毕后执行
-     * @param rawFiles 文件
+     * 所有文件上传后执行
+     * 此方法不会等待
+     * @param rawFiles 文件集合
      */
-    Done?: (rawFiles: RawFile[]) => Promise<void>;
+    AfterUploadAll?: (rawFiles: RawFile[]) => Promise<void>;
 
     /**
      * 是否启用Worker

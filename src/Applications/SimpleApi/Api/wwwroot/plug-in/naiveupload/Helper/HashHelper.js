@@ -48,11 +48,15 @@ var HashHelper = (function () {
             var _this = this;
             return __generator(this, function (_a) {
                 promise = new Promise(function (resolve, reject) {
-                    window.importFile([{
-                            tag: 'script',
-                            type: 'text/javascript',
-                            src: 'Helper/FileReadHelper.js'
-                        }], function () {
+                    ImportHelper.ImportFile([
+                        {
+                            Tag: "script",
+                            Attributes: {
+                                type: 'text/javascript',
+                                src: 'Helper/FileReadHelper.js'
+                            }
+                        }
+                    ], function () {
                         while (_this.FileReaders.length < count) {
                             _this.FileReaders.push(new FileReadHelper());
                         }
@@ -65,11 +69,15 @@ var HashHelper = (function () {
                             resolve();
                         }
                         else {
-                            window.importFile([{
-                                    tag: 'script',
-                                    type: 'text/javascript',
-                                    src: '../../../utils/spark-md5.min.js'
-                                }], function () {
+                            ImportHelper.ImportFile([
+                                {
+                                    Tag: "script",
+                                    Attributes: {
+                                        type: 'text/javascript',
+                                        src: '../../../utils/spark-md5.min.js'
+                                    }
+                                }
+                            ], function () {
                                 while (_this.SparkUnits.length < count) {
                                     _this.SparkUnits.push(new window.SparkMD5.ArrayBuffer());
                                 }
