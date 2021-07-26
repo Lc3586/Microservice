@@ -199,7 +199,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
             var newData = Mapper.Map<<#=Options.Table.Name#>>(data).InitEntity();
 
             //@数据验证#待完善@
-            //if (Repository.Where(o => <#=Options.Table.Tree ? "o.ParentId == editData.ParentId && " : ""#>o.Name == newData.Name).Any())
+            //if (Repository.Where(o => <#=Options.Table.Tree ? "o.ParentId == newData.ParentId && " : ""#>o.Name == newData.Name).Any())
             //    throw new MessageException($"<#=Options.Table.Tree ? "当前层级" : ""#>已存在名称为{newData.Name}的<#=Options.Table.Remark#>.");
 
             (bool success, Exception ex) = Orm.RunTransaction(() =>
@@ -235,7 +235,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
             {
 #>
 
-                newData.<#=FunctionsWithField[Function.Sort].Name#> = Repository.Where(o => o.ParentId == editData.ParentId).Max(o => o.<#=FunctionsWithField[Function.Sort].Name#>) + 1;
+                newData.<#=FunctionsWithField[Function.Sort].Name#> = Repository.Where(o => o.ParentId == newData.ParentId).Max(o => o.<#=FunctionsWithField[Function.Sort].Name#>) + 1;
 <#
             }
         }
@@ -622,6 +622,8 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
         {
 #>
                                         o.ParentId,
+                                        o.RootId,
+                                        o.Level,
 <#
         }
 #>
@@ -875,21 +877,19 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
                         _errors.Add(new ErrorInfo(i + 3, attr.Description, "数据格式有误。"));
                     }
                 });
-
+                
+                //@数据验证#待完善@
                 if (_errors.Any())
                 {
                     errors.AddRange(_errors);
                     continue;
                 }
-
-                //@数据验证#待完善@
 <#
         foreach (var field in RequiredKeys)
         {
             var i = 0;
 #>
-
-                <#=i > 0 ? "if" : "else if"#> (entity.<#=field.Name#>.IsNullOrWhiteSpace())
+                <#=i > 0 ? "if" : "else if"#> (entity.<#=field.Name#><#=field.CsType != typeof(string) ? " == null" : ".IsNullOrWhiteSpace()"#>)
                 {
                     errors.Add(new ErrorInfo(i + 3, "<#=field.Remark#>", "内容不能为空。"));
                     continue;
