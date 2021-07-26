@@ -647,7 +647,9 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
              * 开始
              */
             function Start() {
-                Upload.Upload();
+                for (var i = 0; i < MultipleUploadSettings.ConcurrentFile; i++) {
+                    Upload.Upload();
+                }
             }
 
             /**
