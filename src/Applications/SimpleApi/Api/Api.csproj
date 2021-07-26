@@ -117,10 +117,14 @@
     <Content Remove="wwwroot\plug-in\naiveupload\Helper\HashHelper.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Helper\HashWorker.js" />
     <Content Remove="wwwroot\plug-in\naiveupload\Helper\HashWorker.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Helper\ImportHelper.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Helper\ImportHelper.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Helper\UploadHelper.js" />
     <Content Remove="wwwroot\plug-in\naiveupload\Helper\UploadHelper.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Helper\UploadWorker.js" />
     <Content Remove="wwwroot\plug-in\naiveupload\Helper\UploadWorker.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\index.css" />
+    <Content Remove="wwwroot\plug-in\naiveupload\index.html" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\ApiUri.js" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\ApiUri.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\ChunkFile.js" />
@@ -145,6 +149,8 @@
     <Content Remove="wwwroot\plug-in\naiveupload\Model\TokenInfo.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadProgress.js" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadProgress.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadTheme - 复制.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadTheme - 复制.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadTheme.js" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadTheme.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerCancelMessage.js" />
@@ -165,8 +171,6 @@
     <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerSetUpAxiosMessage.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\ValidationMD5Response.js" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\ValidationMD5Response.js.map" />
-    <Content Remove="wwwroot\plug-in\naiveupload\naiveupload.css" />
-    <Content Remove="wwwroot\plug-in\naiveupload\naiveupload.html" />
     <Content Remove="wwwroot\plug-in\naiveupload\NaiveUpload.js" />
     <Content Remove="wwwroot\plug-in\naiveupload\NaiveUpload.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\test.ts" />
@@ -416,6 +420,12 @@
     <None Include="wwwroot\plug-in\naiveupload\Helper\HashWorker.js.map">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="wwwroot\plug-in\naiveupload\Helper\ImportHelper.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Helper\ImportHelper.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="wwwroot\plug-in\naiveupload\Helper\UploadHelper.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -500,6 +510,12 @@
     <None Include="wwwroot\plug-in\naiveupload\Model\UploadProgress.js.map">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadMode.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadMode.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="wwwroot\plug-in\naiveupload\Model\UploadTheme.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -560,10 +576,16 @@
     <None Include="wwwroot\plug-in\naiveupload\Model\ValidationMD5Response.js.map">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="wwwroot\plug-in\naiveupload\naiveupload.css">
+    <None Include="wwwroot\plug-in\naiveupload\index.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="wwwroot\plug-in\naiveupload\naiveupload.html">
+    <None Include="wwwroot\plug-in\naiveupload\index.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Index.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Index.js.map">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="wwwroot\plug-in\naiveupload\NaiveUpload.js">
