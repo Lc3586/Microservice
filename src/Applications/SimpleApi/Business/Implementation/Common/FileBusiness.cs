@@ -210,7 +210,7 @@ namespace Business.Implementation.Common
 
             var state = GetFileState(md5, false);
 
-            if (state.State != FileState.处理中 && state.State == FileState.可用)
+            if (state.State != FileState.处理中 && state.State != FileState.可用)
                 return false;
 
             file = Repository.Find(state.Id);
@@ -631,7 +631,7 @@ namespace Business.Implementation.Common
                 Directory.CreateDirectory(BaseDir);
 
             var name = Guid.NewGuid().ToString();
-            var path = Path.Combine(BaseDir, $"{name}.jpg");
+            var path = Path.Combine(BaseDir, $"{name}.bmp");
 
             var image = ImgHelper.GetImgFromBase64Url(base64);
             Save(image, path);
@@ -645,8 +645,8 @@ namespace Business.Implementation.Common
                     Name = name,
                     StorageType = StorageType.Path,
                     FileType = FileType.图片,
-                    Extension = ".jpg",
-                    ContentType = "image/jpg",
+                    Extension = ".bmp",
+                    ContentType = "image/x-ms-bmp",
                     Path = path,
                     Bytes = path.GetFileBytes(),
                     State = FileState.可用
@@ -690,11 +690,15 @@ namespace Business.Implementation.Common
 
             if (download)
             {
-                var path = Path.Combine(BaseDir, name);
+                var extension = url.LastIndexOf('/') >= 0 ? Path.GetExtension(url) : string.Empty;
+
+                var path = Path.Combine(BaseDir, $"{name}{extension}");
 
                 using var client = new WebClient();
-
                 var stream = await client.OpenReadTaskAsync(url);
+
+                var contentType = client.ResponseHeaders[HttpResponseHeader.ContentType];
+
                 await Save(stream, path);
 
                 var md5 = await GetMD5(path);
@@ -705,9 +709,9 @@ namespace Business.Implementation.Common
                     {
                         Name = name,
                         StorageType = StorageType.Path,
-                        FileType = FileType.图片,
-                        Extension = ".jpg",
-                        ContentType = "image/jpg",
+                        FileType = contentType.IsNullOrWhiteSpace() ? GetFileTypeByExtension(extension) : GetFileTypeByMIME(contentType),
+                        Extension = extension,
+                        ContentType = contentType,
                         Path = path,
                         Bytes = path.GetFileBytes(),
                         State = FileState.可用
@@ -730,7 +734,7 @@ namespace Business.Implementation.Common
                     file = new Common_File
                     {
                         Name = name,
-                        FileType = FileType.外链资源,
+                        FileType = FileType.未知,
                         StorageType = StorageType.Uri,
                         Path = url,
                         State = FileState.可用
@@ -816,7 +820,7 @@ namespace Business.Implementation.Common
 
             if (file.FileType == FileType.图片)
             {
-                var imagePath = $"{file.Path.Replace(file.Extension, "")}-Screenshot/{width}x{height}.jpg";
+                var imagePath = $"{(file.Extension.IsNullOrWhiteSpace() ? file.Path : file.Path.Replace(file.Extension, ""))}-Screenshot/{width}x{height}{file.Extension}";
 
                 if (!imagePath.Exists())
                 {
@@ -824,12 +828,26 @@ namespace Business.Implementation.Common
                     if (!Directory.Exists(dir))
                         Directory.CreateDirectory(dir);
 
-                    using var fs = new FileStream(file.Path, FileMode.Open, FileAccess.Read);
-                    var image = new Image(fs);
+                    try
+                    {
+                        using var fs = new FileStream(file.Path, FileMode.Open, FileAccess.Read);
+                        var image = new Image(fs);
 
-                    using var newFS = File.Create(imagePath);
-                    image.Resize(width, height)
-                       .Save(newFS);
+                        using var newFS = File.Create(imagePath);
+                        image.Resize(width, height)
+                           .Save(newFS);
+                    }
+                    catch (Exception ex)
+                    {
+                        imagePath = file.Path;
+
+                        Logger.Log(
+                            NLog.LogLevel.Warn,
+                            LogType.警告信息,
+                            "图片截图失败.",
+                            file.Path,
+                            ex);
+                    }
                 }
 
                 response.ContentType = file.ContentType;
@@ -838,7 +856,7 @@ namespace Business.Implementation.Common
             else if (file.FileType == FileType.视频)
             {
                 time ??= TimeSpan.FromSeconds(0.001);
-                var imagePath = $"{file.Path.Replace(file.Extension, "")}-Screenshot/{width}x{height}-{time.Value:c}.jpg";
+                var imagePath = $"{(file.Extension.IsNullOrWhiteSpace() ? file.Path : file.Path.Replace(file.Extension, ""))}-Screenshot/{width}x{height}-{time.Value:c}.jpg";
 
                 if (!File.Exists(imagePath))
                 {
@@ -906,7 +924,7 @@ namespace Business.Implementation.Common
                 Response(response, StatusCodes.Status412PreconditionFailed, "此文件不支持浏览.");
                 return;
             }
-            else if (file.FileType != FileType.视频 && file.FileType != FileType.视频 && file.FileType != FileType.文本文件 && file.ContentType != "application/pdf")
+            else if (file.FileType != FileType.图片 && file.FileType != FileType.视频 && file.FileType != FileType.文本文件 && file.ContentType != "application/pdf")
             {
                 Response(response, StatusCodes.Status412PreconditionFailed, "此文件不支持浏览.");
                 return;
@@ -978,7 +996,7 @@ namespace Business.Implementation.Common
                 DeleteFile(file.Path);
 
                 //缩略图&截图
-                var s = $"{file.Path.Replace(file.Extension, "")}-Screenshot";
+                var s = $"{(file.Extension.IsNullOrWhiteSpace() ? file.Path : file.Path.Replace(file.Extension, ""))}-Screenshot";
                 if (Directory.Exists(s))
                     Directory.Delete(s, true);
             }
@@ -1038,7 +1056,8 @@ namespace Business.Implementation.Common
         {
             try
             {
-                stream.Seek(0, SeekOrigin.Begin);
+                if (stream.CanSeek)
+                    stream.Seek(0, SeekOrigin.Begin);
                 using var fs = File.Create(path);
                 await stream.CopyToAsync(fs);
             }
@@ -1085,7 +1104,8 @@ namespace Business.Implementation.Common
         {
             if (IsResponseRangeBytes(request, response, stream.Length, out long start, out long count))
             {
-                stream.Seek(start, SeekOrigin.Begin);
+                if (stream.CanSeek)
+                    stream.Seek(start, SeekOrigin.Begin);
                 var buffer = new byte[1024];
                 int wrote = 0;
                 while (wrote <= count)
@@ -1196,7 +1216,8 @@ namespace Business.Implementation.Common
         {
             using var md5 = MD5.Create();
 
-            stream.Seek(0, SeekOrigin.Begin);
+            if (stream.CanSeek)
+                stream.Seek(0, SeekOrigin.Begin);
             var md5Byte = await md5.ComputeHashAsync(stream);
             var md5String = BitConverter.ToString(md5Byte);
 

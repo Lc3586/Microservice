@@ -6,6 +6,7 @@ using Microservice.Library.OpenApi.Annotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Model.Common;
 using Model.Common.FileDTO;
 using Model.Utils.Pagination;
 using Model.Utils.Result;
@@ -262,7 +263,7 @@ namespace Api.Controllers
         /// <returns></returns>
         [HttpPost("upload-single-file-url")]
         [SwaggerResponse((int)HttpStatusCode.OK, "文件信息", typeof(FileInfo))]
-        public async Task<object> SingleFileFromUrl([FromBody] string url, string filename, bool download = false)
+        public async Task<object> SingleFileFromUrl(string url, string filename, bool download = false)
         {
             return OpenApiJsonContent(ResponseDataFactory.Success(await FileBusiness.SingleFileFromUrl(url, filename, download)));
         }

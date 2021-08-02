@@ -472,7 +472,9 @@ window.onload = function () {
             Upload.Remove(index);
         }
         function Start() {
-            Upload.Upload();
+            for (var i = 0; i < MultipleUploadSettings.ConcurrentFile; i++) {
+                Upload.Upload();
+            }
         }
         function Pause() {
             Upload.Pause();

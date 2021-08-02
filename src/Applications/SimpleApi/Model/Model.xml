@@ -1679,6 +1679,42 @@
             订阅集合
             </summary>
         </member>
+        <member name="T:Model.Utils.Config.RSASetting">
+            <summary>
+            RSA配置
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Config.RSASetting.UseCertFile">
+            <summary>
+            使用证书
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Config.RSASetting.PublicKey">
+            <summary>
+            公钥
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Config.RSASetting.PrivateKey">
+            <summary>
+            私钥
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Config.RSASetting.CertFilePath">
+            <summary>
+            p12证书地址
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Config.RSASetting.CertPassword">
+            <summary>
+            证书密码
+            <para>一般默认为商户号</para>
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Config.RSASetting.PemFilePath">
+            <summary>
+            pem公钥文件地址
+            </summary>
+        </member>
         <member name="T:Model.Utils.Config.RunMode">
             <summary>
             运行模式
@@ -2192,6 +2228,16 @@
             </summary>
             <param name="filename">文件名</param>
             <returns></returns>
+        </member>
+        <member name="P:Model.Utils.Config.SystemConfig.EnableRSA">
+            <summary>
+            启用RSA
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Config.SystemConfig.RSA">
+            <summary>
+            RSA配置
+            </summary>
         </member>
         <member name="T:Model.Utils.Config.WeChatServiceSetting">
             <summary>

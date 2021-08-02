@@ -203,6 +203,18 @@
             <param name="app"></param>
             <param name="config"></param>
         </member>
+        <member name="T:Api.Configures.RSAHelperConfigura">
+            <summary>
+            RSA帮助类配置类
+            </summary>
+        </member>
+        <member name="M:Api.Configures.RSAHelperConfigura.RegisterRSAHelper(Microsoft.Extensions.DependencyInjection.IServiceCollection,Model.Utils.Config.SystemConfig)">
+            <summary>
+            注册RSA帮助类
+            </summary>
+            <param name="services"></param>
+            <param name="config"></param>
+        </member>
         <member name="T:Api.Configures.SampleAuthenticationConfigura">
             <summary>
             简易身份认证配置类

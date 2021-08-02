@@ -524,5 +524,20 @@ namespace Model.Utils.Config
         }
 
         #endregion
+
+        #region RSA
+
+        /// <summary>
+        /// 启用RSA
+        /// </summary>
+        public bool EnableRSA { get; set; }
+
+        /// <summary>
+        /// RSA配置
+        /// </summary>
+        [JsonConfig("jsonconfig/rsa.json", "RSA")]
+        public RSASetting RSA { get; set; }
+
+        #endregion
     }
 }

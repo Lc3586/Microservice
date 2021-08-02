@@ -39,8 +39,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="jsonconfig\cas.json" />
     <Content Remove="jsonconfig\database.json" />
+    <Content Remove="jsonconfig\elasticsearch.json" />
+    <Content Remove="jsonconfig\filelist.json" />
+    <Content Remove="jsonconfig\freesql.json" />
+    <Content Remove="jsonconfig\jwt.json" />
+    <Content Remove="jsonconfig\kafka.json" />
+    <Content Remove="jsonconfig\redis.json" />
+    <Content Remove="jsonconfig\rsa.json" />
     <Content Remove="jsonconfig\soap.json" />
+    <Content Remove="jsonconfig\swagger.json" />
     <Content Remove="jsonconfig\wechatservice.json" />
     <Content Remove="ffmpeg\ffmpeg.exe" />
     <Content Remove="ffmpeg\ffplay.exe" />
@@ -193,6 +202,33 @@
 
   <ItemGroup>
     <None Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="jsonconfig\cas.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="jsonconfig\elasticsearch.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="jsonconfig\filelist.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="jsonconfig\freesql.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="jsonconfig\jwt.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="jsonconfig\kafka.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="jsonconfig\redis.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="jsonconfig\rsa.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="jsonconfig\swagger.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="jsonconfig\wechatservice.json">

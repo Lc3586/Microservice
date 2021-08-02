@@ -26,10 +26,10 @@
 
   <ItemGroup>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.34" />
-    <PackageReference Include="Microservice.Library.File" Version="0.0.0.46446-alpha-g6eb55bb61b" />
-    <PackageReference Include="Microservice.Library.NLogger" Version="0.0.0.7522-alpha-g621d2e688e" />
-    <PackageReference Include="Microservice.Library.OfficeDocuments" Version="0.0.0.7522-alpha-g621d2e688e" />
-    <PackageReference Include="Microservice.Library.SelectOption" Version="0.0.0.7522-alpha-g621d2e688e" />
+    <PackageReference Include="Microservice.Library.File" Version="0.0.0.28041-alpha-g896d62b5fe" />
+    <PackageReference Include="Microservice.Library.NLogger" Version="0.0.0.28041-alpha-g896d62b5fe" />
+    <PackageReference Include="Microservice.Library.OfficeDocuments" Version="0.0.0.28041-alpha-g896d62b5fe" />
+    <PackageReference Include="Microservice.Library.SelectOption" Version="0.0.0.28041-alpha-g896d62b5fe" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.1.0" />

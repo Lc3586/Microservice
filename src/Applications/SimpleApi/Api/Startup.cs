@@ -211,6 +211,10 @@ namespace Api
             Bar?.Normal(27);
             $"初始化{ChunkFileMergeHandler.Name}.".ConsoleWrite();
             services.AddSingleton(new ChunkFileMergeHandler());
+
+            Bar?.Normal(28);
+            if (Config.EnableRSA)
+                services.RegisterRSAHelper(Config);
         }
 
         /// <summary>
