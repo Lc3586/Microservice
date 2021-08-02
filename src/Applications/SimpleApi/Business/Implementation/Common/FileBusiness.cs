@@ -850,7 +850,7 @@ namespace Business.Implementation.Common
                     }
                 }
 
-                response.ContentType = file.ContentType;
+                response.ContentType = file.ContentType.IsNullOrWhiteSpace() ? "applicatoin/octet-stream" : file.ContentType;
                 await ResponseFile(HttpRequest, HttpResponse, imagePath);
             }
             else if (file.FileType == FileType.视频)
@@ -930,7 +930,7 @@ namespace Business.Implementation.Common
                 return;
             }
 
-            response.ContentType = file.ContentType;
+            response.ContentType = file.ContentType.IsNullOrWhiteSpace() ? "applicatoin/octet-stream" : file.ContentType;
 
             await ResponseFile(HttpRequest, HttpResponse, file.Path, file.Bytes);
         }
@@ -967,8 +967,7 @@ namespace Business.Implementation.Common
                 return;
             }
 
-            response.ContentType = file.ContentType;
-            //response.ContentType = "applicatoin/octet-stream";
+            response.ContentType = file.ContentType.IsNullOrWhiteSpace() ? "applicatoin/octet-stream" : file.ContentType;
             response.Headers.Add("Content-Disposition", $"attachment; filename=\"{UrlEncoder.Default.Encode($"{file_extension.Name}{file.Extension}")}\"");
 
             await ResponseFile(HttpRequest, HttpResponse, file.Path, file.Bytes);
