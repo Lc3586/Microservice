@@ -330,7 +330,7 @@ namespace Business.Implementation.Common
 
             var md5 = await GetMD5(path);
 
-            var validation = ValidationFileMD5(md5, filename);
+            var validation = PreUploadFile(md5, filename);
             if (validation.Uploaded)
             {
                 File.Delete(path);
@@ -474,11 +474,11 @@ namespace Business.Implementation.Common
             return value.GetFileSize();
         }
 
-        public ValidationMD5Response ValidationFileMD5(string md5, string filename)
+        public PreUploadFileResponse PreUploadFile(string md5, string filename, bool section = false, string type = null, string extension = null, int? specs = null, int? total = null)
         {
             var state = GetFileState(md5, false);
 
-            var result = new ValidationMD5Response
+            var result = new PreUploadFileResponse
             {
                 Uploaded = state.State == FileState.处理中 || state.State == FileState.可用
             };
@@ -508,6 +508,10 @@ namespace Business.Implementation.Common
                 }
 
                 result.FileInfo = GetDetail(file_extension_id);
+            }
+            else if (section)
+            {
+                MergeHandler.Add(md5, type, extension, filename, specs.Value, total.Value);
             }
 
             return result;
@@ -619,7 +623,7 @@ namespace Business.Implementation.Common
             if (!success)
                 throw new MessageException("数据处理失败.", ex);
 
-            MergeHandler.Add(file_md5, type, extension, filename, specs, total);
+            MergeHandler.Handler(file_md5, specs, total);
 
             end:
             return GetDetail(file_extension.Id);

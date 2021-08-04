@@ -36,7 +36,14 @@ var ApiUri = (function () {
     ApiUri.FileTypeByMIME = function (mimetype) { return "/file/file-type-by-mimetype?mimetype=" + mimetype; };
     ApiUri.FileTypeImageUrl = function (extension) { return "/file/file-type-image/" + extension; };
     ApiUri.FileSize = function (length) { return "/file/file-size/" + length; };
-    ApiUri.ValidationFileMD5 = function (md5, filename) { return "/file/validation-file-md5/" + md5 + "?filename=" + filename; };
+    ApiUri.PreUploadFile = function (md5, filename, section, type, extension, specs, total) {
+        if (section === void 0) { section = false; }
+        if (type === void 0) { type = null; }
+        if (extension === void 0) { extension = null; }
+        if (specs === void 0) { specs = null; }
+        if (total === void 0) { total = null; }
+        return "/file/pre-upload-file/" + md5 + "?filename=" + filename + "&section=" + section + "&type=" + type + "&extension=" + extension + "&specs=" + specs + "&total=" + total;
+    };
     return ApiUri;
 }());
 //# sourceMappingURL=ApiUri.js.map

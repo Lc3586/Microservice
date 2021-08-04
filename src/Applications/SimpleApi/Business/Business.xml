@@ -107,6 +107,14 @@
             <param name="specs">分片文件规格</param>
             <param name="total">分片文件总数</param>
         </member>
+        <member name="M:Business.Handler.ChunkFileMergeHandler.Handler(System.String,System.Int32,System.Int32)">
+            <summary>
+            处理合并任务
+            </summary>
+            <param name="md5">文件MD5值</param>
+            <param name="specs">分片文件规格</param>
+            <param name="total">分片文件总数</param>
+        </member>
         <member name="M:Business.Handler.ChunkFileMergeHandler.Run">
             <summary>
             运行
@@ -777,12 +785,17 @@
             <param name="length">文件字节数</param>
             <returns></returns>
         </member>
-        <member name="M:Business.Interface.Common.IFileBusiness.ValidationFileMD5(System.String,System.String)">
+        <member name="M:Business.Interface.Common.IFileBusiness.PreUploadFile(System.String,System.String,System.Boolean,System.String,System.String,System.Nullable{System.Int32},System.Nullable{System.Int32})">
             <summary>
-            文件MD5值校验
+            预备上传文件
             </summary>
             <param name="md5">文件MD5值</param>
             <param name="filename">文件重命名</param>
+            <param name="section">是否分片处理</param>
+            <param name="type">文件类型</param>
+            <param name="extension">文件拓展名</param>
+            <param name="specs">分片文件规格</param>
+            <param name="total">分片文件总数</param>
             <returns></returns>
         </member>
         <member name="M:Business.Interface.Common.IFileBusiness.PreUploadChunkFile(System.String,System.String,System.Int32,System.Int32,System.Boolean)">

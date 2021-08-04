@@ -54,11 +54,16 @@ class ApiUri {
     static FileSize: (length: number | string) => string = (length: number | string) => `/file/file-size/${length}`;
 
     /**
-     * 文件MD5值校验
+     * 预备上传文件
      * @param md5 文件哈希值
      * @param filename 文件重命名
+     * @param section 是否分片处理（默认否）
+     * @param type 文件类型（单文件上传时忽略此参数）
+     * @param extension 文件拓展名（单文件上传时忽略此参数）
+     * @param specs 分片文件规格（单文件上传时忽略此参数）
+     * @param total 分片文件总数（单文件上传时忽略此参数）
      * */
-    static ValidationFileMD5: (md5: string, filename: string) => string = (md5: string, filename: string) => `/file/validation-file-md5/${md5}?filename=${filename}`;
+    static PreUploadFile: (md5: string, filename: string, section?: boolean, type?: string, extension?: string, specs?: number, total?: number) => string = (md5: string, filename: string, section: boolean = false, type: string | null = null, extension: string | null = null, specs: number | null = null, total: number | null = null) => `/file/pre-upload-file/${md5}?filename=${filename}&section=${section}&type=${type}&extension=${extension}&specs=${specs}&total=${total}`;
 
     /**
      * 预上传分片文件

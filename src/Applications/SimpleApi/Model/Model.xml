@@ -29,20 +29,20 @@
             会员
             </summary>
         </member>
-        <member name="T:Model.Common.FileDTO.ValidationMD5Response">
+        <member name="T:Model.Common.FileDTO.PreUploadFileResponse">
             <summary>
-            MD5校验输出信息
+            预备上传文件输出信息
             </summary>
         </member>
-        <member name="P:Model.Common.FileDTO.ValidationMD5Response.Uploaded">
+        <member name="P:Model.Common.FileDTO.PreUploadFileResponse.Uploaded">
             <summary>
             是否已上传过了
             </summary>
             <remarks>
-            <para>如已上传,则返回文件信息<see cref="P:Model.Common.FileDTO.ValidationMD5Response.FileInfo"/></para>
+            <para>如已上传,则返回文件信息<see cref="P:Model.Common.FileDTO.PreUploadFileResponse.FileInfo"/></para>
             </remarks>
         </member>
-        <member name="P:Model.Common.FileDTO.ValidationMD5Response.FileInfo">
+        <member name="P:Model.Common.FileDTO.PreUploadFileResponse.FileInfo">
             <summary>
             文件信息
             </summary>

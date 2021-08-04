@@ -9,6 +9,8 @@ namespace Model.Common
     /// </summary>
     public static class CFMTState
     {
+        public const string 上传中 = "上传中";
+
         public const string 等待处理 = "等待处理";
 
         public const string 处理中 = "处理中";

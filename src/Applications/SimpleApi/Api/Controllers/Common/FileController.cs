@@ -167,16 +167,21 @@ namespace Api.Controllers
         }
 
         /// <summary>
-        /// 文件MD5值校验
+        /// 预备上传文件
         /// </summary>
         /// <param name="md5">文件MD5值</param>
-        /// <param name="filename">文件名</param>
+        /// <param name="filename">文件重命名</param>
+        /// <param name="section">是否分片处理（默认否）</param>
+        /// <param name="type">文件类型（单文件上传时忽略此参数）</param>
+        /// <param name="extension">文件拓展名（单文件上传时忽略此参数）</param>
+        /// <param name="specs">分片文件规格（单文件上传时忽略此参数）</param>
+        /// <param name="total">分片文件总数（单文件上传时忽略此参数）</param>
         /// <returns></returns>
-        [HttpGet("validation-file-md5/{md5}")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "输出信息", typeof(ValidationMD5Response))]
-        public async Task<object> ValidationFileMD5(string md5, string filename)
+        [HttpGet("pre-upload-file/{md5}")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "输出信息", typeof(PreUploadFileResponse))]
+        public async Task<object> PreUploadFile(string md5, string filename, bool section = false, string type = null, string extension = null, int? specs = null, int? total = null)
         {
-            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(FileBusiness.ValidationFileMD5(md5, filename))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(FileBusiness.PreUploadFile(md5, filename, section, type, extension, specs, total))));
         }
 
         /// <summary>

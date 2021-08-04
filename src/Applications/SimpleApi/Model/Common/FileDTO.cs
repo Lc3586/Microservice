@@ -10,9 +10,9 @@ using Microsoft.AspNetCore.Http;
 namespace Model.Common.FileDTO
 {
     /// <summary>
-    /// MD5校验输出信息
+    /// 预备上传文件输出信息
     /// </summary>
-    public class ValidationMD5Response
+    public class PreUploadFileResponse
     {
         /// <summary>
         /// 是否已上传过了

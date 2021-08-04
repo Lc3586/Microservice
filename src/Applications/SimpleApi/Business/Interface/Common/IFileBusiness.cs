@@ -84,12 +84,17 @@ namespace Business.Interface.Common
         string GetFileSize(string length);
 
         /// <summary>
-        /// 文件MD5值校验
+        /// 预备上传文件
         /// </summary>
         /// <param name="md5">文件MD5值</param>
         /// <param name="filename">文件重命名</param>
+        /// <param name="section">是否分片处理</param>
+        /// <param name="type">文件类型</param>
+        /// <param name="extension">文件拓展名</param>
+        /// <param name="specs">分片文件规格</param>
+        /// <param name="total">分片文件总数</param>
         /// <returns></returns>
-        ValidationMD5Response ValidationFileMD5(string md5, string filename = null);
+        PreUploadFileResponse PreUploadFile(string md5, string filename, bool section = false, string type = null, string extension = null, int? specs = null, int? total = null);
 
         /// <summary>
         /// 预备上传分片文件

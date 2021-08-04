@@ -358,7 +358,10 @@ class UploadHelper {
             //文件MD5校验
             let validation: ValidationMD5Response;
             try {
-                validation = await this.ValidationFileMD5(file.MD5, file.Name);
+                if (file.NeedSection)
+                    validation = await this.PreUploadFile(file.MD5, file.Name, true, file.File.type, file.Extension, file.Specs, file.Chunks.length);
+                else
+                    validation = await this.PreUploadFile(file.MD5, file.Name);
             } catch (e) {
                 reject(e);
                 return;
@@ -520,14 +523,19 @@ class UploadHelper {
     }
 
     /**
-     * 文件MD5值校验
+     * 预备上传文件
      * @param md5 文件MD5值
      * @param name 文件重命名
+     * @param section 是否分片处理（默认否）
+     * @param type 文件类型（单文件上传时忽略此参数）
+     * @param extension 文件拓展名（单文件上传时忽略此参数）
+     * @param specs 分片文件规格（单文件上传时忽略此参数）
+     * @param total 分片文件总数（单文件上传时忽略此参数）
      */
-    async ValidationFileMD5(md5: string, name: string)
+    async PreUploadFile(md5: string, name: string, section?: boolean, type?: string, extension?: string, specs?: number, total?: number)
         : Promise<ValidationMD5Response> {
         const promise = new Promise<ValidationMD5Response>((resolve, reject) => {
-            this.AxiosInstance.get(ApiUri.ValidationFileMD5(md5, name))
+            this.AxiosInstance.get(ApiUri.PreUploadFile(md5, name, section, type, extension, specs, total))
                 .then(function (response: { data: ResponseData_T<ValidationMD5Response> }) {
                     if (response.data.Success) {
                         resolve(response.data.Data);

@@ -352,22 +352,28 @@ var UploadHelper = (function () {
                     return __generator(this, function (_b) {
                         switch (_b.label) {
                             case 0:
-                                _b.trys.push([0, 2, , 3]);
-                                return [4, this.ValidationFileMD5(file.MD5, file.Name)];
+                                _b.trys.push([0, 5, , 6]);
+                                if (!file.NeedSection) return [3, 2];
+                                return [4, this.PreUploadFile(file.MD5, file.Name, true, file.File.type, file.Extension, file.Specs, file.Chunks.length)];
                             case 1:
                                 validation = _b.sent();
-                                return [3, 3];
-                            case 2:
+                                return [3, 4];
+                            case 2: return [4, this.PreUploadFile(file.MD5, file.Name)];
+                            case 3:
+                                validation = _b.sent();
+                                _b.label = 4;
+                            case 4: return [3, 6];
+                            case 5:
                                 e_6 = _b.sent();
                                 reject(e_6);
                                 return [2];
-                            case 3:
+                            case 6:
                                 if (validation.Uploaded) {
                                     file.FileInfo = validation.FileInfo;
                                     resolve();
                                     return [2];
                                 }
-                                if (!file.NeedSection) return [3, 4];
+                                if (!file.NeedSection) return [3, 7];
                                 progress_1 = { PreLoaded: 0, Loaded: 0, Total: file.Size };
                                 upload_1 = function () { return __awaiter(_this, void 0, void 0, function () {
                                     var i, _a, e_8, handlerIndex, i, next, chunk, chunk_progress, handlerProgress, validation, e_9, proceed, _b;
@@ -493,26 +499,26 @@ var UploadHelper = (function () {
                                     chunk = _a[_i];
                                     push(chunk);
                                 }
-                                return [3, 10];
-                            case 4:
-                                _b.trys.push([4, 9, , 10]);
-                                if (!this.WorkerSupported) return [3, 6];
-                                return [4, this.UseWorkerUploadFile(file, onProgress)];
-                            case 5:
-                                _b.sent();
-                                return [3, 8];
-                            case 6: return [4, this.UseAxiosUploadFile(file, onProgress)];
+                                return [3, 13];
                             case 7:
-                                _b.sent();
-                                _b.label = 8;
+                                _b.trys.push([7, 12, , 13]);
+                                if (!this.WorkerSupported) return [3, 9];
+                                return [4, this.UseWorkerUploadFile(file, onProgress)];
                             case 8:
+                                _b.sent();
+                                return [3, 11];
+                            case 9: return [4, this.UseAxiosUploadFile(file, onProgress)];
+                            case 10:
+                                _b.sent();
+                                _b.label = 11;
+                            case 11:
                                 resolve();
-                                return [3, 10];
-                            case 9:
+                                return [3, 13];
+                            case 12:
                                 e_7 = _b.sent();
                                 reject(e_7);
-                                return [3, 10];
-                            case 10: return [2];
+                                return [3, 13];
+                            case 13: return [2];
                         }
                     });
                 }); });
@@ -520,13 +526,13 @@ var UploadHelper = (function () {
             });
         });
     };
-    UploadHelper.prototype.ValidationFileMD5 = function (md5, name) {
+    UploadHelper.prototype.PreUploadFile = function (md5, name, section, type, extension, specs, total) {
         return __awaiter(this, void 0, void 0, function () {
             var promise;
             var _this = this;
             return __generator(this, function (_a) {
                 promise = new Promise(function (resolve, reject) {
-                    _this.AxiosInstance.get(ApiUri.ValidationFileMD5(md5, name))
+                    _this.AxiosInstance.get(ApiUri.PreUploadFile(md5, name, section, type, extension, specs, total))
                         .then(function (response) {
                         if (response.data.Success) {
                             resolve(response.data.Data);

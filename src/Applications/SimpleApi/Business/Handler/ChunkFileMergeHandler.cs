@@ -376,15 +376,15 @@ namespace Business.Handler
 
             StartTime = DateTime.Now;
 
-            ////将未完成的任务添加至队列
-            //Repository_ChunkFileMergeTask.Where(o => o.State != $"{CFMTState.已完成}" && o.ServerKey == Config.ServerKey)
-            //    .ToList(o => o.Id)
-            //    .ForEach(o => IdQueue.Enqueue(o));
+            //将未完成的任务添加至队列
+            Repository_ChunkFileMergeTask.Where(o => o.State != $"{CFMTState.已完成}" && o.ServerKey == Config.ServerKey)
+                .ToList(o => o.Id)
+                .ForEach(o => IdQueue.Enqueue(o));
 
             Run();
 
-            ////开始合并
-            //TCS?.SetResult(true);
+            //开始合并
+            TCS?.SetResult(true);
         }
 
         /// <summary>
@@ -413,6 +413,9 @@ namespace Business.Handler
         /// <param name="total">分片文件总数</param>
         public void Add(string md5, string type, string extension, string name, int specs, int total)
         {
+            if (Repository_ChunkFileMergeTask.Where(o => o.MD5 == md5 && o.Specs == specs && o.Total == total && o.ServerKey == Config.ServerKey).Any())
+                return;
+
             var newTask = new Common_ChunkFileMergeTask
             {
                 ServerKey = Config.ServerKey,
@@ -422,13 +425,29 @@ namespace Business.Handler
                 Name = name,
                 Specs = specs,
                 Total = total,
-                State = CFMTState.等待处理,
+                State = CFMTState.上传中,
                 CurrentChunkIndex = -1
             }.InitEntityWithoutOP();
 
             Repository_ChunkFileMergeTask.Insert(newTask);
+        }
 
-            IdQueue.Enqueue(newTask.Id);
+        /// <summary>
+        /// 处理合并任务
+        /// </summary>
+        /// <param name="md5">文件MD5值</param>
+        /// <param name="specs">分片文件规格</param>
+        /// <param name="total">分片文件总数</param>
+        public void Handler(string md5, int specs, int total)
+        {
+            var taskId = Repository_ChunkFileMergeTask.Where(o => o.MD5 == md5 && o.Specs == specs && o.Total == total && o.ServerKey == Config.ServerKey)
+                 .ToOne(o => o.Id);
+
+            _ = Repository_ChunkFileMergeTask.UpdateDiy
+                 .Where(o => o.Id == taskId).Set(o => o.State, $"{CFMTState.处理中}")
+                 .ExecuteAffrows();
+
+            IdQueue.Enqueue(taskId);
 
             //开始合并
             TCS?.SetResult(true);
