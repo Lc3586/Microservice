@@ -53,6 +53,13 @@ namespace Api.Configures
                     option.EnableDetailedErrors = config.RunMode != RunMode.Publish && config.RunMode != RunMode.Publish_Swagger;
                 });
 
+            if (config.EnableUploadLargeFile)
+                builder.AddHubOptions<ChunkFileMergeTaskHub>(option =>
+                {
+                    option.ClientTimeoutInterval = TimeSpan.FromSeconds(30);
+                    option.EnableDetailedErrors = config.RunMode != RunMode.Publish && config.RunMode != RunMode.Publish_Swagger;
+                });
+
             $"初始化{LogForwardHandler.Name}.".ConsoleWrite();
             services.AddSingleton(new LogForwardHandler());
 
@@ -79,6 +86,8 @@ namespace Api.Configures
                     endpoints.MapHub<WeChatServiceHub>("/wechathub");
                 if (config.EnableCAGC)
                     endpoints.MapHub<CAGCHub>("/cagchub");
+                if (config.EnableUploadLargeFile)
+                    endpoints.MapHub<ChunkFileMergeTaskHub>("/cfmthub");
             });
 
             $"启动{LogForwardHandler.Name}.".ConsoleWrite();

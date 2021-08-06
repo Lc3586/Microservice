@@ -539,5 +539,14 @@ namespace Model.Utils.Config
         public RSASetting RSA { get; set; }
 
         #endregion
+
+        #region 大文件上传功能
+
+        /// <summary>
+        /// 启用大文件上传功能
+        /// </summary>
+        public bool EnableUploadLargeFile { get; set; }
+
+        #endregion
     }
 }

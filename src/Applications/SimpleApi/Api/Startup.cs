@@ -209,8 +209,11 @@ namespace Api
             services.RegisterNLog(Config);
 
             Bar?.Normal(27);
-            $"初始化{ChunkFileMergeHandler.Name}.".ConsoleWrite();
-            services.AddSingleton(new ChunkFileMergeHandler());
+            if (Config.EnableUploadLargeFile)
+            {
+                $"初始化{ChunkFileMergeHandler.Name}.".ConsoleWrite();
+                services.AddSingleton(new ChunkFileMergeHandler());
+            }
 
             Bar?.Normal(28);
             if (Config.EnableRSA)
@@ -388,8 +391,11 @@ namespace Api
             Bar?.Normal(98);
 
             Bar?.Normal(99);
-            $"启动{ChunkFileMergeHandler.Name}.".ConsoleWrite();
-            AutofacHelper.GetService<ChunkFileMergeHandler>().Start();
+            if (Config.EnableUploadLargeFile)
+            {
+                $"启动{ChunkFileMergeHandler.Name}.".ConsoleWrite();
+                AutofacHelper.GetService<ChunkFileMergeHandler>().Start();
+            }
 
             Bar?.Normal(100, "应用程序已启动");
             "应用程序已启动.".ConsoleWrite(ConsoleColor.White, null, true, 1);

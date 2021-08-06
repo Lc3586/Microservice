@@ -1,22 +1,29 @@
-﻿using Business.Utils;
+﻿using AutoMapper;
+using Business.Hub;
+using Business.Utils;
 using Business.Utils.Log;
 using Entity.Common;
 using FreeSql;
 using Microservice.Library.Container;
+using Microservice.Library.DataMapping.Gen;
 using Microservice.Library.Extension;
 using Microservice.Library.Extension.Helper;
 using Microservice.Library.File;
 using Microservice.Library.FreeSql.Gen;
 using Microservice.Library.Http;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.SignalR;
 using Model.Common;
+using Model.Common.ChunkFileMergeTaskDTO;
 using Model.Utils.Config;
 using Model.Utils.Log;
+using Model.Utils.SignalR;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Business.Handler
@@ -100,6 +107,30 @@ namespace Business.Handler
         /// </summary>
         string BaseDir => $"{Config.AbsoluteStorageDirectory}/upload/{DateTime.Now:yyyy-MM-dd}";
 
+        IHubContext<ChunkFileMergeTaskHub> CFMTHub
+        {
+            get
+            {
+                if (_CFMTHub == null)
+                    _CFMTHub = AutofacHelper.GetService<IHubContext<ChunkFileMergeTaskHub>>();
+                return _CFMTHub;
+            }
+        }
+
+        IHubContext<ChunkFileMergeTaskHub> _CFMTHub;
+
+        IMapper Mapper
+        {
+            get
+            {
+                if (_Mapper == null)
+                    _Mapper = AutofacHelper.GetService<IAutoMapperProvider>().GetMapper();
+                return _Mapper;
+            }
+        }
+
+        IMapper _Mapper;
+
         TaskCompletionSource<bool> TCS;
 
         /// <summary>
@@ -152,6 +183,15 @@ namespace Business.Handler
                     task.ModifyTime = DateTime.Now;
                     Repository_ChunkFileMergeTask.Update(task);
 
+                    _ = SendUpdateData(
+                        task.Id,
+                        new
+                        {
+                            State = task.State,
+                            Info = task.Info,
+                            ModifyTime = task.ModifyTime
+                        });
+
                     Logger.Log(
                         NLog.LogLevel.Warn,
                         LogType.警告信息,
@@ -183,6 +223,14 @@ namespace Business.Handler
                 //task.Info = "合并分片文件失败, 分片文件还未全部上传完毕, 已将任务移至队尾.";
                 task.ModifyTime = DateTime.Now;
                 Repository_ChunkFileMergeTask.Update(task);
+
+                _ = SendUpdateData(
+                    task.Id,
+                    new
+                    {
+                        Info = task.Info,
+                        ModifyTime = task.ModifyTime
+                    });
 
                 Logger.Log(
                     NLog.LogLevel.Warn,
@@ -216,6 +264,15 @@ namespace Business.Handler
                 task.Info = "合并分片文件失败, 部分分片文件已损坏.";
                 task.ModifyTime = DateTime.Now;
                 Repository_ChunkFileMergeTask.Update(task);
+
+                _ = SendUpdateData(
+                    task.Id,
+                    new
+                    {
+                        State = task.State,
+                        Info = task.Info,
+                        ModifyTime = task.ModifyTime
+                    });
 
                 Logger.Log(
                     NLog.LogLevel.Warn,
@@ -257,6 +314,15 @@ namespace Business.Handler
             task.ModifyTime = DateTime.Now;
             Repository_ChunkFileMergeTask.Update(task);
 
+            _ = SendUpdateData(
+                task.Id,
+                new
+                {
+                    State = task.State,
+                    Info = task.Info,
+                    ModifyTime = task.ModifyTime
+                });
+
             if (!Directory.Exists(BaseDir))
                 Directory.CreateDirectory(BaseDir);
 
@@ -278,6 +344,15 @@ namespace Business.Handler
                 task.ModifyTime = DateTime.Now;
                 task.Bytes = (task.Bytes ?? 0) + chunkFile.Bytes;
                 Repository_ChunkFileMergeTask.Update(task);
+
+                _ = SendUpdateData(
+                    task.Id,
+                    new
+                    {
+                        CurrentChunkIndex = task.CurrentChunkIndex,
+                        Bytes = task.Bytes,
+                        ModifyTime = task.ModifyTime
+                    });
             }
 
             task.Size = FileHelper.GetFileSize(task.Bytes ?? 0);
@@ -308,8 +383,18 @@ namespace Business.Handler
                     .Set(o => o.Path, task.Path)
                     .ExecuteAffrows() < 0)
             {
-                task.Info = "合并分片文件失败, 更新文件信息失败.";
+                task.Info = "合并分片文件成功, 但更新文件信息失败.";
                 Repository_ChunkFileMergeTask.Update(task);
+
+                _ = SendUpdateData(
+                    task.Id,
+                    new
+                    {
+                        State = task.State,
+                        Info = task.Info,
+                        ModifyTime = task.ModifyTime,
+                        CompletedTime = task.CompletedTime
+                    });
 
                 Logger.Log(
                     NLog.LogLevel.Warn,
@@ -321,6 +406,16 @@ namespace Business.Handler
 
             task.Info = "已合并所有分片文件.";
             Repository_ChunkFileMergeTask.Update(task);
+
+            _ = SendUpdateData(
+                task.Id,
+                new
+                {
+                    State = task.State,
+                    Info = task.Info,
+                    ModifyTime = task.ModifyTime,
+                    CompletedTime = task.CompletedTime
+                });
 
             return true;
         }
@@ -337,6 +432,225 @@ namespace Business.Handler
             Repository_FileChunk.UpdateDiy.Where(o => ids.Contains(o.Id))
                                         .Set(o => o.State, FileState.已删除)
                                         .ExecuteAffrows();
+        }
+
+        /// <summary>
+        /// 运行
+        /// </summary>
+        async void Run()
+        {
+            while (true)
+            {
+                if (TCS != null)
+                {
+                    if (!await TCS.Task)
+                        return;
+                    TCS = null;
+                }
+
+                if (IdQueue.IsEmpty)
+                {
+                    TCS = new TaskCompletionSource<bool>();
+                    continue;
+                }
+
+                try
+                {
+                    await Processing();
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log(
+                        NLog.LogLevel.Error,
+                        LogType.系统异常,
+                        "合并分片文件时异常.",
+                        null,
+                        ex);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 处理
+        /// </summary>
+        async Task Processing()
+        {
+            var Queue = IdQueue;
+            var Count = Queue.Count;
+
+            for (int i = 0; i < Count; i++)
+            {
+                Queue.TryDequeue(out string id);
+
+                try
+                {
+                    if (!GetTask(id, out Common_ChunkFileMergeTask task))
+                        continue;
+
+                    if (IsFileAlready(task))
+                        continue;
+
+                    if (!GetChunkFiles(task, out List<(string Id, string Path)> allChunkFiles, out List<(string Id, int Index, long Bytes, string Path)> needChunkFiles))
+                        continue;
+
+                    await Merge(task, needChunkFiles);
+
+                    if (!Completed(task))
+                        continue;
+
+                    Clear(allChunkFiles);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log(
+                        NLog.LogLevel.Error,
+                        LogType.系统异常,
+                        $"合并分片文件时异常.",
+                        null,
+                        ex);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 发送更新数据
+        /// </summary>
+        /// <param name="id">任务ID</param>
+        /// <param name="data">更新的数据</param>
+        /// <returns></returns>
+        async Task SendUpdateData(string id, object data)
+        {
+            await CFMTHub.Clients.All.SendCoreAsync(
+                 CFMTHubMethod.更新任务,
+                 new object[]
+                 {
+                    id,
+                    data
+                 });
+        }
+
+        /// <summary>
+        /// 发送分片来源信息任务
+        /// </summary>
+        /// <param name="md5">文件MD5值</param>
+        /// <param name="specs">分片规格</param>
+        /// <param name="total">分片总数</param>
+        /// <param name="cancellationToken">取消令牌</param>
+        /// <returns></returns>
+        Task SendChunksSourceInfoTask(string md5, int specs, int total, CancellationToken cancellationToken)
+        {
+            Action<object?> action = async (object? state) =>
+            {
+                if (state == null)
+                    return;
+
+                var paramsType = typeof((string md5, int specs, int total));
+
+                var _md5 = (string)paramsType.GetField("Item1").GetValue(state);
+                var _specs = (int)paramsType.GetField("Item2").GetValue(state);
+                var _total = (int)paramsType.GetField("Item3").GetValue(state);
+
+                var lastChunkFileUpload = DateTime.MinValue;
+                var lastTaskCurrentChunkIndex = -1;
+
+                while (Repository_ChunkFileMergeTask.Where(o => o.MD5 == _md5 && o.Specs == _specs && o.State == $"{CFMTState.处理中}").Any())
+                {
+                    var _lastChunkFileUpload = Repository_FileChunk.Where(o => o.FileMD5 == md5 && o.Specs == specs && o.State != $"{FileState.已删除}")
+                                                        .OrderByDescending(o => o.CreateTime)
+                                                        .ToOne(o => o.CreateTime);
+
+                    if (lastChunkFileUpload == _lastChunkFileUpload)
+                    {
+                        await Task.Delay(500);
+                        continue;
+                    }
+                    else
+                        lastChunkFileUpload = _lastChunkFileUpload;
+
+                    var _lastTaskCurrentChunkIndex = Repository_ChunkFileMergeTask.Where(o => o.MD5 == md5 && o.Specs == specs)
+                                                        .OrderByDescending(o => o.ModifyTime)
+                                                        .ToOne(o => o.CurrentChunkIndex);
+
+                    if (lastTaskCurrentChunkIndex == _lastTaskCurrentChunkIndex)
+                    {
+                        await Task.Delay(500);
+                        continue;
+                    }
+                    else
+                        lastTaskCurrentChunkIndex = _lastTaskCurrentChunkIndex;
+
+                    var chunksSource = new ChunksSourceInfo
+                    {
+                        Specs = _specs,
+                        Total = _total
+                    };
+
+                    var chunkFileIndices = Repository_FileChunk.Where(p =>
+                                    p.FileMD5 == _md5
+                                    && p.Specs == _specs
+                                    && (p.State == $"{FileState.上传中}" || p.State == $"{FileState.可用}")
+                                    && p.ServerKey == Config.ServerKey)
+                               .GroupBy(p => p.Index)
+                               .OrderBy(p => p.Key)
+                               .ToDictionary(p => p.Count());
+
+                    chunksSource.Activity = GetActivityInfo();
+
+                    await CFMTHub.Clients.All.SendCoreAsync(
+                           CFMTHubMethod.更新分片来源信息,
+                           new object[]
+                           {
+                    _md5,
+                    chunksSource
+                           });
+
+                    List<ActivityInfo> GetActivityInfo()
+                    {
+                        var activitys = new List<ActivityInfo>();
+                        var lastActivity = 0;
+                        for (int i = 0; i < _total; i++)
+                        {
+                            var activity = chunkFileIndices.ContainsKey(i) ? chunkFileIndices[i] : 0;
+
+                            if (lastActivity != activity)
+                                activitys.Add(new ActivityInfo
+                                {
+                                    Activity = activity,
+                                    Percentage = 1
+                                });
+                            else
+                                activitys.Last().Percentage += 1;
+                        }
+
+                        activitys.ForEach(o => o.Percentage = o.Percentage / _total * 100);
+
+                        return activitys;
+                    }
+
+                    await Task.Delay(500);
+                }
+            };
+
+            return new Task(action, (md5, specs, total), cancellationToken);
+        }
+
+        /// <summary>
+        /// 开始发送分片信息任务
+        /// </summary>
+        /// <param name="md5">文件MD5值</param>
+        /// <param name="specs">分片规格</param>
+        /// <param name="total">分片总数</param>
+        /// <returns></returns>
+        async void BeginSendChunksSourceInfoTask(string md5, int specs, int total)
+        {
+            var timeoutCancel = new CancellationTokenSource();
+
+            timeoutCancel.Token.Register(state =>
+            {
+
+            }, (md5, specs, total));
+
+            await SendChunksSourceInfoTask(md5, specs, total, timeoutCancel.Token);
         }
 
         #endregion
@@ -430,6 +744,15 @@ namespace Business.Handler
             }.InitEntityWithoutOP();
 
             Repository_ChunkFileMergeTask.Insert(newTask);
+
+            CFMTHub.Clients.All.SendCoreAsync(
+                CFMTHubMethod.新增任务,
+                new object[]
+                {
+                    Mapper.Map<List>(newTask)
+                });
+
+            BeginSendChunksSourceInfoTask(newTask.MD5, newTask.Specs, newTask.Total);
         }
 
         /// <summary>
@@ -444,91 +767,20 @@ namespace Business.Handler
                  .ToOne(o => o.Id);
 
             _ = Repository_ChunkFileMergeTask.UpdateDiy
-                 .Where(o => o.Id == taskId).Set(o => o.State, $"{CFMTState.处理中}")
+                 .Where(o => o.Id == taskId).Set(o => o.State, $"{CFMTState.等待处理}")
                  .ExecuteAffrows();
+
+            _ = SendUpdateData(
+                taskId,
+                new
+                {
+                    State = CFMTState.等待处理
+                });
 
             IdQueue.Enqueue(taskId);
 
             //开始合并
             TCS?.SetResult(true);
-        }
-
-        /// <summary>
-        /// 运行
-        /// </summary>
-        private async void Run()
-        {
-            while (true)
-            {
-                if (TCS != null)
-                {
-                    if (!await TCS.Task)
-                        return;
-                    TCS = null;
-                }
-
-                if (IdQueue.IsEmpty)
-                {
-                    TCS = new TaskCompletionSource<bool>();
-                    continue;
-                }
-
-                try
-                {
-                    await Processing();
-                }
-                catch (Exception ex)
-                {
-                    Logger.Log(
-                        NLog.LogLevel.Error,
-                        LogType.系统异常,
-                        "合并分片文件时异常.",
-                        null,
-                        ex);
-                }
-            }
-        }
-
-        /// <summary>
-        /// 处理
-        /// </summary>
-        private async Task Processing()
-        {
-            var Queue = IdQueue;
-            var Count = Queue.Count;
-
-            for (int i = 0; i < Count; i++)
-            {
-                Queue.TryDequeue(out string id);
-
-                try
-                {
-                    if (!GetTask(id, out Common_ChunkFileMergeTask task))
-                        continue;
-
-                    if (IsFileAlready(task))
-                        continue;
-
-                    if (!GetChunkFiles(task, out List<(string Id, string Path)> allChunkFiles, out List<(string Id, int Index, long Bytes, string Path)> needChunkFiles))
-                        continue;
-
-                    await Merge(task, needChunkFiles);
-
-                    if (!Completed(task))
-                        continue;
-
-                    Clear(allChunkFiles);
-                }
-                catch (Exception ex)
-                {
-                    Logger.Log(
-                        NLog.LogLevel.Error,
-                        LogType.系统异常,
-                        $"合并分片文件时异常.",
-                        null,
-                        ex);
-                }
-            }
         }
 
         #endregion

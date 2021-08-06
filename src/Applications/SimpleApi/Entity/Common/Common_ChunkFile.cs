@@ -82,20 +82,6 @@ namespace Entity.Common
         public string Size { get; set; }
 
         /// <summary>
-        /// 内容类型
-        /// </summary>
-        [OpenApiSubTag("List", "Detail")]
-        [Column(StringLength = 50)]
-        public string ContentType { get; set; }
-
-        /// <summary>
-        /// 文件扩展名
-        /// </summary>
-        [OpenApiSubTag("List", "Detail")]
-        [Column(StringLength = 30)]
-        public string Extension { get; set; }
-
-        /// <summary>
         /// 文件路径
         /// </summary>
         [OpenApiSubTag("_List")]

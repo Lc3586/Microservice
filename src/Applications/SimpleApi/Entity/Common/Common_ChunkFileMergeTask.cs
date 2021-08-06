@@ -22,7 +22,7 @@ namespace Entity.Common
         /// <summary>
         /// Id
         /// </summary>
-        [OpenApiSubTag("List")]
+        [OpenApiSubTag("List", "Detail")]
         [Column(IsPrimary = true, StringLength = 36)]
         public string Id { get; set; }
 
@@ -78,7 +78,7 @@ namespace Entity.Common
         /// <summary>
         /// 合并后的文件路径
         /// </summary>
-        [OpenApiSubTag("List", "Detail")]
+        //[OpenApiSubTag("List", "Detail")]
         [Column(StringLength = -1)]
         public string Path { get; set; }
 
@@ -97,7 +97,7 @@ namespace Entity.Common
         /// <summary>
         /// 当前处理分片的索引
         /// </summary>
-        [OpenApiSubTag("List", "Detail")]
+        //[OpenApiSubTag("List", "Detail")]
         public int CurrentChunkIndex { get; set; }
 
         /// <summary>

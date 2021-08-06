@@ -42,8 +42,7 @@ namespace Business.Implementation.Common
         public FileBusiness(
             IFreeSqlProvider freeSqlProvider,
             IAutoMapperProvider autoMapperProvider,
-            IHttpContextAccessor httpContextAccessor,
-            ChunkFileMergeHandler mergeHandler)
+            IHttpContextAccessor httpContextAccessor)
         {
             Orm = freeSqlProvider.GetFreeSql();
             Mapper = autoMapperProvider.GetMapper();
@@ -53,7 +52,10 @@ namespace Business.Implementation.Common
             HttpContextAccessor = httpContextAccessor;
             HttpRequest = HttpContextAccessor?.HttpContext?.Request;
             HttpResponse = HttpContextAccessor?.HttpContext?.Response;
-            MergeHandler = mergeHandler;
+
+            if (Config.EnableUploadLargeFile)
+                MergeHandler = AutofacHelper.GetService<ChunkFileMergeHandler>();
+
             FileStateDir = $"{Config.AbsoluteWWWRootDirectory}/filestate";
             PreviewDir = $"{Config.AbsoluteWWWRootDirectory}/filetypes";
             BaseDir = $"{Config.AbsoluteStorageDirectory}/upload/{DateTime.Now:yyyy-MM-dd}";
@@ -511,6 +513,9 @@ namespace Business.Implementation.Common
             }
             else if (section)
             {
+                if (!Config.EnableUploadLargeFile)
+                    throw new MessageException("未启用大文件上传功能.");
+
                 MergeHandler.Add(md5, type, extension, filename, specs.Value, total.Value);
             }
 
@@ -519,6 +524,9 @@ namespace Business.Implementation.Common
 
         public PreUploadChunkFileResponse PreUploadChunkFile(string file_md5, string md5, int index, int specs, bool forced = false)
         {
+            if (!Config.EnableUploadLargeFile)
+                throw new MessageException("未启用大文件上传功能.");
+
             var file_state = GetFileState(file_md5, false);
 
             var result = new PreUploadChunkFileResponse
@@ -551,6 +559,9 @@ namespace Business.Implementation.Common
 
         public async Task SingleChunkFile(string key, string md5, IFormFile file)
         {
+            if (!Config.EnableUploadLargeFile)
+                throw new MessageException("未启用大文件上传功能.");
+
             if (file == null)
                 throw new MessageException("未上传任何文件.", new { Key = key, MD5 = md5 });
 
@@ -560,12 +571,18 @@ namespace Business.Implementation.Common
 
         public async Task SingleChunkFileByArrayBuffer(string key, string md5)
         {
+            if (!Config.EnableUploadLargeFile)
+                throw new MessageException("未启用大文件上传功能.");
+
             using var rs = HttpContextAccessor.HttpContext.Request.Body;
             await SingleChunkFile(key, md5, rs);
         }
 
         public FileInfo UploadChunkFileFinished(string file_md5, int specs, int total, string type, string extension, string filename)
         {
+            if (!Config.EnableUploadLargeFile)
+                throw new MessageException("未启用大文件上传功能.");
+
             var file_state = GetFileState(file_md5, false);
 
             Common_File file = null;
