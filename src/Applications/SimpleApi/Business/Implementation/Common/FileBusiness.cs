@@ -996,30 +996,30 @@ namespace Business.Implementation.Common
 
         public void Delete(List<string> ids)
         {
-            var files = Repository_FileExtension.Select
-                .Where(c => ids.Contains(c.Id))
-                .ToList(c => new
-                {
-                    c.Id,
-                    c.Name,
-                    c.Common_File.StorageType,
-                    c.Common_File.Path,
-                    c.Common_File.Extension
-                });
+            //var files = Repository_FileExtension.Select
+            //    .Where(c => ids.Contains(c.Id))
+            //    .ToList(c => new
+            //    {
+            //        c.Id,
+            //        c.Name,
+            //        c.Common_File.StorageType,
+            //        c.Common_File.Path,
+            //        c.Common_File.Extension
+            //    });
 
-            foreach (var file in files)
-            {
-                if (file.StorageType != StorageType.Path || file.Path.IsNullOrEmpty())
-                    continue;
+            //foreach (var file in files)
+            //{
+            //    if (file.StorageType != StorageType.Path || file.Path.IsNullOrEmpty())
+            //        continue;
 
-                //原文件
-                DeleteFile(file.Path);
+            //    //原文件
+            //    DeleteFile(file.Path);
 
-                //缩略图&截图
-                var s = $"{(file.Extension.IsNullOrWhiteSpace() ? file.Path : file.Path.Replace(file.Extension, ""))}-Screenshot";
-                if (Directory.Exists(s))
-                    Directory.Delete(s, true);
-            }
+            //    //缩略图&截图
+            //    var s = $"{(file.Extension.IsNullOrWhiteSpace() ? file.Path : file.Path.Replace(file.Extension, ""))}-Screenshot";
+            //    if (Directory.Exists(s))
+            //        Directory.Delete(s, true);
+            //}
 
             if (Repository_FileExtension.Delete(o => ids.Contains(o.Id)) <= 0)
                 throw new MessageException("未删除任何数据.", ids);
