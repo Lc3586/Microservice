@@ -534,13 +534,13 @@
                 main.logReal.list.splice(0, main.logReal.list.length - main.logReal.max - 1);
 
             main.logReal.list.push({
-                content: data.data,
-                timestamp: data.createTime,
+                content: data.Data,
+                timestamp: data.CreateTime,
                 size: 'large',
-                icon: getIconForlogLevel(data.level)
+                icon: getIconForlogLevel(data.Level)
             });
 
-            changeStateFromlogLevel(data.level);
+            changeStateFromlogLevel(data.Level);
         });
         main.logReal.connection
             .start()
