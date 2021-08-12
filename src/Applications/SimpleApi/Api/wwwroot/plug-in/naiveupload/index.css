@@ -48,3 +48,12 @@
     .tab-pane-tool .item {
         margin-right: 20px;
     }
+
+.chunks-sources {
+    line-height: 1;
+    align-items: center;
+    display: flex;
+    -webkit-box-align: center;
+    border: solid 1px #9E9E9E;
+    border-radius: 20px;
+}

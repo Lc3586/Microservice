@@ -309,10 +309,10 @@
                                                 <p>分片规格: {{ source.Specs }}</p>
                                                 <p>总数: {{ source.Total }}</p>
 
-                                                <el-progress v-for="(activity, index) in source.Activitys"
-                                                             :percentage="activity.Percentage" :color="(activity.Activity == 0 ? '#ecf5ff' : (activity.Activity == 1 ? '#1989fa' : (activity.Activity < 5 ? '#e6a23c' : (activity.Activity < 10 ?'#f56c6c' : '#6f7ad3'))))"></el-progress>
-
-                                                <hr />
+                                                <div class="chunks-sources">
+                                                    <div v-for="(activity, index) in source.Activitys"
+                                                         :style="'height: 10px;width: ' + activity.Percentage + '%;background-color: ' + (activity.Activity == 0 ? '#ecf5ff' : (activity.Activity == 1 ? '#1989fa' : (activity.Activity < 5 ? '#e6a23c' : (activity.Activity < 10 ?'#f56c6c' : '#6f7ad3')))) + ';' "></div>
+                                                </div>
                                             </div>
                                         </template>
                                         <template #reference>

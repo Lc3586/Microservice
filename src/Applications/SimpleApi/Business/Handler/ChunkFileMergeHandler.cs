@@ -576,7 +576,7 @@ namespace Business.Handler
                 }
             }
 
-            activitys.ForEach(o => o.Percentage = o.Percentage / total * 100);
+            activitys.ForEach(o => o.Percentage = Math.Round(o.Percentage / total, 4) * 100);
 
             return activitys;
         }
@@ -638,7 +638,7 @@ namespace Business.Handler
                 var _total = (int)paramsType.GetField("Item3").GetValue(state);
 
                 var lastChunkFileUpload = DateTime.MinValue;
-                var lastTaskCurrentChunkIndex = -1;
+                var lastTaskCurrentChunkIndex = -2;
 
                 while (Repository_ChunkFileMergeTask.Where(o => o.MD5 == _md5 && o.Specs == _specs && o.State == $"{CFMTState.上传中}").Any())
                 {
@@ -648,23 +648,20 @@ namespace Business.Handler
 
                     if (lastChunkFileUpload == _lastChunkFileUpload)
                     {
-                        Task.Delay(500, cancellationToken).GetAwaiter().GetResult();
-                        continue;
+                        var _lastTaskCurrentChunkIndex = Repository_ChunkFileMergeTask.Where(o => o.MD5 == md5 && o.Specs == specs)
+                                                            .OrderByDescending(o => o.ModifyTime)
+                                                            .ToOne(o => o.CurrentChunkIndex);
+
+                        if (lastTaskCurrentChunkIndex == _lastTaskCurrentChunkIndex)
+                        {
+                            Task.Delay(500, cancellationToken).GetAwaiter().GetResult();
+                            continue;
+                        }
+                        else
+                            lastTaskCurrentChunkIndex = _lastTaskCurrentChunkIndex;
                     }
                     else
                         lastChunkFileUpload = _lastChunkFileUpload;
-
-                    var _lastTaskCurrentChunkIndex = Repository_ChunkFileMergeTask.Where(o => o.MD5 == md5 && o.Specs == specs)
-                                                        .OrderByDescending(o => o.ModifyTime)
-                                                        .ToOne(o => o.CurrentChunkIndex);
-
-                    if (lastTaskCurrentChunkIndex == _lastTaskCurrentChunkIndex)
-                    {
-                        Task.Delay(500, cancellationToken).GetAwaiter().GetResult();
-                        continue;
-                    }
-                    else
-                        lastTaskCurrentChunkIndex = _lastTaskCurrentChunkIndex;
 
                     SendChunksSourceInfo(_md5, _specs, _total).GetAwaiter().GetResult();
 
