@@ -9,6 +9,61 @@
             分片文件合并任务状态
             </summary>
         </member>
+        <member name="T:Model.Common.ChunkFileMergeTaskDTO.List">
+            <summary>
+            列表
+            </summary>
+        </member>
+        <member name="P:Model.Common.ChunkFileMergeTaskDTO.List.FullName">
+            <summary>
+            完整名称
+            </summary>
+        </member>
+        <member name="F:Model.Common.ChunkFileMergeTaskDTO.List.FromMemberMapOptions">
+            <summary>
+            来源成员映射选项
+            </summary>
+        </member>
+        <member name="F:Model.Common.ChunkFileMergeTaskDTO.List.ToMemberMapOptions">
+            <summary>
+            当前成员映射选项
+            </summary>
+        </member>
+        <member name="T:Model.Common.ChunkFileMergeTaskDTO.ChunksSourceInfo">
+            <summary>
+            分片来源信息
+            </summary>
+        </member>
+        <member name="P:Model.Common.ChunkFileMergeTaskDTO.ChunksSourceInfo.Specs">
+            <summary>
+            分片规格
+            </summary>
+        </member>
+        <member name="P:Model.Common.ChunkFileMergeTaskDTO.ChunksSourceInfo.Total">
+            <summary>
+            总数
+            </summary>
+        </member>
+        <member name="P:Model.Common.ChunkFileMergeTaskDTO.ChunksSourceInfo.Activitys">
+            <summary>
+            热度信息
+            </summary>
+        </member>
+        <member name="T:Model.Common.ChunkFileMergeTaskDTO.ActivityInfo">
+            <summary>
+            热度信息
+            </summary>
+        </member>
+        <member name="P:Model.Common.ChunkFileMergeTaskDTO.ActivityInfo.Activity">
+            <summary>
+            热度
+            </summary>
+        </member>
+        <member name="P:Model.Common.ChunkFileMergeTaskDTO.ActivityInfo.Percentage">
+            <summary>
+            百分比
+            </summary>
+        </member>
         <member name="T:Model.Common.EntryLogDTO.List">
             <summary>
             列表
@@ -2239,6 +2294,11 @@
             RSA配置
             </summary>
         </member>
+        <member name="P:Model.Utils.Config.SystemConfig.EnableUploadLargeFile">
+            <summary>
+            启用大文件上传功能
+            </summary>
+        </member>
         <member name="T:Model.Utils.Config.WeChatServiceSetting">
             <summary>
             微信服务配置
@@ -3432,6 +3492,11 @@
         <member name="T:Model.Utils.SignalR.CAGCHubMethod">
             <summary>
             代码自动生成信息推送前端方法
+            </summary>
+        </member>
+        <member name="T:Model.Utils.SignalR.CFMTHubMethod">
+            <summary>
+            分片文件合并任务中心前端方法
             </summary>
         </member>
         <member name="T:Model.Utils.SignalR.LogHubMethod">

@@ -54,16 +54,6 @@
             文件大小
             </summary>
         </member>
-        <member name="P:Entity.Common.Common_ChunkFile.ContentType">
-            <summary>
-            内容类型
-            </summary>
-        </member>
-        <member name="P:Entity.Common.Common_ChunkFile.Extension">
-            <summary>
-            文件扩展名
-            </summary>
-        </member>
         <member name="P:Entity.Common.Common_ChunkFile.Path">
             <summary>
             文件路径

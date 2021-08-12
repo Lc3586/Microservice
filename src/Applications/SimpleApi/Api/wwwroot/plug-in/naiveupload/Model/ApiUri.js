@@ -38,12 +38,9 @@ var ApiUri = (function () {
     ApiUri.FileSize = function (length) { return "/file/file-size/" + length; };
     ApiUri.PreUploadFile = function (md5, filename, section, type, extension, specs, total) {
         if (section === void 0) { section = false; }
-        if (type === void 0) { type = null; }
-        if (extension === void 0) { extension = null; }
-        if (specs === void 0) { specs = null; }
-        if (total === void 0) { total = null; }
-        return "/file/pre-upload-file/" + md5 + "?filename=" + filename + "&section=" + section + "&type=" + type + "&extension=" + extension + "&specs=" + specs + "&total=" + total;
+        return "/file/pre-upload-file/" + md5 + "?filename=" + filename + "&section=" + section + "&type=" + (type || '') + "&extension=" + (extension || '') + "&specs=" + (specs || '') + "&total=" + (total || '');
     };
+    ApiUri.CFMTHub = '/cfmthub';
     return ApiUri;
 }());
 //# sourceMappingURL=ApiUri.js.map

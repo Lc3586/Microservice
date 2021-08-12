@@ -86,6 +86,13 @@
                     src: 'Model/ApiUri.js'
                 }
             },
+            {
+                Tag: ImportFileTag.JS,
+                Attributes: {
+                    type: 'text/javascript',
+                    src: 'Helper/ChunkFileMergeTaskHelper.js'
+                }
+            },
         ],
         () => {
             const Vue = (<any>window).Vue;
@@ -273,6 +280,13 @@
                         scrollLock: true,
                         /*文件集合*/
                         files: []
+                    },
+                    chunkFileMergeTask: {
+                        init: false,
+                        search: '',
+                        list: [],
+                        error: '',
+                        loading: true
                     }
                 };
             }
@@ -389,11 +403,17 @@
                             Upload.Clean();
                         MultipleUploadSettings.Limit = 1;
                         break;
-                    default:
-
-                        break;
                     case 'Multiple':
                         MultipleUploadSettings.Limit = 50;
+                        break;
+                    case 'Bigger':
+                        InitChunkFileMergeTaskList();
+                        break;
+                    case 'Library':
+
+                        break;
+                    default:
+
                         break;
                 }
             }
@@ -671,6 +691,75 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
              */
             function Clean() {
                 Upload.Clean();
+            }
+
+            /**
+             * 初始化分片文件合并任务列表
+             * */
+            async function InitChunkFileMergeTaskList() {
+                if (Main.chunkFileMergeTask.init)
+                    return;
+
+                Main.chunkFileMergeTask.init = true;
+
+                const chunkFileMergeTaskHelper = new ChunkFileMergeTaskHelper();
+                await chunkFileMergeTaskHelper.Init();
+
+                chunkFileMergeTaskHelper.AddTask = async task => {
+                    //console.info(task);
+
+                    task.ChunksSources = [];
+                    Main.chunkFileMergeTask.list.push(task);
+                };
+
+                chunkFileMergeTaskHelper.UpdateTask = async (id, data) => {
+                    //console.info(id, data);
+                    //console.info(Main.chunkFileMergeTask.list);
+
+                    for (let task of Main.chunkFileMergeTask.list) {
+                        if (task.Id !== id)
+                            continue;
+
+                        for (let key in data) {
+                            task[key] = data[key];
+                        }
+                        break;
+                    }
+                };
+
+                chunkFileMergeTaskHelper.RemoveTask = async md5 => {
+                    for (let task of Main.chunkFileMergeTask.list) {
+                        if (task.MD5 !== md5)
+                            continue;
+
+                        task.Remove = true;
+                        break;
+                    }
+                };
+
+                chunkFileMergeTaskHelper.UpdateChunksSource = async (md5, chunksSource) => {
+                    //console.info(md5, chunksSource);
+
+                    for (let task of Main.chunkFileMergeTask.list) {
+                        if (task.MD5 !== md5)
+                            continue;
+
+                        for (let source of task.ChunksSources) {
+                            if (source.Specs == chunksSource.Specs
+                                && source.Total == chunksSource.Total) {
+                                source.Activitys = chunksSource.Activitys;
+                                return;
+                            }
+                        }
+
+                        task.ChunksSources.push(chunksSource);
+                        break;
+                    }
+                };
+
+                await chunkFileMergeTaskHelper.Connect();
+
+                Main.chunkFileMergeTask.loading = false;
             }
         });
 };

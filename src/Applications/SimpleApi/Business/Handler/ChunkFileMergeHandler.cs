@@ -10,8 +10,7 @@ using Microservice.Library.Extension;
 using Microservice.Library.Extension.Helper;
 using Microservice.Library.File;
 using Microservice.Library.FreeSql.Gen;
-using Microservice.Library.Http;
-using Microsoft.AspNetCore.Hosting;
+using Microservice.Library.OpenApi.Extention;
 using Microsoft.AspNetCore.SignalR;
 using Model.Common;
 using Model.Common.ChunkFileMergeTaskDTO;
@@ -41,6 +40,12 @@ namespace Business.Handler
         /// <remarks>
         /// </remarks>
         readonly ConcurrentQueue<string> IdQueue = new ConcurrentQueue<string>();
+
+        /// <summary>
+        /// 发送分片来源信息任务取消令牌集合
+        /// </summary>
+        /// <remarks>{Key, CancellationTokenSource}</remarks>
+        public static readonly ConcurrentDictionary<string, CancellationTokenSource> CancellationTokens = new ConcurrentDictionary<string, CancellationTokenSource>();
 
         SystemConfig Config
         {
@@ -187,9 +192,9 @@ namespace Business.Handler
                         task.Id,
                         new
                         {
-                            State = task.State,
-                            Info = task.Info,
-                            ModifyTime = task.ModifyTime
+                            task.State,
+                            task.Info,
+                            ModifyTime = task.ModifyTime?.ToString("yyyy-MM-dd HH:mm:ss.ffff")
                         });
 
                     Logger.Log(
@@ -228,8 +233,8 @@ namespace Business.Handler
                     task.Id,
                     new
                     {
-                        Info = task.Info,
-                        ModifyTime = task.ModifyTime
+                        task.Info,
+                        ModifyTime = task.ModifyTime?.ToString("yyyy-MM-dd HH:mm:ss.ffff")
                     });
 
                 Logger.Log(
@@ -269,9 +274,9 @@ namespace Business.Handler
                     task.Id,
                     new
                     {
-                        State = task.State,
-                        Info = task.Info,
-                        ModifyTime = task.ModifyTime
+                        task.State,
+                        task.Info,
+                        ModifyTime = task.ModifyTime?.ToString("yyyy-MM-dd HH:mm:ss.ffff")
                     });
 
                 Logger.Log(
@@ -318,9 +323,9 @@ namespace Business.Handler
                 task.Id,
                 new
                 {
-                    State = task.State,
-                    Info = task.Info,
-                    ModifyTime = task.ModifyTime
+                    task.State,
+                    task.Info,
+                    ModifyTime = task.ModifyTime?.ToString("yyyy-MM-dd HH:mm:ss.ffff")
                 });
 
             if (!Directory.Exists(BaseDir))
@@ -349,9 +354,9 @@ namespace Business.Handler
                     task.Id,
                     new
                     {
-                        CurrentChunkIndex = task.CurrentChunkIndex,
-                        Bytes = task.Bytes,
-                        ModifyTime = task.ModifyTime
+                        task.CurrentChunkIndex,
+                        task.Bytes,
+                        ModifyTime = task.ModifyTime?.ToString("yyyy-MM-dd HH:mm:ss.ffff")
                     });
             }
 
@@ -390,10 +395,10 @@ namespace Business.Handler
                     task.Id,
                     new
                     {
-                        State = task.State,
-                        Info = task.Info,
-                        ModifyTime = task.ModifyTime,
-                        CompletedTime = task.CompletedTime
+                        task.State,
+                        task.Info,
+                        ModifyTime = task.ModifyTime?.ToString("yyyy-MM-dd HH:mm:ss.ffff"),
+                        CompletedTime = task.CompletedTime?.ToString("yyyy-MM-dd HH:mm:ss.ffff")
                     });
 
                 Logger.Log(
@@ -407,14 +412,16 @@ namespace Business.Handler
             task.Info = "已合并所有分片文件.";
             Repository_ChunkFileMergeTask.Update(task);
 
+            //CancelSendChunksSourceInfoTask(task.MD5, task.Specs, task.Total);
+
             _ = SendUpdateData(
                 task.Id,
                 new
                 {
-                    State = task.State,
-                    Info = task.Info,
-                    ModifyTime = task.ModifyTime,
-                    CompletedTime = task.CompletedTime
+                    task.State,
+                    task.Info,
+                    ModifyTime = task.ModifyTime?.ToString("yyyy-MM-dd HH:mm:ss.ffff"),
+                    CompletedTime = task.CompletedTime?.ToString("yyyy-MM-dd HH:mm:ss.ffff")
                 });
 
             return true;
@@ -498,6 +505,9 @@ namespace Business.Handler
                     if (!Completed(task))
                         continue;
 
+                    CancelSendChunksSourceInfoTask(task.MD5, task.Specs, task.Total);
+                    await SendChunksSourceInfo(task.MD5, task.Specs, task.Total);
+
                     Clear(allChunkFiles);
                 }
                 catch (Exception ex)
@@ -530,6 +540,83 @@ namespace Business.Handler
         }
 
         /// <summary>
+        /// 获取分片热度信息
+        /// </summary>
+        /// <param name="total"></param>
+        /// <param name="chunkFileIndices"></param>
+        /// <returns></returns>
+        static List<ActivityInfo> GetActivityInfo(int total, Dictionary<int, int> chunkFileIndices)
+        {
+            var activitys = new List<ActivityInfo>();
+            var lastActivity = 0;
+            for (int i = 0; i < total; i++)
+            {
+                var activity = chunkFileIndices.ContainsKey(i) ? chunkFileIndices[i] : 0;
+
+                if (lastActivity != activity)
+                {
+                    activitys.Add(new ActivityInfo
+                    {
+                        Activity = activity,
+                        Percentage = 1
+                    });
+
+                    lastActivity = activity;
+                }
+                else
+                {
+                    if (activitys.Count == 0)
+                        activitys.Add(new ActivityInfo
+                        {
+                            Activity = activity,
+                            Percentage = 1
+                        });
+                    else
+                        activitys.Last().Percentage += 1;
+                }
+            }
+
+            activitys.ForEach(o => o.Percentage = o.Percentage / total * 100);
+
+            return activitys;
+        }
+
+        /// <summary>
+        /// 获取分片文件来源信息
+        /// </summary>
+        /// <param name="md5"></param>
+        /// <param name="specs"></param>
+        /// <param name="total"></param>
+        /// <returns></returns>
+        async Task SendChunksSourceInfo(string md5, int specs, int total)
+        {
+            var chunksSource = new ChunksSourceInfo
+            {
+                Specs = specs,
+                Total = total
+            };
+
+            var chunkFileIndices = Repository_FileChunk.Where(p =>
+                            p.FileMD5 == md5
+                            && p.Specs == specs
+                            && (p.State == $"{FileState.上传中}" || p.State == $"{FileState.可用}")
+                            && p.ServerKey == Config.ServerKey)
+                       .GroupBy(p => p.Index)
+                       .OrderBy(p => p.Key)
+                       .ToDictionary(p => p.Count());
+
+            chunksSource.Activitys = GetActivityInfo(total, chunkFileIndices);
+
+            await CFMTHub.Clients.All.SendCoreAsync(
+                   CFMTHubMethod.更新分片来源信息,
+                   new object[]
+                   {
+                        md5,
+                        chunksSource
+                   });
+        }
+
+        /// <summary>
         /// 发送分片来源信息任务
         /// </summary>
         /// <param name="md5">文件MD5值</param>
@@ -539,7 +626,7 @@ namespace Business.Handler
         /// <returns></returns>
         Task SendChunksSourceInfoTask(string md5, int specs, int total, CancellationToken cancellationToken)
         {
-            Action<object?> action = async (object? state) =>
+            void action(object? state)
             {
                 if (state == null)
                     return;
@@ -553,7 +640,7 @@ namespace Business.Handler
                 var lastChunkFileUpload = DateTime.MinValue;
                 var lastTaskCurrentChunkIndex = -1;
 
-                while (Repository_ChunkFileMergeTask.Where(o => o.MD5 == _md5 && o.Specs == _specs && o.State == $"{CFMTState.处理中}").Any())
+                while (Repository_ChunkFileMergeTask.Where(o => o.MD5 == _md5 && o.Specs == _specs && o.State == $"{CFMTState.上传中}").Any())
                 {
                     var _lastChunkFileUpload = Repository_FileChunk.Where(o => o.FileMD5 == md5 && o.Specs == specs && o.State != $"{FileState.已删除}")
                                                         .OrderByDescending(o => o.CreateTime)
@@ -561,7 +648,7 @@ namespace Business.Handler
 
                     if (lastChunkFileUpload == _lastChunkFileUpload)
                     {
-                        await Task.Delay(500);
+                        Task.Delay(500, cancellationToken).GetAwaiter().GetResult();
                         continue;
                     }
                     else
@@ -573,63 +660,17 @@ namespace Business.Handler
 
                     if (lastTaskCurrentChunkIndex == _lastTaskCurrentChunkIndex)
                     {
-                        await Task.Delay(500);
+                        Task.Delay(500, cancellationToken).GetAwaiter().GetResult();
                         continue;
                     }
                     else
                         lastTaskCurrentChunkIndex = _lastTaskCurrentChunkIndex;
 
-                    var chunksSource = new ChunksSourceInfo
-                    {
-                        Specs = _specs,
-                        Total = _total
-                    };
+                    SendChunksSourceInfo(_md5, _specs, _total).GetAwaiter().GetResult();
 
-                    var chunkFileIndices = Repository_FileChunk.Where(p =>
-                                    p.FileMD5 == _md5
-                                    && p.Specs == _specs
-                                    && (p.State == $"{FileState.上传中}" || p.State == $"{FileState.可用}")
-                                    && p.ServerKey == Config.ServerKey)
-                               .GroupBy(p => p.Index)
-                               .OrderBy(p => p.Key)
-                               .ToDictionary(p => p.Count());
-
-                    chunksSource.Activity = GetActivityInfo();
-
-                    await CFMTHub.Clients.All.SendCoreAsync(
-                           CFMTHubMethod.更新分片来源信息,
-                           new object[]
-                           {
-                    _md5,
-                    chunksSource
-                           });
-
-                    List<ActivityInfo> GetActivityInfo()
-                    {
-                        var activitys = new List<ActivityInfo>();
-                        var lastActivity = 0;
-                        for (int i = 0; i < _total; i++)
-                        {
-                            var activity = chunkFileIndices.ContainsKey(i) ? chunkFileIndices[i] : 0;
-
-                            if (lastActivity != activity)
-                                activitys.Add(new ActivityInfo
-                                {
-                                    Activity = activity,
-                                    Percentage = 1
-                                });
-                            else
-                                activitys.Last().Percentage += 1;
-                        }
-
-                        activitys.ForEach(o => o.Percentage = o.Percentage / _total * 100);
-
-                        return activitys;
-                    }
-
-                    await Task.Delay(500);
+                    Task.Delay(500, cancellationToken).GetAwaiter().GetResult();
                 }
-            };
+            }
 
             return new Task(action, (md5, specs, total), cancellationToken);
         }
@@ -641,7 +682,7 @@ namespace Business.Handler
         /// <param name="specs">分片规格</param>
         /// <param name="total">分片总数</param>
         /// <returns></returns>
-        async void BeginSendChunksSourceInfoTask(string md5, int specs, int total)
+        void BeginSendChunksSourceInfoTask(string md5, int specs, int total)
         {
             var timeoutCancel = new CancellationTokenSource();
 
@@ -650,7 +691,27 @@ namespace Business.Handler
 
             }, (md5, specs, total));
 
-            await SendChunksSourceInfoTask(md5, specs, total, timeoutCancel.Token);
+            SendChunksSourceInfoTask(md5, specs, total, timeoutCancel.Token).Start();
+
+            CancellationTokens.AddOrUpdate(
+                $"{md5}{specs}{total}",
+                timeoutCancel,
+                (key, old) =>
+                {
+                    return timeoutCancel;
+                });
+        }
+
+        /// <summary>
+        /// 取消发送分片信息任务
+        /// </summary>
+        /// <param name="md5">文件MD5值</param>
+        /// <param name="specs">分片规格</param>
+        /// <param name="total">分片总数</param>
+        static void CancelSendChunksSourceInfoTask(string md5, int specs, int total)
+        {
+            if (CancellationTokens.TryRemove($"{md5}{specs}{total}", out CancellationTokenSource cts) && cts.Token.CanBeCanceled)
+                cts.Cancel();
         }
 
         #endregion

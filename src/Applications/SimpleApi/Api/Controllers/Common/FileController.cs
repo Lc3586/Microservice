@@ -185,7 +185,7 @@ namespace Api.Controllers
         }
 
         /// <summary>
-        /// 分片MD5值校验
+        /// 预备上传分片文件
         /// </summary>
         /// <param name="file_md5">文件MD5值</param>
         /// <param name="md5">分片文件MD5值</param>

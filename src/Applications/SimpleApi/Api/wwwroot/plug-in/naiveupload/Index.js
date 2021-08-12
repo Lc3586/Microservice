@@ -122,6 +122,13 @@ window.onload = function () {
                 src: 'Model/ApiUri.js'
             }
         },
+        {
+            Tag: "script",
+            Attributes: {
+                type: 'text/javascript',
+                src: 'Helper/ChunkFileMergeTaskHelper.js'
+            }
+        },
     ], function () {
         var Vue = window.Vue;
         var ElementPlus = window.ElementPlus;
@@ -259,6 +266,13 @@ window.onload = function () {
                     },
                     scrollLock: true,
                     files: []
+                },
+                chunkFileMergeTask: {
+                    init: false,
+                    search: '',
+                    list: [],
+                    error: '',
+                    loading: true
                 }
             };
         }
@@ -345,10 +359,15 @@ window.onload = function () {
                         Upload.Clean();
                     MultipleUploadSettings.Limit = 1;
                     break;
-                default:
-                    break;
                 case 'Multiple':
                     MultipleUploadSettings.Limit = 50;
+                    break;
+                case 'Bigger':
+                    InitChunkFileMergeTaskList();
+                    break;
+                case 'Library':
+                    break;
+                default:
                     break;
             }
         }
@@ -484,6 +503,85 @@ window.onload = function () {
         }
         function Clean() {
             Upload.Clean();
+        }
+        function InitChunkFileMergeTaskList() {
+            return __awaiter(this, void 0, void 0, function () {
+                var chunkFileMergeTaskHelper;
+                var _this = this;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            if (Main.chunkFileMergeTask.init)
+                                return [2];
+                            Main.chunkFileMergeTask.init = true;
+                            chunkFileMergeTaskHelper = new ChunkFileMergeTaskHelper();
+                            return [4, chunkFileMergeTaskHelper.Init()];
+                        case 1:
+                            _a.sent();
+                            chunkFileMergeTaskHelper.AddTask = function (task) { return __awaiter(_this, void 0, void 0, function () {
+                                return __generator(this, function (_a) {
+                                    task.ChunksSources = [];
+                                    Main.chunkFileMergeTask.list.push(task);
+                                    return [2];
+                                });
+                            }); };
+                            chunkFileMergeTaskHelper.UpdateTask = function (id, data) { return __awaiter(_this, void 0, void 0, function () {
+                                var _i, _a, task, key;
+                                return __generator(this, function (_b) {
+                                    for (_i = 0, _a = Main.chunkFileMergeTask.list; _i < _a.length; _i++) {
+                                        task = _a[_i];
+                                        if (task.Id !== id)
+                                            continue;
+                                        for (key in data) {
+                                            task[key] = data[key];
+                                        }
+                                        break;
+                                    }
+                                    return [2];
+                                });
+                            }); };
+                            chunkFileMergeTaskHelper.RemoveTask = function (md5) { return __awaiter(_this, void 0, void 0, function () {
+                                var _i, _a, task;
+                                return __generator(this, function (_b) {
+                                    for (_i = 0, _a = Main.chunkFileMergeTask.list; _i < _a.length; _i++) {
+                                        task = _a[_i];
+                                        if (task.MD5 !== md5)
+                                            continue;
+                                        task.Remove = true;
+                                        break;
+                                    }
+                                    return [2];
+                                });
+                            }); };
+                            chunkFileMergeTaskHelper.UpdateChunksSource = function (md5, chunksSource) { return __awaiter(_this, void 0, void 0, function () {
+                                var _i, _a, task, _b, _c, source;
+                                return __generator(this, function (_d) {
+                                    for (_i = 0, _a = Main.chunkFileMergeTask.list; _i < _a.length; _i++) {
+                                        task = _a[_i];
+                                        if (task.MD5 !== md5)
+                                            continue;
+                                        for (_b = 0, _c = task.ChunksSources; _b < _c.length; _b++) {
+                                            source = _c[_b];
+                                            if (source.Specs == chunksSource.Specs
+                                                && source.Total == chunksSource.Total) {
+                                                source.Activitys = chunksSource.Activitys;
+                                                return [2];
+                                            }
+                                        }
+                                        task.ChunksSources.push(chunksSource);
+                                        break;
+                                    }
+                                    return [2];
+                                });
+                            }); };
+                            return [4, chunkFileMergeTaskHelper.Connect()];
+                        case 2:
+                            _a.sent();
+                            Main.chunkFileMergeTask.loading = false;
+                            return [2];
+                    }
+                });
+            });
         }
     });
 };

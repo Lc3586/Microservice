@@ -16,6 +16,12 @@
             <remarks>
             </remarks>
         </member>
+        <member name="F:Business.Handler.ChunkFileMergeHandler.CancellationTokens">
+            <summary>
+            发送分片来源信息任务取消令牌集合
+            </summary>
+            <remarks>{Key, CancellationTokenSource}</remarks>
+        </member>
         <member name="P:Business.Handler.ChunkFileMergeHandler.BaseDir">
             <summary>
             存储路径根目录相对路径
@@ -64,6 +70,68 @@
             清理
             </summary>
             <param name="chunkFiles">分片文件</param>
+        </member>
+        <member name="M:Business.Handler.ChunkFileMergeHandler.Run">
+            <summary>
+            运行
+            </summary>
+        </member>
+        <member name="M:Business.Handler.ChunkFileMergeHandler.Processing">
+            <summary>
+            处理
+            </summary>
+        </member>
+        <member name="M:Business.Handler.ChunkFileMergeHandler.SendUpdateData(System.String,System.Object)">
+            <summary>
+            发送更新数据
+            </summary>
+            <param name="id">任务ID</param>
+            <param name="data">更新的数据</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Handler.ChunkFileMergeHandler.GetActivityInfo(System.Int32,System.Collections.Generic.Dictionary{System.Int32,System.Int32})">
+            <summary>
+            获取分片热度信息
+            </summary>
+            <param name="total"></param>
+            <param name="chunkFileIndices"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Handler.ChunkFileMergeHandler.SendChunksSourceInfo(System.String,System.Int32,System.Int32)">
+            <summary>
+            获取分片文件来源信息
+            </summary>
+            <param name="md5"></param>
+            <param name="specs"></param>
+            <param name="total"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Handler.ChunkFileMergeHandler.SendChunksSourceInfoTask(System.String,System.Int32,System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            发送分片来源信息任务
+            </summary>
+            <param name="md5">文件MD5值</param>
+            <param name="specs">分片规格</param>
+            <param name="total">分片总数</param>
+            <param name="cancellationToken">取消令牌</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Handler.ChunkFileMergeHandler.BeginSendChunksSourceInfoTask(System.String,System.Int32,System.Int32)">
+            <summary>
+            开始发送分片信息任务
+            </summary>
+            <param name="md5">文件MD5值</param>
+            <param name="specs">分片规格</param>
+            <param name="total">分片总数</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Handler.ChunkFileMergeHandler.CancelSendChunksSourceInfoTask(System.String,System.Int32,System.Int32)">
+            <summary>
+            取消发送分片信息任务
+            </summary>
+            <param name="md5">文件MD5值</param>
+            <param name="specs">分片规格</param>
+            <param name="total">分片总数</param>
         </member>
         <member name="F:Business.Handler.ChunkFileMergeHandler.Name">
             <summary>
@@ -114,16 +182,6 @@
             <param name="md5">文件MD5值</param>
             <param name="specs">分片文件规格</param>
             <param name="total">分片文件总数</param>
-        </member>
-        <member name="M:Business.Handler.ChunkFileMergeHandler.Run">
-            <summary>
-            运行
-            </summary>
-        </member>
-        <member name="M:Business.Handler.ChunkFileMergeHandler.Processing">
-            <summary>
-            处理
-            </summary>
         </member>
         <member name="T:Business.Handler.LogForwardHandler">
             <summary>
@@ -206,6 +264,11 @@
             停止接收
             </summary>
             <returns></returns>
+        </member>
+        <member name="T:Business.Hub.ChunkFileMergeTaskHub">
+            <summary>
+            分片文件合并任务中心
+            </summary>
         </member>
         <member name="T:Business.Hub.LogHub">
             <summary>

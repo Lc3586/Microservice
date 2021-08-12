@@ -34,6 +34,11 @@
                                type="primary"
                                @click="Start">开始</el-button>
                 </div>
+                <div class="tab-pane-tool" v-show="config.type=='Bigger'">
+                    <el-input v-model="chunkFileMergeTask.search"
+                              prefix-icon="el-icon-search"
+                              placeholder="输入文件名筛选" />
+                </div>
                 <el-tabs tab-position="left" v-model="config.type" @tab-click="TabsChanged">
                     <el-tab-pane label="单文件上传" class="tab-pane" name="Single">
                         <div :class="'upload-container independent ' + (multipleUpload.settings.Theme == 'detailedly' ? 'independent-detailedly' : 'independent-card')">
@@ -249,10 +254,93 @@
                             </div>
                         </div>
                     </el-tab-pane>
-                    <el-tab-pane label="文件库" class="tab-pane" name="Library">
-
-                    </el-tab-pane>
                     <el-tab-pane label="大文件任务" class="tab-pane" name="Bigger">
+                        <el-table :data="chunkFileMergeTask.list.filter(data => !data.Remove && (!chunkFileMergeTask.search || data.Name.includes(chunkFileMergeTask.search)))"
+                                  stripe
+                                  :default-sort="{prop: 'State', order: 'descending'}"
+                                  :empty-text="chunkFileMergeTask.error"
+                                  v-loading="chunkFileMergeTask.loading"
+                                  style="width: 100%">
+                            <el-table-column label="服务器标识"
+                                             prop="ServerKey"
+                                             sortable>
+                            </el-table-column>
+                            <el-table-column label="文件MD5校验值"
+                                             prop="MD5">
+                            </el-table-column>
+                            <el-table-column label="名称"
+                                             prop="Name"
+                                             sortable>
+                            </el-table-column>
+                            <el-table-column label="内容类型"
+                                             prop="ContentType"
+                                             sortable>
+                            </el-table-column>
+                            <el-table-column label="文件扩展名"
+                                             prop="Extension"
+                                             sortable>
+                            </el-table-column>
+                            <el-table-column label="字节数"
+                                             prop="Bytes"
+                                             sortable>
+                            </el-table-column>
+                            <el-table-column label="文件大小"
+                                             prop="Size"
+                                             sortable>
+                            </el-table-column>
+                            <el-table-column label="分片规格"
+                                             prop="Specs"
+                                             sortable>
+                            </el-table-column>
+                            <el-table-column label="分片总数"
+                                             prop="Total"
+                                             sortable>
+                            </el-table-column>
+                            <el-table-column label="状态"
+                                             prop="State"
+                                             sortable>
+                            </el-table-column>
+                            <el-table-column label="分片来源">
+                                <template #default="scope">
+                                    <el-popover effect="light" trigger="hover" placement="top">
+                                        <template #default>
+                                            <div v-for="(source, index) in scope.row.ChunksSources">
+                                                <p>分片规格: {{ source.Specs }}</p>
+                                                <p>总数: {{ source.Total }}</p>
+
+                                                <el-progress v-for="(activity, index) in source.Activitys"
+                                                             :percentage="activity.Percentage" :color="(activity.Activity == 0 ? '#ecf5ff' : (activity.Activity == 1 ? '#1989fa' : (activity.Activity < 5 ? '#e6a23c' : (activity.Activity < 10 ?'#f56c6c' : '#6f7ad3'))))"></el-progress>
+
+                                                <hr />
+                                            </div>
+                                        </template>
+                                        <template #reference>
+                                            <div class="name-wrapper">
+                                                <el-tag size="medium">{{ scope.row.ChunksSources.length }}个</el-tag>
+                                            </div>
+                                        </template>
+                                    </el-popover>
+                                </template>
+                            </el-table-column>
+                            <el-table-column label="信息"
+                                             prop="Info"
+                                             sortable>
+                            </el-table-column>
+                            <el-table-column label="创建时间"
+                                             prop="CreateTime"
+                                             sortable>
+                            </el-table-column>
+                            <el-table-column label="最近更新时间"
+                                             prop="ModifyTime"
+                                             sortable>
+                            </el-table-column>
+                            <el-table-column label="完成时间"
+                                             prop="CompletedTime"
+                                             sortable>
+                            </el-table-column>
+                        </el-table>
+                    </el-tab-pane>
+                    <el-tab-pane label="文件库" class="tab-pane" name="Library">
 
                     </el-tab-pane>
                 </el-tabs>

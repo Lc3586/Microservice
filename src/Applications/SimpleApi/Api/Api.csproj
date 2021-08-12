@@ -120,6 +120,8 @@
     <Content Remove="wwwroot\filetypes\xmind.png" />
     <Content Remove="wwwroot\filetypes\xml.png" />
     <Content Remove="wwwroot\filetypes\zip.png" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Helper\ChunkFileMergeTaskHelper.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Helper\ChunkFileMergeTaskHelper.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Helper\FileReadHelper.js" />
     <Content Remove="wwwroot\plug-in\naiveupload\Helper\FileReadHelper.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Helper\HashHelper.js" />
@@ -142,6 +144,8 @@
     <Content Remove="wwwroot\plug-in\naiveupload\Model\FileInfo.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\FIleType.js" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\FIleType.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\HubState.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\HubState.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\MultipleUploadSetting.js" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\MultipleUploadSetting.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\PreUploadChunkFileResponse.js" />
@@ -438,6 +442,12 @@
     <None Include="wwwroot\filetypes\zip.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="wwwroot\plug-in\naiveupload\Helper\ChunkFileMergeTaskHelper.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Helper\ChunkFileMergeTaskHelper.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="wwwroot\plug-in\naiveupload\Helper\FileReadHelper.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -496,6 +506,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="wwwroot\plug-in\naiveupload\Model\FIleType.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\HubState.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\HubState.js.map">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="wwwroot\plug-in\naiveupload\Model\MultipleUploadSetting.js">
@@ -891,6 +907,15 @@
     <Content Update="wwwroot\vue\vue.global.prod.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <TypeScriptCompile Update="wwwroot\plug-in\naiveupload\Helper\ChunkFileMergeTaskHelper.ts">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </TypeScriptCompile>
+    <TypeScriptCompile Update="wwwroot\plug-in\naiveupload\Model\HubState.ts">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </TypeScriptCompile>
   </ItemGroup>
 
   <ProjectExtensions>

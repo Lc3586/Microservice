@@ -63,10 +63,10 @@ class ApiUri {
      * @param specs 分片文件规格（单文件上传时忽略此参数）
      * @param total 分片文件总数（单文件上传时忽略此参数）
      * */
-    static PreUploadFile: (md5: string, filename: string, section?: boolean, type?: string, extension?: string, specs?: number, total?: number) => string = (md5: string, filename: string, section: boolean = false, type: string | null = null, extension: string | null = null, specs: number | null = null, total: number | null = null) => `/file/pre-upload-file/${md5}?filename=${filename}&section=${section}&type=${type}&extension=${extension}&specs=${specs}&total=${total}`;
+    static PreUploadFile: (md5: string, filename: string, section?: boolean, type?: string, extension?: string, specs?: number, total?: number) => string = (md5: string, filename: string, section: boolean = false, type: string, extension: string, specs: number, total: number) => `/file/pre-upload-file/${md5}?filename=${filename}&section=${section}&type=${type || ''}&extension=${extension || ''}&specs=${specs || ''}&total=${total || ''}`;
 
     /**
-     * 预上传分片文件
+     * 预备上传分片文件
      * @param file_md5 文件哈希值
      * @param md5 分片文件哈希值
      * @param index 分片文件索引
@@ -144,4 +144,9 @@ class ApiUri {
     static Browse(id: string) {
         return `/file/browse/${id}`;
     }
+
+    /**
+     * 分片文件合并任务中心
+     * */
+    static CFMTHub: string = '/cfmthub';
 }

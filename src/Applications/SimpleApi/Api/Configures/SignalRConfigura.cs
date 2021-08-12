@@ -33,6 +33,10 @@ namespace Api.Configures
                      });
                  }).AddScoped<IAuthorizationHandler, SignalRHubHandler<SignalRHubRequirement>>()
                  .AddSignalR()
+                 .AddJsonProtocol(option =>
+                 {
+                     option.PayloadSerializerOptions.PropertyNamingPolicy = null;
+                 })
                  .AddHubOptions<LogHub>(option =>
                  {
                      option.ClientTimeoutInterval = TimeSpan.FromSeconds(30);

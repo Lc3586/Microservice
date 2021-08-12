@@ -56,7 +56,7 @@ namespace Model.Common.ChunkFileMergeTaskDTO
         /// <summary>
         /// 热度信息
         /// </summary>
-        public List<ActivityInfo> Activity { get; set; }
+        public List<ActivityInfo> Activitys { get; set; }
     }
 
     /// <summary>
