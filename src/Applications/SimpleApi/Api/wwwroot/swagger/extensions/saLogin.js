@@ -226,7 +226,19 @@ window.onDomLoaded(() => {
                 }
             };
 
-            check(addBtn);
+            var checking = () => {
+                check(addBtn);
+            };
+
+            window.onInformationLoaded(() => {
+                window.domMutationObserver(
+                    $(".swagger-ui")[0],
+                    () => {
+                        window.delayedEvent(checking, null, 150, 'sa-check');
+                    });
+            });
+
+            window.delayedEvent(checking, null, 100, 'sa-check');
 
             console.info('已加载功能 => SampleAuthentication身份验证');
         }

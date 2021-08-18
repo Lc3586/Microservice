@@ -5,12 +5,12 @@ using System.Text;
 namespace Model.Utils.Config
 {
     /// <summary>
-    /// swagger接口文档说明配置
+    /// swagger接口文档分组配置
     /// </summary>
-    public class SwaggerApiVersionDescription
+    public class SwaggerApiGroup
     {
         /// <summary>
-        /// 名称
+        /// 分组名称
         /// </summary>
         public string Name { get; set; }
 
@@ -22,11 +22,22 @@ namespace Model.Utils.Config
         /// <summary>
         /// 版本
         /// </summary>
-        public string Version { get; set; }
+        public string[] Versions { get; set; }
 
         /// <summary>
         /// 说明
         /// </summary>
         public string Description { get; set; }
+
+        /// <summary>
+        /// 未配置
+        /// </summary>
+        /// <returns></returns>
+        public static SwaggerApiGroup NotConfigured = new SwaggerApiGroup
+        {
+            Title = "未配置",
+            Versions = new[] { "1.0" },
+            Description = "未在 SystemConfig.Swagger.ApiMultiVersion 中找到指定的分组配置."
+        };
     }
 }

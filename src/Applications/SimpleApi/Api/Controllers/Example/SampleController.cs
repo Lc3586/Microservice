@@ -20,6 +20,9 @@ namespace Api.Controllers
     /// <summary>
     /// 示例接口
     /// </summary>
+    [ApiController]
+    [ApiVersion("1.0")]
+    [ApiExplorerSettings(GroupName = "示例")]
     [Route("/sample")]//路由模板
     [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
     [SwaggerTag("示例接口，包含列表、增、删、改、查等接口")]//swagger标签

@@ -18,6 +18,9 @@ namespace Api.Controllers
     /// <summary>
     /// 菜单接口
     /// </summary>
+    [ApiController]
+    [ApiVersion("1.0")]
+    [ApiExplorerSettings(GroupName = "基础模块,权限模块")]
     [Route("/menu")]
     [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
     [SwaggerTag("菜单接口")]

@@ -39,6 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="jsonconfig\apiversion.json" />
     <Content Remove="jsonconfig\cas.json" />
     <Content Remove="jsonconfig\database.json" />
     <Content Remove="jsonconfig\elasticsearch.json" />
@@ -193,6 +194,7 @@
     <Content Remove="wwwroot\swagger\casLogin.js" />
     <Content Remove="wwwroot\swagger\custom-javascript.js" />
     <Content Remove="wwwroot\swagger\custom-stylesheet.css" />
+    <Content Remove="wwwroot\swagger\extensions\apiVersion.js" />
     <Content Remove="wwwroot\swagger\extensions\jwt.js" />
     <Content Remove="wwwroot\swagger\extensions\naiveUpload.js" />
     <Content Remove="wwwroot\swagger\extensions\quickInput.js" />
@@ -230,6 +232,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="jsonconfig\rsa.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="jsonconfig\apiversion.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="jsonconfig\swagger.json">
@@ -655,6 +660,9 @@
     <None Include="wwwroot\plug-in\systemconsole\systemconsole.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="wwwroot\swagger\extensions\apiVersion.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="wwwroot\swagger\extensions\casLogin.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -738,16 +746,16 @@
   <ItemGroup>
     <PackageReference Include="GSS.Authentication.CAS.AspNetCore" Version="5.0.0" />
     <PackageReference Include="GSS.Authentication.CAS.DistributedCache" Version="5.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.9" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="5.0.1" />
     <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.3.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.13" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.4" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.1.4" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.11.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.5" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.1.5" />
   </ItemGroup>
 
   <ItemGroup>

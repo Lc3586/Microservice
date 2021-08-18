@@ -4,6 +4,18 @@
         <name>SimpleApi</name>
     </assembly>
     <members>
+        <member name="T:Api.Configures.ApiVersionConfigura">
+            <summary>
+            接口版本配置类
+            </summary>
+        </member>
+        <member name="M:Api.Configures.ApiVersionConfigura.RegisterApiVersion(Microsoft.Extensions.DependencyInjection.IServiceCollection,Model.Utils.Config.SystemConfig)">
+            <summary>
+            注册接口版本服务
+            </summary>
+            <param name="services"></param>
+            <param name="config"></param>
+        </member>
         <member name="T:Api.Configures.AutoMapperConfigura">
             <summary>
             AutoMapper配置类
@@ -54,11 +66,11 @@
             </summary>
             <remarks>当Api有多个版本时使用此类,将系统配置应用于Swagger配置</remarks>
         </member>
-        <member name="M:Api.Configures.ConfigureSwaggerGenOptions.#ctor(System.IServiceProvider,Microsoft.Extensions.Options.IOptions{Model.Utils.Config.SwaggerApiMultiVersionDescriptionOptions})">
+        <member name="M:Api.Configures.ConfigureSwaggerGenOptions.#ctor(Microsoft.AspNetCore.Mvc.ApiExplorer.IApiVersionDescriptionProvider,Microsoft.Extensions.Options.IOptions{Model.Utils.Config.SwaggerApiOptions})">
             <summary>
             
             </summary>
-            <param name="serviceProvider"></param>
+            <param name="apiVersionProvider"></param>
             <param name="options"></param>
         </member>
         <member name="M:Api.Configures.ConfigureSwaggerGenOptions.Configure(Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions)">
@@ -294,19 +306,19 @@
             <param name="app"></param>
             <param name="config"></param>
         </member>
-        <member name="T:Api.Configures.SwaggerMultiVersionConfigura">
+        <member name="T:Api.Configures.SwaggerWithApiVersionConfigura">
             <summary>
-            Swagger多版本文档配置类
+            Swagger多接口版本文档配置类
             </summary>
         </member>
-        <member name="M:Api.Configures.SwaggerMultiVersionConfigura.RegisterSwaggerMultiVersion(Microsoft.Extensions.DependencyInjection.IServiceCollection,Model.Utils.Config.SystemConfig)">
+        <member name="M:Api.Configures.SwaggerWithApiVersionConfigura.RegisterSwaggerMultiVersion(Microsoft.Extensions.DependencyInjection.IServiceCollection,Model.Utils.Config.SystemConfig)">
             <summary>
             注册Swagger多版本文档服务
             </summary>
             <param name="services"></param>
             <param name="config"></param>
         </member>
-        <member name="M:Api.Configures.SwaggerMultiVersionConfigura.ConfiguraSwaggerMultiVersion(Microsoft.AspNetCore.Builder.IApplicationBuilder,Model.Utils.Config.SystemConfig)">
+        <member name="M:Api.Configures.SwaggerWithApiVersionConfigura.ConfiguraSwaggerMultiVersion(Microsoft.AspNetCore.Builder.IApplicationBuilder,Model.Utils.Config.SystemConfig)">
             <summary>
             配置Swagger多版本文档服务
             </summary>
@@ -2160,19 +2172,25 @@
             <param name="data">参数</param>
             <returns></returns>
         </member>
-        <member name="T:Api.Controllers.Utils.TestController">
+        <member name="T:Api.Controllers.Utils.TestV1Controller">
             <summary>
             测试
             </summary>
         </member>
-        <member name="M:Api.Controllers.Utils.TestController.DependencyInjectionTest(System.String)">
+        <member name="M:Api.Controllers.Utils.TestV1Controller.GetApiVersion">
+            <summary>
+            获取接口版本
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.Utils.TestV1Controller.DependencyInjectionTest(System.String)">
             <summary>
             测试依赖注入
             </summary>
             <param name="value"></param>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.Utils.TestController.TestDataBaseWithTable(System.String,System.String)">
+        <member name="M:Api.Controllers.Utils.TestV1Controller.TestDataBaseWithTable(System.String,System.String)">
             <summary>
             测试数据库指定的表
             </summary>
@@ -2180,11 +2198,22 @@
             <param name="where">过滤条件</param>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.Utils.TestController.TestDataBaseWithStoredProcedure(System.String)">
+        <member name="M:Api.Controllers.Utils.TestV1Controller.TestDataBaseWithStoredProcedure(System.String)">
             <summary>
             测试数据库指定的存储过程
             </summary>
             <param name="procedure">存储过程</param>
+            <returns></returns>
+        </member>
+        <member name="T:Api.Controllers.Utils.TestV2Controller">
+            <summary>
+            测试
+            </summary>
+        </member>
+        <member name="M:Api.Controllers.Utils.TestV2Controller.GetApiVersion">
+            <summary>
+            获取接口版本
+            </summary>
             <returns></returns>
         </member>
         <member name="T:Api.Controllers.SystemConsoleController">

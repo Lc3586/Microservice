@@ -278,7 +278,19 @@ window.onDomLoaded(() => {
                 }
             };
 
-            check(addBtn);
+            var checking = () => {
+                check(addBtn);
+            };
+
+            window.onInformationLoaded(() => {
+                window.domMutationObserver(
+                    $(".swagger-ui")[0],
+                    () => {
+                        window.delayedEvent(checking, null, 150, 'cas-check');
+                    });
+            });
+
+            window.delayedEvent(checking, null, 100, 'cas-check');
 
             console.info('已加载功能 => CAS身份验证');
         });

@@ -1406,6 +1406,26 @@
             登出后跳转地址
             </summary>
         </member>
+        <member name="T:Model.Utils.Config.ApiVersionSetting">
+            <summary>
+            接口版本配置
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Config.ApiVersionSetting.Keyword">
+            <summary>
+            通过Header或QueryString设置版本号时的关键字名称
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Config.ApiVersionSetting.DefaultVersion">
+            <summary>
+            请求时如果未指定版本则使用的默认版本
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Config.ApiVersionSetting.SelectMaximumVersion">
+            <summary>
+            请求时如果未指定版本则指定为当前最高版本
+            </summary>
+        </member>
         <member name="T:Model.Utils.Config.CASSetting">
             <summary>
             CAS配置
@@ -1875,60 +1895,82 @@
             服务
             </summary>
         </member>
-        <member name="T:Model.Utils.Config.SwaggerApiMultiVersionDescription">
+        <member name="T:Model.Utils.Config.SwaggerApiGroup">
             <summary>
-            swagger接口文档多版本说明配置
+            swagger接口文档分组配置
             </summary>
         </member>
-        <member name="P:Model.Utils.Config.SwaggerApiMultiVersionDescription.GroupName">
+        <member name="P:Model.Utils.Config.SwaggerApiGroup.Name">
             <summary>
             分组名称
             </summary>
         </member>
-        <member name="P:Model.Utils.Config.SwaggerApiMultiVersionDescription.Title">
+        <member name="P:Model.Utils.Config.SwaggerApiGroup.Title">
             <summary>
             标题
             </summary>
         </member>
-        <member name="P:Model.Utils.Config.SwaggerApiMultiVersionDescription.Version">
+        <member name="P:Model.Utils.Config.SwaggerApiGroup.Versions">
             <summary>
             版本
             </summary>
         </member>
-        <member name="P:Model.Utils.Config.SwaggerApiMultiVersionDescription.Description">
+        <member name="P:Model.Utils.Config.SwaggerApiGroup.Description">
             <summary>
             说明
             </summary>
         </member>
-        <member name="T:Model.Utils.Config.SwaggerApiMultiVersionDescriptionOptions">
+        <member name="F:Model.Utils.Config.SwaggerApiGroup.NotConfigured">
             <summary>
-            swagger多版本说明配置
+            未配置
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Model.Utils.Config.SwaggerApiOptions">
+            <summary>
+            swagger配置
             </summary>
         </member>
-        <member name="T:Model.Utils.Config.SwaggerApiVersionDescription">
+        <member name="P:Model.Utils.Config.SwaggerApiOptions.ApiVersions">
             <summary>
-            swagger接口文档说明配置
+            接口版本
             </summary>
         </member>
-        <member name="P:Model.Utils.Config.SwaggerApiVersionDescription.Name">
+        <member name="P:Model.Utils.Config.SwaggerApiOptions.Groups">
+            <summary>
+            分组
+            </summary>
+        </member>
+        <member name="T:Model.Utils.Config.SwaggerApiVersion">
+            <summary>
+            swagger接口文档版本配置
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Config.SwaggerApiVersion.Name">
             <summary>
             名称
             </summary>
         </member>
-        <member name="P:Model.Utils.Config.SwaggerApiVersionDescription.Title">
+        <member name="P:Model.Utils.Config.SwaggerApiVersion.Title">
             <summary>
             标题
             </summary>
         </member>
-        <member name="P:Model.Utils.Config.SwaggerApiVersionDescription.Version">
+        <member name="P:Model.Utils.Config.SwaggerApiVersion.Version">
             <summary>
             版本
             </summary>
         </member>
-        <member name="P:Model.Utils.Config.SwaggerApiVersionDescription.Description">
+        <member name="P:Model.Utils.Config.SwaggerApiVersion.Description">
             <summary>
             说明
             </summary>
+        </member>
+        <member name="F:Model.Utils.Config.SwaggerApiVersion.NotConfigured">
+            <summary>
+            未配置
+            </summary>
+            <returns></returns>
         </member>
         <member name="T:Model.Utils.Config.SwaggerSetting">
             <summary>
@@ -1940,19 +1982,14 @@
             说明文档相对路径
             </summary>
         </member>
-        <member name="P:Model.Utils.Config.SwaggerSetting.ApiVersion">
+        <member name="P:Model.Utils.Config.SwaggerSetting.ApiVersions">
             <summary>
-            接口版本说明
+            接口版本
             </summary>
         </member>
-        <member name="P:Model.Utils.Config.SwaggerSetting.EnableApiMultiVersion">
+        <member name="P:Model.Utils.Config.SwaggerSetting.Groups">
             <summary>
-            启用接口多版本说明
-            </summary>
-        </member>
-        <member name="P:Model.Utils.Config.SwaggerSetting.ApiMultiVersion">
-            <summary>
-            接口多版本说明
+            分组
             </summary>
         </member>
         <member name="T:Model.Utils.Config.SystemConfig">
@@ -2297,6 +2334,16 @@
         <member name="P:Model.Utils.Config.SystemConfig.EnableUploadLargeFile">
             <summary>
             启用大文件上传功能
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Config.SystemConfig.EnableApiVersion">
+            <summary>
+            启用接口版本
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Config.SystemConfig.ApiVersion">
+            <summary>
+            接口版本配置
             </summary>
         </member>
         <member name="T:Model.Utils.Config.WeChatServiceSetting">

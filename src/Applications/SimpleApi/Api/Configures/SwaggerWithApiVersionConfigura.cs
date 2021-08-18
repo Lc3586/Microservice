@@ -1,7 +1,9 @@
 ﻿using Microservice.Library.ConsoleTool;
+using Microservice.Library.Extension;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
@@ -13,13 +15,14 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text.Encodings.Web;
 
 namespace Api.Configures
 {
     /// <summary>
-    /// Swagger多版本文档配置类
+    /// Swagger多接口版本文档配置类
     /// </summary>
-    public static class SwaggerMultiVersionConfigura
+    public static class SwaggerWithApiVersionConfigura
     {
         /// <summary>
         /// 注册Swagger多版本文档服务
@@ -30,28 +33,17 @@ namespace Api.Configures
         {
             "注册Swagger多版本文档服务.".ConsoleWrite();
 
+            services.AddMvc()
+            //禁用框架结构属性小驼峰命名规则
+            .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
+
+            if (config.Swagger.Groups.Any_Ex())
+                services.AddVersionedApiExplorer();
+
             #region 多版本文档
-
-            services.AddApiVersioning();
-            services.AddVersionedApiExplorer();
-
-            #endregion
 
             services.AddSwaggerGen(options =>
             {
-                #region 配置文档
-
-                //多版本文档配置
-                //注册自定义配置程序，将系统配置（SystemConfig）应用于Swagger配置（AutoMapperGeneratorOptions）。
-                services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerGenOptions>();
-                services.AddTransient(s => s.GetRequiredService<IOptions<SwaggerApiMultiVersionDescriptionOptions>>().Value);
-                services.Configure<SwaggerApiMultiVersionDescriptionOptions>(options =>
-                {
-                    options.ApiMultiVersionDescription = config.Swagger.ApiMultiVersion;
-                });
-
-                #endregion
-
                 #region 自定义架构Id选择器
 
                 static string SchemaIdSelector(Type modelType)
@@ -71,8 +63,11 @@ namespace Api.Configures
 
                 options.SchemaFilter<OpenApiSchemaFilter>();
 
+                options.DocumentFilter<DocumentFilter>();
+
                 #region 为JSON文件和UI设置xml文档路径
 
+                //获取应用程序所在目录（绝对，不受工作目录影响，建议采用此方法获取路径）
                 var basePath = AppContext.BaseDirectory;
                 foreach (var item in config.Swagger.XmlComments)
                 {
@@ -86,10 +81,45 @@ namespace Api.Configures
 
                 //启用注解
                 options.EnableAnnotations();
-            })
-            .AddMvc()
-            //禁用框架结构属性小驼峰命名规则
-            .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
+
+                if (config.EnableJWT)
+                {
+                    options.AddSecurityDefinition("JWT", new OpenApiSecurityScheme
+                    {
+                        Description = "在请求的Header中，添加\"Authorization\":\"Bearer xxxxxxxxxxxxxx\"",
+                        Name = "Authorization",
+                        In = ParameterLocation.Header,
+                        Type = SecuritySchemeType.Http,
+                        Scheme = "Bearer"
+                    });
+
+                    var scheme = new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "JWT" }
+                    };
+
+                    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                    {
+                        [scheme] = Array.Empty<string>()
+                    });
+                }
+            });
+
+            #region 配置文档
+
+            //多版本文档配置
+            //注册自定义配置程序，将系统配置（SystemConfig）应用于Swagger配置（AutoMapperGeneratorOptions）。
+            services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerGenOptions>();
+            services.AddTransient(s => s.GetRequiredService<IOptions<SwaggerApiOptions>>().Value);
+            services.Configure<SwaggerApiOptions>(options =>
+            {
+                options.ApiVersions = config.Swagger.ApiVersions;
+                options.Groups = config.Swagger.Groups;
+            });
+
+            #endregion
+
+            #endregion
 
             return services;
         }
@@ -144,14 +174,31 @@ namespace Api.Configures
                     };
                 });
             });
+
             app.UseSwaggerUI(s =>
             {
+                s.RoutePrefix = "swagger";
+
                 //多版本文档
                 foreach (var description in apiVersionDescription.ApiVersionDescriptions)
                 {
-                    s.SwaggerEndpoint($"{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
+                    var version = description.ApiVersion.ToString();
+
+                    var apiVersion = config.Swagger.ApiVersions.FirstOrDefault(o => o.Version == version);
+
+                    if (apiVersion == null)
+                    {
+                        apiVersion = SwaggerApiVersion.NotConfigured;
+                        apiVersion.Version = version;
+                    }
+
+                    //分组
+                    var groups = config.Swagger.Groups.Where(o => o.Versions.Contains(apiVersion.Version));
+                    foreach (var group in groups)
+                    {
+                        s.SwaggerEndpoint($"/swagger/{UrlEncoder.Default.Encode($"{apiVersion.Version} {group.Name}")}/swagger.json", $"{apiVersion.Name} {group.Name}");
+                    }
                 }
-                s.SwaggerEndpoint("/swagger/v1.0/swagger.json", "v1.0 文档");
 
                 #region 页面自定义选项
 

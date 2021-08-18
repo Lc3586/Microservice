@@ -16,6 +16,9 @@ namespace Api.Controllers.Utils
     /// <summary>
     /// CAS认证接口
     /// </summary>
+    [ApiController]
+    [ApiVersion("1.0")]
+    [ApiExplorerSettings(GroupName = "身份验证模块")]
     [Route("/cas")]
     [SwaggerTag("CAS认证接口")]
     public class CASController : BaseApiController

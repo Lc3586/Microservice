@@ -38,9 +38,6 @@ window.onInformationLoaded(() => {
             }
         ],
         () => {
-            //隐藏框架原本的按钮
-            $('.auth-wrapper button').css('opacity', 0);
-
             var tokenInfo = JSON.parse(window.localStorage.getItem('jwt-token'));
 
             /**
@@ -293,10 +290,26 @@ window.onInformationLoaded(() => {
                 done();
             };
 
-            if (tokenInfo)
-                setToken(tokenInfo.AccessToken, () => { check(addBtn); });
-            else
-                addBtn(false);
+            var checking = () => {
+                //隐藏框架原本的按钮
+                $('.auth-wrapper button').css('opacity', 0);
+
+                if (tokenInfo)
+                    setToken(tokenInfo.AccessToken, () => { check(addBtn); });
+                else
+                    addBtn(false);
+            };
+
+            window.onInformationLoaded(() => {
+                window.domMutationObserver(
+                    $(".swagger-ui")[0],
+                    () => {
+                        window.delayedEvent(checking, null, 150, 'jwt-check');
+                    });
+            });
+
+            window.delayedEvent(checking, null, 100, 'jwt-check');
+
 
             console.info('已加载功能 => JWT');
         }

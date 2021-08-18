@@ -4,6 +4,7 @@ using IocServiceDemo;
 using Microservice.Library.DataMapping.Gen;
 using Microservice.Library.Extension;
 using Microservice.Library.FreeSql.Gen;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Threading.Tasks;
@@ -13,14 +14,17 @@ namespace Api.Controllers.Utils
     /// <summary>
     /// 测试
     /// </summary>
+    [ApiController]
+    [ApiVersion("1.0")]
+    [ApiExplorerSettings(GroupName = "测试")]
     [Route("/test")]
     [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
     [SwaggerTag("测试接口")]
-    public class TestController : BaseApiController
+    public class TestV1Controller : BaseApiController
     {
         #region DI
 
-        public TestController(
+        public TestV1Controller(
             IDemoService demoService,
             IDemoServiceProvider demoServiceProvider,
             IFreeSqlProvider freeSqlProvider,
@@ -43,6 +47,17 @@ namespace Api.Controllers.Utils
         readonly IFreeSql Orm;
 
         #endregion
+
+        /// <summary>
+        /// 获取接口版本
+        /// </summary>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet("api-version")]
+        public string GetApiVersion()
+        {
+            return "1.0";
+        }
 
         /// <summary>
         /// 测试依赖注入

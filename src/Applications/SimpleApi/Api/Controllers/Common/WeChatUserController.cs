@@ -14,6 +14,9 @@ namespace Api.Controllers
     /// <summary>
     /// 微信用户信息接口
     /// </summary>
+    [ApiController]
+    [ApiVersion("1.0")]
+    [ApiExplorerSettings(GroupName = "微信拓展")]
     [Route("/wechat-user")]
     [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
     [SwaggerTag("微信用户信息接口")]

@@ -148,10 +148,14 @@ namespace Api
                 options.AllowSynchronousIO = true;
             });
 
+            if (Config.EnableApiVersion)
+                services.RegisterApiVersion(Config);
+
             Bar?.Normal(15);
+            //不是发布模式时，开放swagger接口文档
             if (Config.EnableSwagger && Config.RunMode != RunMode.Publish)
             {
-                if (Config.Swagger.EnableApiMultiVersion)
+                if (Config.EnableApiVersion)
                     services.RegisterSwaggerMultiVersion(Config);
                 else
                     services.RegisterSwagger(Config);
@@ -325,7 +329,7 @@ namespace Api
             //不是发布模式时，开放swagger接口文档
             if (Config.EnableSwagger && Config.RunMode != RunMode.Publish)
             {
-                if (Config.Swagger.EnableApiMultiVersion)
+                if (Config.EnableApiVersion)
                     app.ConfiguraSwaggerMultiVersion(Config);
                 else
                     app.ConfiguraSwagger(Config);

@@ -1,0 +1,7 @@
+﻿{
+  "ApiVersion": {
+    "Keyword": "api-version",
+    "DefaultVersion": [ 1, 0 ],
+    "SelectMaximumVersion": true
+  }
+}

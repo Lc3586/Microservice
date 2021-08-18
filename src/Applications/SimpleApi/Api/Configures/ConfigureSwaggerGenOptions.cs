@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
+﻿using Business.Utils;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Model.Utils.Config;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
+using System.Linq;
 
 namespace Api.Configures
 {
@@ -14,22 +17,20 @@ namespace Api.Configures
     /// <remarks>当Api有多个版本时使用此类,将系统配置应用于Swagger配置</remarks>
     public class ConfigureSwaggerGenOptions : IConfigureOptions<SwaggerGenOptions>
     {
-        private readonly IServiceProvider ServiceProvider;
         private readonly IApiVersionDescriptionProvider ApiVersionProvider;
 
-        readonly SwaggerApiMultiVersionDescriptionOptions Options;
+        readonly SwaggerApiOptions Options;
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="serviceProvider"></param>
+        /// <param name="apiVersionProvider"></param>
         /// <param name="options"></param>
         public ConfigureSwaggerGenOptions(
-           IServiceProvider serviceProvider,
-           IOptions<SwaggerApiMultiVersionDescriptionOptions> options)
+           IApiVersionDescriptionProvider apiVersionProvider,
+           IOptions<SwaggerApiOptions> options)
         {
-            ServiceProvider = serviceProvider;
-            ApiVersionProvider = ServiceProvider.GetRequiredService<IApiVersionDescriptionProvider>();
+            ApiVersionProvider = apiVersionProvider;
             Options = options.Value;
         }
 
@@ -39,17 +40,54 @@ namespace Api.Configures
         /// <param name="options"></param>
         public void Configure(SwaggerGenOptions options)
         {
+            //分组
+            options.DocInclusionPredicate((string documentName, ApiDescription apiDescription) =>
+            {
+                if (apiDescription.GroupName == null)
+                    return true;
+
+                if (apiDescription.GroupName == "测试")
+                {
+                    var a = 1;
+                }
+
+                var type = typeof(ApiVersionAttribute);
+
+                var apiVersions = apiDescription.ActionDescriptor.EndpointMetadata.Where(o => o.GetType() == type);
+                if (apiVersions.Any())
+                {
+                    var versions = apiVersions.SelectMany(o => ((ApiVersionAttribute)o).Versions);
+                    return apiDescription.GroupName.Split(',').Any(o => versions.Any(p => documentName == $"{p} {o}"));
+                }
+                else
+                    return apiDescription.GroupName.Split(',').Any(o => documentName == $"{SwaggerApiVersion.NotConfigured.Version} {o}");
+            });
+
             foreach (var description in ApiVersionProvider.ApiVersionDescriptions)
             {
-                var apiVersion = Options.ApiMultiVersionDescription.Find(o => o.GroupName == description.GroupName);
-                options.SwaggerDoc(
-                    description.GroupName,
-                    new OpenApiInfo()
-                    {
-                        Title = apiVersion.Title,
-                        Version = apiVersion.Version ?? description.ApiVersion.ToString(),
-                        Description = apiVersion.Description
-                    });
+                var version = description.ApiVersion.ToString();
+
+                var apiVersion = Options.ApiVersions.FirstOrDefault(o => o.Version == version);
+
+                if (apiVersion == null)
+                {
+                    apiVersion = SwaggerApiVersion.NotConfigured;
+                    apiVersion.Version = version;
+                }
+
+                //分组
+                var groups = Options.Groups.Where(o => o.Versions.Contains(apiVersion.Version));
+                foreach (var group in groups)
+                {
+                    options.SwaggerDoc(
+                        $"{apiVersion.Version} {group.Name}",
+                        new OpenApiInfo()
+                        {
+                            Title = $"{apiVersion.Title} {group.Title}",
+                            Version = apiVersion.Version,
+                            Description = $"{apiVersion.Description} {group.Description}"
+                        });
+                }
             }
         }
     }

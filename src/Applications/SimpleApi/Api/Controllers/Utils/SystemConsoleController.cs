@@ -18,6 +18,9 @@ namespace Api.Controllers
     /// <summary>
     /// 系统中控台
     /// </summary>
+    [ApiController]
+    [ApiVersion("1.0")]
+    [ApiExplorerSettings(GroupName = "框架拓展")]
     [Route("/system-console")]
     [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
     [SwaggerTag("系统中控台")]

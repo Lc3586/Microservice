@@ -17,6 +17,9 @@ namespace Api.Controllers
     /// <summary>
     /// 权限接口
     /// </summary>
+    [ApiController]
+    [ApiVersion("1.0")]
+    [ApiExplorerSettings(GroupName = "权限模块")]
     [Route("/authorities")]
     [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
     public class AuthoritiesController : BaseApiController

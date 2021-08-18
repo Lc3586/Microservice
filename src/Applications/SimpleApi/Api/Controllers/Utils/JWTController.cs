@@ -16,6 +16,9 @@ namespace Api.Controllers.Utils
     /// <summary>
     /// 身份令牌接口
     /// </summary>
+    [ApiController]
+    [ApiVersion("1.0")]
+    [ApiExplorerSettings(GroupName = "身份验证模块")]
     [Route("/jwt")]
     [SwaggerTag("身份令牌接口")]
     public class JWTController : BaseApiController

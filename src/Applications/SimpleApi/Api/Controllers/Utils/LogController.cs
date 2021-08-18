@@ -15,6 +15,9 @@ namespace Api.Controllers.Utils
     /// <summary>
     /// 日志接口
     /// </summary>
+    [ApiController]
+    [ApiVersion("1.0")]
+    [ApiExplorerSettings(GroupName = "日志模块")]
     [Route("/log")]
     [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
     [SwaggerTag("日志接口")]

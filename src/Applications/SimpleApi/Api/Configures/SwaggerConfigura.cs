@@ -1,6 +1,8 @@
 ﻿using Microservice.Library.ConsoleTool;
+using Microservice.Library.Extension;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Model.Utils.Config;
@@ -10,6 +12,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text.Encodings.Web;
 
 namespace Api.Configures
 {
@@ -31,16 +34,33 @@ namespace Api.Configures
                 //禁用框架结构属性小驼峰命名规则
                 .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
 
+            if (config.Swagger.Groups.Any_Ex())
+                services.AddVersionedApiExplorer();
+
             services.AddSwaggerGen(options =>
             {
                 #region 配置文档
 
-                options.SwaggerDoc(config.Swagger.ApiVersion.Version, new OpenApiInfo
+                var apiVersion = config.Swagger.ApiVersions.FirstOrDefault() ?? SwaggerApiVersion.NotConfigured;
+
+                //分组
+                options.DocInclusionPredicate((string documentName, ApiDescription apiDescription) =>
                 {
-                    Title = config.Swagger.ApiVersion.Title,
-                    Version = config.Swagger.ApiVersion.Version,
-                    Description = config.Swagger.ApiVersion.Description
+                    return apiDescription.GroupName == null || apiDescription.GroupName.Split(',').Contains(documentName);
                 });
+
+                var groups = config.Swagger.Groups.Where(o => o.Versions.Contains(apiVersion.Version));
+                foreach (var group in groups)
+                {
+                    options.SwaggerDoc(
+                        group.Name,
+                        new OpenApiInfo()
+                        {
+                            Title = $"{apiVersion.Title} {group.Title}",
+                            Version = apiVersion.Version,
+                            Description = $"{apiVersion.Description} {group.Description}"
+                        });
+                }
 
                 #endregion
 
@@ -157,11 +177,19 @@ namespace Api.Configures
             });
             app.UseSwaggerUI(s =>
             {
-                s.SwaggerEndpoint($"/swagger/{config.Swagger.ApiVersion.Version}/swagger.json", config.Swagger.ApiVersion.Name);
+                var apiVersion = config.Swagger.ApiVersions.FirstOrDefault() ?? SwaggerApiVersion.NotConfigured;
+
+                //分组
+                var groups = config.Swagger.Groups.Where(o => o.Versions.Contains(apiVersion.Version));
+                foreach (var group in groups)
+                {
+                    s.SwaggerEndpoint($"/swagger/{UrlEncoder.Default.Encode(group.Name)}/swagger.json", $"{apiVersion.Name} {group.Name}");
+
+                }
 
                 #region 页面自定义选项
 
-                s.DocumentTitle = config.Swagger.ApiVersion.Title;//页面标题
+                s.DocumentTitle = apiVersion.Title;//页面标题
                 s.DisplayOperationId();//显示操作Id
                 s.DisplayRequestDuration();//显示请求持续时间
                 s.EnableFilter();//启用顶部筛选框

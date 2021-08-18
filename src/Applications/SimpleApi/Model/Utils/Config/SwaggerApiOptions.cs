@@ -3,15 +3,10 @@
 namespace Model.Utils.Config
 {
     /// <summary>
-    /// Swagger配置
+    /// swagger配置
     /// </summary>
-    public class SwaggerSetting
+    public class SwaggerApiOptions
     {
-        /// <summary>
-        /// 说明文档相对路径
-        /// </summary>
-        public List<string> XmlComments { get; set; }
-
         /// <summary>
         /// 接口版本
         /// </summary>

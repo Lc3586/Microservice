@@ -122,24 +122,14 @@ window.onInformationLoaded(() => {
                                     });
                                 }, null, 100, 'change-Tags');
                         }
-                    })
+                    });
             };
 
-            //监听HTML结构发生的变化
-            var mutationObserver = window.MutationObserver
-                || window.WebKitMutationObserver
-                || window.MozMutationObserver;//浏览器兼容
-
-            var observer = new mutationObserver((mutations) => {
-                for (var index in mutations) {
-                    if (mutations[index].type == 'childList') {
-                        window.delayedEvent(generateTags, null, 100, 'generate-Tags');
-                        break;
-                    }
-                }
-            });
-
-            observer.observe($(".opblock-tag-section")[0].parentElement.parentElement, { attributes: false, childList: true });
+            window.domMutationObserver(
+                $(".swagger-ui")[0],
+                () => {
+                    window.delayedEvent(generateTags, null, 150, 'generate-Tags');
+                });
 
             window.delayedEvent(generateTags, null, 100, 'generate-Tags');
 

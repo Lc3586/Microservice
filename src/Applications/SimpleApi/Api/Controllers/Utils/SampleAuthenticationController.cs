@@ -17,6 +17,9 @@ namespace Api.Controllers.Utils
     /// <summary>
     /// 简易身份认证接口
     /// </summary>
+    [ApiController]
+    [ApiVersion("1.0")]
+    [ApiExplorerSettings(GroupName = "身份验证模块")]
     [Route("/sa")]
     [SwaggerTag("简易身份认证接口")]
     public class SampleAuthenticationController : BaseApiController

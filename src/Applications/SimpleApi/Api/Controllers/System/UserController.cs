@@ -3,7 +3,6 @@ using Business.Interface.System;
 using Business.Utils.Authorization;
 using Microservice.Library.Extension;
 using Microservice.Library.SelectOption;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model.System.UserDTO;
 using Model.Utils.Pagination;
@@ -19,9 +18,12 @@ namespace Api.Controllers
     /// <summary>
     /// 系统用户接口
     /// </summary>
+    [ApiController]
+    [ApiVersion("1.0")]
+    [ApiExplorerSettings(GroupName = "基础模块")]
+    [SwaggerTag("系统用户接口")]
     [Route("/user")]
     [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
-    [SwaggerTag("系统用户接口")]
     public class UserController : BaseApiController
     {
         #region DI

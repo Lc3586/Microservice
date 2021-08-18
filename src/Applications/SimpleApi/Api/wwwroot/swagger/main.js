@@ -662,13 +662,12 @@ if (!window.showDialog) {
     *
     */
     window.showDialog = (title, content, button, closeButton = true, mask = true, drag = false) => {
-        var close = done => { $body.fadeOut(() => { $body.remove(); typeof (done) == 'function' && done(); }); },
-            $body = $('<div id="dialog" class="dialog-ux ' + (mask ? '' : 'dialog-ux-none') + '">' + (mask ? '<div class="backdrop-ux"></div>' : '') + '<div class="modal-ux"><div class="modal-dialog-ux"><div class="modal-ux-inner"><div class="modal-ux-header"><h3>' + title + '</h3></div><div class="modal-ux-content"><div class="auth-container"><div><div><div class="auth-container-items"></div><div class="auth-btn-wrapper"></div></div></div></div></div></div></div></div></div></div>'),
-            info = '';
+        let close = done => { $body.fadeOut(() => { $body.remove(); typeof (done) == 'function' && done(); }); },
+            $body = $('<div id="dialog" class="dialog-ux ' + (mask ? '' : 'dialog-ux-none') + '">' + (mask ? '<div class="backdrop-ux"></div>' : '') + '<div class="modal-ux"><div class="modal-dialog-ux"><div class="modal-ux-inner"><div class="modal-ux-header"><h3>' + title + '</h3></div><div class="modal-ux-content"><div class="auth-container"><div><div><div class="auth-container-items"></div><div class="auth-btn-wrapper"></div></div></div></div></div></div></div></div></div></div>');
 
         if (button)
             $.each(button, (key, value) => {
-                var title = $.isArray(value) ? value[0] : '',
+                let title = $.isArray(value) ? value[0] : '',
                     text = key,
                     events = $.isArray(value) ? value[1] : value,
                     btn = $('<button class="btn swBtn authorize" title="' + title + '">' + text + '</button>');
@@ -680,34 +679,44 @@ if (!window.showDialog) {
                 btn.appendTo($body.find('.auth-btn-wrapper'));
             });
 
-        if (content)
+        if (content) {
+            let $container = $body.find('.auth-container-items');
             $.each(content, (index, item) => {
-                var type = item[0],
+                let $item = null,
+                    type = item[0],
                     _title = item.length >= 2 ? item[1] : null,
                     _content = item.length > 2 ? item[2] : item[1],
+                    _events = item.length > 3 ? item[3] : {},
                     _key = 'key_' + index;
 
                 if (_title)
-                    info += '<label for="' + _key + '">' + _title + ':</label>';
+                    $container.append('<label for="' + _key + '">' + _title + ':</label>');
 
                 switch (type) {
                     case 'H5':
-                        info += '<h5 id="' + _key + '">' + _content + '</h5>';
+                        $item = $('<h5 id="' + _key + '">' + _content + '</h5>');
                         break;
                     case 'input':
                     case 'input-readonly':
                     case 'password':
-                        info += '<section class="block-tablet col-10-tablet block-desktop col-10-desktop"><input type="' + (type == 'password' ? 'password' : 'text') + '" ' + (type == 'input-readonly' ? 'readonly="readonly"' : '') + ' class="swInput" id="' + _key + '" data-name="' + _key + '" value="' + _content + '"></section>';
+                        $item = $('<section class="block-tablet col-10-tablet block-desktop col-10-desktop"><input type="' + (type == 'password' ? 'password' : 'text') + '" ' + (type == 'input-readonly' ? 'readonly="readonly"' : '') + ' class="swInput" id="' + _key + '" data-name="' + _key + '" value="' + _content + '"></section>');
                         break;
                     case 'iframe':
-                        info += '<iframe class="swIframe" id="' + _key + '" data-name="' + _key + '" src="' + _content + '" name="' + _title + '"><p>您的浏览器不支持iframes标签.</p></iframe >';
+                        $item = $('<iframe class="swIframe" id="' + _key + '" data-name="' + _key + '" src="' + _content + '" name="' + _title + '"><p>您的浏览器不支持iframes标签.</p></iframe >');
                         break;
                     case 'label':
                     default:
-                        info += '<section class="block-tablet col-10-tablet block-desktop col-10-desktop"><label class="swLabel" id="' + _key + '" data-name="' + _key + '">' + _content + '</label></section>';
+                        $item = $('<section class="block-tablet col-10-tablet block-desktop col-10-desktop"><label class="swLabel" id="' + _key + '" data-name="' + _key + '">' + _content + '</label></section>');
                         break;
                 }
+
+                $.each(_events, (type, event) => {
+                    $item.on(type, event);
+                });
+
+                $item.appendTo($container);
             });
+        }
 
         if (closeButton) {
             $('<button class="btn btn-done">关闭</button>')
@@ -717,8 +726,6 @@ if (!window.showDialog) {
                 .on('click', close)
                 .appendTo($body.find('.modal-ux-header'));
         }
-
-        $body.find('.auth-container-items').append(info);
 
         $body.fadeIn().appendTo($('.scheme-container'));
 
@@ -848,8 +855,19 @@ if (!window.addPlugIn) {
 }
 
 if (!window.onDomLoaded) {
-    let isLoaded = null,
-        funs = [];
+    let funs = [],
+        check = () => {
+            if (funs.length == 0)
+                return;
+
+            if (!state)
+                setTimeout(check, 100);
+            else {
+                while (funs.length > 0) {
+                    funs.shift()();
+                }
+            }
+        };
 
     let state = document.readyState === "complete" || (document.readyState !== "loading" && !document.documentElement.doScroll);
 
@@ -861,24 +879,56 @@ if (!window.onDomLoaded) {
      */
     window.onDomLoaded = (done) => {
         funs.push(done);
-        isLoaded != null ? 1 : (isLoaded = setInterval(() => {
-            state ? (window.clearInterval(isLoaded), isLoaded = null, funs.forEach((item, index) => { item(); }), funs = []) : 0;
-        }, 100));
+        check();
     }
 }
 
 if (!window.onInformationLoaded) {
-    let isLoaded = null,
-        funs = [];
+    let funs = [],
+        check = () => {
+            if (funs.length == 0)
+                return;
+
+            if (document.getElementsByClassName('information-container').length == 0)
+                setTimeout(check, 100);
+            else {
+                while (funs.length > 0) {
+                    funs.shift()();
+                }
+            }
+        };
 
     /**
      * Api文档加载完成
-     * @param {any} done 回调
+     * @param {Function} done 回调
      */
     window.onInformationLoaded = (done) => {
         funs.push(done);
-        isLoaded != null ? 1 : (isLoaded = setInterval(() => {
-            document.getElementsByClassName('information-container').length != 0 ? (window.clearInterval(isLoaded), isLoaded = null, funs.forEach((item, index) => { item(); }), funs = []) : 0;
-        }, 100));
+        check();
+    }
+}
+
+if (!window.domMutationObserver) {
+    //监听HTML结构发生的变化
+    let mutationObserver = window.MutationObserver
+        || window.WebKitMutationObserver
+        || window.MozMutationObserver;//浏览器兼容
+
+    /**
+     * 监听DOM变更
+     * @param {HTMLElement} el 目标
+     * @param {Function} event 回调事件
+     */
+    window.domMutationObserver = (el, event) => {
+        let observer = new mutationObserver((mutations) => {
+            for (let index in mutations) {
+                if (mutations[index].type == 'childList') {
+                    event();
+                    break;
+                }
+            }
+        });
+
+        observer.observe(el, { attributes: false, childList: true, subtree: true });
     }
 }

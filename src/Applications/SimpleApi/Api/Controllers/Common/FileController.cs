@@ -22,6 +22,9 @@ namespace Api.Controllers
     /// <summary>
     /// 文件处理接口
     /// </summary>
+    [ApiController]
+    [ApiVersion("1.0")]
+    [ApiExplorerSettings(GroupName = "文件管理")]
     [Route("/file")]
     [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
     [SwaggerTag("文件处理接口")]

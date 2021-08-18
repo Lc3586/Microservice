@@ -57,7 +57,7 @@ window.onInformationLoaded(() => {
             };
 
             $('.block-desktop').on('focus', 'input,textarea', e => {
-                if (!flag || e.target.className.indexOf('noQuickInput') > -1 || e.target.type != 'text')
+                if (!flag || e.target.type != 'text' || e.target.className.indexOf('noQuickInput') > -1)
                     return;
 
                 let $input = e.target.nodeName == 'TEXTAREA'

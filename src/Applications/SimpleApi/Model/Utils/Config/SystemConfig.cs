@@ -548,5 +548,20 @@ namespace Model.Utils.Config
         public bool EnableUploadLargeFile { get; set; }
 
         #endregion
+
+        #region MyRegion
+
+        /// <summary>
+        /// 启用接口版本
+        /// </summary>
+        public bool EnableApiVersion { get; set; }
+
+        /// <summary>
+        /// 接口版本配置
+        /// </summary>
+        [JsonConfig("jsonconfig/apiversion.json", "ApiVersion")]
+        public ApiVersionSetting ApiVersion { get; set; }
+
+        #endregion
     }
 }

@@ -16,6 +16,9 @@ namespace Api.Controllers
     /// <summary>
     /// 微信认证接口
     /// </summary>
+    [ApiController]
+    [ApiVersion("1.0")]
+    [ApiExplorerSettings(GroupName = "微信拓展")]
     [Route("/wechat-oath")]
     [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
     [SwaggerTag("微信认证接口")]

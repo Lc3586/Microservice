@@ -13,6 +13,9 @@ namespace Api.Controllers.Utils
     /// <summary>
     /// 自动生成代码接口
     /// </summary>
+    [ApiController]
+    [ApiVersion("1.0")]
+    [ApiExplorerSettings(GroupName = "框架拓展")]
     [Route("/cagc")]
     [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
     [SwaggerTag("自动生成代码接口")]
