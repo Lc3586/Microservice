@@ -97,6 +97,8 @@ window.onInformationLoaded(() => {
                         .on('click', e => {
                             window.delayedEvent(changeTags, $changeTags.data('state') == 'locked' ? 'unlocked' : 'locked', 100, 'change-Tags');
                         });
+                else
+                    $changeTags.data('state', 'unlocked');
 
                 $("body")
                     .on('mouseover', e => {
