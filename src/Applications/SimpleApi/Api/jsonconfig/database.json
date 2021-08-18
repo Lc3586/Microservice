@@ -1,7 +1,7 @@
 ﻿{
   //单数据库配置
   "Single": {
-    "ConnectString": "Server=;Database=;User Id=;Password=;",
+    "ConnectString": "Server=.;Database=SimpleApi;User Id=2021;Password=2021123456;",
     "DatabaseType": "SqlServer",
     "EntityAssembly": [ "Entity" ]
   },
