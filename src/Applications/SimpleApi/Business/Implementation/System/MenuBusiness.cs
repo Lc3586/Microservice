@@ -79,33 +79,38 @@ namespace Business.Implementation.System
             return result;
         }
 
-        public List<TreeList> GetTreeList(TreeListParamter paramter, bool deep = false)
+        public List<TreeList> GetTreeList(TreePaginationDTO pagination)
         {
-            if (paramter.ParentId.IsNullOrWhiteSpace())
-                paramter.ParentId = null;
+            return GetData(pagination, false);
 
-            var entityList = Repository.Select
-                                    .Where(o => o.ParentId == paramter.ParentId)
-                                    .OrderBy(o => o.Sort)
-                                    .ToList<System_Menu, TreeList>(typeof(List).GetNamesWithTagAndOther(true, "_List"));
+            List<TreeList> GetData(TreePaginationDTO pagination, bool deep)
+            {
+                if (pagination.ParentId.IsNullOrWhiteSpace())
+                    pagination.ParentId = null;
 
-            var result = Mapper.Map<List<TreeList>>(entityList);
+                var entityList = Repository.Select
+                                    .Where(o => o.ParentId == pagination.ParentId)
+                                    .GetPagination(pagination.Pagination)
+                                    .ToList<System_Menu, TreeList>(typeof(TreeList).GetNamesWithTagAndOther(true, "_List"));
 
-            if (result.Any())
-                result.ForEach(o =>
-                {
-                    var rank = paramter.Rank;
-                    if (!rank.HasValue || rank > 0)
+                var result = Mapper.Map<List<TreeList>>(entityList);
+
+                if (result.Any())
+                    result.ForEach(o =>
                     {
-                        paramter.ParentId = o.Id;
-                        paramter.Rank--;
-                        o.Childs_ = GetTreeList(paramter, true);
-                    }
-                });
-            else if (deep)
-                result = null;
+                        var rank = pagination.Rank;
+                        if (!rank.HasValue || rank > 0)
+                        {
+                            pagination.ParentId = o.Id;
+                            pagination.Rank--;
+                            o.Childs_ = GetData(pagination, true);
+                        }
+                    });
+                else if (deep)
+                    result = null;
 
-            return result;
+                return result;
+            }
         }
 
         public Detail GetDetail(string id)

@@ -129,6 +129,13 @@ namespace T4CAGC.Template
 
                         Functions.GetAndAddWhenNotContains(Function.Export, tag);
                     }
+                    else if (tag_lower.Contains("dropdownlist"))
+                    {
+                        NameSpaces.AddWhenNotContains("Model.Utils.Pagination");
+                        NameSpaces.AddWhenNotContains("Microservice.Library.SelectOption");
+
+                        Functions.GetAndAddWhenNotContains(Function.DropdownList, tag);
+                    }
                 });
             });
         }

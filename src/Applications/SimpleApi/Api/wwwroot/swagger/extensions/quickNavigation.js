@@ -100,7 +100,7 @@ window.onInformationLoaded(() => {
                 else
                     $changeTags.data('state', 'unlocked');
 
-                $("body")
+                $("#swagger-ui")
                     .on('mouseover', e => {
                         if (e.offsetX < 100) {
                             if ($changeTags.data('state') == 'hidden')

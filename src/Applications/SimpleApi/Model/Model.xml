@@ -84,189 +84,9 @@
             会员
             </summary>
         </member>
-        <member name="T:Model.Common.FileDTO.PreUploadFileResponse">
-            <summary>
-            预备上传文件输出信息
-            </summary>
-        </member>
-        <member name="P:Model.Common.FileDTO.PreUploadFileResponse.Uploaded">
-            <summary>
-            是否已上传过了
-            </summary>
-            <remarks>
-            <para>如已上传,则返回文件信息<see cref="P:Model.Common.FileDTO.PreUploadFileResponse.FileInfo"/></para>
-            </remarks>
-        </member>
-        <member name="P:Model.Common.FileDTO.PreUploadFileResponse.FileInfo">
-            <summary>
-            文件信息
-            </summary>
-        </member>
-        <member name="T:Model.Common.FileDTO.PreUploadChunkFileResponse">
-            <summary>
-            预备上传分片文件输出信息
-            </summary>
-        </member>
-        <member name="P:Model.Common.FileDTO.PreUploadChunkFileResponse.State">
-            <summary>
-            状态
-            </summary>
-            <remarks><see cref="T:Model.Common.PUCFRState"/></remarks>
-        </member>
-        <member name="P:Model.Common.FileDTO.PreUploadChunkFileResponse.Key">
-            <summary>
-            上传标识
-            </summary>
-        </member>
-        <member name="T:Model.Common.FileDTO.ChunkFileUploadParams">
-            <summary>
-            分片文件上传参数
-            </summary>
-        </member>
-        <member name="P:Model.Common.FileDTO.ChunkFileUploadParams.File">
-            <summary>
-            分片文件
-            </summary>
-        </member>
-        <member name="P:Model.Common.FileDTO.ChunkFileUploadParams.Key">
-            <summary>
-            上传标识
-            </summary>
-        </member>
-        <member name="T:Model.Common.FileDTO.UploadChunkFileFinishedParams">
-            <summary>
-            分片文件全部上传完毕参数
-            </summary>
-        </member>
-        <member name="P:Model.Common.FileDTO.UploadChunkFileFinishedParams.Key">
-            <summary>
-            上传标识
-            </summary>
-        </member>
-        <member name="T:Model.Common.FileDTO.ImageUploadParams">
-            <summary>
-            图片上传参数
-            </summary>
-        </member>
-        <member name="P:Model.Common.FileDTO.ImageUploadParams.File">
-            <summary>
-            文件
-            </summary>
-        </member>
-        <member name="P:Model.Common.FileDTO.ImageUploadParams.Name">
-            <summary>
-            文件名
-            注意:不指定文件名时将使用原始名称,使用Base64时使用Guid
-            </summary>
-        </member>
-        <member name="P:Model.Common.FileDTO.ImageUploadParams.UrlOrBase64">
-            <summary>
-            链接或Base64字符串
-            </summary>
-        </member>
-        <member name="P:Model.Common.FileDTO.ImageUploadParams.Download">
-            <summary>
-            下载外链资源链接
-            </summary>
-        </member>
-        <member name="P:Model.Common.FileDTO.ImageUploadParams.ToBase64Url">
-            <summary>
-            图片转Base64链接
-            </summary>
-        </member>
-        <member name="P:Model.Common.FileDTO.ImageUploadParams.ToBase64">
-            <summary>
-            图片转Base64
-            </summary>
-        </member>
-        <member name="P:Model.Common.FileDTO.ImageUploadParams.IsCompress">
-            <summary>
-            压缩图片
-            默认开启
-            </summary>
-        </member>
-        <member name="P:Model.Common.FileDTO.ImageUploadParams.CompressOption">
-            <summary>
-            图片压缩选项
-            默认配置:按照200像素的宽度等比压缩图片，并且保存原图
-            </summary>
-        </member>
-        <member name="T:Model.Common.FileDTO.ImageCompressOption">
-            <summary>
-            图片压缩选项
-            </summary>
-        </member>
-        <member name="P:Model.Common.FileDTO.ImageCompressOption.SaveOriginal">
-            <summary>
-            保存原图
-            </summary>
-        </member>
-        <member name="P:Model.Common.FileDTO.ImageCompressOption.Width">
-            <summary>
-            压缩后的宽度
-            注意:只设置高度时将进行等比压缩
-            </summary>
-        </member>
-        <member name="P:Model.Common.FileDTO.ImageCompressOption.Height">
-            <summary>
-            压缩后的高度
-            </summary>
-        </member>
-        <member name="T:Model.Common.FileDTO.FileUploadParams">
-            <summary>
-            文件上传参数
-            </summary>
-        </member>
-        <member name="P:Model.Common.FileDTO.FileUploadParams.File">
-            <summary>
-            文件
-            </summary>
-        </member>
-        <member name="P:Model.Common.FileDTO.FileUploadParams.Name">
-            <summary>
-            文件名
-            注意:不指定文件名时将使用原始名称,使用Base64时使用Guid
-            </summary>
-        </member>
-        <member name="P:Model.Common.FileDTO.FileUploadParams.Url">
-            <summary>
-            外链资源链接
-            </summary>
-        </member>
-        <member name="P:Model.Common.FileDTO.FileUploadParams.Download">
-            <summary>
-            下载外链资源链接
-            </summary>
-        </member>
-        <member name="P:Model.Common.FileDTO.FileUploadParams.IsCompress">
-            <summary>
-            压缩文件
-            默认关闭
-            </summary>
-        </member>
-        <member name="P:Model.Common.FileDTO.FileUploadParams.CompressOption">
-            <summary>
-            文件压缩选项
-            </summary>
-        </member>
-        <member name="T:Model.Common.FileDTO.FileCompressOption">
-            <summary>
-            文件压缩选项
-            </summary>
-        </member>
-        <member name="P:Model.Common.FileDTO.FileCompressOption.Level">
-            <summary>
-            压缩比例
-            </summary>
-        </member>
         <member name="T:Model.Common.FileDTO.FileInfo">
             <summary>
             文件信息
-            </summary>
-        </member>
-        <member name="P:Model.Common.FileDTO.FileInfo.FullName">
-            <summary>
-            完整名称
             </summary>
         </member>
         <member name="F:Model.Common.FileDTO.FileInfo.FromMemberMapOptions">
@@ -277,11 +97,6 @@
         <member name="F:Model.Common.FileDTO.FileInfo.ToMemberMapOptions">
             <summary>
             当前成员映射选项
-            </summary>
-        </member>
-        <member name="T:Model.Common.FileExtensionState">
-            <summary>
-            文件拓展信息状态
             </summary>
         </member>
         <member name="T:Model.Common.FileState">
@@ -307,6 +122,221 @@
             </summary>
             <param name="mimetype">MIME类型</param>
             <returns></returns>
+        </member>
+        <member name="T:Model.Common.FileUploadConfigDTO.Create">
+            <summary>
+            新增
+            </summary>
+        </member>
+        <member name="T:Model.Common.FileUploadConfigDTO.Detail">
+            <summary>
+            详情
+            </summary>
+        </member>
+        <member name="T:Model.Common.FileUploadConfigDTO.Edit">
+            <summary>
+            编辑
+            </summary>
+        </member>
+        <member name="T:Model.Common.FileUploadConfigDTO.Import">
+            <summary>
+            导入
+            </summary>
+        </member>
+        <member name="T:Model.Common.FileUploadConfigDTO.Export">
+            <summary>
+            导出
+            </summary>
+        </member>
+        <member name="T:Model.Common.FileUploadConfigDTO.List">
+            <summary>
+            列表
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadConfigDTO.List.Childs_">
+            <summary>
+            子级
+            </summary>
+        </member>
+        <member name="T:Model.Common.FileUploadConfigDTO.Config">
+            <summary>
+            配置
+            </summary>
+        </member>
+        <member name="T:Model.Common.FileUploadDTO.PreUploadFileResponse">
+            <summary>
+            预备上传文件输出信息
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadDTO.PreUploadFileResponse.Uploaded">
+            <summary>
+            是否已上传过了
+            </summary>
+            <remarks>
+            <para>如已上传,则返回文件信息<see cref="P:Model.Common.FileUploadDTO.PreUploadFileResponse.FileInfo"/></para>
+            </remarks>
+        </member>
+        <member name="P:Model.Common.FileUploadDTO.PreUploadFileResponse.FileInfo">
+            <summary>
+            个人文件信息
+            </summary>
+        </member>
+        <member name="T:Model.Common.FileUploadDTO.PreUploadChunkFileResponse">
+            <summary>
+            预备上传分片文件输出信息
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadDTO.PreUploadChunkFileResponse.State">
+            <summary>
+            状态
+            </summary>
+            <remarks><see cref="T:Model.Common.PUCFRState"/></remarks>
+        </member>
+        <member name="P:Model.Common.FileUploadDTO.PreUploadChunkFileResponse.Key">
+            <summary>
+            上传标识
+            </summary>
+        </member>
+        <member name="T:Model.Common.FileUploadDTO.ChunkFileUploadParams">
+            <summary>
+            分片文件上传参数
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadDTO.ChunkFileUploadParams.File">
+            <summary>
+            分片文件
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadDTO.ChunkFileUploadParams.Key">
+            <summary>
+            上传标识
+            </summary>
+        </member>
+        <member name="T:Model.Common.FileUploadDTO.UploadChunkFileFinishedParams">
+            <summary>
+            分片文件全部上传完毕参数
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadDTO.UploadChunkFileFinishedParams.Key">
+            <summary>
+            上传标识
+            </summary>
+        </member>
+        <member name="T:Model.Common.FileUploadDTO.ImageUploadParams">
+            <summary>
+            图片上传参数
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadDTO.ImageUploadParams.File">
+            <summary>
+            文件
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadDTO.ImageUploadParams.Name">
+            <summary>
+            文件名
+            注意:不指定文件名时将使用原始名称,使用Base64时使用Guid
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadDTO.ImageUploadParams.UrlOrBase64">
+            <summary>
+            链接或Base64字符串
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadDTO.ImageUploadParams.Download">
+            <summary>
+            下载外链资源链接
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadDTO.ImageUploadParams.ToBase64Url">
+            <summary>
+            图片转Base64链接
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadDTO.ImageUploadParams.ToBase64">
+            <summary>
+            图片转Base64
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadDTO.ImageUploadParams.IsCompress">
+            <summary>
+            压缩图片
+            默认开启
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadDTO.ImageUploadParams.CompressOption">
+            <summary>
+            图片压缩选项
+            默认配置:按照200像素的宽度等比压缩图片，并且保存原图
+            </summary>
+        </member>
+        <member name="T:Model.Common.FileUploadDTO.ImageCompressOption">
+            <summary>
+            图片压缩选项
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadDTO.ImageCompressOption.SaveOriginal">
+            <summary>
+            保存原图
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadDTO.ImageCompressOption.Width">
+            <summary>
+            压缩后的宽度
+            注意:只设置高度时将进行等比压缩
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadDTO.ImageCompressOption.Height">
+            <summary>
+            压缩后的高度
+            </summary>
+        </member>
+        <member name="T:Model.Common.FileUploadDTO.FileUploadParams">
+            <summary>
+            文件上传参数
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadDTO.FileUploadParams.File">
+            <summary>
+            文件
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadDTO.FileUploadParams.Name">
+            <summary>
+            文件名
+            注意:不指定文件名时将使用原始名称,使用Base64时使用Guid
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadDTO.FileUploadParams.Url">
+            <summary>
+            外链资源链接
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadDTO.FileUploadParams.Download">
+            <summary>
+            下载外链资源链接
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadDTO.FileUploadParams.IsCompress">
+            <summary>
+            压缩文件
+            默认关闭
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadDTO.FileUploadParams.CompressOption">
+            <summary>
+            文件压缩选项
+            </summary>
+        </member>
+        <member name="T:Model.Common.FileUploadDTO.FileCompressOption">
+            <summary>
+            文件压缩选项
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadDTO.FileCompressOption.Level">
+            <summary>
+            压缩比例
+            </summary>
         </member>
         <member name="T:Model.Common.OperationRecordDTO.List">
             <summary>
@@ -351,6 +381,31 @@
         <member name="P:Model.Common.OperatorUserInfo.Tel">
             <summary>
             电话号码
+            </summary>
+        </member>
+        <member name="T:Model.Common.PersonalFileInfoDTO.PersonalFileInfo">
+            <summary>
+            文件信息
+            </summary>
+        </member>
+        <member name="F:Model.Common.PersonalFileInfoDTO.PersonalFileInfo.FromMemberMapOptions">
+            <summary>
+            来源成员映射选项
+            </summary>
+        </member>
+        <member name="F:Model.Common.PersonalFileInfoDTO.PersonalFileInfo.ToMemberMapOptions">
+            <summary>
+            当前成员映射选项
+            </summary>
+        </member>
+        <member name="T:Model.Common.PersonalFileInfoDTO.Edit">
+            <summary>
+            编辑
+            </summary>
+        </member>
+        <member name="T:Model.Common.PersonalFileInfoState">
+            <summary>
+            个人文件信息状态
             </summary>
         </member>
         <member name="T:Model.Common.PUCFRState">
@@ -3105,6 +3160,27 @@
         <member name="F:Model.Utils.Pagination.SortType.desc">
             <summary>
             倒序
+            </summary>
+        </member>
+        <member name="T:Model.Utils.Pagination.TreePaginationDTO">
+            <summary>
+            树状列表数据分页
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Pagination.TreePaginationDTO.ParentId">
+            <summary>
+            父级Id
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Pagination.TreePaginationDTO.Rank">
+            <summary>
+            层级数
+            <para>为空则表示获取所有层级数据</para>
+            </summary>
+        </member>
+        <member name="P:Model.Utils.Pagination.TreePaginationDTO.Pagination">
+            <summary>
+            数据分页
             </summary>
         </member>
         <member name="T:Model.Utils.Result.AntdVueResult`1">

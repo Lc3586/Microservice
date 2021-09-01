@@ -159,6 +159,28 @@ namespace T4CAGC.Template
 
     if(Functions.ContainsKey(Function.List))
     {
+        if(Options.Table.Tree)
+        {
+
+            
+            #line default
+            #line hidden
+            this.Write("\r\n        /// <summary>\r\n        /// 获取树状列表数据\r\n        /// </summary>\r\n        //" +
+                    "/ <param name=\"pagination\">分页设置</param>\r\n        /// <returns></returns>\r\n      " +
+                    "  List<");
+            
+            #line 54 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Functions[Function.List]));
+            
+            #line default
+            #line hidden
+            this.Write("> GetTreeList(TreePaginationDTO pagination);\r\n");
+            
+            #line 55 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+
+        }
+        else
+        {
 
             
             #line default
@@ -167,14 +189,35 @@ namespace T4CAGC.Template
                     "<param name=\"pagination\">分页设置</param>\r\n        /// <returns></returns>\r\n        " +
                     "List<");
             
-            #line 52 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+            #line 66 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Functions[Function.List]));
             
             #line default
             #line hidden
             this.Write("> GetList(PaginationDTO pagination);\r\n");
             
-            #line 53 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+            #line 67 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+
+        }
+    }
+
+    if(Functions.ContainsKey(Function.DropdownList))
+    {
+
+            
+            #line default
+            #line hidden
+            this.Write(@"
+        /// <summary>
+        /// 获取下拉选择列表数据
+        /// </summary>
+        /// <param name=""condition"">关键词(多个用空格分隔)</param>
+        /// <param name=""pagination"">分页设置</param>
+        /// <returns></returns>
+        List<SelectOption> GetDropdownList(string condition, PaginationDTO pagination);
+");
+            
+            #line 82 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 
     }
 
@@ -186,28 +229,28 @@ namespace T4CAGC.Template
             #line hidden
             this.Write("\r\n        /// <summary>\r\n        /// 获取详情数据\r\n        /// </summary>\r\n");
             
-            #line 63 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+            #line 92 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 WritePrimaryParamsRemark();
             
             #line default
             #line hidden
             this.Write("        /// <returns></returns>\r\n        ");
             
-            #line 65 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+            #line 94 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Functions[Function.Detail]));
             
             #line default
             #line hidden
             this.Write(" GetDetail(");
             
-            #line 65 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+            #line 94 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 WritePrimaryParams();
             
             #line default
             #line hidden
             this.Write(");\r\n");
             
-            #line 66 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+            #line 95 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 
     }
 
@@ -221,14 +264,14 @@ WritePrimaryParams();
                     "am name=\"data\">数据</param>\r\n        /// <returns></returns>\r\n        void Create(" +
                     "");
             
-            #line 78 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+            #line 107 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Functions[Function.Create]));
             
             #line default
             #line hidden
             this.Write(" data);\r\n");
             
-            #line 79 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+            #line 108 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 
     }
 
@@ -240,21 +283,21 @@ WritePrimaryParams();
             #line hidden
             this.Write("\r\n        /// <summary>\r\n        /// 获取编辑数据\r\n        /// </summary>\r\n");
             
-            #line 89 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+            #line 118 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 WritePrimaryParamsRemark();
             
             #line default
             #line hidden
             this.Write("        /// <returns></returns>\r\n        ");
             
-            #line 91 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+            #line 120 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Functions[Function.Edit]));
             
             #line default
             #line hidden
             this.Write(" GetEdit(");
             
-            #line 91 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+            #line 120 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 WritePrimaryParams();
             
             #line default
@@ -263,14 +306,14 @@ WritePrimaryParams();
                     "<param name=\"data\">数据</param>\r\n        /// <returns></returns>\r\n        void Edi" +
                     "t(");
             
-            #line 98 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+            #line 127 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Functions[Function.Edit]));
             
             #line default
             #line hidden
             this.Write(" data);\r\n");
             
-            #line 99 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+            #line 128 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 
     }
 
@@ -282,7 +325,7 @@ WritePrimaryParams();
             #line hidden
             this.Write("\r\n        /// <summary>\r\n        /// 删除\r\n        /// </summary>\r\n");
             
-            #line 109 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+            #line 138 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 
         WritePrimaryListParamsRemark();
 
@@ -291,7 +334,7 @@ WritePrimaryParams();
             #line hidden
             this.Write("        /// <returns></returns>\r\n        void Delete(List<string> keys);\r\n");
             
-            #line 114 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+            #line 143 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 
     }
 
@@ -300,7 +343,7 @@ WritePrimaryParams();
             #line hidden
             this.Write("\r\n        #endregion\r\n\r\n        #region 拓展功能\r\n");
             
-            #line 121 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+            #line 150 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 
     if(Functions.ContainsKey(Function.Enable))
     {
@@ -310,7 +353,7 @@ WritePrimaryParams();
             #line hidden
             this.Write("\r\n        /// <summary>\r\n        /// 启用/禁用\r\n        /// </summary>\r\n");
             
-            #line 129 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+            #line 158 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 WritePrimaryParamsRemark();
             
             #line default
@@ -318,14 +361,14 @@ WritePrimaryParamsRemark();
             this.Write("        /// <param name=\"enable\">设置状态</param>\r\n        /// <returns></returns>\r\n " +
                     "       void Enable(");
             
-            #line 132 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+            #line 161 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 WritePrimaryParams();
             
             #line default
             #line hidden
             this.Write(", bool enable);\r\n");
             
-            #line 133 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+            #line 162 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 
     }
     
@@ -350,14 +393,14 @@ WritePrimaryParams();
         /// <returns></returns>
         void DragSort(");
             
-            #line 152 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+            #line 181 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Tree ? "TreeDragSort" : "DragSort"));
             
             #line default
             #line hidden
             this.Write(" data);\r\n");
             
-            #line 153 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+            #line 182 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 
     }
     
@@ -397,7 +440,7 @@ WritePrimaryParams();
         ImportResult Import(IFormFile file, bool autogenerateTemplate = false);
 ");
             
-            #line 187 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+            #line 216 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 
     }
     
@@ -421,7 +464,7 @@ WritePrimaryParams();
         void Export(string version = ExcelVersion.xlsx, string paginationJson = null);
 ");
             
-            #line 205 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+            #line 234 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 
     }
 
@@ -432,7 +475,7 @@ WritePrimaryParams();
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 213 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+        #line 242 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 
     /// <summary>
     /// 主键参数注释
@@ -446,42 +489,42 @@ WritePrimaryParams();
         #line default
         #line hidden
         
-        #line 221 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+        #line 250 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 this.Write("        /// <param name=\"");
 
         
         #line default
         #line hidden
         
-        #line 222 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+        #line 251 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(field.Name.ToLower()));
 
         
         #line default
         #line hidden
         
-        #line 222 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+        #line 251 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 this.Write("\">");
 
         
         #line default
         #line hidden
         
-        #line 222 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+        #line 251 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(field.Remark));
 
         
         #line default
         #line hidden
         
-        #line 222 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+        #line 251 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 this.Write("</param>\r\n");
 
         
         #line default
         #line hidden
         
-        #line 223 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+        #line 252 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 
         }
     }
@@ -499,35 +542,35 @@ this.Write("</param>\r\n");
         #line default
         #line hidden
         
-        #line 235 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+        #line 264 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(i > 0 ? ", " : ""));
 
         
         #line default
         #line hidden
         
-        #line 235 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+        #line 264 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(field.Type));
 
         
         #line default
         #line hidden
         
-        #line 235 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+        #line 264 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 this.Write(" ");
 
         
         #line default
         #line hidden
         
-        #line 235 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+        #line 264 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(field.Name.ToLower()));
 
         
         #line default
         #line hidden
         
-        #line 235 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+        #line 264 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 
             i++;
         }
@@ -543,14 +586,14 @@ this.Write(this.ToStringHelper.ToStringWithCulture(field.Name.ToLower()));
         #line default
         #line hidden
         
-        #line 245 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+        #line 274 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 this.Write("        /// <param name=\"keys\">[");
 
         
         #line default
         #line hidden
         
-        #line 246 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+        #line 275 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 
         var i = 0;
         foreach (var field in PrimaryKeys)
@@ -560,21 +603,21 @@ this.Write("        /// <param name=\"keys\">[");
         #line default
         #line hidden
         
-        #line 250 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+        #line 279 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(i > 0 ? " + " : ""));
 
         
         #line default
         #line hidden
         
-        #line 250 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+        #line 279 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(field.Remark));
 
         
         #line default
         #line hidden
         
-        #line 250 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+        #line 279 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 
             i++;
         }
@@ -583,14 +626,14 @@ this.Write(this.ToStringHelper.ToStringWithCulture(field.Remark));
         #line default
         #line hidden
         
-        #line 253 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+        #line 282 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 this.Write("]</param>\r\n");
 
         
         #line default
         #line hidden
         
-        #line 254 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
+        #line 283 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
 
     }
 

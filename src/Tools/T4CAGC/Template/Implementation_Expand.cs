@@ -55,6 +55,12 @@ namespace T4CAGC.Template
         readonly Dictionary<Function, FieldInfo> FunctionsWithField = new Dictionary<Function, FieldInfo>();
 
         /// <summary>
+        /// 方法集合
+        /// </summary>
+        /// <remarks>{方法,字段集合}</remarks>
+        readonly Dictionary<Function, List<FieldInfo>> FunctionsWithFields = new Dictionary<Function, List<FieldInfo>>();
+
+        /// <summary>
         /// 主键字段集合
         /// </summary>
         readonly List<FieldInfo> PrimaryKeys = new List<FieldInfo>();
@@ -94,8 +100,8 @@ namespace T4CAGC.Template
             NameSpaces.AddWhenNotContains("System");
             NameSpaces.AddWhenNotContains("System.Collections.Generic");
             NameSpaces.AddWhenNotContains("System.Linq");
-            NameSpaces.AddWhenNotContains("Microservice.Library.Extension");
             NameSpaces.AddWhenNotContains("AutoMapper");
+            NameSpaces.AddWhenNotContains("Microservice.Library.Extension");
             NameSpaces.AddWhenNotContains("Microservice.Library.DataMapping.Gen");
             NameSpaces.AddWhenNotContains("Microservice.Library.OpenApi.Extention");
             NameSpaces.AddWhenNotContains("Business.Utils");
@@ -161,6 +167,7 @@ namespace T4CAGC.Template
                     }
                     else if (tag_lower.Contains("import"))
                     {
+                        NameSpaces.AddWhenNotContains("Business.Utils.Log");
                         NameSpaces.AddWhenNotContains("FreeSql.DataAnnotations");
                         NameSpaces.AddWhenNotContains("System.Data");
                         NameSpaces.AddWhenNotContains("System.Text.Encodings.Web");
@@ -183,12 +190,23 @@ namespace T4CAGC.Template
                         NameSpaces.AddWhenNotContains("Microservice.Library.OfficeDocuments");
                         NameSpaces.AddWhenNotContains("Model.Utils.Pagination");
                         NameSpaces.AddWhenNotContains("Model.Utils.OfficeDocuments");
+                        NameSpaces.AddWhenNotContains("Newtonsoft.Json");
                         NameSpaces.AddWhenNotContains("System.ComponentModel");
                         NameSpaces.AddWhenNotContains("System.Reflection");
                         NameSpaces.AddWhenNotContains("System.Text.Encodings.Web");
                         NameSpaces.AddWhenNotContains("System.IO");
 
                         Functions.GetAndAddWhenNotContains(Function.Export, tag);
+                    }
+                    else if (tag_lower.Contains("dropdownlist"))
+                    {
+                        NameSpaces.AddWhenNotContains("Model.Utils.Pagination");
+                        NameSpaces.AddWhenNotContains("System.Collections.Generic");
+                        NameSpaces.AddWhenNotContains("Microservice.Library.SelectOption");
+
+                        Functions.GetAndAddWhenNotContains(Function.DropdownList, tag);
+
+                        FunctionsWithFields.GetAndAddWhenNotContains_ReferenceType(Function.DropdownList).Add(o);
                     }
                 });
             });

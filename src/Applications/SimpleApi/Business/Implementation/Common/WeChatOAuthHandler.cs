@@ -49,7 +49,7 @@ namespace Business.Implementation.Common
             IOperationRecordBusiness operationRecordBusiness,
             IMemberBusiness memberBusiness,
             IUserBusiness userBusiness,
-            IFileBusiness fileBusiness,
+            IFileUploadBusiness fileUploadBusiness,
             IHubContext<WeChatServiceHub> weChatServiceHub,
             IHttpContextAccessor httpContextAccessor)
         {
@@ -64,7 +64,7 @@ namespace Business.Implementation.Common
             OperationRecordBusiness = operationRecordBusiness;
             MemberBusiness = memberBusiness;
             UserBusiness = userBusiness;
-            FileBusiness = fileBusiness;
+            FileUploadBusiness = fileUploadBusiness;
             WeChatServiceHub = weChatServiceHub;
             HttpContextAccessor = httpContextAccessor;
         }
@@ -95,7 +95,7 @@ namespace Business.Implementation.Common
 
         readonly IUserBusiness UserBusiness;
 
-        readonly IFileBusiness FileBusiness;
+        readonly IFileUploadBusiness FileUploadBusiness;
 
         readonly IHubContext<WeChatServiceHub> WeChatServiceHub;
 
@@ -219,7 +219,7 @@ namespace Business.Implementation.Common
         /// <returns>文件Id</returns>
         async Task<string> SaveFile(string uri)
         {
-            var file = await FileBusiness.SingleFileFromUrl($"{uri.Substring(0, uri.LastIndexOf('/'))}/0", Guid.NewGuid().ToString(), true);
+            var file = await FileUploadBusiness.SingleFileFromUrl($"{uri.Substring(0, uri.LastIndexOf('/'))}/0", Guid.NewGuid().ToString(), true);
 
             return file.Id;
         }

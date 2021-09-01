@@ -42,6 +42,20 @@ namespace Business.Interface.<#=Options.Table.ModuleName#>
 
     if(Functions.ContainsKey(Function.List))
     {
+        if(Options.Table.Tree)
+        {
+#>
+
+        /// <summary>
+        /// 获取树状列表数据
+        /// </summary>
+        /// <param name="pagination">分页设置</param>
+        /// <returns></returns>
+        List<<#=Functions[Function.List]#>> GetTreeList(TreePaginationDTO pagination);
+<#
+        }
+        else
+        {
 #>
 
         /// <summary>
@@ -50,6 +64,21 @@ namespace Business.Interface.<#=Options.Table.ModuleName#>
         /// <param name="pagination">分页设置</param>
         /// <returns></returns>
         List<<#=Functions[Function.List]#>> GetList(PaginationDTO pagination);
+<#
+        }
+    }
+
+    if(Functions.ContainsKey(Function.DropdownList))
+    {
+#>
+
+        /// <summary>
+        /// 获取下拉选择列表数据
+        /// </summary>
+        /// <param name="condition">关键词(多个用空格分隔)</param>
+        /// <param name="pagination">分页设置</param>
+        /// <returns></returns>
+        List<SelectOption> GetDropdownList(string condition, PaginationDTO pagination);
 <#
     }
 

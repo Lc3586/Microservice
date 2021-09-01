@@ -315,69 +315,168 @@
             创建时间
             </summary>
         </member>
-        <member name="P:Entity.Common.Common_File.Common_FileExtensions">
+        <member name="P:Entity.Common.Common_File.PersonalFileInfos">
             <summary>
-            相关文件拓展信息
+            相关个人文件信息
             </summary>
         </member>
-        <member name="T:Entity.Common.Common_FileExtension">
+        <member name="T:Entity.Common.Common_FileUploadConfig">
             <summary>
-            文件拓展信息
+            文件上传配置
             </summary>
         </member>
-        <member name="P:Entity.Common.Common_FileExtension.Id">
+        <member name="P:Entity.Common.Common_FileUploadConfig.Id">
             <summary>
-            Id
+            主键
             </summary>
         </member>
-        <member name="P:Entity.Common.Common_FileExtension.FileId">
+        <member name="P:Entity.Common.Common_FileUploadConfig.RootId">
             <summary>
-            文件Id
+            根Id
             </summary>
         </member>
-        <member name="P:Entity.Common.Common_FileExtension.Name">
+        <member name="P:Entity.Common.Common_FileUploadConfig.ParentId">
             <summary>
-            文件重命名
+            父级Id
             </summary>
         </member>
-        <member name="P:Entity.Common.Common_FileExtension.State">
+        <member name="P:Entity.Common.Common_FileUploadConfig.Level">
             <summary>
-            状态
+            层级
             </summary>
         </member>
-        <member name="P:Entity.Common.Common_FileExtension.CreatorId">
+        <member name="P:Entity.Common.Common_FileUploadConfig.ReferenceId">
+            <summary>
+            引用的上传配置Id
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_FileUploadConfig.ReferenceTree">
+            <summary>
+            级联引用
+            <para>使用引用的上传配置以及它的所有子集配置</para>
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_FileUploadConfig.Name">
+            <summary>
+            名称
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_FileUploadConfig.DisplayName">
+            <summary>
+            显示名称
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_FileUploadConfig.Public">
+            <summary>
+            公共配置
+            <para>无需授权</para>
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_FileUploadConfig.LowerLimit">
+            <summary>
+            文件数量下限
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_FileUploadConfig.UpperLimit">
+            <summary>
+            文件数量上限
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_FileUploadConfig.AllowedTypes">
+            <summary>
+            允许的MIME类型
+            <para>[,]逗号分隔</para>
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_FileUploadConfig.ProhibitedTypes">
+            <summary>
+            禁止的MIME类型
+            <para>[,]逗号分隔</para>
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_FileUploadConfig.Sort">
+            <summary>
+            排序值
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_FileUploadConfig.Enable">
+            <summary>
+            启用
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_FileUploadConfig.Remark">
+            <summary>
+            备注
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_FileUploadConfig.CreatorId">
             <summary>
             创建者
             </summary>
         </member>
-        <member name="P:Entity.Common.Common_FileExtension.CreatorName">
+        <member name="P:Entity.Common.Common_FileUploadConfig.CreatorName">
             <summary>
             创建者名称
             </summary>
         </member>
-        <member name="P:Entity.Common.Common_FileExtension.CreateTime">
+        <member name="P:Entity.Common.Common_FileUploadConfig.CreateTime">
             <summary>
             创建时间
             </summary>
         </member>
-        <member name="P:Entity.Common.Common_FileExtension.ModifiedById">
+        <member name="P:Entity.Common.Common_FileUploadConfig.ModifiedById">
             <summary>
             最近编辑者
             </summary>
         </member>
-        <member name="P:Entity.Common.Common_FileExtension.ModifiedByName">
+        <member name="P:Entity.Common.Common_FileUploadConfig.ModifiedByName">
             <summary>
             最近编辑者名称
             </summary>
         </member>
-        <member name="P:Entity.Common.Common_FileExtension.ModifyTime">
+        <member name="P:Entity.Common.Common_FileUploadConfig.ModifyTime">
             <summary>
             最近编辑时间
             </summary>
         </member>
-        <member name="P:Entity.Common.Common_FileExtension.Common_File">
+        <member name="P:Entity.Common.Common_FileUploadConfig.CreatorUser">
             <summary>
-            文件信息
+            创建者
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_FileUploadConfig.ModifiedBuUser">
+            <summary>
+            最近编辑者
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_FileUploadConfig.RootConfig">
+            <summary>
+            根配置
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_FileUploadConfig.ParentConfig">
+            <summary>
+            父级配置
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_FileUploadConfig.ChildConfigs">
+            <summary>
+            子级配置
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_FileUploadConfig.ReferenceConfig">
+            <summary>
+            引用配置
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_FileUploadConfig.System_Roles">
+            <summary>
+            授权了此配置的角色
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_FileUploadConfig.PersonalFileInfos">
+            <summary>
+            使用此配置上传的个人文件信息
             </summary>
         </member>
         <member name="T:Entity.Common.Common_OperationRecord">
@@ -450,6 +549,106 @@
         <member name="P:Entity.Common.Common_OperationRecord.Member">
             <summary>
             会员
+            </summary>
+        </member>
+        <member name="T:Entity.Common.Common_PersonalFileInfo">
+            <summary>
+            个人文件信息
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_PersonalFileInfo.Id">
+            <summary>
+            Id
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_PersonalFileInfo.FileId">
+            <summary>
+            文件Id
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_PersonalFileInfo.ConfigId">
+            <summary>
+            文件上传配置Id
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_PersonalFileInfo.Name">
+            <summary>
+            文件重命名
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_PersonalFileInfo.Extension">
+            <summary>
+            文件扩展名
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_PersonalFileInfo.Category">
+            <summary>
+            类别
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_PersonalFileInfo.Star">
+            <summary>
+            星级
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_PersonalFileInfo.Tags">
+            <summary>
+            标签
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_PersonalFileInfo.State">
+            <summary>
+            状态
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_PersonalFileInfo.CreatorId">
+            <summary>
+            创建者
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_PersonalFileInfo.CreatorName">
+            <summary>
+            创建者名称
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_PersonalFileInfo.CreateTime">
+            <summary>
+            创建时间
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_PersonalFileInfo.ModifiedById">
+            <summary>
+            最近编辑者
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_PersonalFileInfo.ModifiedByName">
+            <summary>
+            最近编辑者名称
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_PersonalFileInfo.ModifyTime">
+            <summary>
+            最近编辑时间
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_PersonalFileInfo.User">
+            <summary>
+            所属用户
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_PersonalFileInfo.Member">
+            <summary>
+            所属会员
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_PersonalFileInfo.Common_File">
+            <summary>
+            文件信息
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_PersonalFileInfo.FileUploadConfig">
+            <summary>
+            上传时使用的配置
             </summary>
         </member>
         <member name="T:Entity.Common.Common_WeChatUserInfo">
@@ -1005,6 +1204,11 @@
             此会员绑定的微信
             </summary>
         </member>
+        <member name="P:Entity.Public.Public_Member.PersonalFileInfos">
+            <summary>
+            上传的个人文件信息
+            </summary>
+        </member>
         <member name="T:Entity.Public.Public_MemberRole">
             <summary>
             会员授权角色
@@ -1538,6 +1742,31 @@
             被授权此角色的会员
             </summary>
         </member>
+        <member name="T:Entity.System.System_RoleCFUC">
+            <summary>
+            角色授权文件上传配置
+            </summary>
+        </member>
+        <member name="P:Entity.System.System_RoleCFUC.RoleId">
+            <summary>
+            角色Id
+            </summary>
+        </member>
+        <member name="P:Entity.System.System_RoleCFUC.ConfigId">
+            <summary>
+            配置Id
+            </summary>
+        </member>
+        <member name="P:Entity.System.System_RoleCFUC.Role">
+            <summary>
+            角色
+            </summary>
+        </member>
+        <member name="P:Entity.System.System_RoleCFUC.FileUploadConfig">
+            <summary>
+            文件上传配置
+            </summary>
+        </member>
         <member name="T:Entity.System.System_RoleMenu">
             <summary>
             角色授权菜单
@@ -1696,6 +1925,11 @@
         <member name="P:Entity.System.System_User.WeChatUserInfos">
             <summary>
             此用户绑定的微信
+            </summary>
+        </member>
+        <member name="P:Entity.System.System_User.PersonalFileInfos">
+            <summary>
+            上传的个人文件信息
             </summary>
         </member>
         <member name="T:Entity.System.System_UserMenu">

@@ -183,6 +183,15 @@ namespace Entity.Public
         [XmlIgnore]
         public virtual ICollection<Common_WeChatUserInfo> WeChatUserInfos { get; set; }
 
+        /// <summary>
+        /// 上传的个人文件信息
+        /// </summary>
+        [JsonIgnore]
+        [Navigate(nameof(Common_PersonalFileInfo.CreatorId))]
+        [OpenApiIgnore]
+        [XmlIgnore]
+        public virtual ICollection<Common_PersonalFileInfo> PersonalFileInfos { get; set; }
+
         #endregion
     }
 }

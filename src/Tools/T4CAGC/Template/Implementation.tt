@@ -147,6 +147,47 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
 
     if(Functions.ContainsKey(Function.List))
     {
+        if(Options.Table.Tree)
+        {
+#>
+
+        public List<<#=Functions[Function.List]#>> GetTreeList(TreePaginationDTO pagination)
+        {
+            return GetData(pagination, false);
+
+            List<<#=Functions[Function.List]#>> GetData(TreePaginationDTO pagination, bool deep)
+            {
+                if (pagination.ParentId.IsNullOrWhiteSpace())
+                    pagination.ParentId = null;
+
+                var entityList = Repository.Select
+                                    .Where(o => o.ParentId == pagination.ParentId)
+                                    .GetPagination(pagination.Pagination)
+                                    .ToList<<#=Options.Table.Name#>, <#=Functions[Function.List]#>>(typeof(<#=Functions[Function.List]#>).GetNamesWithTagAndOther(true, "_List"));
+
+                var result = Mapper.Map<List<<#=Functions[Function.List]#>>>(entityList);
+
+                if (result.Any())
+                    result.ForEach(o =>
+                    {
+                        var rank = pagination.Rank;
+                        if (!rank.HasValue || rank > 0)
+                        {
+                            pagination.ParentId = o.Id;
+                            pagination.Rank--;
+                            o.Childs_ = GetData(pagination, true);
+                        }
+                    });
+                else if (deep)
+                    result = null;
+
+                return result;
+            }
+        }
+<#
+        }
+        else
+        {
 #>
 
         public List<<#=Functions[Function.List]#>> GetList(PaginationDTO pagination)
@@ -158,6 +199,90 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
             var result = Mapper.Map<List<<#=Functions[Function.List]#>>>(entityList);
 
             return result;
+        }
+<#
+        }
+    }
+
+    if(Functions.ContainsKey(Function.DropdownList))
+    {
+#>
+
+        public List<SelectOption> GetDropdownList(string condition, PaginationDTO pagination)
+        {
+            var fields = new[] {
+<#
+
+    var i1 = 1;
+    foreach (var field in FunctionsWithFields[Function.DropdownList])
+    {
+#>
+                nameof(<#=Options.Table.Name#>.<#=field.Name#>)<#=FunctionsWithFields[Function.DropdownList].Count > 1 && i1 != FunctionsWithFields[Function.DropdownList].Count ? "," : ""#>
+<#
+        i1++;
+    }
+#>
+            };
+
+            var where = new List<string>();
+            if (!condition.IsNullOrWhiteSpace())
+            {
+                var index = 0;
+                var add = false;
+                foreach (var item in condition)
+                {
+                    if (item != ' ')
+                    {
+                        if (where.Count < index + 1)
+                            where.Add("");
+                        where[index] += item;
+                        add = false;
+                    }
+                    else
+                    {
+                        if (add)
+                            continue;
+                        index++;
+                        add = true;
+                    }
+                }
+            }
+
+            var where_sql = where.Any() ? string.Join(" or ", where.Select(o => string.Join(" or ", fields.Select(p => $"a.\"{p}\" like '%{o}%'")))) : null;
+
+            var type = typeof(<#=Options.Table.Name#>);
+
+            var select = SelectExtension.Select<<#=Options.Table.Name#>, SelectOption>(a => new SelectOption
+            {
+                text = a.Name,
+                value = a.Id,
+                search = $"{a.Name} {a.Code}",
+                options = new List<OptionInfo>
+                {
+<#
+    var i2 = 0;
+    foreach (var field in FunctionsWithFields[Function.DropdownList])
+    {
+#>
+                    new OptionInfo
+                    {
+                        display = type.GetDescription(nameof(a.<#=field.Name#>)),
+                        value = a.<#=field.Name#>
+                    }<#=FunctionsWithFields[Function.DropdownList].Count > 1 && i2 != FunctionsWithFields[Function.DropdownList].Count ? "," : ""#>
+<#
+        i2++;
+    }
+#>
+                }
+            });
+
+            var list = from a in Orm.Select<<#=Options.Table.Name#>>()
+                            .Where(where_sql)
+                            .GetPagination(pagination)
+                            .ToList<<#=Options.Table.Name#>, <#=Functions[Function.DropdownList]#>>(typeof(<#=Functions[Function.DropdownList]#>).GetNamesWithTagAndOther(true, "_List"))
+                       select @select.Invoke(a);
+
+            return list.ToList();
         }
 <#
     }
@@ -200,7 +325,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
 
             //@数据验证#待完善@
             //if (Repository.Where(o => <#=Options.Table.Tree ? "o.ParentId == newData.ParentId && " : ""#>o.Name == newData.Name).Any())
-            //    throw new MessageException($"<#=Options.Table.Tree ? "当前层级" : ""#>已存在名称为{newData.Name}的<#=Options.Table.Remark#>.");
+            //    throw new MessageException($"<#=Options.Table.Tree ? "同层级下" : ""#>已存在名称为[{newData.Name}]的<#=Options.Table.Remark#>.");
 
             (bool success, Exception ex) = Orm.RunTransaction(() =>
             {
@@ -298,8 +423,8 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
             var editData = Mapper.Map<<#=Options.Table.Name#>>(data).ModifyEntity();
 
             //@数据验证#待完善@
-            //if (Repository.Where(o => <#=Options.Table.Tree ? "o.ParentId == editData.ParentId && " : ""#>o.Name == newData.Name && o.Id != editData.Id).Any())
-            //    throw new MessageException($"<#=Options.Table.Tree ? "当前层级" : ""#>已存在名称为{newData.Name}的<#=Options.Table.Remark#>.");
+            //if (Repository.Where(o => <#=Options.Table.Tree ? "o.ParentId == editData.ParentId && " : ""#>o.Name == editData.Name && o.Id != editData.Id).Any())
+            //    throw new MessageException($"<#=Options.Table.Tree ? "同层级下" : ""#>已存在名称为[{editData.Name}]的<#=Options.Table.Remark#>.");
 
             var entity = Repository.GetAndCheckNull(<#WritePrimaryField("editData", ", ");#>);
 
@@ -875,6 +1000,13 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
                     catch (Exception ex)
                     {
                         _errors.Add(new ErrorInfo(i + 3, attr.Description, "数据格式有误。"));
+
+                        Logger.Log(
+                            NLog.LogLevel.Error,
+                            LogType.警告信息,
+                            $"{file.FileName}文件第{i + 3}行第{attr.Description}列数据格式有误.",
+                            null,
+                            ex);
                     }
                 });
                 

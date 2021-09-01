@@ -366,7 +366,7 @@
         </member>
         <member name="T:Api.Controllers.FileController">
             <summary>
-            文件处理接口
+            文件信息接口
             </summary>
         </member>
         <member name="M:Api.Controllers.FileController.GetList(Model.Utils.Pagination.PaginationDTO)">
@@ -395,129 +395,6 @@
             获取详情数据集合
             </summary>
             <param name="ids">id集合</param>
-            <returns></returns>
-        </member>
-        <member name="M:Api.Controllers.FileController.Rename(System.String,System.String)">
-            <summary>
-            文件重命名
-            </summary>
-            <param name="id">Id</param>
-            <param name="filename">文件名</param>
-            <returns></returns>
-        </member>
-        <member name="M:Api.Controllers.FileController.GetFileTypeByExtension(System.String)">
-            <summary>
-            获取文件类型
-            </summary>
-            <param name="extension">文件拓展名</param>
-            <returns></returns>
-        </member>
-        <member name="M:Api.Controllers.FileController.GetFileTypeByMIME(System.String)">
-            <summary>
-            获取文件类型
-            </summary>
-            <param name="mimetype">MIME类型</param>
-            <returns></returns>
-        </member>
-        <member name="M:Api.Controllers.FileController.GetFileTypeImageUrl(System.String)">
-            <summary>
-            获取文件类型预览图链接地址
-            </summary>
-            <param name="extension">文件拓展名</param>
-            <returns></returns>
-        </member>
-        <member name="M:Api.Controllers.FileController.GetFileSize(System.String)">
-            <summary>
-            获取文件大小
-            </summary>
-            <param name="length">文件字节数</param>
-            <returns></returns>
-        </member>
-        <member name="M:Api.Controllers.FileController.PreUploadFile(System.String,System.String,System.Boolean,System.String,System.String,System.Nullable{System.Int32},System.Nullable{System.Int32})">
-            <summary>
-            预备上传文件
-            </summary>
-            <param name="md5">文件MD5值</param>
-            <param name="filename">文件重命名</param>
-            <param name="section">是否分片处理（默认否）</param>
-            <param name="type">文件类型（单文件上传时忽略此参数）</param>
-            <param name="extension">文件拓展名（单文件上传时忽略此参数）</param>
-            <param name="specs">分片文件规格（单文件上传时忽略此参数）</param>
-            <param name="total">分片文件总数（单文件上传时忽略此参数）</param>
-            <returns></returns>
-        </member>
-        <member name="M:Api.Controllers.FileController.PreUploadChunkFile(System.String,System.String,System.Int32,System.Int32,System.Boolean)">
-            <summary>
-            预备上传分片文件
-            </summary>
-            <param name="file_md5">文件MD5值</param>
-            <param name="md5">分片文件MD5值</param>
-            <param name="index">分片文件索引</param>
-            <param name="specs">分片文件规格</param>
-            <param name="forced">强制上传</param>
-            <returns></returns>
-        </member>
-        <member name="M:Api.Controllers.FileController.SingleChunkFile(System.String,System.String,Microsoft.AspNetCore.Http.IFormFile)">
-            <summary>
-            上传单个分片文件
-            </summary>
-            <param name="key">上传标识</param>
-            <param name="md5">分片文件MD5值</param>
-            <param name="file">分片文件</param>
-            <returns></returns>
-        </member>
-        <member name="M:Api.Controllers.FileController.SingleChunkFileByArrayBuffer(System.String,System.String)">
-            <summary>
-            上传单个分片文件
-            </summary>
-            <param name="key">上传标识</param>
-            <param name="md5">分片文件MD5值</param>
-            <returns></returns>
-        </member>
-        <member name="M:Api.Controllers.FileController.UploadChunkFileFinished(System.String,System.Int32,System.Int32,System.String,System.String,System.String)">
-            <summary>
-            分片文件全部上传完毕
-            </summary>
-            <param name="file_md5">文件MD5值</param>
-            <param name="specs">分片文件规格</param>
-            <param name="total">分片文件总数</param>
-            <param name="type">文件类型</param>
-            <param name="extension">文件拓展名</param>
-            <param name="filename">文件名</param>
-            <returns></returns>
-        </member>
-        <member name="M:Api.Controllers.FileController.SingleImageFromBase64(System.String,System.String)">
-            <summary>
-            通过Base64字符串上传单个图片
-            </summary>
-            <param name="base64">Base64字符串</param>
-            <param name="filename">文件名</param>
-            <returns></returns>
-        </member>
-        <member name="M:Api.Controllers.FileController.SingleFileFromUrl(System.String,System.String,System.Boolean)">
-            <summary>
-            通过外链上传单个文件
-            </summary>
-            <param name="url">外链地址</param>
-            <param name="filename">文件名</param>
-            <param name="download">是否下载资源</param>
-            <returns></returns>
-        </member>
-        <member name="M:Api.Controllers.FileController.SingleFile(Microsoft.AspNetCore.Http.IFormFile,System.String)">
-            <summary>
-            上传单个文件
-            </summary>
-            <param name="file">分片文件</param>
-            <param name="filename">文件名</param>
-            <returns></returns>
-        </member>
-        <member name="M:Api.Controllers.FileController.SingleFileByArrayBuffer(System.String,System.String,System.String)">
-            <summary>
-            上传单个文件
-            </summary>
-            <param name="type">上传标识</param>
-            <param name="extension">文件拓展名</param>
-            <param name="filename">文件名</param>
             <returns></returns>
         </member>
         <member name="M:Api.Controllers.FileController.Preview(System.String,System.Int32,System.Int32,System.Nullable{System.TimeSpan})">
@@ -552,6 +429,238 @@
             <param name="ids">Id集合</param>
             <returns></returns>
         </member>
+        <member name="M:Api.Controllers.FileController.GetFileTypeByExtension(System.String)">
+            <summary>
+            获取文件类型
+            </summary>
+            <param name="extension">文件拓展名</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.FileController.GetFileTypeByMIME(System.String)">
+            <summary>
+            获取文件类型
+            </summary>
+            <param name="mimetype">MIME类型</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.FileController.GetFileTypeImageUrl(System.String)">
+            <summary>
+            获取文件类型预览图链接地址
+            </summary>
+            <param name="extension">文件拓展名</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.FileController.GetFileSize(System.String)">
+            <summary>
+            获取文件大小
+            </summary>
+            <param name="length">文件字节数</param>
+            <returns></returns>
+        </member>
+        <member name="T:Api.Controllers.Common.FileUploadConfigController">
+            <summary>
+            文件上传配置接口
+            </summary>
+        </member>
+        <member name="M:Api.Controllers.Common.FileUploadConfigController.#ctor(Business.Interface.Common.IFileUploadConfigBusiness)">
+            <summary>
+            
+            </summary>
+            <param name="fileuploadconfigBusiness"></param>
+        </member>
+        <member name="F:Api.Controllers.Common.FileUploadConfigController.FileUploadConfigBusiness">
+            <summary>
+            文件上传配置接口类
+            </summary>
+        </member>
+        <member name="M:Api.Controllers.Common.FileUploadConfigController.GetTreeList(Model.Utils.Pagination.TreePaginationDTO)">
+            <summary>
+            获取树状列表数据
+            </summary>
+            <param name="pagination">分页设置</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.Common.FileUploadConfigController.GetDetail(System.String)">
+            <summary>
+            详情数据数据
+            </summary>
+            <param name="id">主键</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.Common.FileUploadConfigController.Create(Model.Common.FileUploadConfigDTO.Create)">
+            <summary>
+            新增
+            </summary>
+            <param name="data">表单数据</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.Common.FileUploadConfigController.GetEdit(System.String)">
+            <summary>
+            获取编辑数据
+            </summary>
+            <param name="id">主键</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.Common.FileUploadConfigController.Edit(Model.Common.FileUploadConfigDTO.Edit)">
+            <summary>
+            编辑数据
+            </summary>
+            <param name="data">表单数据</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.Common.FileUploadConfigController.Delete(System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            删除数据
+            </summary>
+            <param name="keys">[主键]</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.Common.FileUploadConfigController.Sort(Model.Utils.Sort.SortParamsDTO.Sort)">
+            <summary>
+            普通排序
+            </summary>
+            <param name="data">数据</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.Common.FileUploadConfigController.DragSort(Model.Utils.Sort.SortParamsDTO.DragSort)">
+            <summary>
+            拖动排序
+            </summary>
+            <param name="data">数据</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.Common.FileUploadConfigController.DownloadTemplate(System.String,System.Boolean)">
+            <summary>
+            下载导入模板
+            </summary>
+            <param name="version">
+            <para>指定Excel文件版本</para>
+            <para><see cref="F:Model.Utils.OfficeDocuments.ExcelVersion.xls"/>: 2003版本</para>
+            <para>(默认)<see cref="F:Model.Utils.OfficeDocuments.ExcelVersion.xlsx"/>: 2007及以上版本</para>
+            </param>
+            <param name="autogenerateTemplate">
+            <para>指明要使用的模板类型</para>
+            <para>true: 自动生成模板</para>
+            <para>(默认)false: 使用预制模板</para>
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.Common.FileUploadConfigController.Import(Microsoft.AspNetCore.Http.IFormFile,System.Boolean)">
+            <summary>
+            导入
+            </summary>
+            <param name="file">Execl文件</param>
+            <param name="autogenerateTemplate">
+            <para>指明所使用的模板类型</para>
+            <para>true: 自动生成的模板</para>
+            <para>(默认)false: 预制模板</para>
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.Common.FileUploadConfigController.Export(System.String,System.String)">
+            <summary>
+            导出
+            </summary>
+            <param name="version">
+            <para>指定Excel文件版本</para>
+            <para><see cref="F:Model.Utils.OfficeDocuments.ExcelVersion.xls"/>: 2003版本</para>
+            <para>(默认)<see cref="F:Model.Utils.OfficeDocuments.ExcelVersion.xlsx"/>: 2007及以上版本</para>
+            </param>
+            <param name="paginationJson">分页参数Json字符串</param>
+            <returns></returns>
+        </member>
+        <member name="T:Api.Controllers.FileUploadController">
+            <summary>
+            文件上传接口
+            </summary>
+        </member>
+        <member name="M:Api.Controllers.FileUploadController.PreUploadFile(System.String,System.String,System.Boolean,System.String,System.String,System.Nullable{System.Int32},System.Nullable{System.Int32})">
+            <summary>
+            预备上传文件
+            </summary>
+            <param name="md5">文件MD5值</param>
+            <param name="filename">文件重命名</param>
+            <param name="section">是否分片处理（默认否）</param>
+            <param name="type">文件类型（单文件上传时忽略此参数）</param>
+            <param name="extension">文件拓展名（单文件上传时忽略此参数）</param>
+            <param name="specs">分片文件规格（单文件上传时忽略此参数）</param>
+            <param name="total">分片文件总数（单文件上传时忽略此参数）</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.FileUploadController.PreUploadChunkFile(System.String,System.String,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            预备上传分片文件
+            </summary>
+            <param name="file_md5">文件MD5值</param>
+            <param name="md5">分片文件MD5值</param>
+            <param name="index">分片文件索引</param>
+            <param name="specs">分片文件规格</param>
+            <param name="forced">强制上传</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.FileUploadController.SingleChunkFile(System.String,System.String,Microsoft.AspNetCore.Http.IFormFile)">
+            <summary>
+            上传单个分片文件
+            </summary>
+            <param name="key">上传标识</param>
+            <param name="md5">分片文件MD5值</param>
+            <param name="file">分片文件</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.FileUploadController.SingleChunkFileByArrayBuffer(System.String,System.String)">
+            <summary>
+            上传单个分片文件
+            </summary>
+            <param name="key">上传标识</param>
+            <param name="md5">分片文件MD5值</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.FileUploadController.UploadChunkFileFinished(System.String,System.Int32,System.Int32,System.String,System.String,System.String)">
+            <summary>
+            分片文件全部上传完毕
+            </summary>
+            <param name="file_md5">文件MD5值</param>
+            <param name="specs">分片文件规格</param>
+            <param name="total">分片文件总数</param>
+            <param name="type">文件类型</param>
+            <param name="extension">文件拓展名</param>
+            <param name="filename">文件名</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.FileUploadController.SingleImageFromBase64(System.String,System.String)">
+            <summary>
+            通过Base64字符串上传单个图片
+            </summary>
+            <param name="base64">Base64字符串</param>
+            <param name="filename">文件名</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.FileUploadController.SingleFileFromUrl(System.String,System.String,System.Boolean)">
+            <summary>
+            通过外链上传单个文件
+            </summary>
+            <param name="url">外链地址</param>
+            <param name="filename">文件名</param>
+            <param name="download">是否下载资源</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.FileUploadController.SingleFile(Microsoft.AspNetCore.Http.IFormFile,System.String)">
+            <summary>
+            上传单个文件
+            </summary>
+            <param name="file">分片文件</param>
+            <param name="filename">文件名</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.FileUploadController.SingleFileByArrayBuffer(System.String,System.String,System.String)">
+            <summary>
+            上传单个文件
+            </summary>
+            <param name="type">上传标识</param>
+            <param name="extension">文件拓展名</param>
+            <param name="filename">文件名</param>
+            <returns></returns>
+        </member>
         <member name="T:Api.Controllers.OperationRecordController">
             <summary>
             操作记录接口
@@ -567,6 +676,79 @@
         <member name="M:Api.Controllers.OperationRecordController.GetDetail(System.String)">
             <summary>
             获取详情数据
+            </summary>
+            <param name="id">Id</param>
+            <returns></returns>
+        </member>
+        <member name="T:Api.Controllers.PersonalFileInfoController">
+            <summary>
+            个人文件信息接口
+            </summary>
+        </member>
+        <member name="M:Api.Controllers.PersonalFileInfoController.GetList(Model.Utils.Pagination.PaginationDTO)">
+            <summary>
+            获取列表数据
+            </summary>
+            <param name="pagination">分页设置</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.PersonalFileInfoController.GetDetail(System.String)">
+            <summary>
+            获取详情数据
+            </summary>
+            <param name="id">Id</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.PersonalFileInfoController.GetDetails(System.String)">
+            <summary>
+            获取详情数据集合
+            </summary>
+            <param name="ids">id逗号拼接</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.PersonalFileInfoController.GetDetails(System.Collections.Generic.List{System.String})">
+            <summary>
+            获取详情数据集合
+            </summary>
+            <param name="ids">id集合</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.PersonalFileInfoController.Rename(System.String,System.String)">
+            <summary>
+            文件重命名
+            </summary>
+            <param name="id">Id</param>
+            <param name="filename">文件名</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.PersonalFileInfoController.Delete(System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            删除
+            </summary>
+            <param name="ids">Id集合</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.PersonalFileInfoController.Preview(System.String,System.Int32,System.Int32,System.Nullable{System.TimeSpan})">
+            <summary>
+            预览
+            </summary>
+            <remarks>用于查看文件缩略图或视频截图</remarks>
+            <param name="id">Id</param>
+            <param name="width">指定宽度</param>
+            <param name="height">指定高度</param>
+            <param name="time">视频的时间轴位置（默认值: 00:00:00.001）</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.PersonalFileInfoController.Browse(System.String)">
+            <summary>
+            浏览
+            </summary>
+            <param name="id">Id</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.PersonalFileInfoController.Download(System.String)">
+            <summary>
+            下载
             </summary>
             <param name="id">Id</param>
             <returns></returns>
@@ -1447,11 +1629,11 @@
             <param name="pagination">分页设置</param>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.MenuController.GetTreeList(Model.System.MenuDTO.TreeListParamter)">
+        <member name="M:Api.Controllers.MenuController.GetTreeList(Model.Utils.Pagination.TreePaginationDTO)">
             <summary>
             获取树状列表数据
             </summary>
-            <param name="paramter">树状列表</param>
+            <param name="pagination">分页设置</param>
             <returns></returns>
         </member>
         <member name="M:Api.Controllers.MenuController.GetDetail(System.String)">
@@ -1610,11 +1792,11 @@
             <param name="pagination">分页设置</param>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.RoleController.GetTreeList(Model.System.RoleDTO.TreeListParamter)">
+        <member name="M:Api.Controllers.RoleController.GetTreeList(Model.Utils.Pagination.TreePaginationDTO)">
             <summary>
             获取树状列表数据
             </summary>
-            <param name="paramter">树状列表</param>
+            <param name="pagination">树状列表</param>
             <returns></returns>
         </member>
         <member name="M:Api.Controllers.RoleController.GetDetail(System.String)">

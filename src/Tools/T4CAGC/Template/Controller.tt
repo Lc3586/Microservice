@@ -10,6 +10,9 @@ namespace Api.Controllers.<#=Options.Table.ModuleName#>
     /// <summary>
     /// <#=Options.Table.Remark#>接口
     /// </summary>
+    [ApiController]
+    [ApiVersion("1.0")]
+    [ApiExplorerSettings()]
     [Route("/<#=Options.Table.Name.GetAbbreviation(30).ToLower()#>")]
     [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
     [SwaggerTag("<#=Options.Table.Remark#>接口")]
@@ -75,6 +78,25 @@ namespace Api.Controllers.<#=Options.Table.ModuleName#>
 
     if(Functions.ContainsKey(Function.List))
     {
+        if(Options.Table.Tree)
+        {
+#>
+
+        /// <summary>
+        /// 获取树状列表数据
+        /// </summary>
+        /// <param name="pagination">分页设置</param>
+        /// <returns></returns>
+        [HttpPost("tree-list")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "树状列表数据", typeof(<#=Functions[Function.List]#>))]
+        public async Task<object> GetTreeList([FromBody] TreePaginationDTO pagination)
+        {
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(<#=Options.Table.ReducedName#>Business.GetTreeList(pagination))));
+        }
+<#
+        }
+        else
+        {
 #>
 
         /// <summary>
@@ -88,8 +110,29 @@ namespace Api.Controllers.<#=Options.Table.ModuleName#>
         {
             return await Task.FromResult(OpenApiJsonContent(<#=Options.Table.ReducedName#>Business.GetList(pagination), pagination));
         }
+<#        
+        }
+    }
+
+    if(Functions.ContainsKey(Function.DropdownList))
+    {
+#>
+
+        /// <summary>
+        /// 获取下拉选择列表数据
+        /// </summary>
+        /// <param name="condition">关键词(多个用空格分隔)</param>
+        /// <param name="pagination">分页设置</param>
+        /// <returns></returns>
+        [HttpPost("dropdown-list")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "下拉选择列表数据", typeof(SelectOption))]
+        public async Task<object> GetDropdownList(string condition, PaginationDTO pagination)
+        {
+            return await Task.FromResult(OpenApiJsonContent(<#=Options.Table.ReducedName#>Business.DropdownList(condition, pagination), pagination));
+        }
 <#
     }
+
 
     if(Functions.ContainsKey(Function.Detail))
     {

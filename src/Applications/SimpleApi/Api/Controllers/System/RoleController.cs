@@ -54,13 +54,13 @@ namespace Api.Controllers
         /// <summary>
         /// 获取树状列表数据
         /// </summary>
-        /// <param name="paramter">树状列表</param>
+        /// <param name="pagination">树状列表</param>
         /// <returns></returns>
         [HttpPost("tree-list")]
         [SwaggerResponse((int)HttpStatusCode.OK, "树状列表数据", typeof(TreeList))]
-        public async Task<object> GetTreeList([FromBody] TreeListParamter paramter)
+        public async Task<object> GetTreeList([FromBody] TreePaginationDTO pagination)
         {
-            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(RoleBusiness.GetTreeList(paramter))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(RoleBusiness.GetTreeList(pagination))));
         }
 
         /// <summary>

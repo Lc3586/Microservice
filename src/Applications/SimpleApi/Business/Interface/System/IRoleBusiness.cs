@@ -22,10 +22,9 @@ namespace Business.Interface.System
         /// <summary>
         /// 获取树状列表数据
         /// </summary>
-        /// <param name="paramter">参数</param>
-        /// <param name="deep">处于递归中</param>
+        /// <param name="pagination">参数</param>
         /// <returns></returns>
-        List<TreeList> GetTreeList(TreeListParamter paramter, bool deep = false);
+        List<TreeList> GetTreeList(TreePaginationDTO pagination);
 
         /// <summary>
         /// 获取详情数据

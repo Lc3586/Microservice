@@ -53,7 +53,11 @@ namespace T4CAGC.Model
         /// <summary>
         /// 导出
         /// </summary>
-        Export
+        Export,
+        /// <summary>
+        /// 下拉列表
+        /// </summary>
+        DropdownList
 
         #endregion
     }

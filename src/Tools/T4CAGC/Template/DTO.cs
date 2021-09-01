@@ -49,9 +49,9 @@ namespace T4CAGC.Template
             #line default
             #line hidden
             this.Write("≣|\r\n|*\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tby  LCTR\t\t   ≣|\r\n|* ___________________________________" +
-                    "_____________________________________________________________≣|\r\n\\*/\r\n");
+                    "_____________________________________________________________≣|\r\n\\*/\r\n\r\n\r\n\r\n");
             
-            #line 11 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
+            #line 14 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
 
 	foreach (var @namespace in NameSpaces?.OrderBy(o => o))
 	{
@@ -61,14 +61,14 @@ namespace T4CAGC.Template
             #line hidden
             this.Write("using ");
             
-            #line 15 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
+            #line 18 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
             this.Write(this.ToStringHelper.ToStringWithCulture(@namespace));
             
             #line default
             #line hidden
             this.Write(";\r\n");
             
-            #line 16 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
+            #line 19 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
 
 	}
 
@@ -136,9 +136,37 @@ namespace T4CAGC.Template
             
             #line default
             #line hidden
-            this.Write("\r\n    {\r\n\r\n    }\r\n\r\n");
+            this.Write("\r\n    {\r\n");
             
-            #line 28 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\DTO.tt"
+            #line 25 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\DTO.tt"
+
+    if(Options.Table.Tree && mr.Key.ToLower().Contains("list"))
+    {
+
+            
+            #line default
+            #line hidden
+            this.Write("\r\n        /// <summary>\r\n        /// 子级\r\n        /// </summary>\r\n        [OpenApi" +
+                    "Schema(OpenApiSchemaType.model, OpenApiSchemaFormat.model_once)]\r\n        [Descr" +
+                    "iption(\"子级\")]\r\n        public List<");
+            
+            #line 35 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\DTO.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(mr.Key));
+            
+            #line default
+            #line hidden
+            this.Write("> Childs_ { get; set; }\r\n");
+            
+            #line 36 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\DTO.tt"
+
+    }
+
+            
+            #line default
+            #line hidden
+            this.Write("    }\r\n\r\n");
+            
+            #line 41 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\DTO.tt"
 
     }
 
@@ -149,7 +177,7 @@ namespace T4CAGC.Template
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 33 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\DTO.tt"
+        #line 46 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\DTO.tt"
 
 
     private void WriteAttributes(List<string> attributes)
@@ -161,28 +189,28 @@ namespace T4CAGC.Template
         #line default
         #line hidden
         
-        #line 39 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\DTO.tt"
+        #line 52 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\DTO.tt"
 this.Write("    [");
 
         
         #line default
         #line hidden
         
-        #line 40 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\DTO.tt"
+        #line 53 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\DTO.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(attribute));
 
         
         #line default
         #line hidden
         
-        #line 40 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\DTO.tt"
+        #line 53 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\DTO.tt"
 this.Write("]\r\n");
 
         
         #line default
         #line hidden
         
-        #line 41 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\DTO.tt"
+        #line 54 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\DTO.tt"
 
         }
     }

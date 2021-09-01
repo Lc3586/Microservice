@@ -90,23 +90,24 @@ namespace T4CAGC.Template
             
             #line default
             #line hidden
-            this.Write("接口\r\n    /// </summary>\r\n    [Route(\"/");
+            this.Write("接口\r\n    /// </summary>\r\n    [ApiController]\r\n    [ApiVersion(\"1.0\")]\r\n    [ApiExp" +
+                    "lorerSettings()]\r\n    [Route(\"/");
             
-            #line 13 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 16 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Name.GetAbbreviation(30).ToLower()));
             
             #line default
             #line hidden
             this.Write("\")]\r\n    [SampleAuthorize(nameof(ApiAuthorizeRequirement))]\r\n    [SwaggerTag(\"");
             
-            #line 15 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 18 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
             
             #line default
             #line hidden
             this.Write("接口\")]\r\n    public class ");
             
-            #line 16 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 19 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName));
             
             #line default
@@ -114,70 +115,70 @@ namespace T4CAGC.Template
             this.Write("Controller : BaseApiController\r\n    {\r\n        #region DI\r\n\r\n        /// <summary" +
                     ">\r\n        /// \r\n        /// </summary>\r\n        /// <param name=\"");
             
-            #line 23 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 26 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName.ToLower()));
             
             #line default
             #line hidden
             this.Write("Business\"></param>\r\n        public ");
             
-            #line 24 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 27 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName));
             
             #line default
             #line hidden
             this.Write("Controller(I");
             
-            #line 24 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 27 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName));
             
             #line default
             #line hidden
             this.Write("Business ");
             
-            #line 24 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 27 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName.ToLower()));
             
             #line default
             #line hidden
             this.Write("Business)\r\n        {\r\n            ");
             
-            #line 26 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 29 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName));
             
             #line default
             #line hidden
             this.Write("Business = ");
             
-            #line 26 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 29 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName.ToLower()));
             
             #line default
             #line hidden
             this.Write("Business;\r\n        }\r\n\r\n        /// <summary>\r\n        /// ");
             
-            #line 30 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 33 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
             
             #line default
             #line hidden
             this.Write("接口类\r\n        /// </summary>\r\n        readonly I");
             
-            #line 32 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 35 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName));
             
             #line default
             #line hidden
             this.Write("Business ");
             
-            #line 32 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 35 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName));
             
             #line default
             #line hidden
             this.Write("Business;\r\n\r\n        #endregion\r\n\r\n        #region 基础功能\r\n\r\n");
             
-            #line 38 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 41 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 
     foreach (var field in Options.Table.Fields)
     {
@@ -189,7 +190,7 @@ namespace T4CAGC.Template
             #line hidden
             this.Write("\r\n        /// <summary>\r\n        /// 获取所有");
             
-            #line 46 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 49 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(field.Remark));
             
             #line default
@@ -197,42 +198,42 @@ namespace T4CAGC.Template
             this.Write("\r\n        /// </summary>\r\n        /// <returns></returns>\r\n        [HttpPost(\"all" +
                     "-");
             
-            #line 49 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 52 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(field.Name.ToLower()));
             
             #line default
             #line hidden
             this.Write("\")]\r\n        [SwaggerResponse((int)HttpStatusCode.OK, \"");
             
-            #line 50 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 53 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(field.Remark));
             
             #line default
             #line hidden
             this.Write("\", typeof(List<string>))]\r\n        public async Task<object> GetAll");
             
-            #line 51 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 54 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(field.Name));
             
             #line default
             #line hidden
             this.Write("()\r\n        {\r\n            return await Task.FromResult(Success(");
             
-            #line 53 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 56 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName));
             
             #line default
             #line hidden
             this.Write("Business.GetAll");
             
-            #line 53 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 56 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(field.Name));
             
             #line default
             #line hidden
             this.Write("()));\r\n        }\r\n");
             
-            #line 55 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 58 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 
         }
         
@@ -244,7 +245,7 @@ namespace T4CAGC.Template
             #line hidden
             this.Write("\r\n        /// <summary>\r\n        /// 获取所有");
             
-            #line 63 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 66 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(field.Remark));
             
             #line default
@@ -252,7 +253,7 @@ namespace T4CAGC.Template
             this.Write("\r\n        /// </summary>\r\n        /// <returns></returns>\r\n        [HttpPost(\"all" +
                     "-");
             
-            #line 66 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 69 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(field.Name.ToLower()));
             
             #line default
@@ -260,34 +261,66 @@ namespace T4CAGC.Template
             this.Write("\")]\r\n        [SwaggerResponse((int)HttpStatusCode.OK, \"{名称: 值}\", typeof(Dictionar" +
                     "y<string, string>))]\r\n        public async Task<object> GetAll");
             
-            #line 68 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 71 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(field.Name));
             
             #line default
             #line hidden
             this.Write("()\r\n        {\r\n            return await Task.FromResult(Success(");
             
-            #line 70 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 73 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName));
             
             #line default
             #line hidden
             this.Write("Business.GetAll");
             
-            #line 70 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 73 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(field.Name));
             
             #line default
             #line hidden
             this.Write("()));\r\n        }\r\n");
             
-            #line 72 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 75 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 
         }
     }
 
     if(Functions.ContainsKey(Function.List))
     {
+        if(Options.Table.Tree)
+        {
+
+            
+            #line default
+            #line hidden
+            this.Write("\r\n        /// <summary>\r\n        /// 获取树状列表数据\r\n        /// </summary>\r\n        //" +
+                    "/ <param name=\"pagination\">分页设置</param>\r\n        /// <returns></returns>\r\n      " +
+                    "  [HttpPost(\"tree-list\")]\r\n        [SwaggerResponse((int)HttpStatusCode.OK, \"树状列" +
+                    "表数据\", typeof(");
+            
+            #line 91 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Functions[Function.List]));
+            
+            #line default
+            #line hidden
+            this.Write("))]\r\n        public async Task<object> GetTreeList([FromBody] TreePaginationDTO p" +
+                    "agination)\r\n        {\r\n            return await Task.FromResult(OpenApiJsonConte" +
+                    "nt(ResponseDataFactory.Success(");
+            
+            #line 94 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName));
+            
+            #line default
+            #line hidden
+            this.Write("Business.GetTreeList(pagination))));\r\n        }\r\n");
+            
+            #line 96 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+
+        }
+        else
+        {
 
             
             #line default
@@ -297,7 +330,7 @@ namespace T4CAGC.Template
                     "[HttpPost(\"list\")]\r\n        [SwaggerResponse((int)HttpStatusCode.OK, \"列表数据\", typ" +
                     "eof(");
             
-            #line 86 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 108 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Functions[Function.List]));
             
             #line default
@@ -305,16 +338,48 @@ namespace T4CAGC.Template
             this.Write("))]\r\n        public async Task<object> GetList([FromBody] PaginationDTO paginatio" +
                     "n)\r\n        {\r\n            return await Task.FromResult(OpenApiJsonContent(");
             
-            #line 89 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 111 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName));
             
             #line default
             #line hidden
             this.Write("Business.GetList(pagination), pagination));\r\n        }\r\n");
             
-            #line 91 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 113 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+        
+        }
+    }
+
+    if(Functions.ContainsKey(Function.DropdownList))
+    {
+
+            
+            #line default
+            #line hidden
+            this.Write(@"
+        /// <summary>
+        /// 获取下拉选择列表数据
+        /// </summary>
+        /// <param name=""condition"">关键词(多个用空格分隔)</param>
+        /// <param name=""pagination"">分页设置</param>
+        /// <returns></returns>
+        [HttpPost(""dropdown-list"")]
+        [SwaggerResponse((int)HttpStatusCode.OK, ""下拉选择列表数据"", typeof(SelectOption))]
+        public async Task<object> GetDropdownList(string condition, PaginationDTO pagination)
+        {
+            return await Task.FromResult(OpenApiJsonContent(");
+            
+            #line 131 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName));
+            
+            #line default
+            #line hidden
+            this.Write("Business.DropdownList(condition, pagination), pagination));\r\n        }\r\n");
+            
+            #line 133 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 
     }
+
 
     if(Functions.ContainsKey(Function.Detail))
     {
@@ -324,28 +389,28 @@ namespace T4CAGC.Template
             #line hidden
             this.Write("\r\n        /// <summary>\r\n        /// 详情数据数据\r\n        /// </summary>\r\n");
             
-            #line 101 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 144 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 WritePrimaryParamsRemark();
             
             #line default
             #line hidden
             this.Write("        /// <returns></returns>\r\n        [HttpPost(\"detail-data");
             
-            #line 103 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 146 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 WritePrimaryRouteParams();
             
             #line default
             #line hidden
             this.Write("\")]\r\n        [SwaggerResponse((int)HttpStatusCode.OK, \"详情数据\", typeof(");
             
-            #line 104 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 147 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Functions[Function.Detail]));
             
             #line default
             #line hidden
             this.Write("))]\r\n        public async Task<object> GetDetail(");
             
-            #line 105 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 148 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 WritePrimaryParams();
             
             #line default
@@ -353,21 +418,21 @@ WritePrimaryParams();
             this.Write(")\r\n        {\r\n            return await Task.FromResult(OpenApiJsonContent(Respons" +
                     "eDataFactory.Success(");
             
-            #line 107 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 150 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName));
             
             #line default
             #line hidden
             this.Write("Business.GetDetail(");
             
-            #line 107 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 150 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 WritePrimaryMethodParams();
             
             #line default
             #line hidden
             this.Write("))));\r\n        }\r\n");
             
-            #line 109 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 152 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 
     }
 
@@ -381,14 +446,14 @@ WritePrimaryMethodParams();
                     "am name=\"data\">表单数据</param>\r\n        /// <returns></returns>\r\n        [HttpPost(" +
                     "\"create\")]\r\n        public async Task<object> Create([FromBody] ");
             
-            #line 122 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 165 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Functions[Function.Create]));
             
             #line default
             #line hidden
             this.Write(" data)\r\n        {\r\n            ");
             
-            #line 124 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 167 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName));
             
             #line default
@@ -396,7 +461,7 @@ WritePrimaryMethodParams();
             this.Write("Business.Create(data);\r\n            return await Task.FromResult(Success(\"添加成功.\")" +
                     ");\r\n        }\r\n");
             
-            #line 127 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 170 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 
     }
 
@@ -408,28 +473,28 @@ WritePrimaryMethodParams();
             #line hidden
             this.Write("\r\n        /// <summary>\r\n        /// 获取编辑数据\r\n        /// </summary>\r\n");
             
-            #line 137 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 180 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 WritePrimaryParamsRemark();
             
             #line default
             #line hidden
             this.Write("        /// <returns></returns>\r\n        [HttpPost(\"edit-data");
             
-            #line 139 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 182 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 WritePrimaryRouteParams();
             
             #line default
             #line hidden
             this.Write("\")]\r\n        [SwaggerResponse((int)HttpStatusCode.OK, \"编辑数据\", typeof(");
             
-            #line 140 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 183 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Functions[Function.Edit]));
             
             #line default
             #line hidden
             this.Write("))]\r\n        public async Task<object> GetEdit(");
             
-            #line 141 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 184 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 WritePrimaryParams();
             
             #line default
@@ -437,14 +502,14 @@ WritePrimaryParams();
             this.Write(")\r\n        {\r\n            return await Task.FromResult(OpenApiJsonContent(Respons" +
                     "eDataFactory.Success(");
             
-            #line 143 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 186 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName));
             
             #line default
             #line hidden
             this.Write("Business.GetEdit(");
             
-            #line 143 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 186 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 WritePrimaryMethodParams();
             
             #line default
@@ -454,14 +519,14 @@ WritePrimaryMethodParams();
                     "\r\n        [HttpPost(\"edit\")]\r\n        public async Task<object> Edit([FromBody] " +
                     "");
             
-            #line 152 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 195 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Functions[Function.Edit]));
             
             #line default
             #line hidden
             this.Write(" data)\r\n        {\r\n            ");
             
-            #line 154 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 197 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName));
             
             #line default
@@ -469,7 +534,7 @@ WritePrimaryMethodParams();
             this.Write("Business.Edit(data);\r\n            return await Task.FromResult(Success());\r\n     " +
                     "   }\r\n");
             
-            #line 157 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 200 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 
     }
 
@@ -481,7 +546,7 @@ WritePrimaryMethodParams();
             #line hidden
             this.Write("\r\n        /// <summary>\r\n        /// 删除数据\r\n        /// </summary>\r\n");
             
-            #line 167 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 210 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 
         WritePrimaryListParamsRemark();
 
@@ -491,7 +556,7 @@ WritePrimaryMethodParams();
             this.Write("        /// <returns></returns>\r\n        [HttpPost(\"delete\")]\r\n        public asy" +
                     "nc Task<object> Delete(IEnumerable<string> keys)\r\n        {\r\n            ");
             
-            #line 174 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 217 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName));
             
             #line default
@@ -499,7 +564,7 @@ WritePrimaryMethodParams();
             this.Write("Business.Delete(keys?.ToList());\r\n            return await Task.FromResult(Succes" +
                     "s());\r\n        }\r\n");
             
-            #line 177 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 220 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 
     }
 
@@ -508,7 +573,7 @@ WritePrimaryMethodParams();
             #line hidden
             this.Write("\r\n        #endregion\r\n\r\n        #region 拓展功能\r\n");
             
-            #line 184 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 227 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 
     if(Functions.ContainsKey(Function.Enable))
     {
@@ -518,7 +583,7 @@ WritePrimaryMethodParams();
             #line hidden
             this.Write("\r\n        /// <summary>\r\n        /// 启用/禁用\r\n        /// </summary>\r\n");
             
-            #line 192 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 235 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 WritePrimaryParamsRemark();
             
             #line default
@@ -526,35 +591,35 @@ WritePrimaryParamsRemark();
             this.Write("        /// <param name=\"enable\">设置状态</param>\r\n        /// <returns></returns>\r\n " +
                     "       [HttpPost(\"enable");
             
-            #line 195 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 238 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 WritePrimaryRouteParams();
             
             #line default
             #line hidden
             this.Write("/{enable}\")]\r\n        public async Task<object> Enable(");
             
-            #line 196 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 239 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 WritePrimaryParams();
             
             #line default
             #line hidden
             this.Write(", bool enable)\r\n        {\r\n            ");
             
-            #line 198 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 241 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName));
             
             #line default
             #line hidden
             this.Write("Business.Enable(");
             
-            #line 198 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 241 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 WritePrimaryMethodParams();
             
             #line default
             #line hidden
             this.Write(", enable);\r\n            return await Task.FromResult(Success());\r\n        }\r\n");
             
-            #line 201 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 244 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 
     }
     
@@ -575,7 +640,7 @@ WritePrimaryMethodParams();
         {
             ");
             
-            #line 216 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 259 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName));
             
             #line default
@@ -592,14 +657,14 @@ WritePrimaryMethodParams();
         [HttpPost(""dragsort"")]
         public async Task<object> DragSort([FromBody] ");
             
-            #line 226 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 269 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Tree ? "TreeDragSort" : "DragSort"));
             
             #line default
             #line hidden
             this.Write(" data)\r\n        {\r\n            ");
             
-            #line 228 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 271 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName));
             
             #line default
@@ -607,7 +672,7 @@ WritePrimaryMethodParams();
             this.Write("Business.DragSort(data);\r\n            return await Task.FromResult(Success());\r\n " +
                     "       }\r\n");
             
-            #line 231 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 274 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 
     }
     
@@ -637,7 +702,7 @@ WritePrimaryMethodParams();
         {
             await ");
             
-            #line 255 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 298 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName));
             
             #line default
@@ -662,14 +727,14 @@ WritePrimaryMethodParams();
         {
             return await Task.FromResult(ResponseDataFactory.Success(");
             
-            #line 273 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 316 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName));
             
             #line default
             #line hidden
             this.Write("Business.Import(file, autogenerateTemplate)));\r\n        }\r\n");
             
-            #line 275 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 318 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 
     }
     
@@ -695,14 +760,14 @@ WritePrimaryMethodParams();
         {
             ");
             
-            #line 295 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 338 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName));
             
             #line default
             #line hidden
             this.Write("Business.Export(version, paginationJson);\r\n        }\r\n");
             
-            #line 297 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+            #line 340 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 
     }
 
@@ -713,7 +778,7 @@ WritePrimaryMethodParams();
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 305 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+        #line 348 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 
     /// <summary>
     /// 主键参数注释
@@ -727,42 +792,42 @@ WritePrimaryMethodParams();
         #line default
         #line hidden
         
-        #line 313 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+        #line 356 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 this.Write("        /// <param name=\"");
 
         
         #line default
         #line hidden
         
-        #line 314 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+        #line 357 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(field.Name.ToLower()));
 
         
         #line default
         #line hidden
         
-        #line 314 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+        #line 357 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 this.Write("\">");
 
         
         #line default
         #line hidden
         
-        #line 314 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+        #line 357 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(field.Remark));
 
         
         #line default
         #line hidden
         
-        #line 314 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+        #line 357 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 this.Write("</param>\r\n");
 
         
         #line default
         #line hidden
         
-        #line 315 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+        #line 358 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 
         }
     }
@@ -780,35 +845,35 @@ this.Write("</param>\r\n");
         #line default
         #line hidden
         
-        #line 327 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+        #line 370 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(i > 0 ? ", " : ""));
 
         
         #line default
         #line hidden
         
-        #line 327 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+        #line 370 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(field.Type));
 
         
         #line default
         #line hidden
         
-        #line 327 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+        #line 370 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 this.Write(" ");
 
         
         #line default
         #line hidden
         
-        #line 327 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+        #line 370 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(field.Name.ToLower()));
 
         
         #line default
         #line hidden
         
-        #line 327 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+        #line 370 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 
             i++;
         }
@@ -826,28 +891,28 @@ this.Write(this.ToStringHelper.ToStringWithCulture(field.Name.ToLower()));
         #line default
         #line hidden
         
-        #line 339 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+        #line 382 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 this.Write("/{");
 
         
         #line default
         #line hidden
         
-        #line 339 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+        #line 382 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(field.Name.ToLower()));
 
         
         #line default
         #line hidden
         
-        #line 339 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+        #line 382 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 this.Write("}");
 
         
         #line default
         #line hidden
         
-        #line 339 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+        #line 382 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 
         }
     }
@@ -865,21 +930,21 @@ this.Write("}");
         #line default
         #line hidden
         
-        #line 351 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+        #line 394 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(i > 0 ? ", " : ""));
 
         
         #line default
         #line hidden
         
-        #line 351 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+        #line 394 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(field.Name.ToLower()));
 
         
         #line default
         #line hidden
         
-        #line 351 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+        #line 394 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 
             i++;
         }
@@ -895,14 +960,14 @@ this.Write(this.ToStringHelper.ToStringWithCulture(field.Name.ToLower()));
         #line default
         #line hidden
         
-        #line 361 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+        #line 404 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 this.Write("        /// <param name=\"keys\">[");
 
         
         #line default
         #line hidden
         
-        #line 362 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+        #line 405 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 
         var i = 0;
         foreach (var field in PrimaryKeys)
@@ -912,21 +977,21 @@ this.Write("        /// <param name=\"keys\">[");
         #line default
         #line hidden
         
-        #line 366 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+        #line 409 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(i > 0 ? " + " : ""));
 
         
         #line default
         #line hidden
         
-        #line 366 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+        #line 409 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(field.Remark));
 
         
         #line default
         #line hidden
         
-        #line 366 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+        #line 409 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 
             i++;
         }
@@ -935,14 +1000,14 @@ this.Write(this.ToStringHelper.ToStringWithCulture(field.Remark));
         #line default
         #line hidden
         
-        #line 369 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+        #line 412 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 this.Write("]</param>\r\n");
 
         
         #line default
         #line hidden
         
-        #line 370 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
+        #line 413 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
 
     }
 

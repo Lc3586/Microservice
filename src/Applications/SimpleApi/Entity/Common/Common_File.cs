@@ -128,13 +128,13 @@ namespace Entity.Common
         #region 关联
 
         /// <summary>
-        /// 相关文件拓展信息
+        /// 相关个人文件信息
         /// </summary>
-        [Navigate(nameof(Common_FileExtension.FileId))]
+        [Navigate(nameof(Common_PersonalFileInfo.FileId))]
         [OpenApiIgnore]
         [JsonIgnore]
         [XmlIgnore]
-        public virtual ICollection<Common_FileExtension> Common_FileExtensions { get; set; }
+        public virtual ICollection<Common_PersonalFileInfo> PersonalFileInfos { get; set; }
 
         #endregion
     }
