@@ -693,12 +693,12 @@ WritePrimaryMethodParams();
         /// </param>
         /// <param name=""autogenerateTemplate"">
         /// <para>指明要使用的模板类型</para>
-        /// <para>true: 自动生成模板</para>
-        /// <para>(默认)false: 使用预制模板</para>
+        /// <para>(默认)true: 自动生成模板</para>
+        /// <para>false: 使用预制模板</para>
         /// </param>
         /// <returns></returns>
         [HttpGet(""downloadtemplate"")]
-        public async Task DownloadTemplate(string version = ExcelVersion.xlsx, bool autogenerateTemplate = false)
+        public async Task DownloadTemplate(string version = ExcelVersion.xlsx, bool autogenerateTemplate = true)
         {
             await ");
             
@@ -716,14 +716,14 @@ WritePrimaryMethodParams();
         /// <param name=""file"">Execl文件</param>
         /// <param name=""autogenerateTemplate"">
         /// <para>指明所使用的模板类型</para>
-        /// <para>true: 自动生成的模板</para>
-        /// <para>(默认)false: 预制模板</para>
+        /// <para>(默认)true: 自动生成的模板</para>
+        /// <para>false: 预制模板</para>
         /// </param>
         /// <returns></returns>
         [HttpPost(""import"")]
         [SwaggerResponse((int)HttpStatusCode.OK, ""导入结果"", typeof(ImportResult))]
         [Consumes(""multipart/form-data"")]
-        public async Task<object> Import(IFormFile file, bool autogenerateTemplate = false)
+        public async Task<object> Import(IFormFile file, bool autogenerateTemplate = true)
         {
             return await Task.FromResult(ResponseDataFactory.Success(");
             

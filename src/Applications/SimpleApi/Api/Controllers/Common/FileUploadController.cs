@@ -37,6 +37,7 @@ namespace Api.Controllers
         /// <summary>
         /// 预备上传文件
         /// </summary>
+        /// <param name="configId">上传配置Id</param>
         /// <param name="md5">文件MD5值</param>
         /// <param name="filename">文件重命名</param>
         /// <param name="section">是否分片处理（默认否）</param>
@@ -45,11 +46,11 @@ namespace Api.Controllers
         /// <param name="specs">分片文件规格（单文件上传时忽略此参数）</param>
         /// <param name="total">分片文件总数（单文件上传时忽略此参数）</param>
         /// <returns></returns>
-        [HttpGet("pre-file/{md5}")]
+        [HttpGet("pre-file/{configId}/{md5}")]
         [SwaggerResponse((int)HttpStatusCode.OK, "输出信息", typeof(PreUploadFileResponse))]
-        public async Task<object> PreUploadFile(string md5, string filename, bool section = false, string type = null, string extension = null, int? specs = null, int? total = null)
+        public async Task<object> PreUploadFile(string configId, string md5, string filename, bool section = false, string type = null, string extension = null, int? specs = null, int? total = null)
         {
-            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(FileUploadBusiness.PreUploadFile(md5, filename, section, type, extension, specs, total))));
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(FileUploadBusiness.PreUploadFile(configId, md5, filename, section, type, extension, specs, total))));
         }
 
         /// <summary>
@@ -130,44 +131,47 @@ namespace Api.Controllers
         /// <summary>
         /// 通过外链上传单个文件
         /// </summary>
+        /// <param name="configId">上传配置Id</param>
         /// <param name="url">外链地址</param>
         /// <param name="filename">文件名</param>
         /// <param name="download">是否下载资源</param>
         /// <returns></returns>
-        [HttpPost("single-file-url")]
+        [HttpPost("single-file-url/{configId}")]
         [SwaggerResponse((int)HttpStatusCode.OK, "文件信息", typeof(FileInfo))]
-        public async Task<object> SingleFileFromUrl(string url, string filename, bool download = false)
+        public async Task<object> SingleFileFromUrl(string configId, string url, string filename, bool download = false)
         {
-            return OpenApiJsonContent(ResponseDataFactory.Success(await FileUploadBusiness.SingleFileFromUrl(url, filename, download)));
+            return OpenApiJsonContent(ResponseDataFactory.Success(await FileUploadBusiness.SingleFileFromUrl(configId, url, filename, download)));
         }
 
         /// <summary>
         /// 上传单个文件
         /// </summary>
+        /// <param name="configId">上传配置Id</param>
         /// <param name="file">分片文件</param>
         /// <param name="filename">文件名</param>
         /// <returns></returns>
         [Consumes("multipart/form-data")]
-        [HttpPost("single-file")]
+        [HttpPost("single-file/{configId}")]
         [SwaggerResponse((int)HttpStatusCode.OK, "文件信息", typeof(FileInfo))]
-        public async Task<object> SingleFile(IFormFile file, string filename)
+        public async Task<object> SingleFile(string configId, IFormFile file, string filename)
         {
-            return OpenApiJsonContent(ResponseDataFactory.Success(await FileUploadBusiness.SingleFile(file, filename)));
+            return OpenApiJsonContent(ResponseDataFactory.Success(await FileUploadBusiness.SingleFile(configId, file, filename)));
         }
 
         /// <summary>
         /// 上传单个文件
         /// </summary>
+        /// <param name="configId">上传配置Id</param>
         /// <param name="type">上传标识</param>
         /// <param name="extension">文件拓展名</param>
         /// <param name="filename">文件名</param>
         /// <returns></returns>
         [Consumes("applicatoin/octet-stream")]
-        [HttpPost("single-file-arraybuffer")]
+        [HttpPost("single-file-arraybuffer/{configId}")]
         [SwaggerResponse((int)HttpStatusCode.OK, "文件信息", typeof(FileInfo))]
-        public async Task<object> SingleFileByArrayBuffer(string type, string extension, string filename)
+        public async Task<object> SingleFileByArrayBuffer(string configId, string type, string extension, string filename)
         {
-            return OpenApiJsonContent(ResponseDataFactory.Success(await FileUploadBusiness.SingleFileByArrayBuffer(type, extension, filename)));
+            return OpenApiJsonContent(ResponseDataFactory.Success(await FileUploadBusiness.SingleFileByArrayBuffer(configId, type, extension, filename)));
         }
     }
 }

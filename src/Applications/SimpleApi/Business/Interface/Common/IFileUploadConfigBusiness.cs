@@ -87,7 +87,7 @@ namespace Business.Interface.Common
         /// </summary>
         /// <param name="data">数据</param>
         /// <returns></returns>
-        void DragSort(DragSort data);
+        void DragSort(TreeDragSort data);
 
         /// <summary>
         /// 下载导入模板
@@ -99,11 +99,11 @@ namespace Business.Interface.Common
         /// </param>
         /// <param name="autogenerateTemplate">
         /// <para>指明要使用的模板类型</para>
-        /// <para>true: 自动生成模板</para>
-        /// <para>(默认)false: 使用预制模板</para>
+        /// <para>(默认)true: 自动生成模板</para>
+        /// <para>false: 使用预制模板</para>
         /// </param>
         /// <returns></returns>
-        Task DownloadTemplate(string version = ExcelVersion.xlsx, bool autogenerateTemplate = false);
+        Task DownloadTemplate(string version = ExcelVersion.xlsx, bool autogenerateTemplate = true);
 
         /// <summary>
         /// 数据导入
@@ -111,11 +111,11 @@ namespace Business.Interface.Common
         /// <param name="file">Execl文件</param>
         /// <param name="autogenerateTemplate">
         /// <para>指明所使用的模板类型</para>
-        /// <para>true: 自动生成的模板</para>
-        /// <para>(默认)false: 预制模板</para>
+        /// <para>(默认)true: 自动生成的模板</para>
+        /// <para>false: 预制模板</para>
         /// </param>
         /// <returns></returns>
-        ImportResult Import(IFormFile file, bool autogenerateTemplate = false);
+        ImportResult Import(IFormFile file, bool autogenerateTemplate = true);
 
         /// <summary>
         /// 导出
@@ -128,6 +128,20 @@ namespace Business.Interface.Common
         /// <param name="paginationJson">分页参数Json字符串</param>
         /// <returns></returns>
         void Export(string version = ExcelVersion.xlsx, string paginationJson = null);
+
+        /// <summary>
+        /// 获取配置数据
+        /// </summary>
+        /// <param name="id">主键</param>
+        /// <returns></returns>
+        Config GetConfig(string id);
+
+        /// <summary>
+        /// 获取配置数据集合
+        /// </summary>
+        /// <param name="ids">id集合</param>
+        /// <returns></returns>
+        List<Config> GetConfigs(List<string> ids);
 
         #endregion
     }

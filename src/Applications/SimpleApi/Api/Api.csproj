@@ -139,6 +139,10 @@
     <Content Remove="wwwroot\plug-in\naiveupload\index.html" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\ApiUri.js" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\ApiUri.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\AppendFileResult.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\AppendFileResult.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\AppendFileResultStatus.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\AppendFileResultStatus.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\ChunkFile.js" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\ChunkFile.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\FileInfo.js" />
@@ -161,6 +165,14 @@
     <Content Remove="wwwroot\plug-in\naiveupload\Model\SelectedFile.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\TokenInfo.js" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\TokenInfo.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadConfig.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadConfig.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadConfigAuthoritiesTreeList.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadConfigAuthoritiesTreeList.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadConfigDetail.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadConfigDetail.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadConfigTreeList.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadConfigTreeList.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadProgress.js" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadProgress.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadTheme - 复制.js" />
@@ -495,6 +507,18 @@
     <None Include="wwwroot\plug-in\naiveupload\Model\ApiUri.js.map">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\AppendFileResult.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\AppendFileResult.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\AppendFileResultStatus.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\AppendFileResultStatus.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="wwwroot\plug-in\naiveupload\Model\ChunkFile.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -559,6 +583,30 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="wwwroot\plug-in\naiveupload\Model\TokenInfo.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadConfig.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadConfig.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadConfigAuthoritiesTreeList.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadConfigAuthoritiesTreeList.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadConfigDetail.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadConfigDetail.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadConfigTreeList.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadConfigTreeList.js.map">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="wwwroot\plug-in\naiveupload\Model\UploadProgress.js">
@@ -759,7 +807,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="wwwroot\element-plus\dayjs.zh-cn.js">
+    <Content Update="wwwroot\plug-in\naiveupload\Model\UploadConfigTreeList - 复制.js">
+      <DependentUpon>UploadConfigTreeList.js</DependentUpon>
+    </Content>
+    <Content Update="wwwroot\plug-in\naiveupload\Model\UploadConfigTreeList - 复制.js.map">
+      <DependentUpon>UploadConfigTreeList.js.map</DependentUpon>
+    </Content>
+    <Content Update="wwwroot\utils\dayjs\dayjs.zh-cn.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="wwwroot\element-plus\element-plus.es.js">
@@ -921,7 +975,25 @@
     <TypeScriptCompile Update="wwwroot\plug-in\naiveupload\Helper\ChunkFileMergeTaskHelper.ts">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </TypeScriptCompile>
+    <TypeScriptCompile Update="wwwroot\plug-in\naiveupload\Model\AppendFileResult.ts">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </TypeScriptCompile>
+    <TypeScriptCompile Update="wwwroot\plug-in\naiveupload\Model\AppendFileResultStatus.ts">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </TypeScriptCompile>
     <TypeScriptCompile Update="wwwroot\plug-in\naiveupload\Model\HubState.ts">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </TypeScriptCompile>
+    <TypeScriptCompile Update="wwwroot\plug-in\naiveupload\Model\UploadConfig.ts">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </TypeScriptCompile>
+    <TypeScriptCompile Update="wwwroot\plug-in\naiveupload\Model\UploadConfigAuthoritiesTreeList.ts">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </TypeScriptCompile>
+    <TypeScriptCompile Update="wwwroot\plug-in\naiveupload\Model\UploadConfigDetail.ts">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </TypeScriptCompile>
+    <TypeScriptCompile Update="wwwroot\plug-in\naiveupload\Model\UploadConfigTreeList.ts">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </TypeScriptCompile>
   </ItemGroup>

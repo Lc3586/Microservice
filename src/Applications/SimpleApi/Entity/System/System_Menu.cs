@@ -211,7 +211,7 @@ namespace Entity.System
         public virtual ICollection<System_Menu> Childs { get; set; }
 
         /// <summary>
-        /// 被授权此菜单的用户
+        /// 被直接授权此菜单的用户
         /// </summary>
         [Navigate(ManyToMany = typeof(System_UserMenu))]
         [OpenApiIgnore]

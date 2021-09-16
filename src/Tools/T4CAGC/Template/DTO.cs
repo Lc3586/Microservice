@@ -146,18 +146,44 @@ namespace T4CAGC.Template
             
             #line default
             #line hidden
-            this.Write("\r\n        /// <summary>\r\n        /// 子级\r\n        /// </summary>\r\n        [OpenApi" +
-                    "Schema(OpenApiSchemaType.model, OpenApiSchemaFormat.model_once)]\r\n        [Descr" +
-                    "iption(\"子级\")]\r\n        public List<");
+            this.Write(@"        /// <summary>
+        /// 是否拥有子级
+        /// </summary>
+        public bool HasChildren { get; set; }
+
+        /// <summary>
+        /// 子级数量
+        /// </summary>
+        public int ChildrenCount { get; set; }
+
+        /// <summary>
+        /// 子级
+        /// </summary>
+        [OpenApiSchema(OpenApiSchemaType.model, OpenApiSchemaFormat.model_once)]
+        [Description(""子级"")]
+        public List<");
             
-            #line 35 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\DTO.tt"
+            #line 44 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\DTO.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(mr.Key));
             
             #line default
             #line hidden
-            this.Write("> Childs_ { get; set; }\r\n");
+            this.Write("> Children { get; set; }\r\n");
             
-            #line 36 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\DTO.tt"
+            #line 45 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\DTO.tt"
+
+    }
+   
+    if(mr.Key.ToLower().Contains("import"))
+    {
+
+            
+            #line default
+            #line hidden
+            this.Write("\r\n        /// <summary>\r\n        /// 新增数据\r\n        /// </summary>\r\n        [OpenA" +
+                    "piIgnore]\r\n        public bool New { get; set; }\r\n");
+            
+            #line 57 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\DTO.tt"
 
     }
 
@@ -166,7 +192,7 @@ namespace T4CAGC.Template
             #line hidden
             this.Write("    }\r\n\r\n");
             
-            #line 41 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\DTO.tt"
+            #line 62 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\DTO.tt"
 
     }
 
@@ -177,7 +203,7 @@ namespace T4CAGC.Template
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 46 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\DTO.tt"
+        #line 67 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\DTO.tt"
 
 
     private void WriteAttributes(List<string> attributes)
@@ -189,28 +215,28 @@ namespace T4CAGC.Template
         #line default
         #line hidden
         
-        #line 52 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\DTO.tt"
+        #line 73 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\DTO.tt"
 this.Write("    [");
 
         
         #line default
         #line hidden
         
-        #line 53 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\DTO.tt"
+        #line 74 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\DTO.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(attribute));
 
         
         #line default
         #line hidden
         
-        #line 53 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\DTO.tt"
+        #line 74 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\DTO.tt"
 this.Write("]\r\n");
 
         
         #line default
         #line hidden
         
-        #line 54 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\DTO.tt"
+        #line 75 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\DTO.tt"
 
         }
     }

@@ -48,75 +48,87 @@ var NaiveUpload = (function () {
             var promise;
             var _this = this;
             return __generator(this, function (_a) {
-                promise = new Promise(function (resolve, reject) {
-                    _this.Settings = settings;
-                    var files = [
-                        {
-                            Tag: "script",
-                            Attributes: {
-                                type: 'text/javascript',
-                                src: 'Model/SelectedFile.js'
+                promise = new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
+                    var files;
+                    var _this = this;
+                    return __generator(this, function (_a) {
+                        this.Settings = settings;
+                        files = [
+                            {
+                                Tag: "script",
+                                Attributes: {
+                                    type: 'text/javascript',
+                                    src: 'Model/UploadConfig.js'
+                                }
+                            },
+                            {
+                                Tag: "script",
+                                Attributes: {
+                                    type: 'text/javascript',
+                                    src: 'Model/SelectedFile.js'
+                                }
+                            },
+                            {
+                                Tag: "script",
+                                Attributes: {
+                                    type: 'text/javascript',
+                                    src: 'Model/RawFile.js'
+                                }
+                            },
+                            {
+                                Tag: "script",
+                                Attributes: {
+                                    type: 'text/javascript',
+                                    src: 'Model/ChunkFile.js'
+                                }
+                            },
+                            {
+                                Tag: "script",
+                                Attributes: {
+                                    type: 'text/javascript',
+                                    src: 'Model/ApiUri.js'
+                                }
+                            },
+                            {
+                                Tag: "script",
+                                Attributes: {
+                                    type: 'text/javascript',
+                                    src: 'Helper/HashHelper.js'
+                                }
+                            },
+                            {
+                                Tag: "script",
+                                Attributes: {
+                                    type: 'text/javascript',
+                                    src: 'Helper/UploadHelper.js'
+                                }
                             }
-                        },
-                        {
-                            Tag: "script",
-                            Attributes: {
-                                type: 'text/javascript',
-                                src: 'Model/RawFile.js'
-                            }
-                        },
-                        {
-                            Tag: "script",
-                            Attributes: {
-                                type: 'text/javascript',
-                                src: 'Model/ChunkFile.js'
-                            }
-                        },
-                        {
-                            Tag: "script",
-                            Attributes: {
-                                type: 'text/javascript',
-                                src: 'Model/ApiUri.js'
-                            }
-                        },
-                        {
-                            Tag: "script",
-                            Attributes: {
-                                type: 'text/javascript',
-                                src: 'Helper/HashHelper.js'
-                            }
-                        },
-                        {
-                            Tag: "script",
-                            Attributes: {
-                                type: 'text/javascript',
-                                src: 'Helper/UploadHelper.js'
-                            }
-                        }
-                    ];
-                    if (_this.Settings.Axios == null)
-                        files.push({
-                            Tag: "script",
-                            Attributes: {
-                                type: 'text/javascript',
-                                src: '../../utils/axios.min.js'
-                            }
+                        ];
+                        if (this.Settings.Axios == null)
+                            files.push({
+                                Tag: "script",
+                                Attributes: {
+                                    type: 'text/javascript',
+                                    src: '../../utils/axios.min.js'
+                                }
+                            });
+                        ImportHelper.ImportFile(files, function () {
+                            if (_this.Settings.Axios == null)
+                                _this.Settings.Axios = new window.axios;
+                            _this.CreateAxiosInstance();
+                            resolve();
                         });
-                    ImportHelper.ImportFile(files, function () {
-                        if (_this.Settings.Axios == null)
-                            _this.Settings.Axios = new window.axios;
-                        _this.CreateAxiosInstance();
-                        resolve();
+                        return [2];
                     });
-                });
+                }); });
                 return [2, promise];
             });
         });
     };
     NaiveUpload.prototype.CreateAxiosInstance = function () {
         this.AxiosInstance = this.Settings.Axios.create({});
-        for (var key in this.Settings) {
-            this.AxiosInstance.defaults.headers.common[key] = this.Settings[key];
+        for (var key in this.Settings.Headers) {
+            this.AxiosInstance.defaults.headers.common[key] = this.Settings.Headers[key];
         }
     };
     NaiveUpload.prototype.Pause = function (index) {
@@ -134,12 +146,13 @@ var NaiveUpload = (function () {
     };
     NaiveUpload.prototype.AppendFiles = function (files) {
         var _this = this;
-        if (!!this.Settings.Limit && (this.SelectedFileList.length + files.length) > this.Settings.Limit)
-            return 1;
+        if (!!this.Settings.Config.UpperLimit && (this.SelectedFileList.length + files.length) > this.Settings.Config.UpperLimit)
+            return "LIMIT";
         var push = function (file, newFile) {
             var rawFile = new RawFile(file);
             rawFile.Name = newFile.Name;
             rawFile.Extension = newFile.Extension;
+            rawFile.ConfigId = _this.Settings.Config.Id;
             _this.RawFileList.push(rawFile);
             newFile.RawIndex = _this.RawFileList.length - 1;
             _this.SelectedFileList.push(newFile);
@@ -148,7 +161,29 @@ var NaiveUpload = (function () {
         var fileList = Array.prototype.slice.call(files);
         var _loop_1 = function (file) {
             if (this_1.Limited())
-                return { value: void 0 };
+                return { value: "LIMIT" };
+            var extension = file.name.substring(file.name.lastIndexOf('.'));
+            if (this_1.Settings.Config.AllowedTypeList.length !== 0) {
+                flag = false;
+                for (var _a = 0, _b = this_1.Settings.Config.AllowedTypeList; _a < _b.length; _a++) {
+                    var type = _b[_a];
+                    if ((type[0] === '.' && type === extension) || new RegExp(type.replace('/*', '//*')).test(file.type)) {
+                        flag = true;
+                        break;
+                    }
+                }
+                if (!flag) {
+                    console.warn(file.type);
+                    return { value: "TYPE" };
+                }
+            }
+            if (this_1.Settings.Config.ProhibitedTypeList.length !== 0) {
+                for (var _c = 0, _d = this_1.Settings.Config.ProhibitedTypeList; _c < _d.length; _c++) {
+                    var type = _d[_c];
+                    if ((type[0] === '.' && type === extension) || new RegExp(type.replace('/*', '//*')).test(file.type))
+                        return { value: "TYPE" };
+                }
+            }
             var selectedFile = new SelectedFile(file);
             if (this_1.Settings.BeforeCheck) {
                 var before = this_1.Settings.BeforeCheck(file);
@@ -162,13 +197,14 @@ var NaiveUpload = (function () {
             else
                 push(file, selectedFile);
         };
-        var this_1 = this;
+        var this_1 = this, flag;
         for (var _i = 0, fileList_1 = fileList; _i < fileList_1.length; _i++) {
             var file = fileList_1[_i];
             var state_1 = _loop_1(file);
             if (typeof state_1 === "object")
                 return state_1.value;
         }
+        return "OK";
     };
     NaiveUpload.prototype.HandleFile = function (selectedFileIndex) {
         var _this = this;
@@ -433,7 +469,7 @@ var NaiveUpload = (function () {
                     case 4:
                         e_3 = _a.sent();
                         console.error('error', e_3.message);
-                        this.UploadError(selectedFileIndex, '文件上传失败，请删除后重新上传.', true, e_3);
+                        this.UploadError(selectedFileIndex, "\u6587\u4EF6\u4E0A\u4F20\u5931\u8D25\uFF0C" + e_3.message + ".", true, e_3);
                         return [3, 5];
                     case 5:
                         close();
@@ -444,7 +480,38 @@ var NaiveUpload = (function () {
         });
     };
     NaiveUpload.prototype.Limited = function () {
-        return !!this.Settings.Limit && this.SelectedFileList.length >= this.Settings.Limit;
+        return !!this.Settings.Config.UpperLimit && this.SelectedFileList.length >= this.Settings.Config.UpperLimit;
+    };
+    NaiveUpload.prototype.UpdateConfig = function (configId) {
+        return __awaiter(this, void 0, void 0, function () {
+            var promise;
+            var _this = this;
+            return __generator(this, function (_a) {
+                promise = new Promise(function (resolve, reject) {
+                    if (_this.Settings.Config == null)
+                        _this.Settings.Config = new UploadConfig();
+                    _this.AxiosInstance.post(ApiUri.FileUploadConfigData(configId), {})
+                        .then(function (response) {
+                        if (response.data.Success) {
+                            _this.UpdateConfigData(response.data.Data);
+                            resolve(response.data.Data);
+                        }
+                        else
+                            reject(new Error(response.data.Message));
+                    })
+                        .catch(function (error) {
+                        console.error(error);
+                        reject(new Error('获取文件上传配置时发生异常.'));
+                    });
+                });
+                return [2, promise];
+            });
+        });
+    };
+    NaiveUpload.prototype.UpdateConfigData = function (config) {
+        for (var key in config) {
+            this.Settings.Config[key] = config[key];
+        }
     };
     NaiveUpload.prototype.Error = function (selectedFileIndex, message, retry, done) {
         var selectedFile = this.SelectedFileList[selectedFileIndex];
@@ -545,7 +612,7 @@ var NaiveUpload = (function () {
                             selectedFile.Name = rawFile.Name;
                     };
                     if (selectedFile.Uploaded) {
-                        _this.AxiosInstance.get(ApiUri.Rename(rawFile.FileInfo.Id, selectedFile.Name))
+                        _this.AxiosInstance.get(ApiUri.PersonalFileInfoRename(rawFile.FileInfo.Id, selectedFile.Name))
                             .then(function (response) {
                             done(response.data.Success);
                             if (response.data.Success)
@@ -553,8 +620,8 @@ var NaiveUpload = (function () {
                             else
                                 reject(new Error(response.data.Message));
                         })
-                            .catch(function (e) {
-                            console.error(e);
+                            .catch(function (error) {
+                            console.error(error);
                             done(false);
                             reject(new Error('文件重命名时发生异常.'));
                         });

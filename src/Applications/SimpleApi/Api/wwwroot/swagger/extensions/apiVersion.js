@@ -40,8 +40,8 @@ window.onInformationLoaded(() => {
         () => {
             let setting = { on: true, version: '1.0' };
 
-            var down = (name, e) => {
-                var close = window.showDialog(
+            let down = (name, e) => {
+                let close = window.showDialog(
                     '自动设置接口版本 - 设置',
                     [
                         ['H5', '当前状态', setting.on ? '已开启' : '已关闭'],
@@ -71,9 +71,9 @@ window.onInformationLoaded(() => {
 
                     let input = $(item).find('input')[0];
 
-                    var nativeInputValueSetter = Object.getOwnPropertyDescriptor(input.nodeName == 'TEXTAREA' ? window.HTMLTextAreaElement.prototype : window.HTMLInputElement.prototype, "value").set;
+                    let nativeInputValueSetter = Object.getOwnPropertyDescriptor(input.nodeName == 'TEXTAREA' ? window.HTMLTextAreaElement.prototype : window.HTMLInputElement.prototype, "value").set;
                     nativeInputValueSetter.call(input, setting.version);
-                    var ev2 = new Event('input', { bubbles: true });
+                    let ev2 = new Event('input', { bubbles: true });
                     input.dispatchEvent(ev2);
                 });
             });

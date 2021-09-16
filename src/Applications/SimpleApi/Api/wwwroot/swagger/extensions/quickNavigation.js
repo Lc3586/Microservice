@@ -15,14 +15,9 @@ window.onInformationLoaded(() => {
             }
         ],
         () => {
-            $('.operation-filter-input').attr('placeholder', '标签名称（区分大小写）')
-                .on('input', (e) => {
-                    window.delayedEvent(generateTags, null, 100, 'generate-Tags');
-                });
-
             //生成左侧标签
-            var generateTags = () => {
-                var $tagBody = $('.tagsBody');
+            let generateTags = () => {
+                let $tagBody = $('.tagsBody');
                 if ($tagBody.length == 0)
                     $tagBody = $('<div class="tagsBody"></div>')
                         .appendTo($('body'));
@@ -30,7 +25,7 @@ window.onInformationLoaded(() => {
                     $('.tagsBody').empty();
 
                 $('.opblock-tag').each((index, item) => {
-                    var $tag = $('<span title="{1}">{0}</span>'.format(item.dataset['tag'], $(item).find('.renderedMarkdown p').text()))
+                    let $tag = $('<span title="{1}">{0}</span>'.format(item.dataset['tag'], $(item).find('.renderedMarkdown p').text()))
                         .css({ 'top': (item.offsetTop + 5) + 'px' })
                         .appendTo($tagBody)
                         .on('click', (e) => {
@@ -38,9 +33,9 @@ window.onInformationLoaded(() => {
                         });
 
                     $(window).scroll(function (e) {
-                        var current = index * 75;
-                        var valueA = item.offsetTop - $(document).scrollTop();
-                        var valueB = valueA - current;
+                        let current = index * 75;
+                        let valueA = item.offsetTop - $(document).scrollTop();
+                        let valueB = valueA - current;
                         $tag.css({
                             'top': (valueB > 0 ? valueA : current + 10) + 'px'
                         });
@@ -53,7 +48,7 @@ window.onInformationLoaded(() => {
                     });
                 });
 
-                var changeTags = (state) => {
+                let changeTags = (state) => {
                     if (state == 'hidden' || state == 'show') {
                         $changeTags.data('state', state == 'show' ? 'unlocked' : 'hidden');
 
@@ -88,7 +83,7 @@ window.onInformationLoaded(() => {
                     'left': `-${$('.tagsBody span').css('width')}`
                 });
 
-                var $changeTags = $('.changeTags');
+                let $changeTags = $('.changeTags');
                 if ($changeTags.length == 0)
                     $changeTags = $('<i title="显示导航标签" class="changeTags"><svg t="1623299549301" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3903" width="50" height="50"><path d="M838.101333 552.96l-239.061333 277.461333c-23.893333 27.733333-65.194667 29.866667-91.306667 8.533334a63.445333 63.445333 0 0 1-8.661333-89.6l204.288-236.928-204.288-236.885334c-23.893333-27.733333-19.541333-68.266667 8.704-89.6 28.245333-23.509333 69.546667-19.242667 91.306667 8.533334l239.018666 277.418666c10.88 10.666667 15.232 25.6 15.232 40.533334s-4.352 29.866667-15.232 40.533333z" fill="#8a8a8a" p-id="3904"></path><path d="M496.768 552.96L257.706667 830.464c-23.893333 27.733333-65.194667 29.866667-91.306667 8.533333a63.445333 63.445333 0 0 1-8.661333-89.6l204.288-236.928-204.288-236.885333c-23.893333-27.733333-19.541333-68.266667 8.704-89.6 28.245333-23.509333 69.546667-19.242667 91.306666 8.533333l239.018667 277.418667c10.88 10.666667 15.232 25.6 15.232 40.533333s-4.352 29.866667-15.232 40.533334z" fill="#8a8a8a" p-id="3905"></path></svg></i>')
                         .data('state', 'hidden')
@@ -101,6 +96,7 @@ window.onInformationLoaded(() => {
                     $changeTags.data('state', 'unlocked');
 
                 $("#swagger-ui")
+                    .off('mouseover')
                     .on('mouseover', e => {
                         if (e.offsetX < 100) {
                             if ($changeTags.data('state') == 'hidden')
@@ -113,6 +109,7 @@ window.onInformationLoaded(() => {
                                 }, null, 100, 'change-Tags');
                         }
                     })
+                    .off('mouseout')
                     .on('mouseout', e => {
                         if (e.offsetX > $('.tagsBody span').width() + 100) {
                             if ($changeTags.data('state') == 'unlocked')
@@ -127,13 +124,39 @@ window.onInformationLoaded(() => {
                     });
             };
 
-            window.domMutationObserver(
-                $(".swagger-ui")[0],
-                () => {
-                    window.delayedEvent(generateTags, null, 150, 'generate-Tags');
-                });
+            let dmo = () => {
+                window.domMutationObserver(
+                    $(".opblock-tag-section").parent().parent()[0],
+                    () => {
+                        window.delayedEvent(generateTags, null, 150, 'generate-Tags');
+                    });
+            };
 
-            window.delayedEvent(generateTags, null, 100, 'generate-Tags');
+            let mo = () => {
+                window.onInformationLoaded(() => {
+                    window.delayedEvent(generateTags, null, 100, 'generate-Tags');
+
+                    let empty = false;
+                    $('.operation-filter-input').attr('placeholder', '标签名称（区分大小写）')
+                        .off('input')
+                        .on('input', (e) => {
+                            window.delayedEvent(generateTags, null, 150, 'generate-Tags');
+
+                            if ($('.opblock-tag').length == 0)
+                                empty = true;
+                            else if (empty) {
+                                dmo();
+                                empty = false;
+                            }
+                        });
+
+                    dmo();
+                });
+            };
+
+            window.onInformationChanged(mo);
+
+            mo();
 
             console.info('已加载功能 => 接口标签快速导航');
         });

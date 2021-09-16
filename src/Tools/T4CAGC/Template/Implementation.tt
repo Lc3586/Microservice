@@ -175,7 +175,14 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
                         {
                             pagination.ParentId = o.Id;
                             pagination.Rank--;
-                            o.Childs_ = GetData(pagination, true);
+                            o.Children = GetData(pagination, true);
+                            o.HasChildren = o.Children.Any_Ex();
+                            o.ChildrenCount = o.Children?.Count ?? 0;
+                        }
+                        else
+                        {
+                            o.HasChildren = Repository.Select.Where(p => p.ParentId == o.Id).Any();
+                            o.ChildrenCount = (int)Repository.Where(p => p.ParentId == o.Id).Count();
                         }
                     });
                 else if (deep)
@@ -887,15 +894,16 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
     {
 #>
 
-        public async Task DownloadTemplate(string version = ExcelVersion.xlsx, bool autogenerateTemplate = false)
+        public async Task DownloadTemplate(string version = ExcelVersion.xlsx, bool autogenerateTemplate = true)
         {
             var response = HttpContextAccessor.HttpContext.Response;
+            
+            response.Headers.Add("Content-Disposition", $"attachment; filename=\"{UrlEncoder.Default.Encode("<#=Options.Table.Remark#>导入模板")}.{version}\"");
 
             if(autogenerateTemplate)
             {
                 #region 直接发送预制模板
 
-                response.Headers.Add("Content-Disposition", $"attachment; filename=\"{UrlEncoder.Default.Encode("<#=Options.Table.Remark#>导入模板")}.{version}\"");
                 var filePath = PathHelper.GetAbsolutePath($"~/template/<#=Options.Table.Remark#>导入模板.{version}");
                 if (!File.Exists(filePath))
                 {
@@ -912,11 +920,14 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
 
                 var table = new DataTable("<#=Options.Table.Remark#>导入模板");
 
-                typeof(<#=Options.Table.Name#>)
-                    .GetProperties()
+                var type = typeof(<#=Functions[Function.Import]#>);
+
+                var tag = type.GetMainTag();
+
+                type.GetProperties()
                     .ForEach(o =>
                     {
-                        if (!o.HasTag(typeof(<#=Functions[Function.Import]#>).GetMainTag()))
+                        if (o.DeclaringType?.Name != type.Name && !o.HasTag(tag))
                             return;
 
                         var attr = o.GetCustomAttribute<DescriptionAttribute>();
@@ -950,65 +961,71 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
                 throw new MessageException("导入失败, 文件有误（请检查格式）.", _ex);
             }
 
-            var entityList = new List<<#=Options.Table.Name#>>();
+            var type = typeof(<#=Functions[Function.Import]#>);
+
+            var tag = type.GetMainTag();
+
+            var dataList = new List<<#=Functions[Function.Import]#>>();
 
             var errors = new List<ErrorInfo>();
+
+            var rowOffset = autogenerateTemplate ? 1 : 3;
 
             for (int i = 0; i < table.Rows.Count; i++)
             {
                 var row = table.Rows[i];
-                var entity = new <#=Options.Table.Name#>();
+                var data = new <#=Functions[Function.Import]#>();
 
                 var _errors = new List<ErrorInfo>();
 
-                entity.GetType().GetProperties().ForEach(o =>
-                {
-                    if (!o.HasTag(typeof(<#=Functions[Function.Import]#>).GetMainTag()))
-                        return;
-
-                    var attr = o.GetCustomAttribute<DescriptionAttribute>();
-                    if (attr == null)
-                        return;
-
-                    if (!table.Columns.Contains(attr.Description))
+                type.GetProperties()
+                    .ForEach(o =>
                     {
-                        _errors.Add(new ErrorInfo(i + 3, attr.Description, "未找到该列。"));
-                        return;
-                    }
+                        if (o.DeclaringType?.Name != type.Name && !o.HasTag(tag))
+                            return;
 
-                    try
-                    {
-                        if (o.PropertyType == typeof(bool))
-                            o.SetValue(entity, row[attr.Description].ToString() == "是");
-                        else if (o.PropertyType == typeof(string))
+                        var attr = o.GetCustomAttribute<DescriptionAttribute>();
+                        if (attr == null)
+                            return;
+
+                        if (!table.Columns.Contains(attr.Description))
                         {
-                            var attrColumn = o.GetCustomAttribute<ColumnAttribute>();
-                            if (attrColumn == null)
-                                return;
-
-                            var value = row[attr.Description].ToString();
-                            if (Encoding.ASCII.GetBytes(value).Sum(c => c == 63 ? 2 : 1) > attrColumn.StringLength)
-                            {
-                                _errors.Add(new ErrorInfo(i + 3, attr.Description, $"数据长度过长, 不可超过{attrColumn.StringLength}个字符（其中每个中文占两个字符）。"));
-                                return;
-                            }
-                            o.SetValue(entity, value);
+                            _errors.Add(new ErrorInfo(i + rowOffset, attr.Description, "未找到该列。"));
+                            return;
                         }
-                        else
-                            o.SetValue(entity, row[attr.Description].ChangeType(o.PropertyType));
-                    }
-                    catch (Exception ex)
-                    {
-                        _errors.Add(new ErrorInfo(i + 3, attr.Description, "数据格式有误。"));
 
-                        Logger.Log(
-                            NLog.LogLevel.Error,
-                            LogType.警告信息,
-                            $"{file.FileName}文件第{i + 3}行第{attr.Description}列数据格式有误.",
-                            null,
-                            ex);
-                    }
-                });
+                        try
+                        {
+                            if (o.PropertyType == typeof(bool))
+                                o.SetValue(data, row[attr.Description].ToString() == "是");
+                            else if (o.PropertyType == typeof(string))
+                            {
+                                var value = row[attr.Description].ToString();
+
+                                var attrColumn = o.GetCustomAttribute<ColumnAttribute>();
+                                if (attrColumn != null && attrColumn.StringLength > 0 && Encoding.ASCII.GetBytes(value).Sum(c => c == 63 ? 2 : 1) > attrColumn.StringLength)
+                                {
+                                    _errors.Add(new ErrorInfo(i + rowOffset, attr.Description, $"数据长度过长, 不可超过{attrColumn.StringLength}个字符（其中每个中文占两个字符）。"));
+                                    return;
+                                }
+
+                                o.SetValue(data, value);
+                            }
+                            else
+                                o.SetValue(data, row[attr.Description].ChangeType(o.PropertyType));
+                        }
+                        catch (Exception ex)
+                        {
+                            _errors.Add(new ErrorInfo(i + rowOffset, attr.Description, "数据格式有误。"));
+
+                            Logger.Log(
+                                NLog.LogLevel.Error,
+                                LogType.警告信息,
+                                $"{file.FileName}文件第{i + rowOffset}行第{attr.Description}列数据格式有误.",
+                                null,
+                                ex);
+                        }
+                    });
                 
                 //@数据验证#待完善@
                 if (_errors.Any())
@@ -1021,9 +1038,9 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
         {
             var i = 0;
 #>
-                <#=i > 0 ? "if" : "else if"#> (entity.<#=field.Name#><#=field.CsType != typeof(string) ? " == null" : ".IsNullOrWhiteSpace()"#>)
+                <#=i > 0 ? "if" : "else if"#> (data.<#=field.Name#><#=field.CsType != typeof(string) ? " == null" : ".IsNullOrWhiteSpace()"#>)
                 {
-                    errors.Add(new ErrorInfo(i + 3, "<#=field.Remark#>", "内容不能为空。"));
+                    errors.Add(new ErrorInfo(i + rowOffset, "<#=field.Remark#>", "内容不能为空。"));
                     continue;
                 }
 <#
@@ -1031,7 +1048,18 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
         }
 #>
 
-                entityList.Add(entity);
+                dataList.Add(data);
+            }
+
+            if (errors.Any())
+                return new ImportResult(errors);
+
+            for (int i = 0; i < dataList.Count; i++)
+            {
+                var data = dataList[i];
+
+                //分析数据
+
             }
 
             if (errors.Any())
@@ -1046,7 +1074,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
             
                 var orList = new List<Common_OperationRecord>();
 
-                entityList.ForEach(entity =>
+                dataList.ForEach(entity =>
                 {
                     //@数据匹配#待完善@
                     //var idSelect = Repository.Where(o => o.Name == entity.Name);
@@ -1111,19 +1139,26 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
             else
                 pagination = new PaginationDTO { PageIndex = -1 };
 
-            var list = GetList(pagination);
+            var type = typeof(<#=Functions[Function.Export]#>);
+
+            var entityList = Repository.Select
+                                    .GetPagination(pagination)
+                                    .ToList<Common_FileUploadConfig, <#=Functions[Function.Export]#>>(typeof(Export).GetNamesWithTagAndOther(true, , "_<#=Functions[Function.Export]#>"));
+
+            var list = Mapper.Map<List<<#=Functions[Function.Export]#>>>(entityList);
 
             //动态生成模板
             var table = new DataTable("<#=Options.Table.Remark#>");
 
             var propDic = new Dictionary<string, PropertyInfo>();
 
+            var tag = type.GetMainTag();
+
             //生成列
-            typeof(<#=Options.Table.Name#>)
-                .GetProperties()
+            type.GetProperties()
                 .ForEach(o =>
                 {
-                    if (!o.HasTag(typeof(<#=Functions[Function.Export]#>).GetMainTag()))
+                    if (o.DeclaringType?.Name != type.Name && !o.HasTag(tag))
                         return;
 
                     var attr = o.GetCustomAttribute<DescriptionAttribute>();

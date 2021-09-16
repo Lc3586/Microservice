@@ -10,6 +10,7 @@ using Microservice.Library.Container;
 using Microservice.Library.DataMapping.Gen;
 using Microservice.Library.Extension;
 using Microservice.Library.File;
+using Microservice.Library.File.Model;
 using Microservice.Library.FreeSql.Extention;
 using Microservice.Library.FreeSql.Gen;
 using Microservice.Library.OpenApi.Extention;
@@ -259,9 +260,9 @@ namespace Business.Implementation.Common
                 {
                     try
                     {
-                        var filePath = Config.GetFileAbsolutePath("ffmpeg");
+                        var ffmpegPath = Config.GetFileAbsolutePath("ffmpeg");
 
-                        await file.Path.Screenshot(imagePath, filePath, time.Value, 31, width, height);
+                        await file.Path.Screenshot(ffmpegPath, imagePath, time.Value, 31, width, height);
                     }
                     catch (Exception ex)
                     {
@@ -375,6 +376,28 @@ namespace Business.Implementation.Common
             if (!long.TryParse(length, out long value))
                 throw new MessageException("length值格式有误.");
             return value.GetFileSize();
+        }
+
+        public async Task<VideoInfo> GetVideoInfo(string id, bool format = true, bool streams = false, bool chapters = false, bool programs = false, bool version = false)
+        {
+            var file = Repository.GetAndCheckNull(id, "文件不存在或已被删除.");
+
+            if (file.FileType != FileType.视频)
+                throw new MessageException("文件不是视频文件.");
+
+            if (file.State != FileState.可用)
+                throw new MessageException("文件不可用.");
+
+            try
+            {
+                var ffprobePath = Config.GetFileAbsolutePath("ffprobe");
+
+                return await file.Path.GetVideoInfo(ffprobePath, format, streams, chapters, programs, version);
+            }
+            catch (Exception ex)
+            {
+                throw new MessageException("获取视频信息失败.", new { file.Path, format, streams, chapters, programs, version }, ex);
+            }
         }
 
         #endregion

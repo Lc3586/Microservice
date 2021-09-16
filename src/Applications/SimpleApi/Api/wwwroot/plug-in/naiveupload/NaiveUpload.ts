@@ -6,9 +6,17 @@ class NaiveUpload {
      * 修改配置
      * */
     async Init(this: NaiveUpload, settings: MultipleUploadSetting) {
-        const promise = new Promise<void>((resolve, reject) => {
+        const promise = new Promise<void>(async (resolve, reject) => {
             this.Settings = settings;
+
             let files: ImportFile[] = [
+                {
+                    Tag: ImportFileTag.JS,
+                    Attributes: {
+                        type: 'text/javascript',
+                        src: 'Model/UploadConfig.js'
+                    }
+                },
                 {
                     Tag: ImportFileTag.JS,
                     Attributes: {
@@ -80,15 +88,15 @@ class NaiveUpload {
      * */
     private CreateAxiosInstance() {
         this.AxiosInstance = this.Settings.Axios.create({});
-        for (const key in this.Settings) {
-            this.AxiosInstance.defaults.headers.common[key] = this.Settings[key];
+        for (const key in this.Settings.Headers) {
+            this.AxiosInstance.defaults.headers.common[key] = this.Settings.Headers[key];
         }
     }
 
     /**
      * 设置
      * */
-    private Settings: MultipleUploadSetting;
+    Settings: MultipleUploadSetting;
 
     /**
      * 源文件集合
@@ -161,17 +169,18 @@ class NaiveUpload {
 
     /**
      * 追加文件
-     * @param {any} files
-     * @returns 0：成功 1：超出数量限制 2：文件类型不合法
+     * @param {any} files 文件
+     * @returns {any} 追加文件返回信息状态
      */
-    AppendFiles(this: NaiveUpload, files: File[]): number {
-        if (!!this.Settings.Limit && (this.SelectedFileList.length + files.length) > this.Settings.Limit)
-            return 1;
+    AppendFiles(this: NaiveUpload, files: File[]): AppendFileResultStatus {
+        if (!!this.Settings.Config.UpperLimit && (this.SelectedFileList.length + files.length) > this.Settings.Config.UpperLimit)
+            return AppendFileResultStatus.超出数量限制;
 
         let push = (file: File, newFile: SelectedFile) => {
             let rawFile = new RawFile(file);
             rawFile.Name = newFile.Name;
             rawFile.Extension = newFile.Extension;
+            rawFile.ConfigId = this.Settings.Config.Id;
             this.RawFileList.push(rawFile);
 
             newFile.RawIndex = this.RawFileList.length - 1;
@@ -185,7 +194,30 @@ class NaiveUpload {
 
         for (let file of fileList) {
             if (this.Limited())
-                return;
+                return AppendFileResultStatus.超出数量限制;
+
+            const extension = file.name.substring(file.name.lastIndexOf('.'));
+
+            if (this.Settings.Config.AllowedTypeList.length !== 0) {
+                var flag = false;
+                for (const type of this.Settings.Config.AllowedTypeList) {
+                    if ((type[0] === '.' && type === extension) || new RegExp(type.replace('/*', '//*')).test(file.type)) {
+                        flag = true;
+                        break;
+                    }
+                }
+                if (!flag) {
+                    console.warn(file.type);
+                    return AppendFileResultStatus.文件类型不合法;
+                }
+            }
+
+            if (this.Settings.Config.ProhibitedTypeList.length !== 0) {
+                for (const type of this.Settings.Config.ProhibitedTypeList) {
+                    if ((type[0] === '.' && type === extension) || new RegExp(type.replace('/*', '//*')).test(file.type))
+                        return AppendFileResultStatus.文件类型不合法;
+                }
+            }
 
             let selectedFile = new SelectedFile(file);
 
@@ -200,6 +232,8 @@ class NaiveUpload {
             } else
                 push(file, selectedFile);
         }
+
+        return AppendFileResultStatus.成功;
     }
 
     /**
@@ -491,7 +525,7 @@ class NaiveUpload {
             selectedFile.Done = true;
         } catch (e) {
             console.error('error', e.message);
-            this.UploadError(selectedFileIndex, '文件上传失败，请删除后重新上传.', true, e);
+            this.UploadError(selectedFileIndex, `文件上传失败，${e.message}.`, true, e);
         }
 
         close();
@@ -503,7 +537,47 @@ class NaiveUpload {
      * 是否已达上限
      * */
     Limited(this: NaiveUpload) {
-        return !!this.Settings.Limit && this.SelectedFileList.length >= this.Settings.Limit;
+        return !!this.Settings.Config.UpperLimit && this.SelectedFileList.length >= this.Settings.Config.UpperLimit;
+    }
+
+    /**
+     * 更新配置
+     * @param this
+     * @param configId 文件上传配置Id
+     */
+    async UpdateConfig(this: NaiveUpload, configId: string) {
+        const promise = new Promise<UploadConfig>((resolve, reject) => {
+            if (this.Settings.Config == null)
+                this.Settings.Config = new UploadConfig();
+
+            this.AxiosInstance.post(ApiUri.FileUploadConfigData(configId), {})
+                .then((response: { data: ResponseData_T<UploadConfig> }) => {
+                    if (response.data.Success) {
+                        this.UpdateConfigData(response.data.Data);
+                        resolve(response.data.Data);
+                    }
+                    else
+                        reject(new Error(response.data.Message));
+                })
+                .catch((error) => {
+                    console.error(error);
+
+                    reject(new Error('获取文件上传配置时发生异常.'));
+                });
+        });
+
+        return promise;
+    }
+
+    /**
+     * 更新配置
+     * @param this
+     * @param configId 文件上传配置Id
+     */
+    UpdateConfigData(this: NaiveUpload, config: UploadConfig) {
+        for (let key in config) {
+            this.Settings.Config[key] = config[key];
+        }
     }
 
     /**
@@ -603,7 +677,7 @@ class NaiveUpload {
         const api = file.File.type === null || file.File.type === '' || file.File.type === 'application/octet-stream' ? ApiUri.FileTypeByExtension(selectedFile.ExtensionLower) : ApiUri.FileTypeByMIME(file.File.type);
 
         this.AxiosInstance.get(api)
-            .then((response) => {
+            .then((response: { data: ResponseData_T<string> }) => {
                 if (response.data.Success)
                     selectedFile.FileType = response.data.Data;
                 else
@@ -633,7 +707,7 @@ class NaiveUpload {
      */
     private GetFileSize(selectedFile: SelectedFile) {
         this.AxiosInstance.get(ApiUri.FileSize(this.GetRawFile(selectedFile).Size))
-            .then((response) => {
+            .then((response: { data: ResponseData_T<string> }) => {
                 if (response.data.Success)
                     selectedFile.Size = response.data.Data;
                 else
@@ -664,16 +738,16 @@ class NaiveUpload {
             }
 
             if (selectedFile.Uploaded) {
-                this.AxiosInstance.get(ApiUri.Rename(rawFile.FileInfo.Id, selectedFile.Name))
-                    .then((response) => {
+                this.AxiosInstance.get(ApiUri.PersonalFileInfoRename(rawFile.FileInfo.Id, selectedFile.Name))
+                    .then((response: { data: ResponseData }) => {
                         done(response.data.Success);
                         if (response.data.Success)
                             resolve();
                         else
                             reject(new Error(response.data.Message));
                     })
-                    .catch((e) => {
-                        console.error(e);
+                    .catch((error) => {
+                        console.error(error);
 
                         done(false);
                         reject(new Error('文件重命名时发生异常.'));

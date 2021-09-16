@@ -48,6 +48,20 @@ namespace Business.Interface.Common
         void Rename(string id, string filename);
 
         /// <summary>
+        /// 获取编辑数据
+        /// </summary>
+        /// <param name="id">id</param>
+        /// <returns></returns>
+        Edit GetEdit(string id);
+
+        /// <summary>
+        /// 编辑
+        /// </summary>
+        /// <param name="data">编辑</param>
+        /// <returns></returns>
+        void Edit(Edit data);
+
+        /// <summary>
         /// 删除
         /// </summary>
         /// <param name="ids">Id集合</param>

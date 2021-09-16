@@ -15,6 +15,7 @@ namespace Business.Interface.Common
         /// <summary>
         /// 预备上传文件
         /// </summary>
+        /// <param name="configId">上传配置Id</param>
         /// <param name="md5">文件MD5值</param>
         /// <param name="filename">文件重命名</param>
         /// <param name="section">是否分片处理</param>
@@ -23,7 +24,7 @@ namespace Business.Interface.Common
         /// <param name="specs">分片文件规格</param>
         /// <param name="total">分片文件总数</param>
         /// <returns></returns>
-        PreUploadFileResponse PreUploadFile(string md5, string filename, bool section = false, string type = null, string extension = null, int? specs = null, int? total = null);
+        PreUploadFileResponse PreUploadFile(string configId, string md5, string filename, bool section = false, string type = null, string extension = null, int? specs = null, int? total = null);
 
         /// <summary>
         /// 预备上传分片文件
@@ -85,21 +86,33 @@ namespace Business.Interface.Common
         Task<PersonalFileInfo> SingleFileFromUrl(string url, string filename, bool download = false);
 
         /// <summary>
-        /// 上传单个文件
+        /// 通过外链上传单个文件
         /// </summary>
-        /// <param name="file">文件</param>
+        /// <param name="configId">上传配置Id</param>
+        /// <param name="url">外链地址</param>
         /// <param name="filename">文件重命名</param>
+        /// <param name="download">是否下载资源</param>
         /// <returns></returns>
-        Task<PersonalFileInfo> SingleFile(IFormFile file, string filename = null);
+        Task<PersonalFileInfo> SingleFileFromUrl(string configId, string url, string filename, bool download = false);
 
         /// <summary>
         /// 上传单个文件
         /// </summary>
+        /// <param name="configId">上传配置Id</param>
+        /// <param name="file">文件</param>
+        /// <param name="filename">文件重命名</param>
+        /// <returns></returns>
+        Task<PersonalFileInfo> SingleFile(string configId, IFormFile file, string filename = null);
+
+        /// <summary>
+        /// 上传单个文件
+        /// </summary>
+        /// <param name="configId">上传配置Id</param>
         /// <param name="type">上传标识</param>
         /// <param name="extension">文件拓展名</param>
         /// <param name="filename">文件重命名</param>
         /// <returns></returns>
-        Task<PersonalFileInfo> SingleFileByArrayBuffer(string type, string extension, string filename);
+        Task<PersonalFileInfo> SingleFileByArrayBuffer(string configId, string type, string extension, string filename);
 
         #endregion
     }

@@ -421,11 +421,11 @@ WritePrimaryParams();
         /// </param>
         /// <param name=""autogenerateTemplate"">
         /// <para>指明要使用的模板类型</para>
-        /// <para>true: 自动生成模板</para>
-        /// <para>(默认)false: 使用预制模板</para>
+        /// <para>(默认)true: 自动生成模板</para>
+        /// <para>false: 使用预制模板</para>
         /// </param>
         /// <returns></returns>
-        Task DownloadTemplate(string version = ExcelVersion.xlsx, bool autogenerateTemplate = false);
+        Task DownloadTemplate(string version = ExcelVersion.xlsx, bool autogenerateTemplate = true);
 
         /// <summary>
         /// 数据导入
@@ -433,11 +433,11 @@ WritePrimaryParams();
         /// <param name=""file"">Execl文件</param>
         /// <param name=""autogenerateTemplate"">
         /// <para>指明所使用的模板类型</para>
-        /// <para>true: 自动生成的模板</para>
-        /// <para>(默认)false: 预制模板</para>
+        /// <para>(默认)true: 自动生成的模板</para>
+        /// <para>false: 预制模板</para>
         /// </param>
         /// <returns></returns>
-        ImportResult Import(IFormFile file, bool autogenerateTemplate = false);
+        ImportResult Import(IFormFile file, bool autogenerateTemplate = true);
 ");
             
             #line 216 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Interface.tt"

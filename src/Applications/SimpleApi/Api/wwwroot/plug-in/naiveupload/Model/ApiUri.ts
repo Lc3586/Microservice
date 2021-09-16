@@ -23,38 +23,72 @@ class ApiUri {
     static RefreshToken: string = '/jwt/refresh-token';
 
     /**
-     * 文件重命名
+     * 个人文件信息重命名
      * @param id Id
      * @param filename 文件名
      * */
-    static Rename: (id: string, filename: string) => string = (id: string, filename: string) => `/file/rename/${id}?filename=${filename}`;
+    static PersonalFileInfoRename: (id: string, filename: string) => string = (id: string, filename: string) => `/personal-file-info/rename/${id}?filename=${filename}`;
+
+    /**
+     * 获取个人文件信息编辑数据
+     * @param id Id
+     * */
+    static PersonalFileInfoEditData: (id: string) => string = (id: string) => `/personal-file-info/edit-data/${id}`;
+
+    /**
+     * 个人文件信息编辑
+     * */
+    static PersonalFileInfoEdit: string = '/personal-file-info/edit';
 
     /**
      * 获取文件类型
      * @param extension 文件拓展名
      * */
-    static FileTypeByExtension: (extension: string) => string = (extension: string) => `/file/file-type-by-extension/${extension}`;
+    static FileTypeByExtension: (extension: string) => string = (extension: string) => `/file/type-by-extension/${extension}`;
 
     /**
      * 获取文件类型
      * @param mimetype MIME类型
      * */
-    static FileTypeByMIME: (mimetype: string) => string = (mimetype: string) => `/file/file-type-by-mimetype?mimetype=${mimetype}`;
+    static FileTypeByMIME: (mimetype: string) => string = (mimetype: string) => `/file/type-by-mimetype?mimetype=${mimetype}`;
 
     /**
      * 获取文件类型预览图链接地址
      * @param extension 文件拓展名
      * */
-    static FileTypeImageUrl: (extension: string) => string = (extension: string) => `/file/file-type-image/${extension}`;
+    static FileTypeImageUrl: (extension: string) => string = (extension: string) => `/file/type-image/${extension}`;
 
     /**
      * 获取文件大小
      * @param length 文件字节数
      * */
-    static FileSize: (length: number | string) => string = (length: number | string) => `/file/file-size/${length}`;
+    static FileSize: (length: number | string) => string = (length: number | string) => `/file/size/${length}`;
+
+    /**
+     * 获取文件上传配置树状列表
+     * */
+    static FileUploadConfigTreeList: string = '/file-upload-config/tree-list';
+
+    /**
+     * 获取文件上传配置详情数据
+     * @param Id 上传配置Id
+     * */
+    static FileUploadConfigDetailData: (id: string) => string = (id: string) => `/file-upload-config/detail-data/${id}`;
+
+    /**
+     * 获取文件上传配置数据
+     * @param Id 上传配置Id
+     * */
+    static FileUploadConfigData: (id: string) => string = (id: string) => `/file-upload-config/data/${id}`;
+
+    /**
+     * 获取当前登录账号的文件上传配置授权树状列表数据
+     */
+    static GetCurrentAccountCFUCTree: string = '/authorities/current-account-data-cfuc-tree';
 
     /**
      * 预备上传文件
+     * @param configId 上传配置Id
      * @param md5 文件哈希值
      * @param filename 文件重命名
      * @param section 是否分片处理（默认否）
@@ -63,7 +97,7 @@ class ApiUri {
      * @param specs 分片文件规格（单文件上传时忽略此参数）
      * @param total 分片文件总数（单文件上传时忽略此参数）
      * */
-    static PreUploadFile: (md5: string, filename: string, section?: boolean, type?: string, extension?: string, specs?: number, total?: number) => string = (md5: string, filename: string, section: boolean = false, type: string, extension: string, specs: number, total: number) => `/file/pre-upload-file/${md5}?filename=${filename}&section=${section}&type=${type || ''}&extension=${extension || ''}&specs=${specs || ''}&total=${total || ''}`;
+    static PreUploadFile: (configId: string, md5: string, filename: string, section?: boolean, type?: string, extension?: string, specs?: number, total?: number) => string = (configId: string, md5: string, filename: string, section: boolean = false, type: string, extension: string, specs: number, total: number) => `/file-upload/pre-file/${configId}/${md5}?filename=${filename}&section=${section}&type=${type || ''}&extension=${extension || ''}&specs=${specs || ''}&total=${total || ''}`;
 
     /**
      * 预备上传分片文件
@@ -74,7 +108,7 @@ class ApiUri {
      * @param forced 强制上传
      */
     static PreUploadChunkfile(file_md5: string, md5: string, index: number, specs: number, forced: boolean = false): string {
-        return `/file/pre-upload-chunkfile/${file_md5}/${md5}/${index}/${specs}?forced=${forced}`
+        return `/file-upload/pre-chunkfile/${file_md5}/${md5}/${index}/${specs}?forced=${forced}`
     };
 
     /**
@@ -83,7 +117,7 @@ class ApiUri {
      * @param md5 分片文件哈希值
      * */
     static UploadSingleChunkfile(key: string, md5: string): string {
-        return `/file/upload-single-chunkfile/${key}/${md5}`;
+        return `/file-upload/single-chunkfile/${key}/${md5}`;
     }
 
     /**
@@ -92,7 +126,7 @@ class ApiUri {
      * @param md5 分片文件哈希值
      * */
     static UploadSingleChunkfileByArrayBuffer(key: string, md5: string): string {
-        return `/file/upload-single-chunkfile-arraybuffer/${key}/${md5}`;
+        return `/file-upload/single-chunkfile-arraybuffer/${key}/${md5}`;
     }
 
     /**
@@ -105,25 +139,27 @@ class ApiUri {
      * @param filename 文件重命名
      * */
     static UploadChunkfileFinished(file_md5: string, specs: number, total: number, type: string, extension: string, filename: string): string {
-        return `/file/upload-chunkfile-finished/${file_md5}/${specs}/${total}?type=${type}&extension=${extension}&filename=${filename}`;
+        return `/file-upload/chunkfile-finished/${file_md5}/${specs}/${total}?type=${type}&extension=${extension}&filename=${filename}`;
     }
 
     /**
      * 上传单个文件
+     * @param configId 上传配置Id
      * @param filename 文件重命名
      * */
-    static SingleFile(filename: string): string {
-        return `/file/upload-single-file?filename=${filename}`;
+    static SingleFile(configId: string, filename: string): string {
+        return `/file-upload/single-file/${configId}?filename=${filename}`;
     }
 
     /**
      * 上传单个文件
+     * @param configId 上传配置Id
      * @param type 文件类型
      * @param extension 文件拓展名
      * @param filename 文件重命名
      * */
-    static SingleFileByArrayBuffer(type: string, extension: string, filename: string): string {
-        return `/file/upload-single-file-arraybuffer?type=${type}&extension=${extension}&filename=${filename}`;
+    static SingleFileByArrayBuffer(configId: string, type: string, extension: string, filename: string): string {
+        return `/file-upload/single-file-arraybuffer/${configId}?type=${type}&extension=${extension}&filename=${filename}`;
     }
 
     /**

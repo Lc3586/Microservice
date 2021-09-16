@@ -457,6 +457,18 @@
             <param name="length">文件字节数</param>
             <returns></returns>
         </member>
+        <member name="M:Api.Controllers.FileController.GetVideoInfo(System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Boolean)">
+            <summary>
+            获取视频信息
+            </summary>
+            <param name="id">文件Id</param>
+            <param name="format">获取有关输入多媒体流的容器格式的信息</param>
+            <param name="streams">获取有关输入多媒体流中包含的每个媒体流的信息</param>
+            <param name="chapters">获取有关以该格式存储的章节的信息</param>
+            <param name="programs">获取有关程序及其输入多媒体流中包含的流的信息</param>
+            <param name="version">获取与程序版本有关的信息、获取与库版本有关的信息、获取与程序和库版本有关的信息</param>
+            <returns></returns>
+        </member>
         <member name="T:Api.Controllers.Common.FileUploadConfigController">
             <summary>
             文件上传配置接口
@@ -482,7 +494,7 @@
         </member>
         <member name="M:Api.Controllers.Common.FileUploadConfigController.GetDetail(System.String)">
             <summary>
-            详情数据数据
+            详情数据
             </summary>
             <param name="id">主键</param>
             <returns></returns>
@@ -522,7 +534,7 @@
             <param name="data">数据</param>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.Common.FileUploadConfigController.DragSort(Model.Utils.Sort.SortParamsDTO.DragSort)">
+        <member name="M:Api.Controllers.Common.FileUploadConfigController.DragSort(Model.Utils.Sort.SortParamsDTO.TreeDragSort)">
             <summary>
             拖动排序
             </summary>
@@ -540,8 +552,8 @@
             </param>
             <param name="autogenerateTemplate">
             <para>指明要使用的模板类型</para>
-            <para>true: 自动生成模板</para>
-            <para>(默认)false: 使用预制模板</para>
+            <para>(默认)true: 自动生成模板</para>
+            <para>false: 使用预制模板</para>
             </param>
             <returns></returns>
         </member>
@@ -552,8 +564,8 @@
             <param name="file">Execl文件</param>
             <param name="autogenerateTemplate">
             <para>指明所使用的模板类型</para>
-            <para>true: 自动生成的模板</para>
-            <para>(默认)false: 预制模板</para>
+            <para>(默认)true: 自动生成的模板</para>
+            <para>false: 预制模板</para>
             </param>
             <returns></returns>
         </member>
@@ -569,15 +581,30 @@
             <param name="paginationJson">分页参数Json字符串</param>
             <returns></returns>
         </member>
+        <member name="M:Api.Controllers.Common.FileUploadConfigController.GetConfig(System.String)">
+            <summary>
+            配置数据
+            </summary>
+            <param name="id">主键</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.Common.FileUploadConfigController.GetConfigs(System.Collections.Generic.List{System.String})">
+            <summary>
+            获取配置数据集合
+            </summary>
+            <param name="ids">id集合</param>
+            <returns></returns>
+        </member>
         <member name="T:Api.Controllers.FileUploadController">
             <summary>
             文件上传接口
             </summary>
         </member>
-        <member name="M:Api.Controllers.FileUploadController.PreUploadFile(System.String,System.String,System.Boolean,System.String,System.String,System.Nullable{System.Int32},System.Nullable{System.Int32})">
+        <member name="M:Api.Controllers.FileUploadController.PreUploadFile(System.String,System.String,System.String,System.Boolean,System.String,System.String,System.Nullable{System.Int32},System.Nullable{System.Int32})">
             <summary>
             预备上传文件
             </summary>
+            <param name="configId">上传配置Id</param>
             <param name="md5">文件MD5值</param>
             <param name="filename">文件重命名</param>
             <param name="section">是否分片处理（默认否）</param>
@@ -635,27 +662,30 @@
             <param name="filename">文件名</param>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.FileUploadController.SingleFileFromUrl(System.String,System.String,System.Boolean)">
+        <member name="M:Api.Controllers.FileUploadController.SingleFileFromUrl(System.String,System.String,System.String,System.Boolean)">
             <summary>
             通过外链上传单个文件
             </summary>
+            <param name="configId">上传配置Id</param>
             <param name="url">外链地址</param>
             <param name="filename">文件名</param>
             <param name="download">是否下载资源</param>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.FileUploadController.SingleFile(Microsoft.AspNetCore.Http.IFormFile,System.String)">
+        <member name="M:Api.Controllers.FileUploadController.SingleFile(System.String,Microsoft.AspNetCore.Http.IFormFile,System.String)">
             <summary>
             上传单个文件
             </summary>
+            <param name="configId">上传配置Id</param>
             <param name="file">分片文件</param>
             <param name="filename">文件名</param>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.FileUploadController.SingleFileByArrayBuffer(System.String,System.String,System.String)">
+        <member name="M:Api.Controllers.FileUploadController.SingleFileByArrayBuffer(System.String,System.String,System.String,System.String)">
             <summary>
             上传单个文件
             </summary>
+            <param name="configId">上传配置Id</param>
             <param name="type">上传标识</param>
             <param name="extension">文件拓展名</param>
             <param name="filename">文件名</param>
@@ -715,10 +745,24 @@
         </member>
         <member name="M:Api.Controllers.PersonalFileInfoController.Rename(System.String,System.String)">
             <summary>
-            文件重命名
+            重命名
             </summary>
             <param name="id">Id</param>
             <param name="filename">文件名</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.PersonalFileInfoController.GetEdit(System.String)">
+            <summary>
+            获取编辑数据
+            </summary>
+            <param name="id">Id</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.PersonalFileInfoController.Edit(Model.Common.PersonalFileInfoDTO.Edit)">
+            <summary>
+            编辑
+            </summary>
+            <param name="data">数据</param>
             <returns></returns>
         </member>
         <member name="M:Api.Controllers.PersonalFileInfoController.Delete(System.Collections.Generic.IEnumerable{System.String})">
@@ -1132,14 +1176,14 @@
         </member>
         <member name="M:Api.Controllers.AuthoritiesController.AuthorizeMenuForUser(Model.System.AuthorizeDTO.MenuForUser)">
             <summary>
-            为用户授权菜单
+            直接为用户授权菜单
             </summary>
             <param name="data">数据</param>
             <returns></returns>
         </member>
         <member name="M:Api.Controllers.AuthoritiesController.AuthorizeMenuForUser(System.String,System.String,System.Boolean)">
             <summary>
-            为用户授权菜单
+            直接为用户授权菜单
             </summary>
             <param name="menuId">菜单Id</param>
             <param name="userId">用户Id</param>
@@ -1148,7 +1192,7 @@
         </member>
         <member name="M:Api.Controllers.AuthoritiesController.AuthorizeResourcesForUser(Model.System.AuthorizeDTO.ResourcesForUser)">
             <summary>
-            为用户授权资源
+            直接为用户授权资源
             </summary>
             <param name="data">数据</param>
             <returns></returns>
@@ -1174,6 +1218,38 @@
             为角色授权资源
             </summary>
             <param name="data">数据</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.AuthoritiesController.AuthorizeCFUCForUser(Model.System.AuthorizeDTO.CFUCForUser)">
+            <summary>
+            直接为用户授权文件上传配置
+            </summary>
+            <param name="data">数据</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.AuthoritiesController.AuthorizeCFUCForUser(System.String,System.String,System.Boolean)">
+            <summary>
+            直接为用户授权文件上传配置
+            </summary>
+            <param name="configId">文件上传配置Id</param>
+            <param name="userId">用户Id</param>
+            <param name="allChilds">同时授权所有子集文件上传配置</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.AuthoritiesController.AuthorizeCFUCForRole(Model.System.AuthorizeDTO.CFUCForRole)">
+            <summary>
+            为角色授权文件上传配置
+            </summary>
+            <param name="data">数据</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.AuthoritiesController.AuthorizeCFUCForRole(System.String,System.String,System.Boolean)">
+            <summary>
+            为角色授权文件上传配置
+            </summary>
+            <param name="configId">文件上传配置Id</param>
+            <param name="roleId">角色Id</param>
+            <param name="allChilds">同时授权所有子集文件上传配置</param>
             <returns></returns>
         </member>
         <member name="M:Api.Controllers.AuthoritiesController.RevocationRoleForAllUser(System.Collections.Generic.IEnumerable{System.String})">
@@ -1218,6 +1294,13 @@
             <param name="userIds">用户Id集合</param>
             <returns></returns>
         </member>
+        <member name="M:Api.Controllers.AuthoritiesController.RevocationCFUCForUser(System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            撤销用户的全部文件上传配置授权
+            </summary>
+            <param name="userIds">用户Id集合</param>
+            <returns></returns>
+        </member>
         <member name="M:Api.Controllers.AuthoritiesController.RevocationMenuForRole(System.Collections.Generic.IEnumerable{System.String})">
             <summary>
             撤销角色的全部菜单授权
@@ -1228,6 +1311,13 @@
         <member name="M:Api.Controllers.AuthoritiesController.RevocationResourcesForRole(System.Collections.Generic.IEnumerable{System.String})">
             <summary>
             撤销角色的全部资源授权
+            </summary>
+            <param name="roleIds">角色Id集合</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.AuthoritiesController.RevocationCFUCForRole(System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            撤销角色的全部文件上传配置授权
             </summary>
             <param name="roleIds">角色Id集合</param>
             <returns></returns>
@@ -1266,14 +1356,14 @@
         </member>
         <member name="M:Api.Controllers.AuthoritiesController.RevocationMenuForUser(Model.System.AuthorizeDTO.MenuForUser)">
             <summary>
-            撤销用户的菜单授权
+            撤销用户的直接菜单授权
             </summary>
             <param name="data">数据</param>
             <returns></returns>
         </member>
         <member name="M:Api.Controllers.AuthoritiesController.RevocationMenuForUser(System.String,System.String,System.Boolean)">
             <summary>
-            撤销用户的菜单授权
+            撤销用户的直接菜单授权
             </summary>
             <param name="menuId">菜单Id</param>
             <param name="userId">用户Id</param>
@@ -1282,9 +1372,25 @@
         </member>
         <member name="M:Api.Controllers.AuthoritiesController.RevocationResourcesForUser(Model.System.AuthorizeDTO.ResourcesForUser)">
             <summary>
-            撤销用户的资源授权
+            撤销用户的直接资源授权
             </summary>
             <param name="data">数据</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.AuthoritiesController.RevocationCFUCForUser(Model.System.AuthorizeDTO.CFUCForUser)">
+            <summary>
+            撤销用户的直接文件上传配置授权
+            </summary>
+            <param name="data">数据</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.AuthoritiesController.RevocationCFUCForUser(System.String,System.String,System.Boolean)">
+            <summary>
+            撤销用户的直接文件上传配置授权
+            </summary>
+            <param name="configId">文件上传配置Id</param>
+            <param name="userId">用户Id</param>
+            <param name="allChilds">同时撤销所有子集文件上传配置授权</param>
             <returns></returns>
         </member>
         <member name="M:Api.Controllers.AuthoritiesController.RevocationMenuForRole(Model.System.AuthorizeDTO.MenuForRole)">
@@ -1310,6 +1416,22 @@
             <param name="data">数据</param>
             <returns></returns>
         </member>
+        <member name="M:Api.Controllers.AuthoritiesController.RevocationCFUCForRole(Model.System.AuthorizeDTO.CFUCForRole)">
+            <summary>
+            撤销角色的文件上配置授权
+            </summary>
+            <param name="data">数据</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.AuthoritiesController.RevocationCFUCForRole(System.String,System.String,System.Boolean)">
+            <summary>
+            撤销角色的文件上配置授权
+            </summary>
+            <param name="configId">文件上配置Id</param>
+            <param name="roleId">角色Id</param>
+            <param name="allChilds">同时撤销所有子集文件上配置授权</param>
+            <returns></returns>
+        </member>
         <member name="M:Api.Controllers.AuthoritiesController.RevocationMenuForAll(System.Collections.Generic.IEnumerable{System.String})">
             <summary>
             撤销所有用户和角色的菜单授权
@@ -1324,7 +1446,14 @@
             <param name="resourcesIds">资源Id集合</param>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.AuthoritiesController.GetUser(System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Boolean)">
+        <member name="M:Api.Controllers.AuthoritiesController.RevocationCFUCForAll(System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            撤销所有用户和角色的文件上配置授权
+            </summary>
+            <param name="configIds">文件上配置Id集合</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.AuthoritiesController.GetUser(System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Boolean)">
             <summary>
             获取用户的授权数据
             </summary>
@@ -1332,11 +1461,13 @@
             <param name="includeRole">包括授权角色</param>
             <param name="includeMenu">包括授权菜单</param>
             <param name="includeResources">包括授权资源</param>
+            <param name="includeCFUC">包括授权文件上传配置</param>
             <param name="mergeRoleMenu">合并角色的授权菜单</param>
             <param name="mergeRoleResources">合并角色的授权资源</param>
+            <param name="mergeRoleCFUC">合并角色的授权文件上传配置</param>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.AuthoritiesController.GetMember(System.String,System.Boolean,System.Boolean,System.Boolean)">
+        <member name="M:Api.Controllers.AuthoritiesController.GetMember(System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean)">
             <summary>
             获取会员的授权数据
             </summary>
@@ -1344,24 +1475,27 @@
             <param name="includeRole">包括授权角色</param>
             <param name="includeMenu">包括授权菜单</param>
             <param name="includeResources">包括授权资源</param>
+            <param name="includeCFUC">包括授权文件上传配置</param>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.AuthoritiesController.GetUserRole(System.String,System.Boolean,System.Boolean)">
+        <member name="M:Api.Controllers.AuthoritiesController.GetUserRole(System.String,System.Boolean,System.Boolean,System.Boolean)">
             <summary>
             获取授权给用户的角色
             </summary>
             <param name="userId">用户Id</param>
             <param name="includeMenu">包括授权菜单</param>
             <param name="includeResources">包括授权资源</param>
+            <param name="includeCFUC">包括授权文件上传配置</param>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.AuthoritiesController.GetMemberRole(System.String,System.Boolean,System.Boolean)">
+        <member name="M:Api.Controllers.AuthoritiesController.GetMemberRole(System.String,System.Boolean,System.Boolean,System.Boolean)">
             <summary>
             获取授权给会员的角色
             </summary>
             <param name="memberId">会员Id</param>
             <param name="includeMenu">包括授权菜单</param>
             <param name="includeResources">包括授权资源</param>
+            <param name="includeCFUC">包括授权文件上传配置</param>
             <returns></returns>
         </member>
         <member name="M:Api.Controllers.AuthoritiesController.GetUserMenu(System.String,System.Boolean)">
@@ -1394,13 +1528,29 @@
             <param name="memberId">会员Id</param>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.AuthoritiesController.GetRole(System.String,System.Boolean,System.Boolean)">
+        <member name="M:Api.Controllers.AuthoritiesController.GetUserCFUC(System.String,System.Boolean)">
+            <summary>
+            获权授权给用户的文件上传配置
+            </summary>
+            <param name="userId">用户Id</param>
+            <param name="mergeRoleCFUC">包括角色的授权文件上传配置</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.AuthoritiesController.GetMemberCFUC(System.String)">
+            <summary>
+            获权授权给会员的文件上传配置
+            </summary>
+            <param name="memberId">会员Id</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.AuthoritiesController.GetRole(System.String,System.Boolean,System.Boolean,System.Boolean)">
             <summary>
             获取角色的授权数据
             </summary>
             <param name="roleId">角色Id</param>
             <param name="includeMenu">包括授权菜单</param>
             <param name="includeResources">包括授权资源</param>
+            <param name="includeCFUC">包括授权文件上传配置</param>
             <returns></returns>
         </member>
         <member name="M:Api.Controllers.AuthoritiesController.GetRoleMenu(System.String)">
@@ -1418,58 +1568,65 @@
             <param name="pagination">分页设置</param>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.AuthoritiesController.GetUserRoleTree(System.String,Model.System.RoleDTO.TreeListParamter)">
+        <member name="M:Api.Controllers.AuthoritiesController.GetRoleCFUC(System.String)">
+            <summary>
+            获取授权给角色的文件上传配置
+            </summary>
+            <param name="roleId">角色Id</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.AuthoritiesController.GetUserRoleTree(System.String,Model.Utils.Pagination.TreePaginationDTO)">
             <summary>
             获取用户角色授权树状列表数据
             </summary>
             <param name="userId">用户ID</param>
-            <param name="paramter">参数</param>
+            <param name="pagination">分页设置</param>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.AuthoritiesController.GetMemberRoleTree(System.String,Model.System.RoleDTO.TreeListParamter)">
+        <member name="M:Api.Controllers.AuthoritiesController.GetMemberRoleTree(System.String,Model.Utils.Pagination.TreePaginationDTO)">
             <summary>
             获取会员角色授权树状列表数据
             </summary>
             <param name="memberId">会员ID</param>
-            <param name="paramter">参数</param>
+            <param name="pagination">分页设置</param>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.AuthoritiesController.GetCurrentAccountRoleTree(Model.System.RoleDTO.TreeListParamter)">
+        <member name="M:Api.Controllers.AuthoritiesController.GetCurrentAccountRoleTree(Model.Utils.Pagination.TreePaginationDTO)">
             <summary>
             获取当前登录账号的角色授权树状列表数据
             </summary>
-            <param name="paramter">参数</param>
+            <param name="pagination">分页设置</param>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.AuthoritiesController.GetRoleMenuTree(System.String,Model.System.MenuDTO.TreeListParamter)">
+        <member name="M:Api.Controllers.AuthoritiesController.GetRoleMenuTree(System.String,Model.Utils.Pagination.TreePaginationDTO)">
             <summary>
             获取角色菜单授权树状列表数据
             </summary>
             <param name="roleId">角色ID</param>
-            <param name="paramter">参数</param>
+            <param name="pagination">分页设置</param>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.AuthoritiesController.GetUserMenuTree(System.String,Model.System.MenuDTO.TreeListParamter)">
+        <member name="M:Api.Controllers.AuthoritiesController.GetUserMenuTree(System.String,Model.Utils.Pagination.TreePaginationDTO)">
             <summary>
             获取用户菜单授权树状列表数据
             </summary>
             <param name="userId">用户ID</param>
-            <param name="paramter">参数</param>
+            <param name="pagination">分页设置</param>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.AuthoritiesController.GetMemberMenuTree(System.String,Model.System.MenuDTO.TreeListParamter)">
+        <member name="M:Api.Controllers.AuthoritiesController.GetMemberMenuTree(System.String,Model.Utils.Pagination.TreePaginationDTO)">
             <summary>
             获取会员菜单授权树状列表数据
             </summary>
             <param name="memberId">会员ID</param>
-            <param name="paramter">参数</param>
+            <param name="pagination">分页设置</param>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.AuthoritiesController.GetCurrentAccountMenuTree(Model.System.MenuDTO.TreeListParamter)">
+        <member name="M:Api.Controllers.AuthoritiesController.GetCurrentAccountMenuTree(Model.Utils.Pagination.TreePaginationDTO)">
             <summary>
             获取当前登录账号的菜单授权树状列表数据
             </summary>
-            <param name="paramter">参数</param>
+            <param name="pagination">分页设置</param>
             <returns></returns>
         </member>
         <member name="M:Api.Controllers.AuthoritiesController.GetRoleResourcesList(System.String,Model.Utils.Pagination.PaginationDTO)">
@@ -1491,6 +1648,37 @@
         <member name="M:Api.Controllers.AuthoritiesController.GetCurrentAccountResourcesList(Model.Utils.Pagination.PaginationDTO)">
             <summary>
             获取当前登录账号的资源授权列表数据
+            </summary>
+            <param name="pagination">分页设置</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.AuthoritiesController.GetRoleCFUCTree(System.String,Model.Utils.Pagination.TreePaginationDTO)">
+            <summary>
+            获取角色文件上传配置授权树状列表数据
+            </summary>
+            <param name="roleId">角色ID</param>
+            <param name="pagination">分页设置</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.AuthoritiesController.GetUserCFUCTree(System.String,Model.Utils.Pagination.TreePaginationDTO)">
+            <summary>
+            获取用户文件上传配置授权树状列表数据
+            </summary>
+            <param name="userId">用户ID</param>
+            <param name="pagination">分页设置</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.AuthoritiesController.GetMemberCFUCTree(System.String,Model.Utils.Pagination.TreePaginationDTO)">
+            <summary>
+            获取会员文件上传配置授权树状列表数据
+            </summary>
+            <param name="memberId">会员ID</param>
+            <param name="pagination">分页设置</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.AuthoritiesController.GetCurrentAccountCFUCTree(Model.Utils.Pagination.TreePaginationDTO)">
+            <summary>
+            获取当前登录账号的文件上传配置授权树状列表数据
             </summary>
             <param name="pagination">分页设置</param>
             <returns></returns>
@@ -1614,6 +1802,24 @@
             </summary>
             <param name="memberId">会员Id</param>
             <param name="resourcesUri">资源链接</param>
+            <param name="checkEnable">检查是否已启用（默认true）</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.AuthoritiesController.UserHasCFUC(System.String,System.String,System.Boolean)">
+            <summary>
+            用户是否拥有文件上传配置授权
+            </summary>
+            <param name="userId">用户Id</param>
+            <param name="configId">文件上传配置Id</param>
+            <param name="checkEnable">检查是否已启用（默认true）</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.AuthoritiesController.MemberHasCFUC(System.String,System.String,System.Boolean)">
+            <summary>
+            会员是否拥有文件上传配置授权
+            </summary>
+            <param name="userId">用户Id</param>
+            <param name="configId">文件上传配置Id</param>
             <param name="checkEnable">检查是否已启用（默认true）</param>
             <returns></returns>
         </member>

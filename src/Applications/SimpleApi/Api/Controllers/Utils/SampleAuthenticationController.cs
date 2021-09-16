@@ -113,7 +113,7 @@ namespace Api.Controllers.Utils
         /// <param name="data">参数</param>
         /// <returns></returns>
         [HttpGet("logout")]
-        public async Task Logout(LogoutRequest data)
+        public async Task Logout([FromQuery] LogoutRequest data)
         {
             if (data?.ReturnUrl?.ToLower().IndexOf("/sa/logout") >= 0)
                 data.ReturnUrl = null;

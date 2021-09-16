@@ -3,7 +3,7 @@ using Business.Interface.Common;
 using Business.Utils.Authorization;
 using Microservice.Library.Extension;
 using Microsoft.AspNetCore.Mvc;
-using Model.Common.FileDTO;
+using Model.Common.PersonalFileInfoDTO;
 using Model.Utils.Pagination;
 using Model.Utils.Result;
 using Swashbuckle.AspNetCore.Annotations;
@@ -45,7 +45,7 @@ namespace Api.Controllers
         [HttpPost("list")]
         [Consumes("application/json", "application/x-www-form-urlencoded")]
         [Produces("application/json")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "列表数据", typeof(FileInfo))]
+        [SwaggerResponse((int)HttpStatusCode.OK, "列表数据", typeof(PersonalFileInfo))]
         public async Task<object> GetList([FromBody] PaginationDTO pagination)
         {
             return await Task.FromResult(OpenApiJsonContent(PersonalFileInfoBusiness.GetList(pagination), pagination));
@@ -59,7 +59,7 @@ namespace Api.Controllers
         [HttpPost("detail-data/{id}")]
         [Consumes("application/json", "application/x-www-form-urlencoded")]
         [Produces("application/json")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "详情数据", typeof(FileInfo))]
+        [SwaggerResponse((int)HttpStatusCode.OK, "详情数据", typeof(PersonalFileInfo))]
         public async Task<object> GetDetail(string id)
         {
             return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(PersonalFileInfoBusiness.GetDetail(id))));
@@ -73,7 +73,7 @@ namespace Api.Controllers
         [HttpGet("detail-list/{ids}")]
         [Consumes("application/json", "application/x-www-form-urlencoded")]
         [Produces("application/json")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "详情数据", typeof(FileInfo))]
+        [SwaggerResponse((int)HttpStatusCode.OK, "详情数据", typeof(PersonalFileInfo))]
         public async Task<object> GetDetails(string ids)
         {
             return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(PersonalFileInfoBusiness.GetDetails(ids))));
@@ -87,14 +87,14 @@ namespace Api.Controllers
         [HttpPost("detail-list")]
         [Consumes("application/json", "application/x-www-form-urlencoded")]
         [Produces("application/json")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "详情数据", typeof(FileInfo))]
+        [SwaggerResponse((int)HttpStatusCode.OK, "详情数据", typeof(PersonalFileInfo))]
         public async Task<object> GetDetails(List<string> ids)
         {
             return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(PersonalFileInfoBusiness.GetDetails(ids))));
         }
 
         /// <summary>
-        /// 文件重命名
+        /// 重命名
         /// </summary>
         /// <param name="id">Id</param>
         /// <param name="filename">文件名</param>
@@ -105,6 +105,34 @@ namespace Api.Controllers
         public async Task<object> Rename(string id, string filename)
         {
             PersonalFileInfoBusiness.Rename(id, filename);
+            return await Task.FromResult(Success());
+        }
+
+        /// <summary>
+        /// 获取编辑数据
+        /// </summary>
+        /// <param name="id">Id</param>
+        /// <returns></returns>
+        [HttpGet("edit-data/{id}")]
+        [Consumes("application/json")]
+        [Produces("application/json")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "编辑数据", typeof(Edit))]
+        public async Task<object> GetEdit(string id)
+        {
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(PersonalFileInfoBusiness.GetEdit(id))));
+        }
+
+        /// <summary>
+        /// 编辑
+        /// </summary>
+        /// <param name="data">数据</param>
+        /// <returns></returns>
+        [HttpGet("edit")]
+        [Consumes("application/json")]
+        [Produces("application/json")]
+        public async Task<object> Edit(Edit data)
+        {
+            PersonalFileInfoBusiness.Edit(data);
             return await Task.FromResult(Success());
         }
 

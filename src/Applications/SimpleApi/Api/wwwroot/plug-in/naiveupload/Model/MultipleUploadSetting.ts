@@ -7,21 +7,9 @@ class MultipleUploadSetting {
     }
 
     /**
-     * 允许的文件类型
+     * 文件上传配置
      */
-    Accept: string[] = ['image/*', 'audio/*', 'video/*', '.txt', '.pdf', '.doc', 'docx', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', '.xls', 'xlsx', '.zip', '.rar', '.7z'];
-
-    /**
-     * 是否允许多选
-     * 默认允许
-     */
-    MultipleSelect: boolean = true;
-
-    /**
-     * 文件数量上限
-     * 默认10个
-     */
-    Limit: number = 10;
+    Config: UploadConfig;
 
     /**
      * 文件上传并发数
@@ -36,14 +24,9 @@ class MultipleUploadSetting {
     ConcurrentChunkFile: number = 3;
 
     /**
-     * 说明文字
+     * 提示文字
      */
-    Explain: string = '单击或拖动文件到此区域即可上传';
-
-    /**
-     * 附加说明
-     */
-    Tip: string = '严禁上传存在违法违规内容的文件';
+    Tip: string = '单击或拖动文件到此区域即可上传';
 
     /**
      * 主题

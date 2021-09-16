@@ -38,7 +38,7 @@ window.onDomLoaded(() => {
             }
         ],
         () => {
-            var open = (name, e) => {
+            let open = (name, e) => {
                 window.open('/adminVue/index.html');
             };
 

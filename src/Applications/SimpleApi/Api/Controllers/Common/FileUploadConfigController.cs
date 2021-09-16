@@ -74,7 +74,7 @@ namespace Api.Controllers.Common
         }
 
         /// <summary>
-        /// 详情数据数据
+        /// 详情数据
         /// </summary>
         /// <param name="id">主键</param>
         /// <returns></returns>
@@ -155,7 +155,7 @@ namespace Api.Controllers.Common
         /// <param name="data">数据</param>
         /// <returns></returns>
         [HttpPost("dragsort")]
-        public async Task<object> DragSort([FromBody] DragSort data)
+        public async Task<object> DragSort([FromBody] TreeDragSort data)
         {
             FileUploadConfigBusiness.DragSort(data);
             return await Task.FromResult(Success());
@@ -171,12 +171,12 @@ namespace Api.Controllers.Common
         /// </param>
         /// <param name="autogenerateTemplate">
         /// <para>指明要使用的模板类型</para>
-        /// <para>true: 自动生成模板</para>
-        /// <para>(默认)false: 使用预制模板</para>
+        /// <para>(默认)true: 自动生成模板</para>
+        /// <para>false: 使用预制模板</para>
         /// </param>
         /// <returns></returns>
         [HttpGet("downloadtemplate")]
-        public async Task DownloadTemplate(string version = ExcelVersion.xlsx, bool autogenerateTemplate = false)
+        public async Task DownloadTemplate(string version = ExcelVersion.xlsx, bool autogenerateTemplate = true)
         {
             await FileUploadConfigBusiness.DownloadTemplate(version, autogenerateTemplate);
         }
@@ -187,14 +187,14 @@ namespace Api.Controllers.Common
         /// <param name="file">Execl文件</param>
         /// <param name="autogenerateTemplate">
         /// <para>指明所使用的模板类型</para>
-        /// <para>true: 自动生成的模板</para>
-        /// <para>(默认)false: 预制模板</para>
+        /// <para>(默认)true: 自动生成的模板</para>
+        /// <para>false: 预制模板</para>
         /// </param>
         /// <returns></returns>
         [HttpPost("import")]
         [SwaggerResponse((int)HttpStatusCode.OK, "导入结果", typeof(ImportResult))]
         [Consumes("multipart/form-data")]
-        public async Task<object> Import(IFormFile file, bool autogenerateTemplate = false)
+        public async Task<object> Import(IFormFile file, bool autogenerateTemplate = true)
         {
             return await Task.FromResult(ResponseDataFactory.Success(FileUploadConfigBusiness.Import(file, autogenerateTemplate)));
         }
@@ -213,6 +213,32 @@ namespace Api.Controllers.Common
         public void Export(string version = ExcelVersion.xlsx, string paginationJson = null)
         {
             FileUploadConfigBusiness.Export(version, paginationJson);
+        }
+
+        /// <summary>
+        /// 配置数据
+        /// </summary>
+        /// <param name="id">主键</param>
+        /// <returns></returns>
+        [HttpPost("data/{id}")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "配置数据", typeof(Config))]
+        public async Task<object> GetConfig(string id)
+        {
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(FileUploadConfigBusiness.GetConfig(id))));
+        }
+
+        /// <summary>
+        /// 获取配置数据集合
+        /// </summary>
+        /// <param name="ids">id集合</param>
+        /// <returns></returns>
+        [HttpPost("list")]
+        [Consumes("application/json", "application/x-www-form-urlencoded")]
+        [Produces("application/json")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "配置数据", typeof(Config))]
+        public async Task<object> GetConfigs(List<string> ids)
+        {
+            return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(FileUploadConfigBusiness.GetConfigs(ids))));
         }
 
         #endregion

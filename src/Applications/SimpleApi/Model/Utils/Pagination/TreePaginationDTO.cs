@@ -22,6 +22,6 @@ namespace Model.Utils.Pagination
         /// 数据分页
         /// </summary>
         [OpenApiSchema(OpenApiSchemaType.model)]
-        public PaginationDTO Pagination { get; set; }
+        public PaginationDTO Pagination { get; set; } = new PaginationDTO();
     }
 }

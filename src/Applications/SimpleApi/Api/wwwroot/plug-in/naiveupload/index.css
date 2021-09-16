@@ -35,19 +35,41 @@
     padding: 50px !important;
 }
 
-.tab-pane-tool {
+.update-tool {
     z-index: 1;
-    position: fixed;
-    right: 20px;
-    margin-top: 0px;
+    /*position: fixed;*/
+    /*width: 60%;*/
+    right: 50px;
+    margin-top: -30px;
     display: flex;
     flex-direction: row;
     align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
-    .tab-pane-tool .item {
+    .update-tool .item {
         margin-right: 20px;
+        margin-top: 20px;
     }
+
+.config-tree-node {
+    width: 100%;
+}
+
+    .config-tree-node .tools {
+        float: right;
+    }
+
+        .config-tree-node .tools .button {
+            margin-left: 10px;
+        }
+
+.config-detail .el-tag {
+    max-width: 300px;
+    margin-right: 10px;
+}
+
 
 .chunks-sources {
     line-height: 1;

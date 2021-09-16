@@ -26,13 +26,34 @@ namespace Model.<#=Options.Table.ModuleName#>.<#=Options.Table.ReducedName#>DTO
     if(Options.Table.Tree && mr.Key.ToLower().Contains("list"))
     {
 #>
+        /// <summary>
+        /// 是否拥有子级
+        /// </summary>
+        public bool HasChildren { get; set; }
+
+        /// <summary>
+        /// 子级数量
+        /// </summary>
+        public int ChildrenCount { get; set; }
 
         /// <summary>
         /// 子级
         /// </summary>
         [OpenApiSchema(OpenApiSchemaType.model, OpenApiSchemaFormat.model_once)]
         [Description("子级")]
-        public List<<#=mr.Key#>> Childs_ { get; set; }
+        public List<<#=mr.Key#>> Children { get; set; }
+<#
+    }
+   
+    if(mr.Key.ToLower().Contains("import"))
+    {
+#>
+
+        /// <summary>
+        /// 新增数据
+        /// </summary>
+        [OpenApiIgnore]
+        public bool New { get; set; }
 <#
     }
 #>

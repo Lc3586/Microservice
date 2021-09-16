@@ -91,7 +91,14 @@ window.onload = function () {
             Tag: "script",
             Attributes: {
                 type: 'text/javascript',
-                src: '../../element-plus/dayjs.zh-cn.js'
+                src: '../../utils/dayjs/dayjs.min.js'
+            }
+        },
+        {
+            Tag: "script",
+            Attributes: {
+                type: 'text/javascript',
+                src: '../../utils/dayjs/dayjs.zh-cn.js'
             }
         },
         {
@@ -129,6 +136,13 @@ window.onload = function () {
                 src: 'Helper/ChunkFileMergeTaskHelper.js'
             }
         },
+        {
+            Tag: "script",
+            Attributes: {
+                type: 'text/javascript',
+                src: 'Model/UploadConfigDetail.js'
+            }
+        },
     ], function () {
         var Vue = window.Vue;
         var ElementPlus = window.ElementPlus;
@@ -155,21 +169,18 @@ window.onload = function () {
         var AppData = {
             data: GetRenderData,
             created: function () {
-                var _this = this;
                 Main = this;
-                if (this.config.type === 'Signle')
-                    MultipleUploadSettings.Limit = 1;
-                else if (this.config.type === 'Multiple')
-                    MultipleUploadSettings.Limit = 50;
-                Upload.Init(MultipleUploadSettings).then(function () {
-                    Upload.SelectedFileList = _this.multipleUpload.files;
-                });
+                Upload.SelectedFileList = this.multipleUpload.files;
                 AddLoginFilter();
                 Authorized();
             },
             methods: {
                 SALogin: SALogin,
                 TabsChanged: TabsChanged,
+                LoadConfig: LoadConfig,
+                FilterConfig: FilterConfig,
+                ConfigDetail: ConfigDetail,
+                ApplyConfig: ApplyConfig,
                 GetSelectCLass: GetSelectCLass,
                 GetSelectTitle: GetSelectTitle,
                 ChosingFile: ChosingFile,
@@ -200,7 +211,7 @@ window.onload = function () {
                 'multipleUpload.settings': {
                     handler: function (val) {
                         for (var key in val) {
-                            if (MultipleUploadSettings[key] !== val[key])
+                            if (key !== 'Config' && MultipleUploadSettings[key] !== val[key])
                                 MultipleUploadSettings[key] = val[key];
                         }
                     },
@@ -233,13 +244,39 @@ window.onload = function () {
                         });
                     },
                     deep: true
-                }
+                },
+                'multipleUpload.config.filter': {
+                    handler: function (val) {
+                        this.$refs.configTree.filter(val);
+                    }
+                },
             }
         };
-        var App = Vue.createApp(AppData);
-        ElementPlus.locale(ElementPlus.lang.zhCn);
-        App.use(ElementPlus);
-        App.mount("#app");
+        Upload.Init(MultipleUploadSettings).then(function () { return __awaiter(_this, void 0, void 0, function () {
+            var e_1, App;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4, Upload.UpdateConfig('05FE0000-AA22-B025-2BAF-08D972A39270')];
+                    case 1:
+                        _a.sent();
+                        return [3, 3];
+                    case 2:
+                        e_1 = _a.sent();
+                        console.error(e_1);
+                        ElementPlus.ElMessage(e_1.message);
+                        return [3, 3];
+                    case 3:
+                        App = Vue.createApp(AppData);
+                        App.use(ElementPlus, {
+                            locale: ElementPlus.lang.zhCn
+                        });
+                        App.mount("#app");
+                        return [2];
+                }
+            });
+        }); });
         function GetRenderData() {
             return {
                 loading: true,
@@ -250,19 +287,23 @@ window.onload = function () {
                     password: ''
                 },
                 config: {
-                    type: 'Single'
-                },
-                single: {
-                    settings: {},
-                    file: {}
+                    type: 'Upload'
                 },
                 multipleUpload: {
                     settings: {
-                        Accept: MultipleUploadSettings.Accept,
-                        MultipleSelect: MultipleUploadSettings.MultipleSelect,
-                        Explain: MultipleUploadSettings.Explain,
+                        Config: MultipleUploadSettings.Config,
                         Tip: MultipleUploadSettings.Tip,
-                        Theme: MultipleUploadSettings.Theme
+                        Theme: MultipleUploadSettings.Theme,
+                        Mode: MultipleUploadSettings.Mode
+                    },
+                    config: {
+                        props: {
+                            label: 'DisplayName',
+                            children: 'Children',
+                            isLeaf: 'Leaf',
+                        },
+                        data: [],
+                        filter: ''
                     },
                     scrollLock: true,
                     files: []
@@ -342,7 +383,7 @@ window.onload = function () {
             Axios.post(ApiUri.RefreshToken).then(function (response) {
                 if (response.data.Success) {
                     MultipleUploadSettings.Headers['Authorization'] = response.data.Data.AccessToken;
-                    setTimeout(RefreshToken, response.data.Data.Expires.getTime() - new Date().getTime() - 60 * 1000);
+                    setTimeout(RefreshToken, new Date(response.data.Data.Expires).getTime() - new Date().getTime() - 60 * 1000);
                 }
                 else
                     ElementPlus.ElMessage(response.data.Message);
@@ -351,16 +392,98 @@ window.onload = function () {
                 ElementPlus.ElMessage('刷新Token时发生异常.');
             });
         }
+        function LoadConfig(node, resolve) {
+            var _a;
+            Axios.post(ApiUri.GetCurrentAccountCFUCTree, {
+                ParentId: (_a = node.data) === null || _a === void 0 ? void 0 : _a.Id,
+                Rank: 0,
+                Pagination: {
+                    PageIndex: -1,
+                    SortField: 'Sort',
+                    SortType: 'asc',
+                    DynamicFilterInfo: [
+                        {
+                            Field: 'Enable',
+                            Value: true,
+                            Compare: 'eq'
+                        }
+                    ]
+                }
+            }).then(function (response) {
+                if (response.data.Success) {
+                    response.data.Data.forEach(function (item, index) {
+                        item.Leaf = !item.HasChildren;
+                    });
+                    resolve(response.data.Data);
+                }
+                else
+                    ElementPlus.ElMessage(response.data.Message);
+            }).catch(function (error) {
+                console.error(error);
+                ElementPlus.ElMessage('加载文件上传配置时发生异常.');
+            });
+        }
+        function FilterConfig(value, data) {
+            if (!value)
+                return true;
+            return data.Name.indexOf(value) !== -1 || data.Code.indexOf(value) !== -1 || data.DisplayName.indexOf(value) !== -1;
+        }
+        function ConfigDetail(node, data) {
+            if (node.detailLoading === false)
+                return;
+            node.detailLoading = true;
+            Axios.post(ApiUri.FileUploadConfigDetailData(data.Id))
+                .then(function (response) {
+                if (response.data.Success) {
+                    node.detailLoading = false;
+                    node.detailData = response.data.Data;
+                }
+                else {
+                    node.detailError = response.data.Message;
+                }
+            }).catch(function (error) {
+                console.error(error);
+                node.detailError = '加载文件上传配置详情时发生异常.';
+            });
+        }
+        function ApplyConfig(node, data) {
+            var done = function (_data, updated) {
+                if (!updated)
+                    Upload.UpdateConfigData(_data);
+                Main.multipleUpload.settings.Config = _data;
+                node.configLoading = false;
+                ElementPlus.ElMessage('配置应用成功.');
+            };
+            if (node.detailLoading === false) {
+                node.configData = node.detailData;
+                done(node.detailData, false);
+                return;
+            }
+            else if (node.configLoading === false) {
+                done(node.configData, false);
+                return;
+            }
+            node.configLoading = true;
+            Upload.UpdateConfig(data.Id)
+                .then(function (_data) {
+                node.configData = _data;
+                done(_data, true);
+            })
+                .catch(function (error) {
+                console.error(error);
+                ElementPlus.ElMessage("\u5E94\u7528\u6587\u4EF6\u4E0A\u4F20\u914D\u7F6E\u5931\u8D25, " + error.message);
+            });
+        }
         function TabsChanged(tab) {
             Main.config.type = tab.props.name;
             switch (tab.props.name) {
-                case 'Single':
-                    if (Upload.SelectedFileList.length > 1)
+                case 'Upload':
+                    if (Upload.SelectedFileList.length > 1) {
                         Upload.Clean();
-                    MultipleUploadSettings.Limit = 1;
-                    break;
-                case 'Multiple':
-                    MultipleUploadSettings.Limit = 50;
+                        MultipleUploadSettings.Config.UpperLimit = 1;
+                    }
+                    else
+                        MultipleUploadSettings.Config.UpperLimit = 50;
                     break;
                 case 'Bigger':
                     InitChunkFileMergeTaskList();
@@ -378,9 +501,9 @@ window.onload = function () {
             return "upload-drag " + (Upload.Limited() ? 'item-limited' : '');
         }
         function GetSelectTitle() {
-            if (!MultipleUploadSettings.Limit)
+            if (!MultipleUploadSettings.Config.UpperLimit)
                 return null;
-            return Upload.SelectedFileList.length < MultipleUploadSettings.Limit ? "\u8FD8\u53EF\u6DFB\u52A0\u4E2A" + (MultipleUploadSettings.Limit - Upload.SelectedFileList.length) + "\u6587\u4EF6" : "\u6587\u4EF6\u6570\u91CF\u5DF2\u8FBE\u4E0A\u9650";
+            return Upload.SelectedFileList.length < MultipleUploadSettings.Config.UpperLimit ? "\u8FD8\u53EF\u6DFB\u52A0\u4E2A" + (MultipleUploadSettings.Config.UpperLimit - Upload.SelectedFileList.length) + "\u6587\u4EF6" : "\u6587\u4EF6\u6570\u91CF\u5DF2\u8FBE\u4E0A\u9650";
         }
         function ChosingFile(e) {
             if (Upload.Limited())
@@ -392,10 +515,23 @@ window.onload = function () {
         }
         function DropFile(e) {
             e.preventDefault();
-            Upload.AppendFiles(e.dataTransfer.files);
+            CheckAppendFilesResult(Upload.AppendFiles(e.dataTransfer.files));
         }
         function ChoseFile(e) {
-            Upload.AppendFiles(Main.$refs.fileInput.files);
+            CheckAppendFilesResult(Upload.AppendFiles(Main.$refs.fileInput.files));
+        }
+        function CheckAppendFilesResult(status) {
+            switch (status) {
+                case "OK":
+                    break;
+                case "TYPE":
+                    ElementPlus.ElMessage('文件类型不合法');
+                    break;
+                case "LIMIT":
+                    ElementPlus.ElMessage('超出数量限制');
+                    break;
+                default:
+            }
         }
         function GetContainerClass(selectedFile) {
             return "item-container " + (selectedFile.Done ? ' item-done' : '') + " " + (selectedFile.Error ? ' item-error' : '') + " " + (selectedFile.Hover && !selectedFile.Rename && !selectedFile.Checking && !selectedFile.Uploading ? ' item-hover' : '') + " " + (selectedFile.Checking ? ' item-checking' : '') + " " + (selectedFile.Uploading ? ' item-uploading' : '');

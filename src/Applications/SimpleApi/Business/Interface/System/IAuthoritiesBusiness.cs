@@ -57,14 +57,14 @@ namespace Business.Interface.System
         void AuthorizeRoleForMember(string roleId, string memberId, bool allChilds = false, bool runTransaction = true);
 
         /// <summary>
-        /// 授权菜单给用户
+        /// 直接授权菜单给用户
         /// </summary>
         /// <param name="data">数据</param>
         /// <param name="runTransaction">运行事务（默认运行）</param>
         void AuthorizeMenuForUser(Model.System.AuthorizeDTO.MenuForUser data, bool runTransaction = true);
 
         /// <summary>
-        /// 授权菜单给用户
+        /// 直接授权菜单给用户
         /// </summary>
         /// <param name="menuId">菜单Id</param>
         /// <param name="userId">用户Id</param>
@@ -73,7 +73,7 @@ namespace Business.Interface.System
         void AuthorizeMenuForUser(string menuId, string userId, bool allChilds = false, bool runTransaction = true);
 
         /// <summary>
-        /// 授权资源给用户
+        /// 直接授权资源给用户
         /// </summary>
         /// <param name="data">数据</param>
         void AuthorizeResourcesForUser(Model.System.AuthorizeDTO.ResourcesForUser data);
@@ -99,6 +99,38 @@ namespace Business.Interface.System
         /// </summary>
         /// <param name="data">数据</param>
         void AuthorizeResourcesForRole(Model.System.AuthorizeDTO.ResourcesForRole data);
+
+        /// <summary>
+        /// 直接授权文件上传配置给用户
+        /// </summary>
+        /// <param name="data">数据</param>
+        /// <param name="runTransaction">运行事务（默认运行）</param>
+        void AuthorizeCFUCForUser(Model.System.AuthorizeDTO.CFUCForUser data, bool runTransaction = true);
+
+        /// <summary>
+        /// 直接授权文件上传配置给用户
+        /// </summary>
+        /// <param name="configId">文件上传配置Id</param>
+        /// <param name="userId">用户Id</param>
+        /// <param name="allChilds">同时授权所有子集菜单</param>
+        /// <param name="runTransaction">运行事务（默认运行）</param>
+        void AuthorizeCFUCForUser(string configId, string userId, bool allChilds = false, bool runTransaction = true);
+
+        /// <summary>
+        /// 授权文件上传配置给角色
+        /// </summary>
+        /// <param name="data">数据</param>
+        /// <param name="runTransaction">运行事务（默认运行）</param>
+        void AuthorizeCFUCForRole(Model.System.AuthorizeDTO.CFUCForRole data, bool runTransaction = true);
+
+        /// <summary>
+        /// 授权文件上传配置给角色
+        /// </summary>
+        /// <param name="configId">文件上传配置Id</param>
+        /// <param name="roleId">角色Id</param>
+        /// <param name="allChilds">同时授权所有子集菜单</param>
+        /// <param name="runTransaction">运行事务（默认运行）</param>
+        void AuthorizeCFUCForRole(string configId, string roleId, bool allChilds = false, bool runTransaction = true);
 
         #endregion
 
@@ -147,6 +179,13 @@ namespace Business.Interface.System
         void RevocationResourcesForUser(List<string> userIds, bool runTransaction = true);
 
         /// <summary>
+        /// 撤销用户的全部文件上传配置授权
+        /// </summary>
+        /// <param name="userIds">用户Id</param>
+        /// <param name="runTransaction">运行事务（默认运行）</param>
+        void RevocationCFUCForUser(List<string> userIds, bool runTransaction = true);
+
+        /// <summary>
         /// 撤销角色的全部菜单授权
         /// </summary>
         /// <param name="roleIds">角色Id</param>
@@ -159,6 +198,13 @@ namespace Business.Interface.System
         /// <param name="roleIds">角色Id</param>
         /// <param name="runTransaction">运行事务（默认运行）</param>
         void RevocationResourcesForRole(List<string> roleIds, bool runTransaction = true);
+
+        /// <summary>
+        /// 撤销角色的全部文件上传配置授权
+        /// </summary>
+        /// <param name="roleIds">角色Id</param>
+        /// <param name="runTransaction">运行事务（默认运行）</param>
+        void RevocationCFUCForRole(List<string> roleIds, bool runTransaction = true);
 
         /// <summary>
         /// 撤销用户的角色授权
@@ -193,14 +239,14 @@ namespace Business.Interface.System
         void RevocationRoleForMember(string roleId, string memberId, bool allChilds = false, bool runTransaction = true);
 
         /// <summary>
-        /// 撤销用户的菜单授权
+        /// 撤销用户的直接菜单授权
         /// </summary>
         /// <param name="data">数据</param>
         /// <param name="runTransaction">运行事务（默认运行）</param>
         void RevocationMenuForUser(Model.System.AuthorizeDTO.MenuForUser data, bool runTransaction = true);
 
         /// <summary>
-        /// 撤销用户的菜单授权
+        /// 撤销用户的直接菜单授权
         /// </summary>
         /// <param name="menuId">菜单Id</param>
         /// <param name="userId">用户Id</param>
@@ -209,11 +255,27 @@ namespace Business.Interface.System
         void RevocationMenuForUser(string menuId, string userId, bool allChilds = false, bool runTransaction = true);
 
         /// <summary>
-        /// 撤销用户的资源授权
+        /// 撤销用户的直接资源授权
         /// </summary>
         /// <param name="data">数据</param>
         /// <param name="runTransaction">运行事务（默认运行）</param>
         void RevocationResourcesForUser(Model.System.AuthorizeDTO.ResourcesForUser data, bool runTransaction = true);
+
+        /// <summary>
+        /// 撤销用户的直接文件上传配置授权
+        /// </summary>
+        /// <param name="data">数据</param>
+        /// <param name="runTransaction">运行事务（默认运行）</param>
+        void RevocationCFUCForUser(Model.System.AuthorizeDTO.CFUCForUser data, bool runTransaction = true);
+
+        /// <summary>
+        /// 撤销用户的直接文件上传配置授权
+        /// </summary>
+        /// <param name="configId">文件上传配置Id</param>
+        /// <param name="userId">用户Id</param>
+        /// <param name="allChilds">同时撤销所有子集文件上传配置授权</param>
+        /// <param name="runTransaction">运行事务（默认运行）</param>
+        void RevocationCFUCForUser(string configId, string userId, bool allChilds = false, bool runTransaction = true);
 
         /// <summary>
         /// 撤销角色的菜单授权
@@ -239,6 +301,22 @@ namespace Business.Interface.System
         void RevocationResourcesForRole(Model.System.AuthorizeDTO.ResourcesForRole data, bool runTransaction = true);
 
         /// <summary>
+        /// 撤销角色的文件上配置授权
+        /// </summary>
+        /// <param name="data">数据</param>
+        /// <param name="runTransaction">运行事务（默认运行）</param>
+        void RevocationCFUCForRole(Model.System.AuthorizeDTO.CFUCForRole data, bool runTransaction = true);
+
+        /// <summary>
+        /// 撤销角色的文件上配置授权
+        /// </summary>
+        /// <param name="configId">文件上配置Id</param>
+        /// <param name="roleId">角色Id</param>
+        /// <param name="allChilds">同时撤销所有子集文件上配置授权</param>
+        /// <param name="runTransaction">运行事务（默认运行）</param>
+        void RevocationCFUCForRole(string configId, string roleId, bool allChilds = false, bool runTransaction = true);
+
+        /// <summary>
         /// 撤销所有用户和角色的菜单授权
         /// </summary>
         /// <param name="menuIds">菜单Id</param>
@@ -252,6 +330,13 @@ namespace Business.Interface.System
         /// <param name="runTransaction">运行事务（默认运行）</param>
         void RevocationResourcesForAll(List<string> resourcesIds, bool runTransaction = true);
 
+        /// <summary>
+        /// 撤销所有用户和角色的文件上配置授权
+        /// </summary>
+        /// <param name="configIds">文件上配置Id</param>
+        /// <param name="runTransaction">运行事务（默认运行）</param>
+        void RevocationCFUCForAll(List<string> configIds, bool runTransaction = true);
+
         #endregion
 
         #region 获取授权
@@ -263,15 +348,17 @@ namespace Business.Interface.System
         /// <param name="includeRole">包括授权角色</param>
         /// <param name="includeMenu">包括授权菜单</param>
         /// <param name="includeResources">包括授权资源</param>
+        /// <param name="includeCFUC">包括授权文件上传配置</param>
         /// <param name="mergeRoleMenu">合并角色的授权菜单</param>
         /// <param name="mergeRoleResources">合并角色的授权资源</param>
+        /// <param name="mergeRoleCFUC">合并角色的授权文件上传配置</param>
         /// <returns>
         /// <para>用户授权信息</para>
         /// <para>角色授权信息</para>
         /// <para>菜单授权信息</para>
         /// <para>资源授权信息</para>
         /// </returns>
-        Model.System.UserDTO.Authorities GetUser(string userId, bool includeRole, bool includeMenu, bool includeResources, bool mergeRoleMenu = true, bool mergeRoleResources = true);
+        Model.System.UserDTO.Authorities GetUser(string userId, bool includeRole, bool includeMenu, bool includeCFUC, bool includeResources, bool mergeRoleMenu = true, bool mergeRoleResources = true, bool mergeRoleCFUC = true);
 
         /// <summary>
         /// 获取会员的授权数据
@@ -280,13 +367,14 @@ namespace Business.Interface.System
         /// <param name="includeRole">包括授权角色</param>
         /// <param name="includeMenu">包括授权菜单</param>
         /// <param name="includeResources">包括授权资源</param>
+        /// <param name="includeCFUC">包括授权文件上传配置</param>
         /// <returns>
         /// <para>用户授权信息</para>
         /// <para>角色授权信息</para>
         /// <para>菜单授权信息</para>
         /// <para>资源授权信息</para>
         /// </returns>
-        Model.Public.MemberDTO.Authorities GetMember(string memberId, bool includeRole, bool includeMenu, bool includeResources);
+        Model.Public.MemberDTO.Authorities GetMember(string memberId, bool includeRole, bool includeMenu, bool includeResources, bool includeCFUC);
 
         /// <summary>
         /// 获取授权给用户的角色
@@ -294,12 +382,13 @@ namespace Business.Interface.System
         /// <param name="userId">用户Id</param>
         /// <param name="includeMenu">包括授权菜单</param>
         /// <param name="includeResources">包括授权资源</param>
+        /// <param name="includeCFUC">包括授权文件上传配置</param>
         /// <returns>
         /// <para>角色授权信息</para>
         /// <para>菜单授权信息</para>
         /// <para>资源授权信息</para>
         /// </returns>
-        List<Model.System.RoleDTO.Authorities> GetUserRole(string userId, bool includeMenu, bool includeResources);
+        List<Model.System.RoleDTO.Authorities> GetUserRole(string userId, bool includeMenu, bool includeResources, bool includeCFUC);
 
         /// <summary>
         /// 获取授权给会员的角色
@@ -307,12 +396,13 @@ namespace Business.Interface.System
         /// <param name="memberId">会员Id</param>
         /// <param name="includeMenu">包括授权菜单</param>
         /// <param name="includeResources">包括授权资源</param>
+        /// <param name="includeCFUC">包括授权文件上传配置</param>
         /// <returns>
         /// <para>角色授权信息</para>
         /// <para>菜单授权信息</para>
         /// <para>资源授权信息</para>
         /// </returns>
-        List<Model.System.RoleDTO.Authorities> GetMemberRole(string memberId, bool includeMenu, bool includeResources);
+        List<Model.System.RoleDTO.Authorities> GetMemberRole(string memberId, bool includeMenu, bool includeResources, bool includeCFUC);
 
         /// <summary>
         /// 获取授权给用户的角色类型
@@ -373,17 +463,38 @@ namespace Business.Interface.System
         List<Model.System.ResourcesDTO.Authorities> GetMemberResources(string memberId, PaginationDTO pagination = null);
 
         /// <summary>
+        /// 获权授权给用户的文件上传配置
+        /// </summary>
+        /// <param name="userId">用户Id</param>
+        /// <param name="mergeRoleCFUC">包括角色的授权文件上传配置</param>
+        /// <returns>
+        /// <para>文件上传配置授权信息</para>
+        /// </returns>
+        List<Model.Common.FileUploadConfigDTO.Authorities> GetUserCFUC(string userId, bool mergeRoleCFUC);
+
+        /// <summary>
+        /// 获权授权给会员的文件上传配置
+        /// </summary>
+        /// <param name="memberId">会员Id</param>
+        /// <returns>
+        /// <para>文件上传配置授权信息</para>
+        /// </returns>
+        List<Model.Common.FileUploadConfigDTO.Authorities> GetMemberCFUC(string memberId);
+
+        /// <summary>
         /// 获取角色的授权数据
         /// </summary>
         /// <param name="roleId">角色Id</param>
         /// <param name="includeMenu">包括授权菜单</param>
         /// <param name="includeResources">包括授权资源</param>
+        /// <param name="includeCFUC">包括授权文件上传配置</param>
         /// <returns>
         /// <para>角色授权信息</para>
         /// <para>菜单授权信息</para>
         /// <para>资源授权信息</para>
+        /// <para>文件上传配置授权信息</para>
         /// </returns>
-        Model.System.RoleDTO.Authorities GetRole(string roleId, bool includeMenu, bool includeResources);
+        Model.System.RoleDTO.Authorities GetRole(string roleId, bool includeMenu, bool includeResources, bool includeCFUC);
 
         /// <summary>
         /// 获取授权给角色的菜单
@@ -405,58 +516,67 @@ namespace Business.Interface.System
         List<Model.System.ResourcesDTO.Authorities> GetRoleResources(string roleId, PaginationDTO pagination);
 
         /// <summary>
+        /// 获取授权给角色的文件上传配置
+        /// </summary>
+        /// <param name="roleId">角色Id</param>
+        /// <returns>
+        /// <para>文件上传配置授权信息</para>
+        /// </returns>
+        List<Model.Common.FileUploadConfigDTO.Authorities> GetRoleCFUC(string roleId);
+
+        /// <summary>
         /// 获取用户角色授权树状列表数据
         /// </summary>
         /// <param name="userId">用户ID</param>
-        /// <param name="paramter">参数</param>
+        /// <param name="pagination">分页设置</param>
         /// <returns></returns>
-        List<Model.System.RoleDTO.AuthoritiesTree> GetUserRoleTree(string userId, Model.System.RoleDTO.TreeListParamter paramter);
+        List<Model.System.RoleDTO.AuthoritiesTree> GetUserRoleTree(string userId, TreePaginationDTO pagination);
 
         /// <summary>
         /// 获取会员角色授权树状列表数据
         /// </summary>
         /// <param name="memberId">会员ID</param>
-        /// <param name="paramter">参数</param>
+        /// <param name="pagination">分页设置</param>
         /// <returns></returns>
-        List<Model.System.RoleDTO.AuthoritiesTree> GetMemberRoleTree(string memberId, Model.System.RoleDTO.TreeListParamter paramter);
+        List<Model.System.RoleDTO.AuthoritiesTree> GetMemberRoleTree(string memberId, TreePaginationDTO pagination);
 
         /// <summary>
         /// 获取当前登录账号的角色授权树状列表数据
         /// </summary>
-        /// <param name="paramter">参数</param>
+        /// <param name="pagination">分页设置</param>
         /// <returns></returns>
-        List<Model.System.RoleDTO.AuthoritiesTree> GetCurrentAccountRoleTree(Model.System.RoleDTO.TreeListParamter paramter);
+        List<Model.System.RoleDTO.AuthoritiesTree> GetCurrentAccountRoleTree(TreePaginationDTO pagination);
 
         /// <summary>
         /// 获取角色菜单授权树状列表数据
         /// </summary>
         /// <param name="roleId">角色ID</param>
-        /// <param name="paramter">参数</param>
+        /// <param name="pagination">分页设置</param>
         /// <returns></returns>
-        List<Model.System.MenuDTO.AuthoritiesTree> GetRoleMenuTree(string roleId, Model.System.MenuDTO.TreeListParamter paramter);
+        List<Model.System.MenuDTO.AuthoritiesTree> GetRoleMenuTree(string roleId, TreePaginationDTO pagination);
 
         /// <summary>
         /// 获取用户菜单授权树状列表数据
         /// </summary>
         /// <param name="userId">用户ID</param>
-        /// <param name="paramter">参数</param>
+        /// <param name="pagination">分页设置</param>
         /// <returns></returns>
-        List<Model.System.MenuDTO.AuthoritiesTree> GetUserMenuTree(string userId, Model.System.MenuDTO.TreeListParamter paramter);
+        List<Model.System.MenuDTO.AuthoritiesTree> GetUserMenuTree(string userId, TreePaginationDTO pagination);
 
         /// <summary>
         /// 获取会员菜单授权树状列表数据
         /// </summary>
         /// <param name="memberId">会员ID</param>
-        /// <param name="paramter">参数</param>
+        /// <param name="pagination">分页设置</param>
         /// <returns></returns>
-        List<Model.System.MenuDTO.AuthoritiesTree> GetMemberMenuTree(string memberId, Model.System.MenuDTO.TreeListParamter paramter);
+        List<Model.System.MenuDTO.AuthoritiesTree> GetMemberMenuTree(string memberId, TreePaginationDTO pagination);
 
         /// <summary>
         /// 获取当前登录账号的菜单授权树状列表数据
         /// </summary>
-        /// <param name="paramter">参数</param>
+        /// <param name="pagination">分页设置</param>
         /// <returns></returns>
-        List<Model.System.MenuDTO.AuthoritiesTree> GetCurrentAccountMenuTree(Model.System.MenuDTO.TreeListParamter paramter);
+        List<Model.System.MenuDTO.AuthoritiesTree> GetCurrentAccountMenuTree(TreePaginationDTO pagination);
 
         /// <summary>
         /// 获取角色的授权资源列表数据
@@ -480,6 +600,37 @@ namespace Business.Interface.System
         /// <param name="pagination">分页设置</param>
         /// <returns></returns>
         List<Model.System.ResourcesDTO.Authorities> GetCurrentAccountResourcesList(PaginationDTO pagination);
+
+        /// <summary>
+        /// 获取角色文件上传配置授权树状列表数据
+        /// </summary>
+        /// <param name="roleId">角色ID</param>
+        /// <param name="pagination">分页设置</param>
+        /// <returns></returns>
+        List<Model.Common.FileUploadConfigDTO.AuthoritiesTree> GetRoleCFUCTree(string roleId, TreePaginationDTO pagination);
+
+        /// <summary>
+        /// 获取用户文件上传配置授权树状列表数据
+        /// </summary>
+        /// <param name="userId">用户ID</param>
+        /// <param name="pagination">分页设置</param>
+        /// <returns></returns>
+        List<Model.Common.FileUploadConfigDTO.AuthoritiesTree> GetUserCFUCTree(string userId, TreePaginationDTO pagination);
+
+        /// <summary>
+        /// 获取会员文件上传配置授权树状列表数据
+        /// </summary>
+        /// <param name="memberId">会员ID</param>
+        /// <param name="pagination">分页设置</param>
+        /// <returns></returns>
+        List<Model.Common.FileUploadConfigDTO.AuthoritiesTree> GetMemberCFUCTree(string memberId, TreePaginationDTO pagination);
+
+        /// <summary>
+        /// 获取当前登录账号的文件上传配置授权树状列表数据
+        /// </summary>
+        /// <param name="pagination">分页设置</param>
+        /// <returns></returns>
+        List<Model.Common.FileUploadConfigDTO.AuthoritiesTree> GetCurrentAccountCFUCTree(TreePaginationDTO pagination);
 
         #endregion
 
@@ -624,6 +775,32 @@ namespace Business.Interface.System
         /// <param name="checkEnable">检查是否已启用</param>
         /// <returns></returns>
         bool MemberHasResourcesUri(string memberId, string resourcesUri, bool checkEnable = true);
+
+        /// <summary>
+        /// 用户是否拥有文件上传配置授权
+        /// </summary>
+        /// <param name="userId">用户Id</param>
+        /// <param name="configId">文件上传配置Id</param>
+        /// <param name="checkEnable">检查是否已启用</param>
+        /// <returns></returns>
+        bool UserHasCFUC(string userId, string configId, bool checkEnable = true);
+
+        /// <summary>
+        /// 会员是否拥有文件上传配置授权
+        /// </summary>
+        /// <param name="memberId">会员Id</param>
+        /// <param name="configId">文件上传配置Id</param>
+        /// <param name="checkEnable">检查是否已启用</param>
+        /// <returns></returns>
+        bool MemberHasCFUC(string memberId, string configId, bool checkEnable = true);
+
+        /// <summary>
+        /// 当前登录账号是否拥有文件上传配置授权
+        /// </summary>
+        /// <param name="configId">文件上传配置Id</param>
+        /// <param name="checkEnable">检查是否已启用</param>
+        /// <returns></returns>
+        bool CurrentAccountHasCFUC(string configId, bool checkEnable = true);
 
         #endregion
 

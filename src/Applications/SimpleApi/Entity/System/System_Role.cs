@@ -1,4 +1,5 @@
-﻿using Entity.Public;
+﻿using Entity.Common;
+using Entity.Public;
 using FreeSql.DataAnnotations;
 using Microservice.Library.OpenApi.Annotations;
 using Newtonsoft.Json;
@@ -227,6 +228,15 @@ namespace Entity.System
         [JsonIgnore]
         [XmlIgnore]
         public virtual ICollection<System_Resources> Resources { get; set; }
+
+        /// <summary>
+        /// 授权给此角色的文件上传配置
+        /// </summary>
+        [Navigate(ManyToMany = typeof(System_RoleCFUC))]
+        [OpenApiIgnore]
+        [JsonIgnore]
+        [XmlIgnore]
+        public virtual ICollection<Common_FileUploadConfig> FileUploadConfigs { get; set; }
 
         /// <summary>
         /// 被授权此角色的会员

@@ -13,9 +13,9 @@ var UploadWorker = (function () {
             }
         }
     };
-    UploadWorker.prototype.SingleFile = function (md5, buffer, type, extension, filename) {
+    UploadWorker.prototype.SingleFile = function (configId, md5, buffer, type, extension, filename) {
         var _this = this;
-        this.AxiosInstance.post(ApiUri.SingleFileByArrayBuffer(type, extension, filename), buffer, {
+        this.AxiosInstance.post(ApiUri.SingleFileByArrayBuffer(configId, type, extension, filename), buffer, {
             onUploadProgress: function (progress) {
                 _this.Self.postMessage({ Type: "file-upload-progress", MD5: md5, Progress: { loaded: progress.loaded, total: progress.total } });
             },
@@ -78,7 +78,7 @@ var UploadWorker = (function () {
                 break;
             case "File":
                 data = event.data.Data;
-                this.SingleFile(data.MD5, data.Buffer, data.Type, data.Extension, data.Name);
+                this.SingleFile(data.ConfigId, data.MD5, data.Buffer, data.Type, data.Extension, data.Name);
                 break;
             case "ChunkFile":
                 data = event.data.Data;

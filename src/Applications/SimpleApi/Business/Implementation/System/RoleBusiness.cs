@@ -104,7 +104,14 @@ namespace Business.Implementation.System
                         {
                             pagination.ParentId = o.Id;
                             pagination.Rank--;
-                            o.Childs_ = GetData(pagination, true);
+                            o.Children = GetData(pagination, true);
+                            o.HasChildren = o.Children.Any_Ex();
+                            o.ChildrenCount = o.Children?.Count ?? 0;
+                        }
+                        else
+                        {
+                            o.HasChildren = Repository.Select.Where(p => p.ParentId == o.Id).Any();
+                            o.ChildrenCount = (int)Repository.Where(p => p.ParentId == o.Id).Count();
                         }
                     });
                 else if (deep)
@@ -327,6 +334,8 @@ namespace Business.Implementation.System
                 AuthoritiesBusiness.RevocationMenuForRole(ids, false);
 
                 AuthoritiesBusiness.RevocationResourcesForRole(ids, false);
+
+                AuthoritiesBusiness.RevocationCFUCForRole(ids, false);
 
                 if (Repository.Delete(o => ids.Contains(o.Id)) <= 0)
                     throw new MessageException("未删除任何数据");

@@ -133,6 +133,25 @@
             详情
             </summary>
         </member>
+        <member name="P:Model.Common.FileUploadConfigDTO.Detail.ReferenceCode">
+            <summary>
+            引用编码
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadConfigDTO.Detail.AllowedTypeList">
+            <summary>
+            允许的MIME类型
+            <para>[,]逗号分隔</para>
+            <para>此值为空时未禁止即允许</para>
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadConfigDTO.Detail.ProhibitedTypeList">
+            <summary>
+            禁止的MIME类型
+            <para>[,]逗号分隔</para>
+            <para>此值为空时皆可允许</para>
+            </summary>
+        </member>
         <member name="T:Model.Common.FileUploadConfigDTO.Edit">
             <summary>
             编辑
@@ -143,9 +162,34 @@
             导入
             </summary>
         </member>
+        <member name="P:Model.Common.FileUploadConfigDTO.Import.ParentCode">
+            <summary>
+            父级编码
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadConfigDTO.Import.ReferenceCode">
+            <summary>
+            引用编码
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadConfigDTO.Import.New">
+            <summary>
+            新增数据
+            </summary>
+        </member>
         <member name="T:Model.Common.FileUploadConfigDTO.Export">
             <summary>
             导出
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadConfigDTO.Export.ParentCode">
+            <summary>
+            父级编码
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadConfigDTO.Export.ReferenceCode">
+            <summary>
+            引用编码
             </summary>
         </member>
         <member name="T:Model.Common.FileUploadConfigDTO.List">
@@ -153,7 +197,17 @@
             列表
             </summary>
         </member>
-        <member name="P:Model.Common.FileUploadConfigDTO.List.Childs_">
+        <member name="P:Model.Common.FileUploadConfigDTO.List.HasChildren">
+            <summary>
+            是否拥有子级
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadConfigDTO.List.ChildrenCount">
+            <summary>
+            子级数量
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadConfigDTO.List.Children">
             <summary>
             子级
             </summary>
@@ -161,6 +215,69 @@
         <member name="T:Model.Common.FileUploadConfigDTO.Config">
             <summary>
             配置
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadConfigDTO.Config.AllowedTypeList">
+            <summary>
+            允许的MIME类型
+            <para>[,]逗号分隔</para>
+            <para>此值为空时未禁止即允许</para>
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadConfigDTO.Config.ProhibitedTypeList">
+            <summary>
+            禁止的MIME类型
+            <para>[,]逗号分隔</para>
+            <para>此值为空时皆可允许</para>
+            </summary>
+        </member>
+        <member name="T:Model.Common.FileUploadConfigDTO.Types">
+            <summary>
+            类型信息
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadConfigDTO.Types.AllowedTypes">
+            <summary>
+            允许的MIME类型
+            <para>[,]逗号分隔</para>
+            <para>此值为空时未禁止即允许</para>
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadConfigDTO.Types.ProhibitedTypes">
+            <summary>
+            禁止的MIME类型
+            <para>[,]逗号分隔</para>
+            <para>此值为空时皆可允许</para>
+            </summary>
+        </member>
+        <member name="T:Model.Common.FileUploadConfigDTO.Authorities">
+            <summary>
+            授权信息
+            </summary>
+        </member>
+        <member name="T:Model.Common.FileUploadConfigDTO.AuthoritiesTree">
+            <summary>
+            授权信息树状列表
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadConfigDTO.AuthoritiesTree.Authorized">
+            <summary>
+            已授权
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadConfigDTO.AuthoritiesTree.HasChildren">
+            <summary>
+            是否拥有子级
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadConfigDTO.AuthoritiesTree.ChildrenCount">
+            <summary>
+            子级数量
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileUploadConfigDTO.AuthoritiesTree.Children">
+            <summary>
+            子级授权信息
             </summary>
         </member>
         <member name="T:Model.Common.FileUploadDTO.PreUploadFileResponse">
@@ -948,6 +1065,46 @@
             全部资源
             </summary>
         </member>
+        <member name="T:Model.System.AuthorizeDTO.CFUCForUser">
+            <summary>
+            授权文件上传配置给用户
+            </summary>
+        </member>
+        <member name="P:Model.System.AuthorizeDTO.CFUCForUser.UserIds">
+            <summary>
+            用户Id
+            </summary>
+        </member>
+        <member name="P:Model.System.AuthorizeDTO.CFUCForUser.ConfigIds">
+            <summary>
+            文件上传配置Id
+            </summary>
+        </member>
+        <member name="P:Model.System.AuthorizeDTO.CFUCForUser.All">
+            <summary>
+            全部文件上传配置
+            </summary>
+        </member>
+        <member name="T:Model.System.AuthorizeDTO.CFUCForRole">
+            <summary>
+            授权文件上传配置给角色
+            </summary>
+        </member>
+        <member name="P:Model.System.AuthorizeDTO.CFUCForRole.RoleIds">
+            <summary>
+            角色Id
+            </summary>
+        </member>
+        <member name="P:Model.System.AuthorizeDTO.CFUCForRole.ConfigIds">
+            <summary>
+            文件上传配置Id
+            </summary>
+        </member>
+        <member name="P:Model.System.AuthorizeDTO.CFUCForRole.All">
+            <summary>
+            全部文件上传配置
+            </summary>
+        </member>
         <member name="T:Model.System.LogDTO.List">
             <summary>
             列表
@@ -994,7 +1151,17 @@
             树状列表
             </summary>
         </member>
-        <member name="P:Model.System.MenuDTO.TreeList.Childs_">
+        <member name="P:Model.System.MenuDTO.TreeList.HasChildren">
+            <summary>
+            是否拥有子级
+            </summary>
+        </member>
+        <member name="P:Model.System.MenuDTO.TreeList.ChildrenCount">
+            <summary>
+            子级数量
+            </summary>
+        </member>
+        <member name="P:Model.System.MenuDTO.TreeList.Children">
             <summary>
             子级菜单
             </summary>
@@ -1014,7 +1181,17 @@
             已授权
             </summary>
         </member>
-        <member name="P:Model.System.MenuDTO.AuthoritiesTree.Childs_">
+        <member name="P:Model.System.MenuDTO.AuthoritiesTree.HasChildren">
+            <summary>
+            是否拥有子级
+            </summary>
+        </member>
+        <member name="P:Model.System.MenuDTO.AuthoritiesTree.ChildrenCount">
+            <summary>
+            子级数量
+            </summary>
+        </member>
+        <member name="P:Model.System.MenuDTO.AuthoritiesTree.Children">
             <summary>
             子级授权信息
             </summary>
@@ -1100,7 +1277,17 @@
             树状列表
             </summary>
         </member>
-        <member name="P:Model.System.RoleDTO.TreeList.Childs_">
+        <member name="P:Model.System.RoleDTO.TreeList.HasChildren">
+            <summary>
+            是否拥有子级
+            </summary>
+        </member>
+        <member name="P:Model.System.RoleDTO.TreeList.ChildrenCount">
+            <summary>
+            子级数量
+            </summary>
+        </member>
+        <member name="P:Model.System.RoleDTO.TreeList.Children">
             <summary>
             子级角色
             </summary>
@@ -1120,7 +1307,17 @@
             已授权
             </summary>
         </member>
-        <member name="P:Model.System.RoleDTO.AuthoritiesTree.Childs_">
+        <member name="P:Model.System.RoleDTO.AuthoritiesTree.HasChildren">
+            <summary>
+            是否拥有子级
+            </summary>
+        </member>
+        <member name="P:Model.System.RoleDTO.AuthoritiesTree.ChildrenCount">
+            <summary>
+            子级数量
+            </summary>
+        </member>
+        <member name="P:Model.System.RoleDTO.AuthoritiesTree.Children">
             <summary>
             子级授权信息
             </summary>
@@ -1138,6 +1335,11 @@
         <member name="P:Model.System.RoleDTO.Authorities._Resources">
             <summary>
             授权给此角色的资源
+            </summary>
+        </member>
+        <member name="P:Model.System.RoleDTO.Authorities._FileUploadConfigs">
+            <summary>
+            授权给此角色的文件上传配置
             </summary>
         </member>
         <member name="T:Model.System.RoleDTO.Create">
@@ -1228,6 +1430,11 @@
         <member name="P:Model.System.UserDTO.Authorities._Resources">
             <summary>
             授权给此用户的资源
+            </summary>
+        </member>
+        <member name="P:Model.System.UserDTO.Authorities._FileUploadConfigs">
+            <summary>
+            授权给此用户的文件上传配置
             </summary>
         </member>
         <member name="T:Model.System.UserDTO.Create">

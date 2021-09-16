@@ -49,11 +49,21 @@ namespace Model.System.RoleDTO
     public class TreeList : System_Role
     {
         /// <summary>
+        /// 是否拥有子级
+        /// </summary>
+        public bool HasChildren { get; set; }
+
+        /// <summary>
+        /// 子级数量
+        /// </summary>
+        public int ChildrenCount { get; set; }
+
+        /// <summary>
         /// 子级角色
         /// </summary>
         [OpenApiSchema(OpenApiSchemaType.model, OpenApiSchemaFormat.model_once)]
         [Description("子级角色")]
-        public List<TreeList> Childs_ { get; set; }
+        public List<TreeList> Children { get; set; }
     }
 
     /// <summary>
@@ -79,11 +89,21 @@ namespace Model.System.RoleDTO
         public bool Authorized { get; set; }
 
         /// <summary>
+        /// 是否拥有子级
+        /// </summary>
+        public bool HasChildren { get; set; }
+
+        /// <summary>
+        /// 子级数量
+        /// </summary>
+        public int ChildrenCount { get; set; }
+
+        /// <summary>
         /// 子级授权信息
         /// </summary>
         [OpenApiSchema(OpenApiSchemaType.model, OpenApiSchemaFormat.model_once)]
         [Description("子级授权信息")]
-        public List<AuthoritiesTree> Childs_ { get; set; }
+        public List<AuthoritiesTree> Children { get; set; }
     }
 
     /// <summary>
@@ -106,6 +126,13 @@ namespace Model.System.RoleDTO
         [OpenApiSchema(OpenApiSchemaType.model)]
         [Description("授权给此角色的资源")]
         public List<ResourcesDTO.Authorities> _Resources { get; set; }
+
+        /// <summary>
+        /// 授权给此角色的文件上传配置
+        /// </summary>
+        [OpenApiSchema(OpenApiSchemaType.model)]
+        [Description("授权给此角色的文件上传配置")]
+        public List<Common.FileUploadConfigDTO.Authorities> _FileUploadConfigs { get; set; }
     }
 
     /// <summary>

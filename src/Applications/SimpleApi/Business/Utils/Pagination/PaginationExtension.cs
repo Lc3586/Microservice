@@ -213,12 +213,7 @@ namespace Business.Utils.Pagination
                 }
                 else if (!string.IsNullOrEmpty(pagination.SortField))
                 {
-                    if (alias != null)
-                        pagination.SortField = $" {alias}.\"{pagination.SortField}\" ";
-                    else
-                        pagination.SortField = $" \"{pagination.SortField}\" ";
-
-                    predicate += $" {pagination.SortField} {pagination.SortType} ";
+                    predicate += $" {(alias != null ? $" {alias}.\"{pagination.SortField}\" " : $" \"{pagination.SortField}\" ")} {pagination.SortType} ";
                 }
 
                 if (!string.IsNullOrWhiteSpace(predicate))

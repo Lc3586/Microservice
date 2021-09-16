@@ -10,7 +10,6 @@ using Microservice.Library.Extension;
 using Microservice.Library.Extension.Helper;
 using Microservice.Library.File;
 using Microservice.Library.FreeSql.Gen;
-using Microservice.Library.OpenApi.Extention;
 using Microsoft.AspNetCore.SignalR;
 using Model.Common;
 using Model.Common.ChunkFileMergeTaskDTO;
@@ -807,7 +806,26 @@ namespace Business.Handler
                 CFMTHubMethod.新增任务,
                 new object[]
                 {
-                    Mapper.Map<List>(newTask)
+                    new
+                    {
+                        newTask.Id,
+                        newTask.ServerKey,
+                        newTask.MD5,
+                        newTask.Name,
+                        newTask.ContentType,
+                        newTask.Extension,
+                        newTask.Bytes,
+                        newTask.Size,
+                        newTask.Path,
+                        newTask.Specs,
+                        newTask.Total,
+                        newTask.State,
+                        newTask.Info,
+                        CreateTime = newTask.CreateTime.ToString("yyyy-MM-dd HH:mm:ss.ffff"),
+                        ModifyTime = newTask.ModifyTime?.ToString("yyyy-MM-dd HH:mm:ss.ffff"),
+                        CompletedTime = newTask.CompletedTime?.ToString("yyyy-MM-dd HH:mm:ss.ffff"),
+                        FullName = $"{newTask.Name}{newTask.Extension}",
+                    }
                 });
 
             BeginSendChunksSourceInfoTask(newTask.MD5, newTask.Specs, newTask.Total);

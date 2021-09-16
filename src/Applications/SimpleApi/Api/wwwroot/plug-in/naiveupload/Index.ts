@@ -55,7 +55,14 @@
                 Tag: ImportFileTag.JS,
                 Attributes: {
                     type: 'text/javascript',
-                    src: '../../element-plus/dayjs.zh-cn.js'
+                    src: '../../utils/dayjs/dayjs.min.js'
+                }
+            },
+            {
+                Tag: ImportFileTag.JS,
+                Attributes: {
+                    type: 'text/javascript',
+                    src: '../../utils/dayjs/dayjs.zh-cn.js'
                 }
             },
             {
@@ -91,6 +98,13 @@
                 Attributes: {
                     type: 'text/javascript',
                     src: 'Helper/ChunkFileMergeTaskHelper.js'
+                }
+            },
+            {
+                Tag: ImportFileTag.JS,
+                Attributes: {
+                    type: 'text/javascript',
+                    src: 'Model/UploadConfigDetail.js'
                 }
             },
         ],
@@ -138,14 +152,7 @@
                 created() {
                     Main = this;
 
-                    if (this.config.type === 'Signle')
-                        MultipleUploadSettings.Limit = 1;
-                    else if (this.config.type === 'Multiple')
-                        MultipleUploadSettings.Limit = 50;
-
-                    Upload.Init(MultipleUploadSettings).then(() => {
-                        Upload.SelectedFileList = this.multipleUpload.files;
-                    });
+                    Upload.SelectedFileList = this.multipleUpload.files;
 
                     AddLoginFilter();
                     Authorized();
@@ -153,6 +160,11 @@
                 methods: {
                     SALogin,
                     TabsChanged,
+
+                    LoadConfig,
+                    FilterConfig,
+                    ConfigDetail,
+                    ApplyConfig,
 
                     GetSelectCLass,
                     GetSelectTitle,
@@ -189,7 +201,7 @@
                     'multipleUpload.settings': {
                         handler(val) {
                             for (const key in val) {
-                                if (MultipleUploadSettings[key] !== val[key])
+                                if (key !== 'Config' && MultipleUploadSettings[key] !== val[key])
                                     MultipleUploadSettings[key] = val[key];
                             }
                         },
@@ -233,14 +245,30 @@
                             });
                         },
                         deep: true
-                    }
+                    },
+                    'multipleUpload.config.filter': {
+                        handler(val) {
+                            this.$refs.configTree.filter(val);
+                        }
+                    },
                 }
             };
 
-            const App = Vue.createApp(AppData);
-            ElementPlus.locale(ElementPlus.lang.zhCn);
-            App.use(ElementPlus);
-            App.mount("#app");
+            Upload.Init(MultipleUploadSettings).then(async () => {
+                //设置默认配置
+                try {
+                    await Upload.UpdateConfig('05FE0000-AA22-B025-2BAF-08D972A39270');
+                } catch (e) {
+                    console.error(e);
+                    ElementPlus.ElMessage(e.message);
+                }
+
+                const App = Vue.createApp(AppData);
+                App.use(ElementPlus, {
+                    locale: ElementPlus.lang.zhCn
+                });
+                App.mount("#app");
+            });
 
             /**
              * 获取渲染数据
@@ -256,23 +284,23 @@
                         password: ''
                     },
                     config: {
-                        type: 'Single'
-                    },
-                    single: {
-                        settings: {
-
-                        },
-                        file: {
-
-                        }
+                        type: 'Upload'
                     },
                     multipleUpload: {
                         settings: {
-                            Accept: MultipleUploadSettings.Accept,
-                            MultipleSelect: MultipleUploadSettings.MultipleSelect,
-                            Explain: MultipleUploadSettings.Explain,
+                            Config: MultipleUploadSettings.Config,
                             Tip: MultipleUploadSettings.Tip,
-                            Theme: MultipleUploadSettings.Theme
+                            Theme: MultipleUploadSettings.Theme,
+                            Mode: MultipleUploadSettings.Mode
+                        },
+                        config: {
+                            props: {
+                                label: 'DisplayName',
+                                children: 'Children',
+                                isLeaf: 'Leaf',
+                            },
+                            data: [],
+                            filter: ''
                         },
                         /**
                          * 锁定滚动条
@@ -357,7 +385,6 @@
                     Main.sa.loading = false;
                     if (response.data.Success) {
                         MultipleUploadSettings.Headers['Authorization'] = response.data.Data.AccessToken;
-
                         //定时更新令牌
                         setTimeout(RefreshToken, new Date(response.data.Data.Expires).getTime() - new Date().getTime() - 60 * 1000);
 
@@ -381,7 +408,7 @@
                         MultipleUploadSettings.Headers['Authorization'] = response.data.Data.AccessToken;
 
                         //定时更新令牌
-                        setTimeout(RefreshToken, response.data.Data.Expires.getTime() - new Date().getTime() - 60 * 1000);
+                        setTimeout(RefreshToken, new Date(response.data.Data.Expires).getTime() - new Date().getTime() - 60 * 1000);
                     }
                     else
                         ElementPlus.ElMessage(response.data.Message);
@@ -392,19 +419,128 @@
             }
 
             /**
+             * 加载文件上传配置下拉选择框数据
+             * @param node
+             * @param resolve
+             */
+            function LoadConfig(node, resolve) {
+                Axios.post(ApiUri.GetCurrentAccountCFUCTree,
+                    {
+                        ParentId: node.data?.Id,
+                        Rank: 0,
+                        Pagination: {
+                            PageIndex: -1,
+                            SortField: 'Sort',
+                            SortType: 'asc',
+                            DynamicFilterInfo: [
+                                {
+                                    Field: 'Enable',
+                                    Value: true,
+                                    Compare: 'eq'
+                                }
+                            ]
+                        }
+                    }).then(function (response: { data: ResponseData_T<UploadConfigAuthoritiesTreeList[]> }) {
+                        if (response.data.Success) {
+                            response.data.Data.forEach((item, index) => {
+                                (<any>item).Leaf = !item.HasChildren;
+                            });
+                            resolve(response.data.Data);
+                        }
+                        else
+                            ElementPlus.ElMessage(response.data.Message);
+                    }).catch(function (error) {
+                        console.error(error);
+                        ElementPlus.ElMessage('加载文件上传配置时发生异常.');
+                    });
+            }
+
+            /**
+             * 删选文件上传配置
+             * @param value
+             * @param data
+             */
+            function FilterConfig(value, data) {
+                if (!value) return true
+                return data.Name.indexOf(value) !== -1 || data.Code.indexOf(value) !== -1 || data.DisplayName.indexOf(value) !== -1;
+            }
+
+            /**
+             * 文件上传配置详情
+             * @param node
+             * @param data
+             */
+            function ConfigDetail(node, data) {
+                if (node.detailLoading === false)
+                    return;
+                node.detailLoading = true;
+                Axios.post(ApiUri.FileUploadConfigDetailData(data.Id))
+                    .then(function (response: { data: ResponseData_T<UploadConfigDetail[]> }) {
+                        if (response.data.Success) {
+                            node.detailLoading = false;
+                            node.detailData = response.data.Data;
+                        }
+                        else {
+                            node.detailError = response.data.Message;
+                        }
+                    }).catch(function (error) {
+                        console.error(error);
+                        node.detailError = '加载文件上传配置详情时发生异常.';
+                    });
+            }
+
+            /**
+             * 应用文件上传配置
+             * @param node
+             * @param data
+             */
+            function ApplyConfig(node, data) {
+                const done = (_data, updated) => {
+                    if (!updated)
+                        Upload.UpdateConfigData(_data);
+
+                    Main.multipleUpload.settings.Config = _data;
+
+                    node.configLoading = false;
+
+                    ElementPlus.ElMessage('配置应用成功.');
+                };
+
+                if (node.detailLoading === false) {
+                    node.configData = node.detailData;
+                    done(node.detailData, false);
+                    return;
+                } else if (node.configLoading === false) {
+                    done(node.configData, false);
+                    return;
+                }
+
+                node.configLoading = true;
+                Upload.UpdateConfig(data.Id)
+                    .then((_data) => {
+                        node.configData = _data;
+                        done(_data, true);
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        ElementPlus.ElMessage(`应用文件上传配置失败, ${error.message}`);
+                    });
+            }
+
+            /**
              * 切换标签时的点击事件
              * @param {any} tab
              */
             function TabsChanged(tab) {
                 Main.config.type = tab.props.name;
                 switch (tab.props.name) {
-                    case 'Single':
-                        if (Upload.SelectedFileList.length > 1)
+                    case 'Upload':
+                        if (Upload.SelectedFileList.length > 1) {
                             Upload.Clean();
-                        MultipleUploadSettings.Limit = 1;
-                        break;
-                    case 'Multiple':
-                        MultipleUploadSettings.Limit = 50;
+                            MultipleUploadSettings.Config.UpperLimit = 1;
+                        }
+                        else
+                            MultipleUploadSettings.Config.UpperLimit = 50;
                         break;
                     case 'Bigger':
                         InitChunkFileMergeTaskList();
@@ -436,10 +572,10 @@
              * 获取文件选择框的提示语
              * */
             function GetSelectTitle() {
-                if (!MultipleUploadSettings.Limit)
+                if (!MultipleUploadSettings.Config.UpperLimit)
                     return null;
 
-                return Upload.SelectedFileList.length < MultipleUploadSettings.Limit ? `还可添加个${MultipleUploadSettings.Limit - Upload.SelectedFileList.length}文件` : `文件数量已达上限`;
+                return Upload.SelectedFileList.length < MultipleUploadSettings.Config.UpperLimit ? `还可添加个${MultipleUploadSettings.Config.UpperLimit - Upload.SelectedFileList.length}文件` : `文件数量已达上限`;
             }
 
             /**
@@ -467,7 +603,7 @@
              */
             function DropFile(e) {
                 e.preventDefault();
-                Upload.AppendFiles(e.dataTransfer.files);
+                CheckAppendFilesResult(Upload.AppendFiles(e.dataTransfer.files));
             }
 
             /**
@@ -475,7 +611,22 @@
              * @param {any} e
              */
             function ChoseFile(e) {
-                Upload.AppendFiles(Main.$refs.fileInput.files);
+                CheckAppendFilesResult(Upload.AppendFiles(Main.$refs.fileInput.files));
+            }
+
+            function CheckAppendFilesResult(status: AppendFileResultStatus) {
+                switch (status) {
+                    case AppendFileResultStatus.成功:
+
+                        break;
+                    case AppendFileResultStatus.文件类型不合法:
+                        ElementPlus.ElMessage('文件类型不合法');
+                        break;
+                    case AppendFileResultStatus.超出数量限制:
+                        ElementPlus.ElMessage('超出数量限制');
+                        break;
+                    default:
+                }
             }
 
             /**

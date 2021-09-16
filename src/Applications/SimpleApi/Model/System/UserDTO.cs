@@ -58,6 +58,13 @@ namespace Model.System.UserDTO
         [OpenApiSchema(OpenApiSchemaType.model)]
         [Description("直接授权给此用户的资源")]
         public List<ResourcesDTO.Authorities> _Resources { get; set; }
+
+        /// <summary>
+        /// 授权给此用户的文件上传配置
+        /// </summary>
+        [OpenApiSchema(OpenApiSchemaType.model)]
+        [Description("授权给此用户的文件上传配置")]
+        public List<Common.FileUploadConfigDTO.Authorities> _FileUploadConfigs { get; set; }
     }
 
     /// <summary>

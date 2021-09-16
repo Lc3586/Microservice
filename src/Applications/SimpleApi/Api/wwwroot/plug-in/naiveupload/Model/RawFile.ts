@@ -71,4 +71,9 @@ class RawFile {
      * 文件信息
      */
     FileInfo: FileInfo;
+
+    /**
+     * 上传配置Id
+     */
+    ConfigId: string;
 }

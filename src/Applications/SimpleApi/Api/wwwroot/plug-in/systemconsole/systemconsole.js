@@ -27,8 +27,9 @@
     };
 
     const app = Vue.createApp(Main);
-    ElementPlus.locale(ElementPlus.lang.zhCn);
-    app.use(ElementPlus);
+    app.use(ElementPlus, {
+        locale: ElementPlus.lang.zhCn
+    });
     app.mount("#app");
 
     /**

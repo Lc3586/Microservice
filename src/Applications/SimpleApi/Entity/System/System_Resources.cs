@@ -150,7 +150,7 @@ namespace Entity.System
         public virtual ICollection<System_Role> Roles { get; set; }
 
         /// <summary>
-        /// 被授权此资源的用户
+        /// 被直接授权此资源的用户
         /// </summary>
         [Navigate(ManyToMany = typeof(System_UserResources))]
         [OpenApiIgnore]

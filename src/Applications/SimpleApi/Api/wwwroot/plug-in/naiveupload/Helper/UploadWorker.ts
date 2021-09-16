@@ -49,9 +49,9 @@ class UploadWorker {
      * @param extension 文件拓展名
      * @param filename 文件重命名
      */
-    SingleFile(md5: string, buffer: ArrayBuffer, type: string, extension: string, filename: string) {
+    SingleFile(configId: string, md5: string, buffer: ArrayBuffer, type: string, extension: string, filename: string) {
         this.AxiosInstance.post(
-            ApiUri.SingleFileByArrayBuffer(type, extension, filename),
+            ApiUri.SingleFileByArrayBuffer(configId, type, extension, filename),
             buffer,
             {
                 onUploadProgress: progress => {
@@ -142,7 +142,7 @@ class UploadWorker {
                 break;
             case UploadWorkerMessageType.文件:
                 data = event.data.Data as UploadWorkerFileMessage;
-                this.SingleFile(data.MD5, data.Buffer, data.Type, data.Extension, data.Name);
+                this.SingleFile(data.ConfigId, data.MD5, data.Buffer, data.Type, data.Extension, data.Name);
                 break;
             case UploadWorkerMessageType.分片文件:
                 data = event.data.Data as UploadWorkerChunkFileMessage;

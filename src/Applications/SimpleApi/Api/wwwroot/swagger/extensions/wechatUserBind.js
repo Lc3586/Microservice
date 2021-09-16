@@ -38,8 +38,8 @@ window.onDomLoaded(() => {
             }
         ],
         () => {
-            var open = (name, e) => {
-                var close = window.showDialog(
+            let open = (name, e) => {
+                let close = window.showDialog(
                     '输入参数',
                     [
                         ['input', '用户ID', ''],
@@ -50,7 +50,7 @@ window.onDomLoaded(() => {
                         '确认': {
                             'click': () => {
                                 close();
-                                var url = '/plug-in/wechat/qrcode.html?method=bind&userId=' + $('#key_0').val() + '&asyncUserInfo=' + $('#key_1').val() + '&size=' + $('#key_2').val();
+                                let url = '/plug-in/wechat/qrcode.html?method=bind&userId=' + $('#key_0').val() + '&asyncUserInfo=' + $('#key_1').val() + '&size=' + $('#key_2').val();
                                 window.showDialog(
                                     '系统用户绑定微信',
                                     [
@@ -64,7 +64,7 @@ window.onDomLoaded(() => {
                                         },
                                         '调整大小': {
                                             'click': () => {
-                                                var state = $('#key_0').data('state');
+                                                let state = $('#key_0').data('state');
                                                 $('#key_0').data('state', state == 1 ? 0 : 1);
                                                 //.animate({ 'height': (state == 1 ? 900 : 900) + 'px' });
                                                 $('.modal-ux').animate({ 'width': state == 1 ? '100%' : '35%' });

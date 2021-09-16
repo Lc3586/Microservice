@@ -167,4 +167,54 @@ namespace Model.System.AuthorizeDTO
         [JsonIgnore]
         public bool All { get; set; } = false;
     }
+
+    /// <summary>
+    /// 授权文件上传配置给用户
+    /// </summary>
+    public class CFUCForUser
+    {
+        /// <summary>
+        /// 用户Id
+        /// </summary>
+        [MinLength(1, ErrorMessage = "最少指定一个用户")]
+        public List<string> UserIds { get; set; } = new List<string>();
+
+        /// <summary>
+        /// 文件上传配置Id
+        /// </summary>
+        [MinLength(1, ErrorMessage = "最少指定一个文件上传配置")]
+        public List<string> ConfigIds { get; set; } = new List<string>();
+
+        /// <summary>
+        /// 全部文件上传配置
+        /// </summary>
+        [OpenApiIgnore]
+        [JsonIgnore]
+        public bool All { get; set; } = false;
+    }
+
+    /// <summary>
+    /// 授权文件上传配置给角色
+    /// </summary>
+    public class CFUCForRole
+    {
+        /// <summary>
+        /// 角色Id
+        /// </summary>
+        [MinLength(1, ErrorMessage = "最少指定一个角色")]
+        public List<string> RoleIds { get; set; } = new List<string>();
+
+        /// <summary>
+        /// 文件上传配置Id
+        /// </summary>
+        [MinLength(1, ErrorMessage = "最少指定一个菜单")]
+        public List<string> ConfigIds { get; set; } = new List<string>();
+
+        /// <summary>
+        /// 全部文件上传配置
+        /// </summary>
+        [OpenApiIgnore]
+        [JsonIgnore]
+        public bool All { get; set; } = false;
+    }
 }

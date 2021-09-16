@@ -1,4 +1,5 @@
-﻿using Model.Common.FileDTO;
+﻿using Microservice.Library.File.Model;
+using Model.Common.FileDTO;
 using Model.Utils.Pagination;
 using System;
 using System.Collections.Generic;
@@ -101,6 +102,18 @@ namespace Business.Interface.Common
         /// <param name="length">文件字节数</param>
         /// <returns></returns>
         string GetFileSize(string length);
+
+        /// <summary>
+        /// 获取视频信息
+        /// </summary>
+        /// <param name="id">文件Id</param>
+        /// <param name="format">获取有关输入多媒体流的容器格式的信息</param>
+        /// <param name="streams">获取有关输入多媒体流中包含的每个媒体流的信息</param>
+        /// <param name="chapters">获取有关以该格式存储的章节的信息</param>
+        /// <param name="programs">获取有关程序及其输入多媒体流中包含的流的信息</param>
+        /// <param name="version">获取与程序版本有关的信息、获取与库版本有关的信息、获取与程序和库版本有关的信息</param>
+        /// <returns></returns>
+        Task<VideoInfo> GetVideoInfo(string id, bool format = true, bool streams = false, bool chapters = false, bool programs = false, bool version = false);
 
         #endregion
     }

@@ -1,5 +1,6 @@
 ﻿using Business.Handler;
 using Business.Interface.Common;
+using Business.Interface.System;
 using Business.Utils;
 using Entity.Common;
 using FreeSql;
@@ -15,6 +16,7 @@ using Model.Common.PersonalFileInfoDTO;
 using System;
 using System.IO;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Business.Implementation.Common
@@ -30,15 +32,18 @@ namespace Business.Implementation.Common
             IFreeSqlProvider freeSqlProvider,
             IHttpContextAccessor httpContextAccessor,
             IFileBusiness fileBusiness,
-            IPersonalFileInfoBusiness personalFileInfoBusiness)
+            IPersonalFileInfoBusiness personalFileInfoBusiness,
+            IAuthoritiesBusiness authoritiesBusiness)
         {
             Orm = freeSqlProvider.GetFreeSql();
             Repository = Orm.GetRepository<Common_File, string>();
             Repository_FileChunk = Orm.GetRepository<Common_ChunkFile, string>();
             Repository_FileExtension = Orm.GetRepository<Common_PersonalFileInfo, string>();
+            Repository_FileUploadConfig = Orm.GetRepository<Common_FileUploadConfig, string>();
             HttpContextAccessor = httpContextAccessor;
             FileBusiness = fileBusiness;
             PersonalFileInfoBusiness = personalFileInfoBusiness;
+            AuthoritiesBusiness = authoritiesBusiness;
 
             if (Config.EnableUploadLargeFile)
                 MergeHandler = AutofacHelper.GetService<ChunkFileMergeHandler>();
@@ -58,11 +63,15 @@ namespace Business.Implementation.Common
 
         readonly IBaseRepository<Common_PersonalFileInfo, string> Repository_FileExtension;
 
+        readonly IBaseRepository<Common_FileUploadConfig, string> Repository_FileUploadConfig;
+
         readonly IHttpContextAccessor HttpContextAccessor;
 
         readonly IFileBusiness FileBusiness;
 
         readonly IPersonalFileInfoBusiness PersonalFileInfoBusiness;
+
+        readonly IAuthoritiesBusiness AuthoritiesBusiness;
 
         readonly ChunkFileMergeHandler MergeHandler;
 
@@ -218,13 +227,20 @@ namespace Business.Implementation.Common
         /// <summary>
         /// 上传单个文件
         /// </summary>
+        /// <param name="configId">上传配置Id</param>
         /// <param name="stream"></param>
         /// <param name="type">文件类型</param>
         /// <param name="extension">文件拓展名</param>
         /// <param name="filename">文件重命名</param>
         /// <returns></returns>
-        async Task<PersonalFileInfo> SingleFile(Stream stream, string type, string extension, string filename)
+        async Task<PersonalFileInfo> SingleFile(string configId, Stream stream, string type, string extension, string filename)
         {
+            if (!Operator.IsSuperAdmin && !AuthoritiesBusiness.CurrentAccountHasCFUC(configId))
+                throw new MessageException("无权限, 禁止上传.");
+
+            if (!CheckType(configId, type, extension))
+                throw new MessageException("文件类型不合法, 禁止上传.");
+
             if (!Directory.Exists(BaseDir))
                 Directory.CreateDirectory(BaseDir);
 
@@ -238,7 +254,7 @@ namespace Business.Implementation.Common
 
             var md5 = await Common.FileBusiness.GetMD5(path);
 
-            var validation = PreUploadFile(md5, filename);
+            var validation = PreUploadFile(configId, md5, filename, false, type);
             if (validation.Uploaded)
             {
                 File.Delete(path);
@@ -283,14 +299,65 @@ namespace Business.Implementation.Common
             return PersonalFileInfoBusiness.GetDetail(file_extension.Id);
         }
 
+        /// <summary>
+        /// 使用上传配置检查文件类型是否合法
+        /// </summary>
+        /// <param name="configId">上传配置Id</param>
+        /// <param name="type">MIME类型</param>
+        /// <param name="extension"></param>
+        /// <returns></returns>
+        bool CheckType(string configId, string type, string extension = null)
+        {
+            var config = Repository_FileUploadConfig.Where(o => o.Id == configId && o.Enable == true).ToOne(o => new { o.AllowedTypes, o.ProhibitedTypes });
+            if (config == default)
+                throw new MessageException("上传配置不存在或已失效");
+
+            if (config.AllowedTypes.IsNullOrWhiteSpace() && config.ProhibitedTypes.IsNullOrWhiteSpace())
+                return true;
+
+            if (!config.AllowedTypes.IsNullOrWhiteSpace())
+            {
+                var flag = false;
+                foreach (var item in config.AllowedTypes.Split(','))
+                {
+                    if ((!type.IsNullOrWhiteSpace() && new Regex(item.Replace("/*", "//*")).IsMatch(type)) || (!extension.IsNullOrWhiteSpace() && item[0] == '.' && item == extension))
+                    {
+                        flag = true;
+                        break;
+                    }
+                }
+                if (!flag)
+                {
+                    return false;
+                }
+            }
+
+            if (!config.ProhibitedTypes.IsNullOrWhiteSpace())
+            {
+                foreach (var item in config.ProhibitedTypes.Split(','))
+                {
+                    if ((!type.IsNullOrWhiteSpace() && new Regex(item.Replace("/*", "//*")).IsMatch(type)) || (!extension.IsNullOrWhiteSpace() && item[0] == '.' && item == extension))
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
         #endregion
 
         #region 外部接口
 
         #region 文件操作接口
 
-        public PreUploadFileResponse PreUploadFile(string md5, string filename, bool section = false, string type = null, string extension = null, int? specs = null, int? total = null)
+        public PreUploadFileResponse PreUploadFile(string configId, string md5, string filename, bool section = false, string type = null, string extension = null, int? specs = null, int? total = null)
         {
+            if (!Operator.IsSuperAdmin && !AuthoritiesBusiness.CurrentAccountHasCFUC(configId))
+                throw new MessageException("无权限, 禁止上传.");
+
+            if (!CheckType(configId, type, extension))
+                throw new MessageException("文件类型不合法, 禁止上传.");
+
             var state = GetFileState(md5, false);
 
             var result = new PreUploadFileResponse
@@ -515,6 +582,11 @@ namespace Business.Implementation.Common
 
         public async Task<PersonalFileInfo> SingleFileFromUrl(string url, string filename, bool download = false)
         {
+            return await SingleFileFromUrl(null, url, filename, download);
+        }
+
+        public async Task<PersonalFileInfo> SingleFileFromUrl(string configId, string url, string filename, bool download = false)
+        {
             if (!Directory.Exists(BaseDir))
                 Directory.CreateDirectory(BaseDir);
 
@@ -532,6 +604,15 @@ namespace Business.Implementation.Common
                 var stream = await client.OpenReadTaskAsync(url);
 
                 var contentType = client.ResponseHeaders[HttpResponseHeader.ContentType];
+
+                if (configId != null)
+                {
+                    if (!Operator.IsSuperAdmin && !AuthoritiesBusiness.CurrentAccountHasCFUC(configId))
+                        throw new MessageException("无权限, 禁止上传.");
+
+                    if (!CheckType(configId, contentType, extension))
+                        throw new MessageException("文件类型不合法, 禁止上传.");
+                }
 
                 await Common.FileBusiness.Save(stream, path);
 
@@ -597,20 +678,20 @@ namespace Business.Implementation.Common
             return PersonalFileInfoBusiness.GetDetail(file_extension.Id);
         }
 
-        public async Task<PersonalFileInfo> SingleFile(IFormFile file, string filename)
+        public async Task<PersonalFileInfo> SingleFile(string configId, IFormFile file, string filename)
         {
             if (file == null)
                 throw new MessageException("未上传任何文件.", filename);
 
             using var rs = file.OpenReadStream();
-            return await SingleFile(rs, file.ContentType, Path.GetExtension(file.FileName), filename);
+            return await SingleFile(configId, rs, file.ContentType, Path.GetExtension(file.FileName), filename);
         }
 
-        public async Task<PersonalFileInfo> SingleFileByArrayBuffer(string type, string extension, string filename)
+        public async Task<PersonalFileInfo> SingleFileByArrayBuffer(string configId, string type, string extension, string filename)
         {
             using var rs = HttpContextAccessor.HttpContext.Request.Body;
 
-            return await SingleFile(rs, type, extension, filename);
+            return await SingleFile(configId, rs, type, extension, filename);
         }
 
         #endregion

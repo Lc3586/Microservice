@@ -49,11 +49,21 @@ namespace Model.System.MenuDTO
     public class TreeList : System_Menu
     {
         /// <summary>
+        /// 是否拥有子级
+        /// </summary>
+        public bool HasChildren { get; set; }
+
+        /// <summary>
+        /// 子级数量
+        /// </summary>
+        public int ChildrenCount { get; set; }
+
+        /// <summary>
         /// 子级菜单
         /// </summary>
         [OpenApiSchema(OpenApiSchemaType.model, OpenApiSchemaFormat.model_once)]
         [Description("子级菜单")]
-        public List<TreeList> Childs_ { get; set; }
+        public List<TreeList> Children { get; set; }
     }
 
     /// <summary>
@@ -79,11 +89,21 @@ namespace Model.System.MenuDTO
         public bool Authorized { get; set; }
 
         /// <summary>
+        /// 是否拥有子级
+        /// </summary>
+        public bool HasChildren { get; set; }
+
+        /// <summary>
+        /// 子级数量
+        /// </summary>
+        public int ChildrenCount { get; set; }
+
+        /// <summary>
         /// 子级授权信息
         /// </summary>
         [OpenApiSchema(OpenApiSchemaType.model, OpenApiSchemaFormat.model_once)]
         [Description("子级授权信息")]
-        public List<AuthoritiesTree> Childs_ { get; set; }
+        public List<AuthoritiesTree> Children { get; set; }
     }
 
     /// <summary>

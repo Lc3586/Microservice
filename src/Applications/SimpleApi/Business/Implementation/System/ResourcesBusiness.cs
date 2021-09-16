@@ -328,7 +328,7 @@ namespace Business.Implementation.System
                 var orId = OperationRecordBusiness.Create(new Common_OperationRecord
                 {
                     DataType = nameof(System_MenuResources),
-                    DataId = null,
+                    DataId = $"{id}+{string.Join(",", menus.Select(o => o.Id))}",
                     Explain = $"资源关联菜单.",
                     Remark = $"资源: \r\n\t[名称 {menu.Name}, 类型 {menu.Type}]\r\n" +
                             $"关联的菜单: \r\n\t{string.Join(",", menus.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
@@ -376,7 +376,7 @@ namespace Business.Implementation.System
                 var orId = OperationRecordBusiness.Create(new Common_OperationRecord
                 {
                     DataType = nameof(System_MenuResources),
-                    DataId = null,
+                    DataId = $"{id}+{string.Join(",", menus.Select(o => o.Id))}",
                     Explain = $"资源解除关联菜单.",
                     Remark = $"资源: \r\n\t[名称 {menu.Name}, 类型 {menu.Type}]\r\n" +
                             $"解除关联的菜单: \r\n\t{string.Join(",", menus.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"

@@ -44,6 +44,9 @@ namespace Business.Implementation.System
             Repository_RoleResources = Orm.GetRepository<System_RoleResources, string>();
             Repository_Menu = Orm.GetRepository<System_Menu, string>();
             Repository_Resources = Orm.GetRepository<System_Resources, string>();
+            Repository_FileUploadConfig = Orm.GetRepository<Common_FileUploadConfig, string>();
+            Repository_UserCFUC = Orm.GetRepository<System_UserCFUC, string>();
+            Repository_RoleCFUC = Orm.GetRepository<System_RoleCFUC, string>();
             Mapper = autoMapperProvider.GetMapper();
             OperationRecordBusiness = operationRecordBusiness;
         }
@@ -75,6 +78,12 @@ namespace Business.Implementation.System
         readonly IBaseRepository<System_Menu, string> Repository_Menu;
 
         readonly IBaseRepository<System_Resources, string> Repository_Resources;
+
+        readonly IBaseRepository<Common_FileUploadConfig, string> Repository_FileUploadConfig;
+
+        readonly IBaseRepository<System_UserCFUC, string> Repository_UserCFUC;
+
+        readonly IBaseRepository<System_RoleCFUC, string> Repository_RoleCFUC;
 
         readonly IMapper Mapper;
 
@@ -257,7 +266,7 @@ namespace Business.Implementation.System
                     var orId = OperationRecordBusiness.Create(new Common_OperationRecord
                     {
                         DataType = nameof(System_UserRole),
-                        DataId = null,
+                        DataId = $"{userId}+{string.Join(",", roles.Select(o => o.Id))}",
                         Explain = $"授权角色给用户.",
                         Remark = $"被授权的用户: \r\n\t[账号 {user.Account}, 姓名 {user.Name}]\r\n" +
                                  $"授权的角色: \r\n\t{string.Join(",", roles.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
@@ -358,7 +367,7 @@ namespace Business.Implementation.System
                     var orId = OperationRecordBusiness.Create(new Common_OperationRecord
                     {
                         DataType = nameof(Public_MemberRole),
-                        DataId = null,
+                        DataId = $"{memberId}+{string.Join(",", roles.Select(o => o.Id))}",
                         Explain = $"授权角色给会员.",
                         Remark = $"被授权的会员: \r\n\t[账号 {member.Account}, 昵称 {member.Nickname}]\r\n" +
                                 $"授权的角色: \r\n\t{string.Join(",", roles.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
@@ -455,7 +464,7 @@ namespace Business.Implementation.System
                     var orId = OperationRecordBusiness.Create(new Common_OperationRecord
                     {
                         DataType = nameof(System_UserMenu),
-                        DataId = null,
+                        DataId = $"{userId}+{string.Join(",", menus.Select(o => o.Id))}",
                         Explain = $"授权菜单给用户.",
                         Remark = $"被授权的用户: \r\n\t[账号 {user.Account}, 姓名 {user.Name}]\r\n" +
                                 $"授权的菜单: \r\n\t{string.Join(",", menus.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
@@ -542,7 +551,7 @@ namespace Business.Implementation.System
                     var orId = OperationRecordBusiness.Create(new Common_OperationRecord
                     {
                         DataType = nameof(System_UserResources),
-                        DataId = null,
+                        DataId = $"{userId}+{string.Join(",", resources.Select(o => o.Id))}",
                         Explain = $"授权资源给用户.",
                         Remark = $"被授权的用户: \r\n\t[账号 {user.Account}, 姓名 {user.Name}]\r\n" +
                                 $"授权的资源: \r\n\t{string.Join(",", resources.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
@@ -597,7 +606,7 @@ namespace Business.Implementation.System
                     var orId = OperationRecordBusiness.Create(new Common_OperationRecord
                     {
                         DataType = nameof(System_RoleMenu),
-                        DataId = null,
+                        DataId = $"{roleId}+{string.Join(",", menus.Select(o => o.Id))}",
                         Explain = $"授权菜单给角色.",
                         Remark = $"被授权的角色: \r\n\t[名称 {role.Name}, 类型 {role.Type}]\r\n" +
                                 $"授权的菜单: \r\n\t{string.Join(",", menus.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
@@ -684,7 +693,7 @@ namespace Business.Implementation.System
                     var orId = OperationRecordBusiness.Create(new Common_OperationRecord
                     {
                         DataType = nameof(System_RoleResources),
-                        DataId = null,
+                        DataId = $"{roleId}+{string.Join(",", menus.Select(o => o.Id))}",
                         Explain = $"授权资源给角色.",
                         Remark = $"被授权的角色: \r\n\t[名称 {role.Name}, 类型 {role.Type}]\r\n" +
                                 $"授权的资源: \r\n\t{string.Join(",", menus.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
@@ -697,6 +706,180 @@ namespace Business.Implementation.System
 
             if (!success)
                 throw new MessageException("授权失败.", ex);
+        }
+
+        public void AuthorizeCFUCForUser(CFUCForUser data, bool runTransaction = true)
+        {
+            if (!data.UserIds.Any_Ex())
+                return;
+
+            var users = data.UserIds.Select(o => GetUserWithCheck(o));
+
+            if (!users.Any())
+                return;
+
+            void handler()
+            {
+                var newData = new List<System_UserCFUC>();
+
+                foreach (var user in users)
+                {
+                    string userId = user.Id;
+                    var configs = Repository_FileUploadConfig
+                                .Where(o => (data.All == true || data.ConfigIds.Contains(o.Id))
+                                    && o.Enable == true
+                                    && !o.System_Users.AsSelect().Where(p => p.Id == userId).Any())
+                                .ToList(o => new
+                                {
+                                    o.Id,
+                                    o.Code,
+                                    o.Name
+                                });
+
+                    if (!configs.Any())
+                        continue;
+
+                    newData.AddRange(configs.Select(o => new System_UserCFUC
+                    {
+                        ConfigId = o.Id,
+                        UserId = userId
+                    }));
+
+                    var orId = OperationRecordBusiness.Create(new Common_OperationRecord
+                    {
+                        DataType = nameof(System_UserCFUC),
+                        DataId = $"{userId}+{string.Join(",", configs.Select(o => o.Id))}",
+                        Explain = $"授权文件上传配置给用户.",
+                        Remark = $"被授权的用户: \r\n\t[账号 {user.Account}, 姓名 {user.Name}]\r\n" +
+                                $"授权的文件上传配置: \r\n\t{string.Join(",", configs.Select(o => $"[名称 {o.Name}, 编码 {o.Code}]"))}"
+                    });
+                }
+
+                if (newData.Any())
+                    Repository_UserCFUC.Insert(newData);
+            }
+
+            if (runTransaction)
+            {
+                (bool success, Exception ex) = Orm.RunTransaction(handler);
+
+                if (!success)
+                    throw new MessageException("授权失败.", ex);
+            }
+            else
+                handler();
+        }
+
+        public void AuthorizeCFUCForUser(string configId, string userId, bool allChilds = false, bool runTransaction = true)
+        {
+            List<string> configIds = new List<string>();
+            var q_Up = Repository_FileUploadConfig.Select.Where($"a.[Id] = '{configId}' AND a.[Enable] = 1")
+                                        .AsTreeCte(null, true)
+                                        .Where($"a.[Enable] = 1");
+            configIds.AddRange(q_Up.ToList(o => o.Id));
+
+            configIds.Remove(configId);
+
+            var q = Repository_FileUploadConfig.Select.Where($"a.[Id] = '{configId}' AND a.[Enable] = 1");
+
+            if (allChilds)
+                q = q.AsTreeCte();
+
+            configIds = q.Where($"a.[Enable] = 1").ToList(o => o.Id);
+
+            if (configIds.Any())
+                AuthorizeCFUCForUser(new CFUCForUser
+                {
+                    UserIds = new List<string> { userId },
+                    ConfigIds = configIds
+                }, runTransaction);
+        }
+
+        public void AuthorizeCFUCForRole(CFUCForRole data, bool runTransaction = true)
+        {
+            if (!data.RoleIds.Any_Ex())
+                return;
+
+            var roles = data.RoleIds.Select(o => GetRoleWithCheck(o));
+
+            if (!roles.Any())
+                return;
+
+            void handler()
+            {
+                var newData = new List<System_RoleCFUC>();
+
+                foreach (var role in roles)
+                {
+                    string roleId = role.Id;
+                    var configs = Repository_FileUploadConfig
+                                .Where(o => (data.All == true || data.ConfigIds.Contains(o.Id))
+                                    && o.Enable == true
+                                    && !o.System_Roles.AsSelect().Where(p => p.Id == roleId).Any())
+                                .ToList(o => new
+                                {
+                                    o.Id,
+                                    o.Code,
+                                    o.Name
+                                });
+
+                    if (!configs.Any())
+                        continue;
+
+                    newData.AddRange(configs.Select(o => new System_RoleCFUC
+                    {
+                        ConfigId = o.Id,
+                        RoleId = roleId
+                    }));
+
+                    var orId = OperationRecordBusiness.Create(new Common_OperationRecord
+                    {
+                        DataType = nameof(System_RoleCFUC),
+                        DataId = $"{roleId}+{string.Join(",", configs.Select(o => o.Id))}",
+                        Explain = $"授权文件上传配置给角色.",
+                        Remark = $"被授权的角色: \r\n\t[名称 {role.Name}, 类型 {role.Type}]\r\n" +
+                                $"授权的文件上传配置: \r\n\t{string.Join(",", configs.Select(o => $"[名称 {o.Name}, 编码 {o.Code}]"))}"
+                    });
+                }
+
+                if (newData.Any())
+                    Repository_RoleCFUC.Insert(newData);
+            }
+
+            if (runTransaction)
+            {
+                (bool success, Exception ex) = Orm.RunTransaction(handler);
+
+                if (!success)
+                    throw new MessageException("授权失败.", ex);
+            }
+            else
+                handler();
+        }
+
+        public void AuthorizeCFUCForRole(string configId, string roleId, bool allChilds = false, bool runTransaction = true)
+        {
+            List<string> configIds = new List<string>();
+            var q_Up = Repository_FileUploadConfig.Select.Where($"a.[Id] = '{configId}' AND a.[Enable] = 1")
+                                        .AsTreeCte(null, true)
+                                        .Where($"a.[Enable] = 1");
+            configIds.AddRange(q_Up.ToList(o => o.Id));
+
+            configIds.Remove(configId);
+
+            var q = Repository_FileUploadConfig.Select.Where($"a.[Id] = '{configId}' AND a.[Enable] = 1");
+
+            if (allChilds)
+                q = q.AsTreeCte();
+
+            configIds = q.Where($"a.[Enable] = 1").ToList(o => o.Id);
+
+            if (configIds.Any())
+                AuthorizeCFUCForRole(new CFUCForRole
+                {
+                    RoleIds = new List<string> { roleId },
+                    ConfigIds = configIds
+                }, runTransaction);
         }
 
         #endregion
@@ -761,6 +944,15 @@ namespace Business.Implementation.System
             }, runTransaction);
         }
 
+        public void RevocationCFUCForUser(List<string> userIds, bool runTransaction = true)
+        {
+            RevocationCFUCForUser(new CFUCForUser
+            {
+                UserIds = userIds,
+                All = true
+            }, runTransaction);
+        }
+
         public void RevocationMenuForRole(List<string> roleIds, bool runTransaction = true)
         {
             RevocationMenuForRole(new MenuForRole
@@ -773,6 +965,15 @@ namespace Business.Implementation.System
         public void RevocationResourcesForRole(List<string> roleIds, bool runTransaction = true)
         {
             RevocationResourcesForRole(new ResourcesForRole
+            {
+                RoleIds = roleIds,
+                All = true
+            }, runTransaction);
+        }
+
+        public void RevocationCFUCForRole(List<string> roleIds, bool runTransaction = true)
+        {
+            RevocationCFUCForRole(new CFUCForRole
             {
                 RoleIds = roleIds,
                 All = true
@@ -811,7 +1012,7 @@ namespace Business.Implementation.System
                     var orId = OperationRecordBusiness.Create(new Common_OperationRecord
                     {
                         DataType = nameof(System_UserRole),
-                        DataId = null,
+                        DataId = $"{userId}+{string.Join(",", roles.Select(o => o.Id))}",
                         Explain = $"撤销用户的角色授权.",
                         Remark = $"被撤销授权的用户: \r\n\t[账号 {user.Account}, 姓名 {user.Name}]\r\n" +
                                  $"撤销授权的角色: \r\n\t{string.Join(",", roles.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
@@ -885,7 +1086,7 @@ namespace Business.Implementation.System
                     var orId = OperationRecordBusiness.Create(new Common_OperationRecord
                     {
                         DataType = nameof(Public_MemberRole),
-                        DataId = null,
+                        DataId = $"{memberId}+{string.Join(",", roles.Select(o => o.Id))}",
                         Explain = $"撤销会员的角色授权.",
                         Remark = $"被撤销授权的会员: \r\n\t[账号 {member.Account}, 昵称 {member.Nickname}]\r\n" +
                                  $"撤销授权的角色: \r\n\t{string.Join(",", roles.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
@@ -958,7 +1159,7 @@ namespace Business.Implementation.System
                     var orId = OperationRecordBusiness.Create(new Common_OperationRecord
                     {
                         DataType = nameof(System_UserMenu),
-                        DataId = null,
+                        DataId = $"{userId}+{string.Join(",", menus.Select(o => o.Id))}",
                         Explain = $"撤销用户的菜单授权.",
                         Remark = $"被撤销授权的用户: \r\n\t[账号 {user.Account}, 姓名 {user.Name}]\r\n" +
                                  $"撤销授权的菜单: \r\n\t{string.Join(",", menus.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
@@ -1031,7 +1232,7 @@ namespace Business.Implementation.System
                     var orId = OperationRecordBusiness.Create(new Common_OperationRecord
                     {
                         DataType = nameof(System_UserResources),
-                        DataId = null,
+                        DataId = $"{userId}+{string.Join(",", resourcess.Select(o => o.Id))}",
                         Explain = $"撤销用户的资源授权.",
                         Remark = $"被撤销授权的用户: \r\n\t[账号 {user.Account}, 姓名 {user.Name}]\r\n" +
                                  $"撤销授权的资源: \r\n\t{string.Join(",", resourcess.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
@@ -1053,6 +1254,79 @@ namespace Business.Implementation.System
             }
             else
                 handler();
+        }
+
+        public void RevocationCFUCForUser(CFUCForUser data, bool runTransaction = true)
+        {
+            if (!data.UserIds.Any_Ex())
+                return;
+
+            var users = data.UserIds.Select(o => GetUserWithCheck(o));
+
+            if (!users.Any())
+                return;
+
+            void handler()
+            {
+                foreach (var user in users)
+                {
+                    string userId = user.Id;
+                    var config = Repository_FileUploadConfig
+                                .Where(o => (data.All == true || data.ConfigIds.Contains(o.Id))
+                                    && o.System_Users.AsSelect().Where(p => p.Id == userId).Any())
+                                .ToList(o => new
+                                {
+                                    o.Id,
+                                    o.Code,
+                                    o.Name
+                                });
+
+                    if (!config.Any())
+                        continue;
+
+                    var orId = OperationRecordBusiness.Create(new Common_OperationRecord
+                    {
+                        DataType = nameof(System_UserCFUC),
+                        DataId = $"{userId}+{string.Join(",", config.Select(o => o.Id))}",
+                        Explain = $"撤销用户的文件上传配置授权.",
+                        Remark = $"被撤销授权的用户: \r\n\t[账号 {user.Account}, 姓名 {user.Name}]\r\n" +
+                                 $"撤销授权的文件上传配置: \r\n\t{string.Join(",", config.Select(o => $"[名称 {o.Name}, 编码 {o.Code}]"))}"
+                    });
+
+                    var deleteIds = config.Select(o => o.Id).ToList();
+
+                    if (Repository_UserCFUC.Delete(o => o.UserId == userId && deleteIds.Contains(o.ConfigId)) < 0)
+                        throw new MessageException("撤销授权失败.");
+                }
+            }
+
+            if (runTransaction)
+            {
+                (bool success, Exception ex) = Orm.RunTransaction(handler);
+
+                if (!success)
+                    throw new MessageException("撤销授权失败.", ex);
+            }
+            else
+                handler();
+        }
+
+        public void RevocationCFUCForUser(string configId, string userId, bool allChilds = false, bool runTransaction = true)
+        {
+            List<string> configIds;
+            var q = Repository_FileUploadConfig.Select.Where($"a.[Id] = '{configId}'");
+
+            if (allChilds)
+                q = q.AsTreeCte();
+
+            configIds = q.ToList(o => o.Id);
+
+            if (configIds.Any())
+                RevocationCFUCForUser(new CFUCForUser
+                {
+                    UserIds = new List<string> { userId },
+                    ConfigIds = configIds
+                }, runTransaction);
         }
 
         public void RevocationMenuForRole(MenuForRole data, bool runTransaction = true)
@@ -1086,7 +1360,7 @@ namespace Business.Implementation.System
                     var orId = OperationRecordBusiness.Create(new Common_OperationRecord
                     {
                         DataType = nameof(System_RoleMenu),
-                        DataId = null,
+                        DataId = $"{roleId}+{string.Join(",", menus.Select(o => o.Id))}",
                         Explain = $"撤销角色的菜单授权.",
                         Remark = $"被撤销授权的角色: \r\n\t[名称 {role.Name}, 类型 {role.Type}]\r\n" +
                                  $"撤销授权的菜单: \r\n\t{string.Join(",", menus.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
@@ -1159,7 +1433,7 @@ namespace Business.Implementation.System
                     var orId = OperationRecordBusiness.Create(new Common_OperationRecord
                     {
                         DataType = nameof(System_RoleResources),
-                        DataId = null,
+                        DataId = $"{roleId}+{string.Join(",", resourcess.Select(o => o.Id))}",
                         Explain = $"撤销角色的资源授权.",
                         Remark = $"被撤销授权的角色: \r\n\t[名称 {role.Name}, 类型 {role.Type}]\r\n" +
                                  $"撤销授权的资源: \r\n\t{string.Join(",", resourcess.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
@@ -1181,6 +1455,79 @@ namespace Business.Implementation.System
             }
             else
                 handler();
+        }
+
+        public void RevocationCFUCForRole(CFUCForRole data, bool runTransaction = true)
+        {
+            if (!data.RoleIds.Any_Ex())
+                return;
+
+            var roles = data.RoleIds.Select(o => GetRoleWithCheck(o));
+
+            if (!roles.Any())
+                return;
+
+            void handler()
+            {
+                foreach (var role in roles)
+                {
+                    string roleId = role.Id;
+                    var configs = Repository_FileUploadConfig
+                                .Where(o => (data.All == true || data.ConfigIds.Contains(o.Id))
+                                    && o.System_Roles.AsSelect().Where(p => p.Id == roleId).Any())
+                                .ToList(o => new
+                                {
+                                    o.Id,
+                                    o.Code,
+                                    o.Name
+                                });
+
+                    if (!configs.Any())
+                        continue;
+
+                    var orId = OperationRecordBusiness.Create(new Common_OperationRecord
+                    {
+                        DataType = nameof(System_RoleCFUC),
+                        DataId = $"{roleId}+{string.Join(",", configs.Select(o => o.Id))}",
+                        Explain = $"撤销角色的文件上传配置授权.",
+                        Remark = $"被撤销授权的角色: \r\n\t[名称 {role.Name}, 类型 {role.Type}]\r\n" +
+                                 $"撤销授权的文件上传配置: \r\n\t{string.Join(",", configs.Select(o => $"[名称 {o.Name}, 编码 {o.Code}]"))}"
+                    });
+
+                    var deleteIds = configs.Select(o => o.Id).ToList();
+
+                    if (Repository_RoleCFUC.Delete(o => o.RoleId == roleId && deleteIds.Contains(o.ConfigId)) < 0)
+                        throw new MessageException("撤销授权失败.");
+                }
+            }
+
+            if (runTransaction)
+            {
+                (bool success, Exception ex) = Orm.RunTransaction(handler);
+
+                if (!success)
+                    throw new MessageException("撤销授权失败.", ex);
+            }
+            else
+                handler();
+        }
+
+        public void RevocationCFUCForRole(string configId, string roleId, bool allChilds = false, bool runTransaction = true)
+        {
+            List<string> configIds;
+            var q = Repository_FileUploadConfig.Select.Where($"a.[Id] = '{configId}'");
+
+            if (allChilds)
+                q = q.AsTreeCte();
+
+            configIds = q.ToList(o => o.Id);
+
+            if (configIds.Any())
+                RevocationCFUCForRole(new CFUCForRole
+                {
+                    RoleIds = new List<string> { roleId },
+                    ConfigIds = configIds
+                }, runTransaction);
         }
 
         public void RevocationMenuForAll(List<string> menuIds, bool runTransaction = true)
@@ -1261,11 +1608,50 @@ namespace Business.Implementation.System
                 handler();
         }
 
+        public void RevocationCFUCForAll(List<string> configIds, bool runTransaction = true)
+        {
+            var configs = Repository_FileUploadConfig.Where(o => configIds.Contains(o.Id)).ToList(o => new
+            {
+                o.Id,
+                o.Code,
+                o.Name
+            });
+
+            if (!configs.Any())
+                return;
+
+            void handler()
+            {
+                var orId = OperationRecordBusiness.Create(new Common_OperationRecord
+                {
+                    DataType = nameof(System_UserCFUC) + "+" + nameof(System_RoleCFUC),
+                    Explain = $"撤销所有用户和角色的文件上传配置授权.",
+                    Remark = $"撤销授权的文件上传配置: \r\n\t{string.Join(",", configs.Select(o => $"[名称 {o.Name}, 编码 {o.Code}]"))}"
+                });
+
+                if (Repository_UserCFUC.Delete(o => (configIds.Contains(o.ConfigId))) < 0)
+                    throw new MessageException("撤销用户的文件上传配置授权失败.");
+
+                if (Repository_RoleCFUC.Delete(o => (configIds.Contains(o.ConfigId))) < 0)
+                    throw new MessageException("撤销角色的文件上传配置授权失败.");
+            }
+
+            if (runTransaction)
+            {
+                (bool success, Exception ex) = Orm.RunTransaction(handler);
+
+                if (!success)
+                    throw new MessageException("撤销授权失败.", ex);
+            }
+            else
+                handler();
+        }
+
         #endregion
 
         #region 获取授权
 
-        public Model.System.UserDTO.Authorities GetUser(string userId, bool includeRole, bool includeMenu, bool includeResources, bool mergeRoleMenu = true, bool mergeRoleResources = true)
+        public Model.System.UserDTO.Authorities GetUser(string userId, bool includeRole, bool includeMenu, bool includeResources, bool includeCFUC, bool mergeRoleMenu = true, bool mergeRoleResources = true, bool mergeRoleCFUC = true)
         {
             var user = Repository_User.Where(o => o.Id == userId)
                                     .ToOne(o => new Model.System.UserDTO.Authorities
@@ -1282,7 +1668,7 @@ namespace Business.Implementation.System
                 throw new MessageException("用户账号已禁用.");
 
             if (includeRole)
-                user._Roles = GetUserRole(userId, includeMenu && !mergeRoleMenu, includeResources && !mergeRoleResources);
+                user._Roles = GetUserRole(userId, includeMenu && !mergeRoleMenu, includeResources && !mergeRoleResources, includeCFUC && !mergeRoleCFUC);
 
             if (includeMenu)
                 user._Menus = GetUserMenu(userId, mergeRoleMenu);
@@ -1290,10 +1676,13 @@ namespace Business.Implementation.System
             if (includeResources)
                 user._Resources = GetUserResources(userId, mergeRoleResources);
 
+            if (includeCFUC)
+                user._FileUploadConfigs = GetUserCFUC(userId, mergeRoleCFUC);
+
             return user;
         }
 
-        public Model.Public.MemberDTO.Authorities GetMember(string memberId, bool includeRole, bool includeMenu, bool includeResources)
+        public Model.Public.MemberDTO.Authorities GetMember(string memberId, bool includeRole, bool includeMenu, bool includeResources, bool includeCFUC)
         {
             var member = Repository_Member.Where(o => o.Id == memberId)
                                     .ToOne(o => new Model.Public.MemberDTO.Authorities
@@ -1310,12 +1699,12 @@ namespace Business.Implementation.System
                 throw new MessageException("会员账号已禁用.");
 
             if (includeRole)
-                member._Roles = GetMemberRole(memberId, includeMenu, includeResources);
+                member._Roles = GetMemberRole(memberId, includeMenu, includeResources, includeCFUC);
 
             return member;
         }
 
-        public List<Model.System.RoleDTO.Authorities> GetUserRole(string userId, bool includeMenu, bool includeResources)
+        public List<Model.System.RoleDTO.Authorities> GetUserRole(string userId, bool includeMenu, bool includeResources, bool includeCFUC)
         {
             var roles = Repository_Role.Where(o => o.Users.AsSelect().Where(p => p.Id == userId).Any() && o.Enable == true)
                                          .ToList(o => new Model.System.RoleDTO.Authorities
@@ -1326,7 +1715,7 @@ namespace Business.Implementation.System
                                              Code = o.Code
                                          });
 
-            if (includeMenu || includeResources)
+            if (includeMenu || includeResources || includeCFUC)
                 roles.ForEach(o =>
                 {
                     if (includeMenu)
@@ -1334,12 +1723,15 @@ namespace Business.Implementation.System
 
                     if (includeResources)
                         o._Resources = GetRoleResources(o.Id, new PaginationDTO { PageIndex = -1 });
+
+                    if (includeCFUC)
+                        o._FileUploadConfigs = GetRoleCFUC(o.Id);
                 });
 
             return roles;
         }
 
-        public List<Model.System.RoleDTO.Authorities> GetMemberRole(string memberId, bool includeMenu, bool includeResources)
+        public List<Model.System.RoleDTO.Authorities> GetMemberRole(string memberId, bool includeMenu, bool includeResources, bool includeCFUC)
         {
             var roles = Repository_Role.Where(o => o.Members.AsSelect().Where(p => p.Id == memberId).Any() && o.Enable == true)
                                          .ToList(o => new Model.System.RoleDTO.Authorities
@@ -1350,7 +1742,7 @@ namespace Business.Implementation.System
                                              Code = o.Code
                                          });
 
-            if (includeMenu || includeResources)
+            if (includeMenu || includeResources || includeCFUC)
                 roles.ForEach(o =>
                 {
                     if (includeMenu)
@@ -1358,6 +1750,9 @@ namespace Business.Implementation.System
 
                     if (includeResources)
                         o._Resources = GetRoleResources(o.Id, new PaginationDTO { PageIndex = -1 });
+
+                    if (includeCFUC)
+                        o._FileUploadConfigs = GetRoleCFUC(o.Id);
                 });
 
             return roles;
@@ -1472,7 +1867,49 @@ namespace Business.Implementation.System
             return resources;
         }
 
-        public Model.System.RoleDTO.Authorities GetRole(string roleId, bool includeMenu, bool includeResources)
+        public List<Model.Common.FileUploadConfigDTO.Authorities> GetUserCFUC(string userId, bool mergeRoleCFUC)
+        {
+            var configs = Repository_FileUploadConfig.Where(o => (o.System_Users.AsSelect()
+                                                            .Where(p => p.Id == userId)
+                                                            .Any()
+                                                    || (mergeRoleCFUC == true
+                                                        && o.System_Roles.AsSelect()
+                                                                .Where(p => p.Users.AsSelect()
+                                                                                .Where(q => q.Id == userId)
+                                                                                .Any() && p.Enable == true)
+                                                                .Any())) && o.Enable == true)
+                                    .ToList(o => new Model.Common.FileUploadConfigDTO.Authorities
+                                    {
+                                        Id = o.Id,
+                                        Code = o.Code,
+                                        Name = o.Name,
+                                        DisplayName = o.DisplayName,
+                                        Public = o.Public
+                                    });
+
+            return configs;
+        }
+
+        public List<Model.Common.FileUploadConfigDTO.Authorities> GetMemberCFUC(string memberId)
+        {
+            var configs = Repository_FileUploadConfig.Where(o => o.System_Roles.AsSelect()
+                                                        .Where(p => p.Members.AsSelect()
+                                                                            .Where(q => q.Id == memberId)
+                                                                            .Any() && p.Enable == true)
+                                                        .Any() && o.Enable == true)
+                                    .ToList(o => new Model.Common.FileUploadConfigDTO.Authorities
+                                    {
+                                        Id = o.Id,
+                                        Code = o.Code,
+                                        Name = o.Name,
+                                        DisplayName = o.DisplayName,
+                                        Public = o.Public
+                                    });
+
+            return configs;
+        }
+
+        public Model.System.RoleDTO.Authorities GetRole(string roleId, bool includeMenu, bool includeResources, bool includeCFUC)
         {
             var role = Repository_Role.Where(o => o.Id == roleId)
                                     .ToOne(o => new Model.System.RoleDTO.Authorities
@@ -1494,6 +1931,9 @@ namespace Business.Implementation.System
 
             if (includeResources)
                 role._Resources = GetRoleResources(role.Id, new PaginationDTO { PageIndex = -1 });
+
+            if (includeCFUC)
+                role._FileUploadConfigs = GetRoleCFUC(role.Id);
 
             return role;
         }
@@ -1530,28 +1970,43 @@ namespace Business.Implementation.System
                                 });
         }
 
+        public List<Model.Common.FileUploadConfigDTO.Authorities> GetRoleCFUC(string roleId)
+        {
+            return Repository_FileUploadConfig.Where(o => o.System_Roles.AsSelect()
+                                            .Where(p => p.Id == roleId)
+                                            .Any() && o.Enable == true)
+                                .ToList(o => new Model.Common.FileUploadConfigDTO.Authorities
+                                {
+                                    Id = o.Id,
+                                    Code = o.Code,
+                                    Name = o.Name,
+                                    DisplayName = o.DisplayName,
+                                    Public = o.Public
+                                });
+        }
+
         #endregion
 
         #region 验证授权
 
         public bool IsSuperAdminUser(string userId, bool checkEnable = true)
         {
-            return Repository_UserRole.Where(o => o.UserId == userId && o.Role.Type == RoleType.超级管理员 && (checkEnable == false || o.Role.Enable == true)).Any();
+            return Repository_UserRole.Where(o => o.UserId == userId && o.Role.Type == $"{RoleType.超级管理员}" && (checkEnable == false || o.Role.Enable == true)).Any();
         }
 
         public bool IsSuperAdminRole(string roleId, bool checkEnable = true)
         {
-            return Repository_Role.Where(o => o.Id == roleId && o.Type == RoleType.超级管理员 && (checkEnable == false || o.Enable == true)).Any();
+            return Repository_Role.Where(o => o.Id == roleId && o.Type == $"{RoleType.超级管理员}" && (checkEnable == false || o.Enable == true)).Any();
         }
 
         public bool IsAdminUser(string userId, bool checkEnable = true)
         {
-            return Repository_UserRole.Where(o => o.UserId == userId && (o.Role.Type == RoleType.超级管理员 || o.Role.Type == RoleType.管理员) && (checkEnable == false || o.Role.Enable == true)).Any();
+            return Repository_UserRole.Where(o => o.UserId == userId && (o.Role.Type == $"{RoleType.超级管理员}" || o.Role.Type == $"{RoleType.管理员}") && (checkEnable == false || o.Role.Enable == true)).Any();
         }
 
         public bool IsAdminRole(string roleId, bool checkEnable = true)
         {
-            return Repository_Role.Where(o => o.Id == roleId && (o.Type == RoleType.超级管理员 || o.Type == RoleType.管理员) && (checkEnable == false || o.Enable == true)).Any();
+            return Repository_Role.Where(o => o.Id == roleId && (o.Type == $"{RoleType.超级管理员}" || o.Type == $"{RoleType.管理员}") && (checkEnable == false || o.Enable == true)).Any();
         }
 
         public bool UserHasRole(string userId, string roleId, bool checkEnable = true)
@@ -1634,26 +2089,50 @@ namespace Business.Implementation.System
                                 .Any();
         }
 
+        public bool UserHasCFUC(string userId, string configId, bool checkEnable = true)
+        {
+            return Repository_FileUploadConfig.Where(o => o.Id == configId && (checkEnable == false || o.Enable == true)
+                                            && (o.System_Users.AsSelect().Where(p => p.Id == userId).Any()
+                                                || o.System_Roles.AsSelect().Where(p => p.Users.AsSelect().Where(q => q.Id == userId).Any()).Any()))
+                                .Any();
+        }
+
+        public bool MemberHasCFUC(string memberId, string configId, bool checkEnable = true)
+        {
+            return Repository_FileUploadConfig.Where(o => o.Id == configId && (checkEnable == false || o.Enable == true)
+                                            && o.System_Roles.AsSelect().Where(p => p.Members.AsSelect().Where(q => q.Id == memberId).Any()).Any())
+                                .Any();
+        }
+
+        public bool CurrentAccountHasCFUC(string configId, bool checkEnable = true)
+        {
+            return Operator.AuthenticationInfo.UserType switch
+            {
+                UserType.系统用户 => UserHasCFUC(Operator.AuthenticationInfo.Id, configId),
+                UserType.会员 => MemberHasCFUC(Operator.AuthenticationInfo.Id, configId),
+                _ => false,
+            };
+        }
+
         #endregion
 
         #region 拓展方法
 
-        public List<Model.System.MenuDTO.AuthoritiesTree> GetRoleMenuTree(string roleId, Model.System.MenuDTO.TreeListParamter paramter)
+        public List<Model.System.MenuDTO.AuthoritiesTree> GetRoleMenuTree(string roleId, TreePaginationDTO pagination)
         {
-            paramter.MenuType.RemoveAll(o => o.IsNullOrWhiteSpace());
-            return GetRoleMenuTree(paramter);
+            return GetRoleMenuTree(pagination, false);
 
-            List<Model.System.MenuDTO.AuthoritiesTree> GetRoleMenuTree(Model.System.MenuDTO.TreeListParamter paramter, bool deep = false)
+            List<Model.System.MenuDTO.AuthoritiesTree> GetRoleMenuTree(TreePaginationDTO pagination, bool deep)
             {
-                if (paramter.ParentId.IsNullOrWhiteSpace())
-                    paramter.ParentId = null;
+                if (pagination.ParentId.IsNullOrWhiteSpace())
+                    pagination.ParentId = null;
 
                 var result = Repository_Menu.Select
-                                        .Where(o => o.ParentId == paramter.ParentId
-                                            && (paramter.MenuType.Count() == 0 || paramter.MenuType.Contains(o.Type))
+                                        .Where(o => o.ParentId == pagination.ParentId
                                             && (Operator.IsSuperAdmin == true
                                                 || o.Users.AsSelect().Any(p => p.Id == Operator.AuthenticationInfo.Id)
                                                 || o.Roles.AsSelect().Any(p => p.Users.AsSelect().Any(q => q.Id == Operator.AuthenticationInfo.Id))))
+                                        .GetPagination(pagination.Pagination)
                                         .ToList(o => new Model.System.MenuDTO.AuthoritiesTree
                                         {
                                             Id = o.Id,
@@ -1668,12 +2147,19 @@ namespace Business.Implementation.System
                 if (result.Any())
                     result.ForEach(o =>
                     {
-                        var rank = paramter.Rank;
+                        var rank = pagination.Rank;
                         if (!rank.HasValue || rank > 0)
                         {
-                            paramter.ParentId = o.Id;
-                            paramter.Rank--;
-                            o.Childs_ = GetRoleMenuTree(paramter, true);
+                            pagination.ParentId = o.Id;
+                            pagination.Rank--;
+                            o.Children = GetRoleMenuTree(pagination, true);
+                            o.HasChildren = o.Children.Any_Ex();
+                            o.ChildrenCount = o.Children?.Count ?? 0;
+                        }
+                        else
+                        {
+                            o.HasChildren = Repository_Menu.Select.Where(p => p.ParentId == o.Id).Filter(pagination.Pagination, "a").Any();
+                            o.ChildrenCount = (int)Repository_Menu.Where(p => p.ParentId == o.Id).Filter(pagination.Pagination, "a").Count();
                         }
                     });
                 else if (deep)
@@ -1683,23 +2169,21 @@ namespace Business.Implementation.System
             }
         }
 
-        public List<Model.System.RoleDTO.AuthoritiesTree> GetUserRoleTree(string userId, Model.System.RoleDTO.TreeListParamter paramter)
+        public List<Model.System.RoleDTO.AuthoritiesTree> GetUserRoleTree(string userId, TreePaginationDTO pagination)
         {
-            paramter.RoleType.RemoveAll(o => o.IsNullOrWhiteSpace() || o == RoleType.会员);
+            return GetUserRoleTree(pagination, false);
 
-            return GetUserRoleTree(paramter);
-
-            List<Model.System.RoleDTO.AuthoritiesTree> GetUserRoleTree(Model.System.RoleDTO.TreeListParamter paramter, bool deep = false)
+            List<Model.System.RoleDTO.AuthoritiesTree> GetUserRoleTree(TreePaginationDTO pagination, bool deep)
             {
-                if (paramter.ParentId.IsNullOrWhiteSpace())
-                    paramter.ParentId = null;
+                if (pagination.ParentId.IsNullOrWhiteSpace())
+                    pagination.ParentId = null;
 
                 var result = Repository_Role.Select
-                                        .Where(o => o.ParentId == paramter.ParentId
-                                            && (paramter.RoleType.Count() == 0 || paramter.RoleType.Contains(o.Type))
+                                        .Where(o => o.ParentId == pagination.ParentId
+                                            && o.Type != $"{RoleType.会员}"
                                             && (Operator.IsSuperAdmin == true
                                                 || o.Users.AsSelect().Any(p => p.Id == Operator.AuthenticationInfo.Id)))
-                                        .OrderBy(o => o.Sort)
+                                        .GetPagination(pagination.Pagination)
                                         .ToList(o => new Model.System.RoleDTO.AuthoritiesTree
                                         {
                                             Id = o.Id,
@@ -1712,12 +2196,19 @@ namespace Business.Implementation.System
                 if (result.Any())
                     result.ForEach(o =>
                     {
-                        var rank = paramter.Rank;
+                        var rank = pagination.Rank;
                         if (!rank.HasValue || rank > 0)
                         {
-                            paramter.ParentId = o.Id;
-                            paramter.Rank--;
-                            o.Childs_ = GetUserRoleTree(paramter, true);
+                            pagination.ParentId = o.Id;
+                            pagination.Rank--;
+                            o.Children = GetUserRoleTree(pagination, true);
+                            o.HasChildren = o.Children.Any_Ex();
+                            o.ChildrenCount = o.Children?.Count ?? 0;
+                        }
+                        else
+                        {
+                            o.HasChildren = Repository_Role.Select.Where(p => p.ParentId == o.Id).Filter(pagination.Pagination, "a").Any();
+                            o.ChildrenCount = (int)Repository_Role.Where(p => p.ParentId == o.Id).Filter(pagination.Pagination, "a").Count();
                         }
                     });
                 else if (deep)
@@ -1727,23 +2218,21 @@ namespace Business.Implementation.System
             }
         }
 
-        public List<Model.System.RoleDTO.AuthoritiesTree> GetMemberRoleTree(string memberId, Model.System.RoleDTO.TreeListParamter paramter)
+        public List<Model.System.RoleDTO.AuthoritiesTree> GetMemberRoleTree(string memberId, TreePaginationDTO pagination)
         {
-            paramter.RoleType.Clear();
-            paramter.RoleType.Add(RoleType.会员);
-            return GetMemberRoleTree(paramter);
+            return GetMemberRoleTree(pagination, false);
 
-            List<Model.System.RoleDTO.AuthoritiesTree> GetMemberRoleTree(Model.System.RoleDTO.TreeListParamter paramter, bool deep = false)
+            List<Model.System.RoleDTO.AuthoritiesTree> GetMemberRoleTree(TreePaginationDTO pagination, bool deep)
             {
-                if (paramter.ParentId.IsNullOrWhiteSpace())
-                    paramter.ParentId = null;
+                if (pagination.ParentId.IsNullOrWhiteSpace())
+                    pagination.ParentId = null;
 
                 var result = Repository_Role.Select
-                                        .Where(o => o.ParentId == paramter.ParentId
-                                            && (paramter.RoleType.Count() == 0 || paramter.RoleType.Contains(o.Type))
+                                        .Where(o => o.ParentId == pagination.ParentId
+                                            && o.Type == $"{RoleType.会员}"
                                             && (Operator.IsSuperAdmin == true
                                                 || o.Users.AsSelect().Any(p => p.Id == Operator.AuthenticationInfo.Id)))
-                                        .OrderBy(o => o.Sort)
+                                        .GetPagination(pagination.Pagination)
                                         .ToList(o => new Model.System.RoleDTO.AuthoritiesTree
                                         {
                                             Id = o.Id,
@@ -1756,12 +2245,19 @@ namespace Business.Implementation.System
                 if (result.Any())
                     result.ForEach(o =>
                     {
-                        var rank = paramter.Rank;
+                        var rank = pagination.Rank;
                         if (!rank.HasValue || rank > 0)
                         {
-                            paramter.ParentId = o.Id;
-                            paramter.Rank--;
-                            o.Childs_ = GetMemberRoleTree(paramter, true);
+                            pagination.ParentId = o.Id;
+                            pagination.Rank--;
+                            o.Children = GetMemberRoleTree(pagination, true);
+                            o.HasChildren = o.Children.Any_Ex();
+                            o.ChildrenCount = o.Children?.Count ?? 0;
+                        }
+                        else
+                        {
+                            o.HasChildren = Repository_Role.Select.Where(p => p.ParentId == o.Id).Filter(pagination.Pagination, "a").Any();
+                            o.ChildrenCount = (int)Repository_Role.Where(p => p.ParentId == o.Id).Filter(pagination.Pagination, "a").Count();
                         }
                     });
                 else if (deep)
@@ -1771,33 +2267,31 @@ namespace Business.Implementation.System
             }
         }
 
-        public List<Model.System.RoleDTO.AuthoritiesTree> GetCurrentAccountRoleTree(Model.System.RoleDTO.TreeListParamter paramter)
+        public List<Model.System.RoleDTO.AuthoritiesTree> GetCurrentAccountRoleTree(TreePaginationDTO pagination)
         {
             return Operator.AuthenticationInfo.UserType switch
             {
-                UserType.系统用户 => GetUserRoleTree(Operator.AuthenticationInfo.Id, paramter),
-                UserType.会员 => GetMemberRoleTree(Operator.AuthenticationInfo.Id, paramter),
+                UserType.系统用户 => GetUserRoleTree(Operator.AuthenticationInfo.Id, pagination),
+                UserType.会员 => GetMemberRoleTree(Operator.AuthenticationInfo.Id, pagination),
                 _ => null
             };
         }
 
-        public List<Model.System.MenuDTO.AuthoritiesTree> GetUserMenuTree(string userId, Model.System.MenuDTO.TreeListParamter paramter)
+        public List<Model.System.MenuDTO.AuthoritiesTree> GetUserMenuTree(string userId, TreePaginationDTO pagination)
         {
-            paramter.MenuType.RemoveAll(o => o.IsNullOrWhiteSpace());
-            return GetUserMenuTree(paramter);
+            return GetUserMenuTree(pagination, false);
 
-            List<Model.System.MenuDTO.AuthoritiesTree> GetUserMenuTree(Model.System.MenuDTO.TreeListParamter paramter, bool deep = false)
+            List<Model.System.MenuDTO.AuthoritiesTree> GetUserMenuTree(TreePaginationDTO pagination, bool deep)
             {
-                if (paramter.ParentId.IsNullOrWhiteSpace())
-                    paramter.ParentId = null;
+                if (pagination.ParentId.IsNullOrWhiteSpace())
+                    pagination.ParentId = null;
 
                 var result = Repository_Menu.Select
-                                        .Where(o => o.ParentId == paramter.ParentId
-                                            && (paramter.MenuType.Count() == 0 || paramter.MenuType.Contains(o.Type))
+                                        .Where(o => o.ParentId == pagination.ParentId
                                             && (Operator.IsSuperAdmin == true
                                                 || o.Users.AsSelect().Any(p => p.Id == Operator.AuthenticationInfo.Id)
                                                 || o.Roles.AsSelect().Any(p => p.Users.AsSelect().Any(q => q.Id == Operator.AuthenticationInfo.Id))))
-                                        .OrderBy(o => o.Sort)
+                                        .GetPagination(pagination.Pagination)
                                         .ToList(o => new Model.System.MenuDTO.AuthoritiesTree
                                         {
                                             Id = o.Id,
@@ -1813,12 +2307,19 @@ namespace Business.Implementation.System
                 if (result.Any())
                     result.ForEach(o =>
                     {
-                        var rank = paramter.Rank;
+                        var rank = pagination.Rank;
                         if (!rank.HasValue || rank > 0)
                         {
-                            paramter.ParentId = o.Id;
-                            paramter.Rank--;
-                            o.Childs_ = GetUserMenuTree(paramter, true);
+                            pagination.ParentId = o.Id;
+                            pagination.Rank--;
+                            o.Children = GetUserMenuTree(pagination, true);
+                            o.HasChildren = o.Children.Any_Ex();
+                            o.ChildrenCount = o.Children?.Count ?? 0;
+                        }
+                        else
+                        {
+                            o.HasChildren = Repository_Menu.Select.Where(p => p.ParentId == o.Id).Filter(pagination.Pagination, "a").Any();
+                            o.ChildrenCount = (int)Repository_Menu.Where(p => p.ParentId == o.Id).Filter(pagination.Pagination, "a").Count();
                         }
                     });
                 else if (deep)
@@ -1828,21 +2329,19 @@ namespace Business.Implementation.System
             }
         }
 
-        public List<Model.System.MenuDTO.AuthoritiesTree> GetMemberMenuTree(string memberId, Model.System.MenuDTO.TreeListParamter paramter)
+        public List<Model.System.MenuDTO.AuthoritiesTree> GetMemberMenuTree(string memberId, TreePaginationDTO pagination)
         {
-            paramter.MenuType.RemoveAll(o => o.IsNullOrWhiteSpace());
-            return GetMemberMenuTree(paramter);
+            return GetMemberMenuTree(pagination, false);
 
-            List<Model.System.MenuDTO.AuthoritiesTree> GetMemberMenuTree(Model.System.MenuDTO.TreeListParamter paramter, bool deep = false)
+            List<Model.System.MenuDTO.AuthoritiesTree> GetMemberMenuTree(TreePaginationDTO pagination, bool deep)
             {
-                if (paramter.ParentId.IsNullOrWhiteSpace())
-                    paramter.ParentId = null;
+                if (pagination.ParentId.IsNullOrWhiteSpace())
+                    pagination.ParentId = null;
 
                 var result = Repository_Menu.Select
-                                        .Where(o => o.ParentId == paramter.ParentId
-                                            && (paramter.MenuType.Count() == 0 || paramter.MenuType.Contains(o.Type))
+                                        .Where(o => o.ParentId == pagination.ParentId
                                             && (o.Roles.AsSelect().Any(p => p.Members.AsSelect().Any(q => q.Id == Operator.AuthenticationInfo.Id))))
-                                        .OrderBy(o => o.Sort)
+                                        .GetPagination(pagination.Pagination)
                                         .ToList(o => new Model.System.MenuDTO.AuthoritiesTree
                                         {
                                             Id = o.Id,
@@ -1857,12 +2356,19 @@ namespace Business.Implementation.System
                 if (result.Any())
                     result.ForEach(o =>
                     {
-                        var rank = paramter.Rank;
+                        var rank = pagination.Rank;
                         if (!rank.HasValue || rank > 0)
                         {
-                            paramter.ParentId = o.Id;
-                            paramter.Rank--;
-                            o.Childs_ = GetMemberMenuTree(paramter, true);
+                            pagination.ParentId = o.Id;
+                            pagination.Rank--;
+                            o.Children = GetMemberMenuTree(pagination, true);
+                            o.HasChildren = o.Children.Any_Ex();
+                            o.ChildrenCount = o.Children?.Count ?? 0;
+                        }
+                        else
+                        {
+                            o.HasChildren = Repository_Menu.Select.Where(p => p.ParentId == o.Id).Filter(pagination.Pagination, "a").Any();
+                            o.ChildrenCount = (int)Repository_Menu.Where(p => p.ParentId == o.Id).Filter(pagination.Pagination, "a").Count();
                         }
                     });
                 else if (deep)
@@ -1872,12 +2378,12 @@ namespace Business.Implementation.System
             }
         }
 
-        public List<Model.System.MenuDTO.AuthoritiesTree> GetCurrentAccountMenuTree(Model.System.MenuDTO.TreeListParamter paramter)
+        public List<Model.System.MenuDTO.AuthoritiesTree> GetCurrentAccountMenuTree(TreePaginationDTO pagination)
         {
             return Operator.AuthenticationInfo.UserType switch
             {
-                UserType.系统用户 => GetUserMenuTree(Operator.AuthenticationInfo.Id, paramter),
-                UserType.会员 => GetMemberMenuTree(Operator.AuthenticationInfo.Id, paramter),
+                UserType.系统用户 => GetUserMenuTree(Operator.AuthenticationInfo.Id, pagination),
+                UserType.会员 => GetMemberMenuTree(Operator.AuthenticationInfo.Id, pagination),
                 _ => null
             };
         }
@@ -1924,6 +2430,165 @@ namespace Business.Implementation.System
             {
                 UserType.系统用户 => GetUserResources(Operator.AuthenticationInfo.Id, true, pagination),
                 UserType.会员 => GetMemberResources(Operator.AuthenticationInfo.Id, pagination),
+                _ => null
+            };
+        }
+
+        public List<Model.Common.FileUploadConfigDTO.AuthoritiesTree> GetRoleCFUCTree(string roleId, TreePaginationDTO pagination)
+        {
+            return GetRoleCFUCTree(pagination, false);
+
+            List<Model.Common.FileUploadConfigDTO.AuthoritiesTree> GetRoleCFUCTree(TreePaginationDTO pagination, bool deep)
+            {
+                if (pagination.ParentId.IsNullOrWhiteSpace())
+                    pagination.ParentId = null;
+
+                var result = Repository_FileUploadConfig.Select
+                                        .Where(o => o.ParentId == pagination.ParentId
+                                            && (Operator.IsSuperAdmin == true
+                                                || o.System_Users.AsSelect().Any(p => p.Id == Operator.AuthenticationInfo.Id)
+                                                || o.System_Roles.AsSelect().Any(p => p.Users.AsSelect().Any(q => q.Id == Operator.AuthenticationInfo.Id))))
+                                        .GetPagination(pagination.Pagination)
+                                        .ToList(o => new Model.Common.FileUploadConfigDTO.AuthoritiesTree
+                                        {
+                                            Id = o.Id,
+                                            Code = o.Code,
+                                            Name = o.Name,
+                                            DisplayName = o.DisplayName,
+                                            Public = o.Public,
+                                            Authorized = o.System_Roles.AsSelect().Any(p => p.Id == roleId) ? true : false
+                                        });
+
+                if (result.Any())
+                    result.ForEach(o =>
+                    {
+                        var rank = pagination.Rank;
+                        if (!rank.HasValue || rank > 0)
+                        {
+                            pagination.ParentId = o.Id;
+                            pagination.Rank--;
+                            o.Children = GetRoleCFUCTree(pagination, true);
+                            o.HasChildren = o.Children.Any_Ex();
+                            o.ChildrenCount = o.Children?.Count ?? 0;
+                        }
+                        else
+                        {
+                            o.HasChildren = Repository_FileUploadConfig.Select.Where(p => p.ParentId == o.Id).Filter(pagination.Pagination, "a").Any();
+                            o.ChildrenCount = (int)Repository_FileUploadConfig.Where(p => p.ParentId == o.Id).Filter(pagination.Pagination, "a").Count();
+                        }
+                    });
+                else if (deep)
+                    result = null;
+
+                return result;
+            }
+        }
+
+        public List<Model.Common.FileUploadConfigDTO.AuthoritiesTree> GetUserCFUCTree(string userId, TreePaginationDTO pagination)
+        {
+            return GetUserCFUCTree(pagination, false);
+
+            List<Model.Common.FileUploadConfigDTO.AuthoritiesTree> GetUserCFUCTree(TreePaginationDTO pagination, bool deep)
+            {
+                if (pagination.ParentId.IsNullOrWhiteSpace())
+                    pagination.ParentId = null;
+
+                var result = Repository_FileUploadConfig.Select
+                                        .Where(o => o.ParentId == pagination.ParentId
+                                            && (Operator.IsSuperAdmin == true
+                                                || o.System_Users.AsSelect().Any(p => p.Id == Operator.AuthenticationInfo.Id)
+                                                || o.System_Roles.AsSelect().Any(p => p.Users.AsSelect().Any(q => q.Id == Operator.AuthenticationInfo.Id))))
+                                        .GetPagination(pagination.Pagination)
+                                        .ToList(o => new Model.Common.FileUploadConfigDTO.AuthoritiesTree
+                                        {
+                                            Id = o.Id,
+                                            Code = o.Code,
+                                            Name = o.Name,
+                                            DisplayName = o.DisplayName,
+                                            Public = o.Public,
+                                            Authorized = (o.System_Users.AsSelect().Any(p => p.Id == userId)
+                                                || o.System_Roles.AsSelect().Any(p => p.Users.AsSelect().Any(q => q.Id == userId))) ? true : false
+                                        });
+
+                if (result.Any())
+                    result.ForEach(o =>
+                    {
+                        var rank = pagination.Rank;
+                        if (!rank.HasValue || rank > 0)
+                        {
+                            pagination.ParentId = o.Id;
+                            pagination.Rank--;
+                            o.Children = GetUserCFUCTree(pagination, true);
+                            o.HasChildren = o.Children.Any_Ex();
+                            o.ChildrenCount = o.Children?.Count ?? 0;
+                        }
+                        else
+                        {
+                            o.HasChildren = Repository_FileUploadConfig.Select.Where(p => p.ParentId == o.Id).Filter(pagination.Pagination, "a").Any();
+                            o.ChildrenCount = (int)Repository_FileUploadConfig.Where(p => p.ParentId == o.Id).Filter(pagination.Pagination, "a").Count();
+                        }
+                    });
+                else if (deep)
+                    result = null;
+
+                return result;
+            }
+        }
+
+        public List<Model.Common.FileUploadConfigDTO.AuthoritiesTree> GetMemberCFUCTree(string memberId, TreePaginationDTO pagination)
+        {
+            return GetMemberCFUCTree(pagination, false);
+
+            List<Model.Common.FileUploadConfigDTO.AuthoritiesTree> GetMemberCFUCTree(TreePaginationDTO pagination, bool deep)
+            {
+                if (pagination.ParentId.IsNullOrWhiteSpace())
+                    pagination.ParentId = null;
+
+                var result = Repository_FileUploadConfig.Select
+                                        .Where(o => o.ParentId == pagination.ParentId
+                                            && (o.System_Roles.AsSelect().Any(p => p.Members.AsSelect().Any(q => q.Id == Operator.AuthenticationInfo.Id))))
+                                        .GetPagination(pagination.Pagination)
+                                        .ToList(o => new Model.Common.FileUploadConfigDTO.AuthoritiesTree
+                                        {
+                                            Id = o.Id,
+                                            Code = o.Code,
+                                            Name = o.Name,
+                                            DisplayName = o.DisplayName,
+                                            Public = o.Public,
+                                            Authorized = (o.System_Roles.AsSelect().Any(p => p.Members.AsSelect().Any(q => q.Id == memberId))) ? true : false
+                                        });
+
+                if (result.Any())
+                    result.ForEach(o =>
+                    {
+                        var rank = pagination.Rank;
+                        if (!rank.HasValue || rank > 0)
+                        {
+                            pagination.ParentId = o.Id;
+                            pagination.Rank--;
+                            o.Children = GetMemberCFUCTree(pagination, true);
+                            o.HasChildren = o.Children.Any_Ex();
+                            o.ChildrenCount = o.Children?.Count ?? 0;
+                        }
+                        else
+                        {
+                            o.HasChildren = Repository_FileUploadConfig.Select.Where(p => p.ParentId == o.Id).Filter(pagination.Pagination, "a").Any();
+                            o.ChildrenCount = (int)Repository_FileUploadConfig.Where(p => p.ParentId == o.Id).Filter(pagination.Pagination, "a").Count();
+                        }
+                    });
+                else if (deep)
+                    result = null;
+
+                return result;
+            }
+        }
+
+        public List<Model.Common.FileUploadConfigDTO.AuthoritiesTree> GetCurrentAccountCFUCTree(TreePaginationDTO pagination)
+        {
+            return Operator.AuthenticationInfo.UserType switch
+            {
+                UserType.系统用户 => GetUserCFUCTree(Operator.AuthenticationInfo.Id, pagination),
+                UserType.会员 => GetMemberCFUCTree(Operator.AuthenticationInfo.Id, pagination),
                 _ => null
             };
         }

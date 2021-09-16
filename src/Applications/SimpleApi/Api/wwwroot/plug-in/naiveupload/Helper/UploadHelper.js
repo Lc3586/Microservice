@@ -146,7 +146,7 @@ var UploadHelper = (function () {
                     return __generator(this, function (_a) {
                         formData = new FormData();
                         formData.append('file', file.File);
-                        this.AxiosInstance.post(ApiUri.SingleFile(file.Name), formData, {
+                        this.AxiosInstance.post(ApiUri.SingleFile(file.ConfigId, file.Name), formData, {
                             onUploadProgress: function (progress) {
                                 onProgress({ PreLoaded: progress.total, Loaded: progress.loaded, Total: progress.total });
                             },
@@ -232,7 +232,7 @@ var UploadHelper = (function () {
                                 return [2];
                             case 3:
                                 _a.trys.push([3, 5, , 6]);
-                                return [4, this.WorkerPostMessage(0, { Type: "File", Data: { MD5: file.MD5, Buffer: buffer, Type: file.File.type, Extension: file.Extension, Name: file.Name } }, onProgress)];
+                                return [4, this.WorkerPostMessage(0, { Type: "File", Data: { MD5: file.MD5, Buffer: buffer, Type: file.File.type, Extension: file.Extension, Name: file.Name, ConfigId: file.ConfigId } }, onProgress)];
                             case 4:
                                 fileInfo = _a.sent();
                                 file.FileInfo = fileInfo;
@@ -354,11 +354,11 @@ var UploadHelper = (function () {
                             case 0:
                                 _b.trys.push([0, 5, , 6]);
                                 if (!file.NeedSection) return [3, 2];
-                                return [4, this.PreUploadFile(file.MD5, file.Name, true, file.File.type, file.Extension, file.Specs, file.Chunks.length)];
+                                return [4, this.PreUploadFile(file.ConfigId, file.MD5, file.Name, true, file.File.type, file.Extension, file.Specs, file.Chunks.length)];
                             case 1:
                                 validation = _b.sent();
                                 return [3, 4];
-                            case 2: return [4, this.PreUploadFile(file.MD5, file.Name)];
+                            case 2: return [4, this.PreUploadFile(file.ConfigId, file.MD5, file.Name, false, file.File.type, file.Extension)];
                             case 3:
                                 validation = _b.sent();
                                 _b.label = 4;
@@ -526,13 +526,13 @@ var UploadHelper = (function () {
             });
         });
     };
-    UploadHelper.prototype.PreUploadFile = function (md5, name, section, type, extension, specs, total) {
+    UploadHelper.prototype.PreUploadFile = function (configId, md5, name, section, type, extension, specs, total) {
         return __awaiter(this, void 0, void 0, function () {
             var promise;
             var _this = this;
             return __generator(this, function (_a) {
                 promise = new Promise(function (resolve, reject) {
-                    _this.AxiosInstance.get(ApiUri.PreUploadFile(md5, name, section, type, extension, specs, total))
+                    _this.AxiosInstance.get(ApiUri.PreUploadFile(configId, md5, name, section, type, extension, specs, total))
                         .then(function (response) {
                         if (response.data.Success) {
                             resolve(response.data.Data);

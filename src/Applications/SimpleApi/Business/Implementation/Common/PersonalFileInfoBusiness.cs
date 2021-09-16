@@ -15,6 +15,7 @@ using Model.Common.PersonalFileInfoDTO;
 using Model.Utils.Pagination;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Business.Implementation.Common
@@ -98,6 +99,30 @@ namespace Business.Implementation.Common
             file_extension.Name = filename;
             file_extension.ModifyEntity();
             Repository.Update(file_extension);
+        }
+
+        public Edit GetEdit(string id)
+        {
+            var entity = Repository.GetAndCheckNull(id);
+
+            var result = Mapper.Map<Edit>(entity);
+
+            return result;
+        }
+
+        public void Edit(Edit data)
+        {
+            var editData = Mapper.Map<Common_PersonalFileInfo>(data).ModifyEntity();
+
+            //@数据验证#待完善@
+            //if (Repository.Where(o => o.Name == editData.Name && o.Id != editData.Id).Any())
+            //    throw new MessageException($"同层级下已存在名称为[{editData.Name}]的文件上传配置.");
+
+            if (Repository.UpdateDiy
+                  .SetSource(editData)
+                  .UpdateColumns(typeof(Edit).GetNamesWithTagAndOther(false, "_Edit").ToArray())
+                  .ExecuteAffrows() <= 0)
+                throw new MessageException("修改个人文件信息失败");
         }
 
 

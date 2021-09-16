@@ -195,6 +195,15 @@ namespace Entity.System
         public virtual ICollection<System_Resources> Resources { get; set; }
 
         /// <summary>
+        /// 直接授权给此用户的文件上传配置
+        /// </summary>
+        [Navigate(ManyToMany = typeof(System_UserCFUC))]
+        [OpenApiIgnore]
+        [JsonIgnore]
+        [XmlIgnore]
+        public virtual ICollection<Common_FileUploadConfig> FileUploadConfigs { get; set; }
+
+        /// <summary>
         /// 此用户绑定的微信
         /// </summary>
         [Navigate(ManyToMany = typeof(System_UserWeChatUserInfo))]

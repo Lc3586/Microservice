@@ -103,7 +103,14 @@ namespace Business.Implementation.System
                         {
                             pagination.ParentId = o.Id;
                             pagination.Rank--;
-                            o.Childs_ = GetData(pagination, true);
+                            o.Children = GetData(pagination, true);
+                            o.HasChildren = o.Children.Any_Ex();
+                            o.ChildrenCount = o.Children?.Count ?? 0;
+                        }
+                        else
+                        {
+                            o.HasChildren = Repository.Select.Where(p => p.ParentId == o.Id).Any();
+                            o.ChildrenCount = (int)Repository.Where(p => p.ParentId == o.Id).Count();
                         }
                     });
                 else if (deep)
@@ -522,7 +529,7 @@ namespace Business.Implementation.System
                 var orId = OperationRecordBusiness.Create(new Common_OperationRecord
                 {
                     DataType = nameof(System_MenuResources),
-                    DataId = null,
+                    DataId = $"{id}+{string.Join(",", resources.Select(o => o.Id))}",
                     Explain = $"菜单关联资源.",
                     Remark = $"菜单: \r\n\t[名称 {menu.Name}, 类型 {menu.Type}]\r\n" +
                             $"关联的资源: \r\n\t{string.Join(",", resources.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"
@@ -570,7 +577,7 @@ namespace Business.Implementation.System
                 var orId = OperationRecordBusiness.Create(new Common_OperationRecord
                 {
                     DataType = nameof(System_MenuResources),
-                    DataId = null,
+                    DataId = $"{id}+{string.Join(",", resources.Select(o => o.Id))}",
                     Explain = $"菜单解除关联资源.",
                     Remark = $"菜单: \r\n\t[名称 {menu.Name}, 类型 {menu.Type}]\r\n" +
                             $"解除关联的资源: \r\n\t{string.Join(",", resources.Select(o => $"[名称 {o.Name}, 类型 {o.Type}]"))}"

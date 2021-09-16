@@ -10,7 +10,7 @@ if (!window.location.request) {
      * @param {string} param 参数名称
      *
      */
-    window.location.request = function (param) {    /*获取URL的字符串*/    var sSource = String(window.document.location); var sName = param; var sReturn = ""; var sQUS = "?"; var sAMP = "&"; var sEQ = "="; var iPos;    /*获取sSource中的"?"，无则返回 -1*/    iPos = sSource.indexOf(sQUS); if (iPos == -1) return;    /*汲取参数，从iPos位置到sSource.length-iPos的位置，若iPos = -1，则：从-1 到 sSource.length+1  */    var strQuery = sSource.substr(iPos, sSource.length - iPos);    /* alert(strQuery);先全部转换为小写 */    var strLCQuery = strQuery.toLowerCase(); var strLCName = sName.toLowerCase();    /*从子字符串strLCQuery中查找“?”、参数名，以及“=”，即“?参数名=”  */    iPos = strLCQuery.indexOf(sQUS + strLCName + sEQ);    /*如果不存在*/    if (iPos == -1) {        /*继续查找可能的后一个参数，即带“&参数名=”*/        iPos = strLCQuery.indexOf(sAMP + strLCName + sEQ); }    /*判断是否存在参数 */    if (iPos != -1) { sReturn = strQuery.substr(iPos + sName.length + 2, strQuery.length - (iPos + sName.length + 2)); var iPosAMP = sReturn.indexOf(sAMP); if (iPosAMP == -1) { return sReturn; } else { sReturn = sReturn.substr(0, iPosAMP); } } return sReturn; }
+    window.location.request = function (param) {    /*获取URL的字符串*/    let sSource = String(window.document.location); let sName = param; let sReturn = ""; let sQUS = "?"; let sAMP = "&"; let sEQ = "="; let iPos;    /*获取sSource中的"?"，无则返回 -1*/    iPos = sSource.indexOf(sQUS); if (iPos == -1) return;    /*汲取参数，从iPos位置到sSource.length-iPos的位置，若iPos = -1，则：从-1 到 sSource.length+1  */    let strQuery = sSource.substr(iPos, sSource.length - iPos);    /* alert(strQuery);先全部转换为小写 */    let strLCQuery = strQuery.toLowerCase(); let strLCName = sName.toLowerCase();    /*从子字符串strLCQuery中查找“?”、参数名，以及“=”，即“?参数名=”  */    iPos = strLCQuery.indexOf(sQUS + strLCName + sEQ);    /*如果不存在*/    if (iPos == -1) {        /*继续查找可能的后一个参数，即带“&参数名=”*/        iPos = strLCQuery.indexOf(sAMP + strLCName + sEQ); }    /*判断是否存在参数 */    if (iPos != -1) { sReturn = strQuery.substr(iPos + sName.length + 2, strQuery.length - (iPos + sName.length + 2)); let iPosAMP = sReturn.indexOf(sAMP); if (iPosAMP == -1) { return sReturn; } else { sReturn = sReturn.substr(0, iPosAMP); } } return sReturn; }
 }
 
 if (!String.prototype.getParam) {
@@ -24,7 +24,7 @@ if (!String.prototype.getParam) {
      * @param {string} param 参数名称
      *
      */
-    String.prototype.getParam = function (param) { var query = this; var iLen = param.length; var iStart = query.indexOf(param); if (iStart == -1) return ""; iStart += iLen + 1; var iEnd = query.indexOf("&", iStart); if (iEnd == -1) return query.substring(iStart); return query.substring(iStart, iEnd); }
+    String.prototype.getParam = function (param) { let query = this; let iLen = param.length; let iStart = query.indexOf(param); if (iStart == -1) return ""; iStart += iLen + 1; let iEnd = query.indexOf("&", iStart); if (iEnd == -1) return query.substring(iStart); return query.substring(iStart, iEnd); }
 }
 
 if (!String.prototype.setParam) {
@@ -39,7 +39,7 @@ if (!String.prototype.setParam) {
      * @param {string} value 值
      *
      */
-    String.prototype.setParam = function (param, value) { var query = this; var iLen = param.length; var iStart = query.indexOf(param + '='); if (iStart == -1) return query += (query.indexOf('?') === -1 ? '?' : (query[query.length - 1] != '&' ? '&' : '')) + param + '=' + value; iStart += iLen + 1; var iEnd = query.indexOf("&", iStart); if (iEnd == -1) return query.substring(0, iStart) + value; return query.substring(0, iStart) + value + query.substring(iEnd, query.length); }
+    String.prototype.setParam = function (param, value) { let query = this; let iLen = param.length; let iStart = query.indexOf(param + '='); if (iStart == -1) return query += (query.indexOf('?') === -1 ? '?' : (query[query.length - 1] != '&' ? '&' : '')) + param + '=' + value; iStart += iLen + 1; let iEnd = query.indexOf("&", iStart); if (iEnd == -1) return query.substring(0, iStart) + value; return query.substring(0, iStart) + value + query.substring(iEnd, query.length); }
 }
 
 if (!String.prototype.setvalue2string) {
@@ -56,7 +56,7 @@ if (!String.prototype.setvalue2string) {
      * @param {any} char 拼接字符(默认逗号,)
      *
      */
-    String.prototype.setvalue2string = function (value, index, char) { var query = this, _index = -1, start_index = 0, end_index = 0; char = typeof char == 'undefined' ? ',' : char; for (var i = 0; i < index; i++) { _index = query.indexOf(char, start_index); if (_index == -1) { query += char; _index = query.indexOf(char, start_index); if (i == index - 1) query = query.substring(0, query.length - 1); } if (i == index - 1) { end_index = _index; } else { start_index = _index + 1; } } return query.substring(0, start_index) + value + query.substring(end_index); }
+    String.prototype.setvalue2string = function (value, index, char) { let query = this, _index = -1, start_index = 0, end_index = 0; char = typeof char == 'undefined' ? ',' : char; for (let i = 0; i < index; i++) { _index = query.indexOf(char, start_index); if (_index == -1) { query += char; _index = query.indexOf(char, start_index); if (i == index - 1) query = query.substring(0, query.length - 1); } if (i == index - 1) { end_index = _index; } else { start_index = _index + 1; } } return query.substring(0, start_index) + value + query.substring(end_index); }
 }
 
 if (!String.prototype.removevalue4string) {
@@ -72,7 +72,7 @@ if (!String.prototype.removevalue4string) {
      * @param {any} char 拼接字符(默认逗号,)
      *
      */
-    String.prototype.removevalue4string = function (index, char) { var query = this; var _query = query.split(char || ','); _query.splice(index - 1, 1); return _query.join(char || ','); }
+    String.prototype.removevalue4string = function (index, char) { let query = this; let _query = query.split(char || ','); _query.splice(index - 1, 1); return _query.join(char || ','); }
 }
 
 if (!String.prototype.IsGUID) {
@@ -88,7 +88,7 @@ if (!String.prototype.IsGUID) {
      * @returns {boolean} 是/否
      *
      */
-    String.prototype.IsGUID = function (type) { var value = this || ''; type == type || ''; type == 'B' || type == 'P' || type == 'X' ? (value = value.substring(1, value.length - 1)) : 1; var _array = type == 'N' ? [] : (type == 'X' ? value.split(',') : value.split('-')); return type == 'N' ? value.length == 32 : (type == 'X' ? value.length == 66 && _array.length == 10 && _array[0][1] == 'x' && _array[1][1] == 'x' && _array[2][1] == 'x' && _array[3][2] == 'x' && _array[4][1] == 'x' && _array[5][1] == 'x' && _array[6][1] == 'x' && _array[7][1] == 'x' && _array[8][1] == 'x' && _array[9][1] == 'x' && _array[10][1] == 'x' : (value.length == 36 && _array.length == 5 && _array[0].length == 8 && _array[1].length == 4 && _array[2].length == 4 && _array[3].length == 4 && _array[4].length == 12)); }
+    String.prototype.IsGUID = function (type) { let value = this || ''; type == type || ''; type == 'B' || type == 'P' || type == 'X' ? (value = value.substring(1, value.length - 1)) : 1; let _array = type == 'N' ? [] : (type == 'X' ? value.split(',') : value.split('-')); return type == 'N' ? value.length == 32 : (type == 'X' ? value.length == 66 && _array.length == 10 && _array[0][1] == 'x' && _array[1][1] == 'x' && _array[2][1] == 'x' && _array[3][2] == 'x' && _array[4][1] == 'x' && _array[5][1] == 'x' && _array[6][1] == 'x' && _array[7][1] == 'x' && _array[8][1] == 'x' && _array[9][1] == 'x' && _array[10][1] == 'x' : (value.length == 36 && _array.length == 5 && _array[0].length == 8 && _array[1].length == 4 && _array[2].length == 4 && _array[3].length == 4 && _array[4].length == 12)); }
 }
 
 if (!String.prototype.group) {
@@ -106,33 +106,33 @@ if (!String.prototype.group) {
      * @returns {string} 结果
      *
      */
-    String.prototype.group = function (x, c, r) { x = typeof x == 'undefined' || x == null || x == '' ? 4 : x; c = typeof c == 'undefined' || c == null ? ',' : c; var value = this || ''; var decimal = ''; value.indexOf('.') < 0 ? 1 : (c == '.' ? (c = ',') : 1, decimal = '.' + value.split('.')[1], value = value.split('.')[0]); return value.split('').map(function (item, index) { if (r) { return index + 1 != value.length && (value.length - index) % (x * 1 + 1) == 0 && item == c ? '' : item; } else { return index + 1 != value.length && (value.length - 1 - index) % x == 0 ? (item + c) : item; } }).join('') + decimal; }
+    String.prototype.group = function (x, c, r) { x = typeof x == 'undefined' || x == null || x == '' ? 4 : x; c = typeof c == 'undefined' || c == null ? ',' : c; let value = this || ''; let decimal = ''; value.indexOf('.') < 0 ? 1 : (c == '.' ? (c = ',') : 1, decimal = '.' + value.split('.')[1], value = value.split('.')[0]); return value.split('').map(function (item, index) { if (r) { return index + 1 != value.length && (value.length - index) % (x * 1 + 1) == 0 && item == c ? '' : item; } else { return index + 1 != value.length && (value.length - 1 - index) % x == 0 ? (item + c) : item; } }).join('') + decimal; }
 }
 
 //拓展String的toBlob方法，将base64字符串转为blob对象
 if (!String.prototype.toBlob) {
     String.prototype.toBlob = function (contentType, sliceSize) {
-        var b64Data = this;
+        let b64Data = this;
         contentType = contentType || '';
         sliceSize = sliceSize || 512;
 
-        var byteCharacters = atob(b64Data);
-        var byteArrays = [];
+        let byteCharacters = atob(b64Data);
+        let byteArrays = [];
 
-        for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-            var slice = byteCharacters.slice(offset, offset + sliceSize);
+        for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+            let slice = byteCharacters.slice(offset, offset + sliceSize);
 
-            var byteNumbers = new Array(slice.length);
-            for (var i = 0; i < slice.length; i++) {
+            let byteNumbers = new Array(slice.length);
+            for (let i = 0; i < slice.length; i++) {
                 byteNumbers[i] = slice.charCodeAt(i);
             }
 
-            var byteArray = new Uint8Array(byteNumbers);
+            let byteArray = new Uint8Array(byteNumbers);
 
             byteArrays.push(byteArray);
         }
 
-        var blob = new Blob(byteArrays, { type: contentType });
+        let blob = new Blob(byteArrays, { type: contentType });
         return blob;
     };
 }
@@ -140,7 +140,7 @@ if (!String.prototype.toBlob) {
 //拓展String的toDate方法，将日期字符串转为日期
 if (!String.prototype.toDate) {
     String.prototype.toDate = function () {
-        var str = this;
+        let str = this;
         str = str.replace(/-/g, "/");
         return new Date(str);
     };
@@ -163,7 +163,7 @@ if (!String.prototype.isIdentityCard) {
      * 
      * @returns {object} 成功则返回身份信息,失败则返回false
      */
-    String.prototype.isIdentityCard = function (birthFormat) { var that = this, info = {}, address = '11x22x35x44x53x12x23x36x45x54x13x31x37x46x61x14x32x41x50x62x15x33x42x51x63x21x34x43x52x64x65x71x81x82x91', checkAddress = () => { return address.indexOf(that.substr(0, 2)) > -1; }, checkBirth = (length) => { return info.birth = new Date(that.substr(6, length).setvalue2string('-', length - 3, '').setvalue2string('-', length, '')), info.birth == 'Invalid Date' ? !1 : (birthFormat ? info.birth = info.birth.format(birthFormat) : 1, true); }, getSex = () => { info.sex = parseInt(that.substr(-4, 3)) % 2 == 0 ? '女' : '男'; }; return that ? (that.length == 15 ? (isNaN(that) || parseInt(that) < Math.pow(10, 14) ? !1 : (!checkAddress() ? !1 : (!checkBirth(6) ? !1 : (getSex(), info)))) : (that.length == 18 ? (isNaN(that.substr(0, 17)) || parseInt(that.substr(0, 17)) < Math.pow(10, 16) || isNaN(that.substr(-1).replace(/[xX]/g, '0')) ? !1 : (!checkAddress() ? !1 : (!checkBirth(8) ? !1 : (getSex(), info)))) : !1)) : !1; }
+    String.prototype.isIdentityCard = function (birthFormat) { let that = this, info = {}, address = '11x22x35x44x53x12x23x36x45x54x13x31x37x46x61x14x32x41x50x62x15x33x42x51x63x21x34x43x52x64x65x71x81x82x91', checkAddress = () => { return address.indexOf(that.substr(0, 2)) > -1; }, checkBirth = (length) => { return info.birth = new Date(that.substr(6, length).setvalue2string('-', length - 3, '').setvalue2string('-', length, '')), info.birth == 'Invalid Date' ? !1 : (birthFormat ? info.birth = info.birth.format(birthFormat) : 1, true); }, getSex = () => { info.sex = parseInt(that.substr(-4, 3)) % 2 == 0 ? '女' : '男'; }; return that ? (that.length == 15 ? (isNaN(that) || parseInt(that) < Math.pow(10, 14) ? !1 : (!checkAddress() ? !1 : (!checkBirth(6) ? !1 : (getSex(), info)))) : (that.length == 18 ? (isNaN(that.substr(0, 17)) || parseInt(that.substr(0, 17)) < Math.pow(10, 16) || isNaN(that.substr(-1).replace(/[xX]/g, '0')) ? !1 : (!checkAddress() ? !1 : (!checkBirth(8) ? !1 : (getSex(), info)))) : !1)) : !1; }
 }
 
 if (!String.prototype.trimEmpty) {
@@ -191,7 +191,7 @@ if (!String.prototype.format) {
      * @method format
      *
      */
-    String.prototype.format = function () { if (arguments.length == 0) return this; var param = arguments[0]; var s = this; if (typeof (param) == 'object') { for (var key in param) { s = s.replace(new RegExp("\\{" + key + "\\}", "g"), typeof param[key] == 'undefined' || param[key] == null ? '' : param[key]); } return s; } else { for (var i = 0; i < arguments.length; i++) { s = s.replace(new RegExp("\\{" + i + "\\}", "g"), arguments[i] || ''); } return s; } }
+    String.prototype.format = function () { if (arguments.length == 0) return this; let param = arguments[0]; let s = this; if (typeof (param) == 'object') { for (let key in param) { s = s.replace(new RegExp("\\{" + key + "\\}", "g"), typeof param[key] == 'undefined' || param[key] == null ? '' : param[key]); } return s; } else { for (let i = 0; i < arguments.length; i++) { s = s.replace(new RegExp("\\{" + i + "\\}", "g"), arguments[i] || ''); } return s; } }
 }
 
 if (!Date.prototype.format) {
@@ -205,7 +205,7 @@ if (!Date.prototype.format) {
      * 
      * @returns {object} 值
      */
-    Date.prototype.format = function (format) { var o = { "M+": this.getMonth() + 1, "d+": this.getDate(), "H+": this.getHours(), "h+": this.getHours(), "m+": this.getMinutes(), "s+": this.getSeconds(), "q+": Math.floor((this.getMonth() + 3) / 3), "S": this.getMilliseconds() }; if (/(y+)/i.test(format)) { format = format.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length)); } for (var k in o) { if (new RegExp("(" + k + ")").test(format)) { format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length)); } } return format; }
+    Date.prototype.format = function (format) { let o = { "M+": this.getMonth() + 1, "d+": this.getDate(), "H+": this.getHours(), "h+": this.getHours(), "m+": this.getMinutes(), "s+": this.getSeconds(), "q+": Math.floor((this.getMonth() + 3) / 3), "S": this.getMilliseconds() }; if (/(y+)/i.test(format)) { format = format.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length)); } for (let k in o) { if (new RegExp("(" + k + ")").test(format)) { format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length)); } } return format; }
 
     Date.prototype.addDays = function (d) {
         this.setDate(this.getDate() + d);
@@ -214,13 +214,13 @@ if (!Date.prototype.format) {
         this.addDays(w * 7);
     };
     Date.prototype.addMonths = function (m) {
-        var d = this.getDate();
+        let d = this.getDate();
         this.setMonth(this.getMonth() + m);
         if (this.getDate() < d)
             this.setDate(0);
     };
     Date.prototype.addYears = function (y) {
-        var m = this.getMonth();
+        let m = this.getMonth();
         this.setFullYear(this.getFullYear() + y);
         if (m < this.getMonth()) {
             this.setDate(0);
@@ -231,7 +231,7 @@ if (!Date.prototype.format) {
 if (!Date.prototype.format_other) {
     //日期格式化
     Date.prototype.format_other = function (fmt) { //author: meizz 
-        var o = {
+        let o = {
             "M+": this.getMonth() + 1, //月份 
             "d+": this.getDate(), //日 
             "h+": this.getHours(), //小时 
@@ -241,7 +241,7 @@ if (!Date.prototype.format_other) {
             "S": this.getMilliseconds() //毫秒 
         };
         if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-        for (var k in o)
+        for (let k in o)
             if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
         return fmt;
     };
@@ -251,11 +251,11 @@ if (!Date.prototype.format_other) {
 if (!Array.prototype.forEach) {
     Object.defineProperty(Array.prototype, "forEach", {
         value: function (callback) {
-            var d = this || [];
+            let d = this || [];
             if (!callback) return;
 
-            for (var i = 0; i < d.length; i++) {
-                var elem = d[i];
+            for (let i = 0; i < d.length; i++) {
+                let elem = d[i];
                 callback(elem, i);
             }
         },
@@ -267,7 +267,7 @@ if (!Array.prototype.indexOf) {
     //拓展Array的indexOf方法
     Object.defineProperty(Array.prototype, "indexOf", {
         value: function (val) {
-            for (var i = 0; i < this.length; i++) {
+            for (let i = 0; i < this.length; i++) {
                 if (this[i] == val) return i;
             }
             return -1;
@@ -290,7 +290,7 @@ if (!Array.prototype.removeItem) {
     //拓展Array的removeItem方法
     Object.defineProperty(Array.prototype, "removeItem", {
         value: function (val) {
-            var index = this.indexOf(val);
+            let index = this.indexOf(val);
             if (index > -1) {
                 this.splice(index, 1);
             }
@@ -302,11 +302,11 @@ if (!Array.prototype.removeItem) {
 //确保开始时间小于结束时间
 if (!window.checkStartEndDate) {
     window.checkStartEndDate = function (startDateId, endDateId) {
-        var startDate = $("#" + startDateId).val();
-        var endDate = $("#" + endDateId).val();
+        let startDate = $("#" + startDateId).val();
+        let endDate = $("#" + endDateId).val();
 
-        var _startDate = new Date(startDate);
-        var _endDate = new Date(endDate);
+        let _startDate = new Date(startDate);
+        let _endDate = new Date(endDate);
         if (_startDate > _endDate) {
             dialogMsg("请输入选择有效的时间（结束时间必须大于或者等于开始时间！）");
             return false;
@@ -320,13 +320,13 @@ if (!window.checkStartEndDate) {
 //拓展FileReader的readAsBinaryString方法
 if (!FileReader.prototype.readAsBinaryString) {
     FileReader.prototype.readAsBinaryString = function (fileData) {
-        var binary = "";
-        var pt = this;
-        var reader = new FileReader();
+        let binary = "";
+        let pt = this;
+        let reader = new FileReader();
         reader.onload = function (e) {
-            var bytes = new Uint8Array(reader.result);
-            var length = bytes.byteLength;
-            for (var i = 0; i < length; i++)
+            let bytes = new Uint8Array(reader.result);
+            let length = bytes.byteLength;
+            for (let i = 0; i < length; i++)
                 binary += String.fromCharCode(bytes[i]);
         }
         pt.content = binary;
@@ -338,12 +338,12 @@ if (!FileReader.prototype.readAsBinaryString) {
 //使用文件base64下载文件
 if (!window.downloadFileBase64) {
     window.downloadFileBase64 = function (base64, fileName) {
-        var blob = base64.toBlob();
-        var reader = new FileReader();
+        let blob = base64.toBlob();
+        let reader = new FileReader();
         reader.readAsDataURL(blob);
         reader.onload = function (e) {
             // 转换完成，创建一个a标签用于下载
-            var a = document.createElement('a');
+            let a = document.createElement('a');
             a.hidden = true;
             a.download = fileName;
             a.href = e.target.result;
@@ -357,7 +357,7 @@ if (!window.downloadFileBase64) {
 //使用文件Url下载文件
 if (!window.downloadFile) {
     window.downloadFile = function (url) {
-        var a = document.createElement('a');
+        let a = document.createElement('a');
         a.hidden = true;
         a.download = '';
         a.href = url
@@ -381,7 +381,7 @@ if (!window.toDateString) {
 //拓展window的getType方法
 if (!window.getType) {
     window.getType = function (obj) {
-        var type = typeof (obj);
+        let type = typeof (obj);
         if (type == 'object') {
             type = Object.prototype.toString.call(obj);
             if (type == '[object Array]') {
@@ -419,27 +419,27 @@ if (!window.importFile) {
      * @param {any} done 回调
      */
     window.importFile = (files, done) => {
-        var index = 0;
+        let index = 0;
 
-        var handler = () => {
+        let handler = () => {
             if (files.length == index) {
                 done && done();
                 return;
             }
 
-            var next = () => {
+            let next = () => {
                 index++;
                 handler();
             };
 
-            var file = files[index];
+            let file = files[index];
             if (importedFile.indexOf(file.src || file.href) >= 0) {
                 next();
                 return;
             }
 
-            var s = this.document.createElement(file.tag);
-            for (var item in file) {
+            let s = this.document.createElement(file.tag);
+            for (let item in file) {
                 if (item == 'tag')
                     continue;
 
@@ -455,10 +455,10 @@ if (!window.importFile) {
                      */
                     if (!$.prototype.bindImgBase64) {
                         $.prototype.bindImgBase64 = function (callback) {
-                            var _callback = callback || function () { };
-                            var thisElement = this[0];
+                            let _callback = callback || function () { };
+                            let thisElement = this[0];
                             thisElement.onchange = function () {
-                                var img = event.target.files[0];
+                                let img = event.target.files[0];
 
                                 // 判断是否图片
                                 if (!img) {
@@ -468,10 +468,10 @@ if (!window.importFile) {
                                 if (!(img.type.indexOf('image') == 0 && img.type && /\.(?:jpg|jpeg|png|gif|bmp)$/i.test(img.name))) {
                                     throw '图片只能是jpg,jpeg,gif,png,bmp';
                                 }
-                                var reader = new FileReader();
+                                let reader = new FileReader();
                                 reader.readAsDataURL(img);
                                 reader.onload = function (e) {
-                                    var imgBase64 = e.target.result;
+                                    let imgBase64 = e.target.result;
                                     $(thisElement).attr('base64', imgBase64);
                                     _callback(imgBase64);
                                 }
@@ -486,14 +486,14 @@ if (!window.importFile) {
                     //回调参数为文件base64内容和文件名
                     if (!$.prototype.getFileBase64) {
                         $.prototype.getFileBase64 = function (callBack) {
-                            var _callBack = callBack || function () { };
-                            var file = $(this)[0].files[0];
-                            var reader = new FileReader();
+                            let _callBack = callBack || function () { };
+                            let file = $(this)[0].files[0];
+                            let reader = new FileReader();
                             reader.readAsBinaryString(file);
                             reader.onload = function (e) {
-                                var bytes = e.target.result;
-                                var base64 = btoa(bytes);
-                                var fileName = file.name;
+                                let bytes = e.target.result;
+                                let base64 = btoa(bytes);
+                                let fileName = file.name;
                                 callBack(base64, fileName);
                             }
                         };
@@ -502,9 +502,9 @@ if (!window.importFile) {
                     //获取元素中所有没有被disabled的name集合
                     if (!$.prototype.getNames) {
                         $.prototype.getNames = function () {
-                            var nameList = [];
+                            let nameList = [];
                             $(this).find('[name]').not('[disabled]').each(function (index, element) {
-                                var name = $(element).attr('name');
+                                let name = $(element).attr('name');
                                 nameList.push(name);
                             });
 
@@ -515,18 +515,18 @@ if (!window.importFile) {
                     //取表单域的所有值
                     if (!$.fn.getValues) {
                         $.fn.getValues = function (options) {
-                            var defaults = {
+                            let defaults = {
                                 checkbox: 'array',
                                 not: []
                             };
-                            var $container = $(this);
+                            let $container = $(this);
 
                             options = $.extend({}, defaults, options);
 
                             function getValues() {
-                                var values = {}, ckbFields = [];
+                                let values = {}, ckbFields = [];
                                 $container.find(":input[name]").each(function () {
-                                    var that = $(this),
+                                    let that = $(this),
                                         type = (that.attr("type") || '').toLowerCase(),
                                         name = that.attr("name");
                                     if (type == 'button' || type == 'submit') return true;
@@ -545,13 +545,13 @@ if (!window.importFile) {
                                         }
                                         values[name] = getRadioValue(name);
                                     } else {
-                                        var value = that.val();
+                                        let value = that.val();
                                         //if (!value.length) return true;
 
                                         if (values[name] == undefined) {
                                             values[name] = value;
                                         } else {
-                                            var arr = [];
+                                            let arr = [];
                                             arr.push(values[name]);
                                             arr.push(value);
 
@@ -588,7 +588,7 @@ if (!window.importFile) {
 
                 next();
             };
-            var h = document.getElementsByTagName("head");
+            let h = document.getElementsByTagName("head");
             if (h && h[0]) { h[0].appendChild(s); }
         };
 
@@ -750,11 +750,12 @@ if (!window.addPlugIn) {
      * 
      * @param {string} name 名称
      * @param {string} title 标题
-     * @param {Function} fun 回调方法
+     * @param {Function} event 单击回调方法
      * @param {string} svg 图标
+     * @param {Function} dbEvent 双击回调方法
      */
-    window.addPlugIn = (name, title, fun, svg) => {
-        var $body = $('#plugInBody'),
+    window.addPlugIn = (name, title, event, svg, dbEvent) => {
+        let $body = $('#plugInBody'),
             $all = $('.plug-in-all');
         if ($body.length == 0) {
             $body = $('<div id="plugInBody"></div>')
@@ -762,13 +763,13 @@ if (!window.addPlugIn) {
                 .draggable({ containment: $('#swagger-ui'), scroll: false });
         }
 
-        var animate = (state) => {
+        let animate = (state) => {
             $all.find('svg').animate({
                 'height': (state == 1 ? 70 : 80) + 'px',
                 'width': (state == 1 ? 70 : 80) + 'px'
             });
-            var $plugs = $body.find('.plug-in');
-            var m = Math.ceil(Math.sqrt($plugs.length)),
+            let $plugs = $body.find('.plug-in');
+            let m = Math.ceil(Math.sqrt($plugs.length)),
                 x = 0,
                 y = 0;
             $plugs.each((index, item) => {
@@ -797,15 +798,15 @@ if (!window.addPlugIn) {
             $all = $('<i title="展开拓展功能" class="plug-in-all">' + defaultSvg.main + '</i>')
                 .appendTo($body)
                 .on('click', (e) => {
-                    var $e = $(e.currentTarget);
-                    var state = $e.data('state');
+                    let $e = $(e.currentTarget);
+                    let state = $e.data('state');
                     $e.data('state', state == 1 ? 0 : 1)
                     $e.attr('title', state == 1 ? '展开拓展功能' : '收起拓展功能');
                     animate(state == 1 ? 0 : 1);
                 });
 
             //提醒
-            var attention = (s = 0) => {
+            let attention = (s = 0) => {
                 if (s > 10)
                     return;
                 $all.find('svg').animate({ 'height': (s % 2 != 0 ? 100 : 80) + 'px', 'width': (s % 2 != 0 ? 100 : 80) + 'px' }, 390, () => { attention(++s) });
@@ -814,11 +815,12 @@ if (!window.addPlugIn) {
             attention(1);
         }
 
+        let el;
+
         if ($('#plug-in-' + name).length == 0) {
-            $('<i title="{title}" class="plug-in" id="plug-in-{name}">{svg}</i>'
+            el = $('<i title="{title}" class="plug-in" id="plug-in-{name}">{svg}</i>'
                 .format({ name: name, title: title, svg: svg || defaultSvg.default }))
                 .appendTo($body)
-                .on('click', (e) => { fun(name, e); })
                 .find('svg')
                 .css({ 'width': '3em', 'height': '3em' });
 
@@ -826,15 +828,16 @@ if (!window.addPlugIn) {
                 animate(1);
             }
         }
-        else
-            $('#plug-in-' + name)
+        else {
+            el = $('#plug-in-' + name)
                 .empty()
                 .html(svg || defaultSvg.default)
                 .attr('title', title)
-                .off('click')
-                .on('click', (e) => { fun(name, e); })
                 .find('svg')
                 .css({ 'width': '3em', 'height': '3em' });
+        }
+
+        !dbEvent ? el.off('click').on('click', (e) => { event(name, e); }) : window.doubleClick(el, e => { event(name, e); }, e => { dbEvent(name, e); });
     }
 
     /**
@@ -906,6 +909,26 @@ if (!window.onInformationLoaded) {
         funs.push(done);
         check();
     }
+
+    if (!window.onInformationChanged) {
+        let funs = [];
+
+        window.onInformationLoaded(() => {
+            window.domMutationObserver(
+                $(".swagger-container .swagger-ui")[0],
+                () => {
+                    funs.forEach(item => { item(); });
+                });
+        });
+
+        /**
+         * Api文档发生变更
+         * @param {Function} done 回调
+         */
+        window.onInformationChanged = (done) => {
+            funs.push(done);
+        }
+    }
 }
 
 if (!window.domMutationObserver) {
@@ -918,8 +941,9 @@ if (!window.domMutationObserver) {
      * 监听DOM变更
      * @param {HTMLElement} el 目标
      * @param {Function} event 回调事件
+     * @param {boolean} subtree 监听树状数据
      */
-    window.domMutationObserver = (el, event) => {
+    window.domMutationObserver = (el, event, subtree = false) => {
         let observer = new mutationObserver((mutations) => {
             for (let index in mutations) {
                 if (mutations[index].type == 'childList') {
@@ -929,6 +953,31 @@ if (!window.domMutationObserver) {
             }
         });
 
-        observer.observe(el, { attributes: false, childList: true, subtree: true });
+        observer.observe(el, { attributes: false, childList: true, subtree: subtree });
+    }
+}
+
+if (!window.doubleClick) {
+    /**
+     * 双击事件
+     * @param {HTMLElement} el 目标
+     * @param {Function} oneEvent 单击事件
+     * @param {Function} towEvent 双击事件
+     * @param {number} timeout 延时
+     */
+    window.doubleClick = (el, oneEvent, towEvent, timeout = 220) => {
+        let timeoutId = null;
+        el.off('click')
+            .on('click', e => {
+                timeoutId && clearTimeout(timeoutId) && (timeoutId = null);
+                timeoutId = window.setTimeout(oneEvent, timeout);
+            })
+            .off('dblclick')
+            .on('dblclick', e => {
+                timeoutId && clearTimeout(timeoutId) && (timeoutId = null);
+                towEvent();
+            });
+
+        return el;
     }
 }

@@ -46,7 +46,7 @@ window.onDomLoaded(() => {
             * @method check
             *
             */
-            var check = (done) => {
+            let check = (done) => {
                 //方式一
                 $.ajax({
                     type: 'POST',
@@ -79,7 +79,7 @@ window.onDomLoaded(() => {
                 });
 
                 //方式二
-                //var casInfo = window.location.request('casInfo');
+                //let casInfo = window.location.request('casInfo');
                 //if (casInfo)
                 //    addBtn(JSON.parse(decodeURI(casInfo).replace(/%3A/g, ':')));
                 //else
@@ -95,11 +95,11 @@ window.onDomLoaded(() => {
             * @param {string} data 登录信息
             * 
             */
-            var addBtn = (data) => {
-                var open = (name, e) => {
+            let addBtn = (data) => {
+                let open = (name, e) => {
                     if (data) {
-                        var content = [];
-                        for (var item in data) {
+                        let content = [];
+                        for (let item in data) {
                             content.push(['input-readonly', item, data[item]]);
                         }
                         window.showDialog(
@@ -183,7 +183,7 @@ window.onDomLoaded(() => {
                     }
                 };
 
-                var init = () => {
+                let init = () => {
                     window.addPlugIn('cas', '统一身份认证-' + (data ? '已登录' : '未登录'), open, data ? '<svg t="1615632900894" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="37768" width="5em" height="5em"><path d="M512 943.559111l-9.443556-3.640889c-15.473778-6.030222-380.814222-149.276444-380.814222-365.795555V193.422222l15.587556-6.940444c8.988444-3.982222 204.8-58.595556 367.729778-103.765334l6.940444-2.275555 390.257778 109.795555v383.886223c0 216.177778-365.340444 359.765333-380.814222 365.795555zM174.08 229.376v344.746667C174.08 737.962667 456.362667 864.028444 512 887.466667c55.637333-22.755556 337.92-149.276444 337.92-313.116445V229.831111L512 134.826667c-118.101333 32.768-284.444444 78.961778-337.92 94.549333z" fill="#0590DF" p-id="37769"></path><path d="M460.913778 686.762667L265.443556 480.028444l38.001777-35.953777 157.582223 166.570666 259.527111-273.408 38.001777 36.067556-297.642666 313.457778z" fill="#1296db" p-id="37770"></path></svg>' : '<svg t="1615632900894" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="37768" width="5em" height="5em"><path d="M512 943.559111l-9.443556-3.640889c-15.473778-6.030222-380.814222-149.276444-380.814222-365.795555V193.422222l15.587556-6.940444c8.988444-3.982222 204.8-58.595556 367.729778-103.765334l6.940444-2.275555 390.257778 109.795555v383.886223c0 216.177778-365.340444 359.765333-380.814222 365.795555zM174.08 229.376v344.746667C174.08 737.962667 456.362667 864.028444 512 887.466667c55.637333-22.755556 337.92-149.276444 337.92-313.116445V229.831111L512 134.826667c-118.101333 32.768-284.444444 78.961778-337.92 94.549333z" fill="#8a8a8a" p-id="37769"></path><path d="M460.913778 686.762667L265.443556 480.028444l38.001777-35.953777 157.582223 166.570666 259.527111-273.408 38.001777 36.067556-297.642666 313.457778z" fill="#8a8a8a" p-id="37770"></path></svg>');
                 };
 
@@ -191,7 +191,7 @@ window.onDomLoaded(() => {
 
                 if (data) {
                     //定时检查  
-                    var checking = setInterval(() => {
+                    let checking = setInterval(() => {
                         check((dataB) => { dataB ? 1 : (window.clearInterval(checking), addBtn(false)) });
                     }, 30000);
                 }
@@ -207,7 +207,7 @@ window.onDomLoaded(() => {
             * @param {number} mode 方式
             *
             */
-            var login = (mode) => {
+            let login = (mode) => {
                 switch (mode) {
                     case 2:
                         location.href = "/cas/authorize?returnUrl=" + location.href;
@@ -229,11 +229,11 @@ window.onDomLoaded(() => {
             * @param {number} mode 方式
             *
             */
-            var logout = (mode) => {
+            let logout = (mode) => {
                 switch (mode) {
                     case 1:
                     default:
-                        var done = (logoutCAS) => {
+                        let done = (logoutCAS) => {
                             location.href = $('[for="servers"] select').val() + '/cas/logout?returnUrl=' + location.href + '&logoutCAS=' + logoutCAS;
                         };
 
@@ -278,16 +278,12 @@ window.onDomLoaded(() => {
                 }
             };
 
-            var checking = () => {
+            let checking = () => {
                 check(addBtn);
             };
 
-            window.onInformationLoaded(() => {
-                window.domMutationObserver(
-                    $(".swagger-ui")[0],
-                    () => {
-                        window.delayedEvent(checking, null, 150, 'cas-check');
-                    });
+            window.onInformationChanged(() => {
+                window.delayedEvent(checking, null, 150, 'cas-check');
             });
 
             window.delayedEvent(checking, null, 100, 'cas-check');

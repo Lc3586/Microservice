@@ -351,6 +351,8 @@ namespace Business.Implementation.System
 
                 AuthoritiesBusiness.RevocationResourcesForUser(ids, false);
 
+                AuthoritiesBusiness.RevocationCFUCForUser(ids, false);
+
                 var orIds = OperationRecordBusiness.Create(orList);
 
                 if (Repository.Delete(o => ids.Contains(o.Id)) <= 0)

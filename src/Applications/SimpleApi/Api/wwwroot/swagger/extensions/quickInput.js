@@ -40,8 +40,8 @@ window.onInformationLoaded(() => {
         () => {
             let flag = true;
 
-            var down = (name, e) => {
-                var close = window.showDialog(
+            let down = (name, e) => {
+                let close = window.showDialog(
                     '文本框&文本域快速输入 - 设置',
                     [
                         ['H5', '当前状态', flag ? '已开启' : '已关闭']
@@ -56,8 +56,8 @@ window.onInformationLoaded(() => {
                     });
             };
 
-            $('.block-desktop').on('focus', 'input,textarea', e => {
-                if (!flag || e.target.type != 'text' || e.target.className.indexOf('noQuickInput') > -1)
+            $(document, '.block-desktop').on('focus', 'input,textarea', e => {
+                if (!flag || (e.target.type != 'text' && e.target.type != 'textarea') || e.target.className.indexOf('noQuickInput') > -1)
                     return;
 
                 let $input = e.target.nodeName == 'TEXTAREA'
@@ -66,9 +66,9 @@ window.onInformationLoaded(() => {
 
                 let setValue = (value) => {
                     //设置input值并触发onchange事件
-                    var nativeInputValueSetter = Object.getOwnPropertyDescriptor(e.target.nodeName == 'TEXTAREA' ? window.HTMLTextAreaElement.prototype : window.HTMLInputElement.prototype, "value").set;
+                    let nativeInputValueSetter = Object.getOwnPropertyDescriptor(e.target.nodeName == 'TEXTAREA' ? window.HTMLTextAreaElement.prototype : window.HTMLInputElement.prototype, "value").set;
                     nativeInputValueSetter.call(e.target, value);
-                    var ev2 = new Event('input', { bubbles: true });
+                    let ev2 = new Event('input', { bubbles: true });
                     e.target.dispatchEvent(ev2);
                 };
 

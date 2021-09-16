@@ -26,4 +26,9 @@ class UploadWorkerFileMessage {
      * 文件重命名
      */
     Name: string;
+
+    /**
+     * 上传配置Id
+     */
+    ConfigId: string;
 }

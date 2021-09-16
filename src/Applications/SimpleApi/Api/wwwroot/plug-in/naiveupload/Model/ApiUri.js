@@ -3,23 +3,23 @@ var ApiUri = (function () {
     }
     ApiUri.PreUploadChunkfile = function (file_md5, md5, index, specs, forced) {
         if (forced === void 0) { forced = false; }
-        return "/file/pre-upload-chunkfile/" + file_md5 + "/" + md5 + "/" + index + "/" + specs + "?forced=" + forced;
+        return "/file-upload/pre-chunkfile/" + file_md5 + "/" + md5 + "/" + index + "/" + specs + "?forced=" + forced;
     };
     ;
     ApiUri.UploadSingleChunkfile = function (key, md5) {
-        return "/file/upload-single-chunkfile/" + key + "/" + md5;
+        return "/file-upload/single-chunkfile/" + key + "/" + md5;
     };
     ApiUri.UploadSingleChunkfileByArrayBuffer = function (key, md5) {
-        return "/file/upload-single-chunkfile-arraybuffer/" + key + "/" + md5;
+        return "/file-upload/single-chunkfile-arraybuffer/" + key + "/" + md5;
     };
     ApiUri.UploadChunkfileFinished = function (file_md5, specs, total, type, extension, filename) {
-        return "/file/upload-chunkfile-finished/" + file_md5 + "/" + specs + "/" + total + "?type=" + type + "&extension=" + extension + "&filename=" + filename;
+        return "/file-upload/chunkfile-finished/" + file_md5 + "/" + specs + "/" + total + "?type=" + type + "&extension=" + extension + "&filename=" + filename;
     };
-    ApiUri.SingleFile = function (filename) {
-        return "/file/upload-single-file?filename=" + filename;
+    ApiUri.SingleFile = function (configId, filename) {
+        return "/file-upload/single-file/" + configId + "?filename=" + filename;
     };
-    ApiUri.SingleFileByArrayBuffer = function (type, extension, filename) {
-        return "/file/upload-single-file-arraybuffer?type=" + type + "&extension=" + extension + "&filename=" + filename;
+    ApiUri.SingleFileByArrayBuffer = function (configId, type, extension, filename) {
+        return "/file-upload/single-file-arraybuffer/" + configId + "?type=" + type + "&extension=" + extension + "&filename=" + filename;
     };
     ApiUri.Preview = function (id, width, height, time) {
         return "/file/preview/" + id + "?width=" + width + "&height=" + height + "&time=" + time;
@@ -31,14 +31,20 @@ var ApiUri = (function () {
     ApiUri.SALogin = '/sa/login';
     ApiUri.GetToken = '/jwt/get-token';
     ApiUri.RefreshToken = '/jwt/refresh-token';
-    ApiUri.Rename = function (id, filename) { return "/file/rename/" + id + "?filename=" + filename; };
-    ApiUri.FileTypeByExtension = function (extension) { return "/file/file-type-by-extension/" + extension; };
-    ApiUri.FileTypeByMIME = function (mimetype) { return "/file/file-type-by-mimetype?mimetype=" + mimetype; };
-    ApiUri.FileTypeImageUrl = function (extension) { return "/file/file-type-image/" + extension; };
-    ApiUri.FileSize = function (length) { return "/file/file-size/" + length; };
-    ApiUri.PreUploadFile = function (md5, filename, section, type, extension, specs, total) {
+    ApiUri.PersonalFileInfoRename = function (id, filename) { return "/personal-file-info/rename/" + id + "?filename=" + filename; };
+    ApiUri.PersonalFileInfoEditData = function (id) { return "/personal-file-info/edit-data/" + id; };
+    ApiUri.PersonalFileInfoEdit = '/personal-file-info/edit';
+    ApiUri.FileTypeByExtension = function (extension) { return "/file/type-by-extension/" + extension; };
+    ApiUri.FileTypeByMIME = function (mimetype) { return "/file/type-by-mimetype?mimetype=" + mimetype; };
+    ApiUri.FileTypeImageUrl = function (extension) { return "/file/type-image/" + extension; };
+    ApiUri.FileSize = function (length) { return "/file/size/" + length; };
+    ApiUri.FileUploadConfigTreeList = '/file-upload-config/tree-list';
+    ApiUri.FileUploadConfigDetailData = function (id) { return "/file-upload-config/detail-data/" + id; };
+    ApiUri.FileUploadConfigData = function (id) { return "/file-upload-config/data/" + id; };
+    ApiUri.GetCurrentAccountCFUCTree = '/authorities/current-account-data-cfuc-tree';
+    ApiUri.PreUploadFile = function (configId, md5, filename, section, type, extension, specs, total) {
         if (section === void 0) { section = false; }
-        return "/file/pre-upload-file/" + md5 + "?filename=" + filename + "&section=" + section + "&type=" + (type || '') + "&extension=" + (extension || '') + "&specs=" + (specs || '') + "&total=" + (total || '');
+        return "/file-upload/pre-file/" + configId + "/" + md5 + "?filename=" + filename + "&section=" + section + "&type=" + (type || '') + "&extension=" + (extension || '') + "&specs=" + (specs || '') + "&total=" + (total || '');
     };
     ApiUri.CFMTHub = '/cfmthub';
     return ApiUri;

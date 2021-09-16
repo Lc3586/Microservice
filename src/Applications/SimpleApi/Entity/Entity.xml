@@ -345,9 +345,15 @@
             层级
             </summary>
         </member>
+        <member name="P:Entity.Common.Common_FileUploadConfig.Code">
+            <summary>
+            编码
+            </summary>
+        </member>
         <member name="P:Entity.Common.Common_FileUploadConfig.ReferenceId">
             <summary>
             引用的上传配置Id
+            <para>引用文件MIME类型，会合并当前数据以及引用数据</para>
             </summary>
         </member>
         <member name="P:Entity.Common.Common_FileUploadConfig.ReferenceTree">
@@ -386,12 +392,19 @@
             <summary>
             允许的MIME类型
             <para>[,]逗号分隔</para>
+            <para>此值为空时未禁止即允许</para>
             </summary>
         </member>
         <member name="P:Entity.Common.Common_FileUploadConfig.ProhibitedTypes">
             <summary>
             禁止的MIME类型
             <para>[,]逗号分隔</para>
+            <para>此值为空时皆可允许</para>
+            </summary>
+        </member>
+        <member name="P:Entity.Common.Common_FileUploadConfig.Explain">
+            <summary>
+            说明
             </summary>
         </member>
         <member name="P:Entity.Common.Common_FileUploadConfig.Sort">
@@ -469,9 +482,14 @@
             引用配置
             </summary>
         </member>
+        <member name="P:Entity.Common.Common_FileUploadConfig.System_Users">
+            <summary>
+            被直接授权了此配置的用户
+            </summary>
+        </member>
         <member name="P:Entity.Common.Common_FileUploadConfig.System_Roles">
             <summary>
-            授权了此配置的角色
+            被授权了此配置的角色
             </summary>
         </member>
         <member name="P:Entity.Common.Common_FileUploadConfig.PersonalFileInfos">
@@ -1476,7 +1494,7 @@
         </member>
         <member name="P:Entity.System.System_Menu.Users">
             <summary>
-            被授权此菜单的用户
+            被直接授权此菜单的用户
             </summary>
         </member>
         <member name="P:Entity.System.System_Menu.Roles">
@@ -1596,7 +1614,7 @@
         </member>
         <member name="P:Entity.System.System_Resources.Users">
             <summary>
-            被授权此资源的用户
+            被直接授权此资源的用户
             </summary>
         </member>
         <member name="P:Entity.System.System_Resources.Menus">
@@ -1735,6 +1753,11 @@
         <member name="P:Entity.System.System_Role.Resources">
             <summary>
             授权给此角色的资源
+            </summary>
+        </member>
+        <member name="P:Entity.System.System_Role.FileUploadConfigs">
+            <summary>
+            授权给此角色的文件上传配置
             </summary>
         </member>
         <member name="P:Entity.System.System_Role.Members">
@@ -1922,6 +1945,11 @@
             直接授权给此用户的资源
             </summary>
         </member>
+        <member name="P:Entity.System.System_User.FileUploadConfigs">
+            <summary>
+            直接授权给此用户的文件上传配置
+            </summary>
+        </member>
         <member name="P:Entity.System.System_User.WeChatUserInfos">
             <summary>
             此用户绑定的微信
@@ -1930,6 +1958,31 @@
         <member name="P:Entity.System.System_User.PersonalFileInfos">
             <summary>
             上传的个人文件信息
+            </summary>
+        </member>
+        <member name="T:Entity.System.System_UserCFUC">
+            <summary>
+            用户授权文件上传配置
+            </summary>
+        </member>
+        <member name="P:Entity.System.System_UserCFUC.UserId">
+            <summary>
+            用户Id
+            </summary>
+        </member>
+        <member name="P:Entity.System.System_UserCFUC.ConfigId">
+            <summary>
+            配置Id
+            </summary>
+        </member>
+        <member name="P:Entity.System.System_UserCFUC.User">
+            <summary>
+            用户
+            </summary>
+        </member>
+        <member name="P:Entity.System.System_UserCFUC.FileUploadConfig">
+            <summary>
+            文件上传配置
             </summary>
         </member>
         <member name="T:Entity.System.System_UserMenu">

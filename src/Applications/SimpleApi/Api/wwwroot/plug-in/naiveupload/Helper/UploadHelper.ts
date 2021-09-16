@@ -149,7 +149,7 @@ class UploadHelper {
             formData.append('file', file.File);
 
             this.AxiosInstance.post(
-                ApiUri.SingleFile(file.Name),
+                ApiUri.SingleFile(file.ConfigId, file.Name),
                 formData,
                 {
                     onUploadProgress: progress => {
@@ -238,7 +238,7 @@ class UploadHelper {
             }
 
             try {
-                let fileInfo = await this.WorkerPostMessage(0, { Type: UploadWorkerMessageType.文件, Data: { MD5: file.MD5, Buffer: buffer, Type: file.File.type, Extension: file.Extension, Name: file.Name } }, onProgress) as FileInfo;
+                let fileInfo = await this.WorkerPostMessage(0, { Type: UploadWorkerMessageType.文件, Data: { MD5: file.MD5, Buffer: buffer, Type: file.File.type, Extension: file.Extension, Name: file.Name, ConfigId: file.ConfigId } }, onProgress) as FileInfo;
 
                 file.FileInfo = fileInfo;
             } catch (e) {
@@ -359,9 +359,9 @@ class UploadHelper {
             let validation: ValidationMD5Response;
             try {
                 if (file.NeedSection)
-                    validation = await this.PreUploadFile(file.MD5, file.Name, true, file.File.type, file.Extension, file.Specs, file.Chunks.length);
+                    validation = await this.PreUploadFile(file.ConfigId, file.MD5, file.Name, true, file.File.type, file.Extension, file.Specs, file.Chunks.length);
                 else
-                    validation = await this.PreUploadFile(file.MD5, file.Name);
+                    validation = await this.PreUploadFile(file.ConfigId, file.MD5, file.Name, false, file.File.type, file.Extension);
             } catch (e) {
                 reject(e);
                 return;
@@ -524,6 +524,7 @@ class UploadHelper {
 
     /**
      * 预备上传文件
+     * @param configId 上传配置Id
      * @param md5 文件MD5值
      * @param name 文件重命名
      * @param section 是否分片处理（默认否）
@@ -532,10 +533,10 @@ class UploadHelper {
      * @param specs 分片文件规格（单文件上传时忽略此参数）
      * @param total 分片文件总数（单文件上传时忽略此参数）
      */
-    async PreUploadFile(md5: string, name: string, section?: boolean, type?: string, extension?: string, specs?: number, total?: number)
+    async PreUploadFile(configId: string, md5: string, name: string, section?: boolean, type?: string, extension?: string, specs?: number, total?: number)
         : Promise<ValidationMD5Response> {
         const promise = new Promise<ValidationMD5Response>((resolve, reject) => {
-            this.AxiosInstance.get(ApiUri.PreUploadFile(md5, name, section, type, extension, specs, total))
+            this.AxiosInstance.get(ApiUri.PreUploadFile(configId, md5, name, section, type, extension, specs, total))
                 .then(function (response: { data: ResponseData_T<ValidationMD5Response> }) {
                     if (response.data.Success) {
                         resolve(response.data.Data);
