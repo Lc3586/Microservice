@@ -419,11 +419,115 @@
                                                      sortable>
                                     </el-table-column>
                                 </el-table>
-                            </el-col>>
+                            </el-col>
                         </el-row>
                     </el-tab-pane>
                     <el-tab-pane label="文件库" class="tab-pane" name="Library">
-
+                        <div class="library-folders"
+                             v-loading="library.loading">
+                            <div class="folder-list">
+                                <div v-for="(folder, index) in library.folders"
+                                     :class="GetFolderCLass(folder)"
+                                     @mouseenter="folder.Hover=true"
+                                     @mouseleave="folder.Hover=false">
+                                    <div class="cube">
+                                        <div :class="'plane front ' + folder.Class">
+                                        </div>
+                                        <div class="plane right">
+                                            <el-descriptions title="库信息"
+                                                             :column="1">
+                                                <el-descriptions-item label="文件类型">{{folder.FileType}}</el-descriptions-item>
+                                                <el-descriptions-item label="文件总数">{{folder.Total}}</el-descriptions-item>
+                                                <el-descriptions-item label="占用存储空间">{{folder.Size}}</el-descriptions-item>
+                                                <el-descriptions-item label="总字节数">{{folder.Bytes}}</el-descriptions-item>
+                                            </el-descriptions>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="file-list">
+                            <el-col :span="6">
+                                <el-checkbox :indeterminate="library.isFileTypeIndeterminate" v-model="library.checkAllFileTypes" @change="libraryAllFileTypes">所有文件类型</el-checkbox>
+                                <div style="margin: 15px 0;"></div>
+                                <el-checkbox-group v-model="logDB.levels" @change="dbLevelChange">
+                                    <el-checkbox v-for="level in logConfig.levels" :label="level" :key="level">{{level}}</el-checkbox>
+                                </el-checkbox-group>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-checkbox :indeterminate="logDB.isTypeIndeterminate" v-model="logDB.checkAllTypes" @change="dbAllType">所有日志类型</el-checkbox>
+                                <div style="margin: 15px 0;"></div>
+                                <el-checkbox-group v-model="logDB.types" @change="dbTypeChange">
+                                    <el-checkbox v-for="type in logConfig.types" :label="type" :key="type">{{type}}</el-checkbox>
+                                </el-checkbox-group>
+                            </el-col>
+                            <el-col :span="5" :offset="1">
+                                <el-date-picker v-model="logDB.date"
+                                                type="datetimerange"
+                                                unlink-panels
+                                                range-separator="至"
+                                                start-placeholder="开始日期"
+                                                end-placeholder="结束日期"
+                                                format="YYYY-MM-DD"
+                                                :shortcuts="dataRangShortcuts">
+                                </el-date-picker>
+                            </el-col>
+                            <el-col :span="3" :offset="1">
+                                <el-input v-model="logDB.content"
+                                          prefix-icon="el-icon-search"
+                                          placeholder="输入日志内容搜索" />
+                            </el-col>
+                            </el-row>
+                            <el-row :gutter="20">
+                                <el-col :span="24">
+                                    <el-table :data="logDB.list"
+                                              stripe
+                                              :empty-text="logDB.error"
+                                              v-loading="logDB.loading"
+                                              @sort-change="logDBSort"
+                                              style="width: 100%;"
+                                              :row-class-name="logDBListRowClassName">
+                                        <el-table-column label="级别"
+                                                         prop="Level"
+                                                         sortable="custom">
+                                        </el-table-column>
+                                        <el-table-column label="类型"
+                                                         prop="LogType"
+                                                         sortable="custom">
+                                        </el-table-column>
+                                        <el-table-column label="内容"
+                                                         prop="LogContent">
+                                        </el-table-column>
+                                        <el-table-column label="操作者"
+                                                         prop="CreatorName">
+                                        </el-table-column>
+                                        <el-table-column label="操作时间"
+                                                         prop="CreateTime"
+                                                         sortable="custom">
+                                        </el-table-column>
+                                        <el-table-column align="center">
+                                            <template #default="scope">
+                                                <el-button size="mini"
+                                                           @click="LogDBDetail(scope.$index, scope.row)">详情</el-button>
+                                            </template>
+                                        </el-table-column>
+                                    </el-table>
+                                </el-col>
+                            </el-row>
+                            <el-row :gutter="20">
+                                <el-col :span="24">
+                                    <el-pagination @size-change="logDBListSizeChange"
+                                                   @current-change="logDBListCurrentChange"
+                                                   :current-page="logDB.currentPage"
+                                                   :page-sizes="pageConfig.sizes"
+                                                   :page-size="logDB.pageSize"
+                                                   layout="total, sizes, prev, pager, next, jumper"
+                                                   :hide-on-single-page="logDB.hidePagination"
+                                                   :total="logDB.total">
+                                    </el-pagination>
+                                </el-col>
+                            </el-row>
+                        </div>
                     </el-tab-pane>
                 </el-tabs>
             </el-container>

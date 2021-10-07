@@ -613,6 +613,8 @@ new
 
             var type = typeof(Import);
 
+            var properties = type.GetProperties();
+
             var tag = type.GetMainTag();
 
             var dataList = new List<Import>();
@@ -628,8 +630,7 @@ new
 
                 var _errors = new List<ErrorInfo>();
 
-                type.GetProperties()
-                    .ForEach(o =>
+                properties.ForEach(o =>
                     {
                         if (o.DeclaringType?.Name != type.Name && !o.HasTag(tag))
                             return;

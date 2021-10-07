@@ -902,6 +902,12 @@
             <param name="version">获取与程序版本有关的信息、获取与库版本有关的信息、获取与程序和库版本有关的信息</param>
             <returns></returns>
         </member>
+        <member name="M:Business.Interface.Common.IFileBusiness.GetLibraryInfo">
+            <summary>
+            获取文件库信息
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:Business.Interface.Common.IFileUploadBusiness">
             <summary>
             文件上传业务接口类

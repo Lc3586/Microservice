@@ -51,6 +51,7 @@ namespace Model.Utils.Pagination
         antdVue,
         /// <summary>
         /// element + Vue
+        /// <para>https://element-plus.org/#/zh-CN/component/pagination</para>
         /// </summary>
         [Description("element + Vue")]
         elementVue,

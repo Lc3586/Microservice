@@ -217,6 +217,18 @@ namespace Api.Controllers
             return ResponseDataFactory.Success(await FileBusiness.GetVideoInfo(id, format, streams, chapters, programs, version));
         }
 
+        /// <summary>
+        /// 获取文件库信息
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("library-info")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "文件库信息", typeof(LibraryInfo))]
+        [AllowAnonymous]
+        public async Task<object> GetLibraryInfo()
+        {
+            return await Task.FromResult(ResponseDataFactory.Success(FileBusiness.GetLibraryInfo()));
+        }
+
         #endregion
     }
 }

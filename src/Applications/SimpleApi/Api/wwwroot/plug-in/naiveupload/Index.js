@@ -143,6 +143,13 @@ window.onload = function () {
                 src: 'Model/UploadConfigDetail.js'
             }
         },
+        {
+            Tag: "script",
+            Attributes: {
+                type: 'text/javascript',
+                src: 'Model/Pagination.js'
+            }
+        },
     ], function () {
         var Vue = window.Vue;
         var ElementPlus = window.ElementPlus;
@@ -205,7 +212,8 @@ window.onload = function () {
                 Start: Start,
                 Pause: Pause,
                 Continues: Continues,
-                Clean: Clean
+                Clean: Clean,
+                GetFolderCLass: GetFolderCLass,
             },
             watch: {
                 'multipleUpload.settings': {
@@ -312,6 +320,13 @@ window.onload = function () {
                     init: false,
                     search: '',
                     list: [],
+                    error: '',
+                    loading: true
+                },
+                library: {
+                    init: false,
+                    search: '',
+                    folders: [],
                     error: '',
                     loading: true
                 }
@@ -489,6 +504,9 @@ window.onload = function () {
                     InitChunkFileMergeTaskList();
                     break;
                 case 'Library':
+                    if (Main.library.init)
+                        return;
+                    GetLibraryInfo();
                     break;
                 default:
                     break;
@@ -718,6 +736,59 @@ window.onload = function () {
                     }
                 });
             });
+        }
+        function GetLibraryInfo() {
+            Main.library.loading = true;
+            Axios.get(ApiUri.GetLibraryInfo)
+                .then(function (response) {
+                Main.library.loading = false;
+                if (response.data.Success) {
+                    Main.library.folders = response.data.Data.map(function (item, index) {
+                        var folder = item;
+                        folder.Hover = false;
+                        folder.Class = GetFolderClassByType(folder.FileType);
+                        folder.Pagination = new Pagination();
+                        return folder;
+                    });
+                    if (!Main.library.init)
+                        Main.library.init = true;
+                }
+                else {
+                    Main.library.error = response.data.Message;
+                    ElementPlus.ElMessage(Main.library.error);
+                }
+            }).catch(function (error) {
+                Main.library.loading = false;
+                console.error(error);
+                Main.library.error = '加载文件上传配置详情时发生异常.';
+                ElementPlus.ElMessage(Main.library.error);
+            });
+        }
+        function GetFolderClassByType(fileType) {
+            switch (fileType) {
+                case "\u97F3\u9891":
+                    return 'icon-folder-audio';
+                case "\u89C6\u9891":
+                    return 'icon-folder-video';
+                case "\u56FE\u7247":
+                    return 'icon-folder-picture';
+                case "\u6587\u672C\u6587\u4EF6":
+                    return 'icon-folder-text';
+                case "\u7535\u5B50\u8868\u683C":
+                    return 'icon-folder-excel';
+                case "\u7535\u5B50\u6587\u6863":
+                    return 'icon-folder-word';
+                case "\u538B\u7F29\u5305":
+                    return 'icon-folder-zip';
+                case "\u5916\u94FE\u8D44\u6E90":
+                    return 'icon-folder-uri';
+                case "\u672A\u77E5":
+                default:
+                    return 'icon-folder-none';
+            }
+        }
+        function GetFolderCLass(folder) {
+            return "folder " + (folder.Hover ? ' hover' : '');
         }
     });
 };

@@ -42,6 +42,7 @@ var ApiUri = (function () {
     ApiUri.FileUploadConfigDetailData = function (id) { return "/file-upload-config/detail-data/" + id; };
     ApiUri.FileUploadConfigData = function (id) { return "/file-upload-config/data/" + id; };
     ApiUri.GetCurrentAccountCFUCTree = '/authorities/current-account-data-cfuc-tree';
+    ApiUri.GetLibraryInfo = '/file/library-info';
     ApiUri.PreUploadFile = function (configId, md5, filename, section, type, extension, specs, total) {
         if (section === void 0) { section = false; }
         return "/file-upload/pre-file/" + configId + "/" + md5 + "?filename=" + filename + "&section=" + section + "&type=" + (type || '') + "&extension=" + (extension || '') + "&specs=" + (specs || '') + "&total=" + (total || '');

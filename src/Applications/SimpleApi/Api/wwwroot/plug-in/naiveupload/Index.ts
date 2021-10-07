@@ -107,6 +107,13 @@
                     src: 'Model/UploadConfigDetail.js'
                 }
             },
+            {
+                Tag: ImportFileTag.JS,
+                Attributes: {
+                    type: 'text/javascript',
+                    src: 'Model/Pagination.js'
+                }
+            },
         ],
         () => {
             const Vue = (<any>window).Vue;
@@ -192,7 +199,9 @@
                     Start,
                     Pause,
                     Continues,
-                    Clean
+                    Clean,
+
+                    GetFolderCLass,
                 },
                 watch: {
                     /**
@@ -313,6 +322,13 @@
                         init: false,
                         search: '',
                         list: [],
+                        error: '',
+                        loading: true
+                    },
+                    library: {
+                        init: false,
+                        search: '',
+                        folders: [],
                         error: '',
                         loading: true
                     }
@@ -546,7 +562,9 @@
                         InitChunkFileMergeTaskList();
                         break;
                     case 'Library':
-
+                        if (Main.library.init)
+                            return;
+                        GetLibraryInfo();
                         break;
                     default:
 
@@ -911,6 +929,72 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
                 await chunkFileMergeTaskHelper.Connect();
 
                 Main.chunkFileMergeTask.loading = false;
+            }
+
+            /**
+             * 获取文件库信息
+             * @param node
+             * @param data
+             */
+            function GetLibraryInfo() {
+                Main.library.loading = true;
+                Axios.get(ApiUri.GetLibraryInfo)
+                    .then(function (response: { data: ResponseData_T<LibraryInfo[]> }) {
+                        Main.library.loading = false;
+                        if (response.data.Success) {
+                            Main.library.folders = response.data.Data.map((item, index): FolderInfo => {
+                                let folder = item as FolderInfo;
+                                folder.Hover = false;
+                                folder.Class = GetFolderClassByType(folder.FileType);
+                                folder.Pagination = new Pagination();
+                                return folder;
+                            });
+
+                            if (!Main.library.init)
+                                Main.library.init = true;
+                        }
+                        else {
+                            Main.library.error = response.data.Message;
+                            ElementPlus.ElMessage(Main.library.error);
+                        }
+                    }).catch(function (error) {
+                        Main.library.loading = false;
+                        console.error(error);
+                        Main.library.error = '加载文件上传配置详情时发生异常.';
+                        ElementPlus.ElMessage(Main.library.error);
+                    });
+            }
+
+            /**
+             * 获取文件类型对于的文件夹图标样式名
+             * @param fileType
+             */
+            function GetFolderClassByType(fileType: string): string {
+                switch (fileType) {
+                    case FileType.音频:
+                        return 'icon-folder-audio';
+                    case FileType.视频:
+                        return 'icon-folder-video';
+                    case FileType.图片:
+                        return 'icon-folder-picture';
+                    case FileType.文本文件:
+                        return 'icon-folder-text';
+                    case FileType.电子表格:
+                        return 'icon-folder-excel';
+                    case FileType.电子文档:
+                        return 'icon-folder-word';
+                    case FileType.压缩包:
+                        return 'icon-folder-zip';
+                    case FileType.外链资源:
+                        return 'icon-folder-uri';
+                    case FileType.未知:
+                    default:
+                        return 'icon-folder-none';
+                }
+            }
+
+            function GetFolderCLass(folder) {
+                return `folder ${(folder.Hover ? ' hover' : '')}`;
             }
         });
 };

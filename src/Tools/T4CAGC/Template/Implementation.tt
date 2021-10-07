@@ -963,6 +963,8 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
 
             var type = typeof(<#=Functions[Function.Import]#>);
 
+            var properties = type.GetProperties();
+
             var tag = type.GetMainTag();
 
             var dataList = new List<<#=Functions[Function.Import]#>>();
@@ -978,8 +980,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
 
                 var _errors = new List<ErrorInfo>();
 
-                type.GetProperties()
-                    .ForEach(o =>
+                properties.ForEach(o =>
                     {
                         if (o.DeclaringType?.Name != type.Name && !o.HasTag(tag))
                             return;

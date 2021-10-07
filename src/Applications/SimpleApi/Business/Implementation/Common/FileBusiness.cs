@@ -17,11 +17,13 @@ using Microservice.Library.OpenApi.Extention;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using Model.Common;
+using Model.Common.FileDTO;
 using Model.Utils.Log;
 using Model.Utils.Pagination;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text.Encodings.Web;
@@ -398,6 +400,25 @@ namespace Business.Implementation.Common
             {
                 throw new MessageException("获取视频信息失败.", new { file.Path, format, streams, chapters, programs, version }, ex);
             }
+        }
+
+        public List<LibraryInfo> GetLibraryInfo()
+        {
+            return Repository.Select.Where(o => o.State == $"{FileState.可用}")
+                .GroupBy(o => o.FileType)
+                .ToList(g => new LibraryInfo
+                {
+                    FileType = g.Key,
+                    Total = g.Count(),
+                    _Bytes = (long)g.Sum(g.Value.Bytes)
+                })
+                .Select(o =>
+                {
+                    o.Bytes = o._Bytes.ToString();
+                    o.Size = o._Bytes.GetFileSize();
+                    return o;
+                })
+                .ToList();
         }
 
         #endregion

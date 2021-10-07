@@ -87,6 +87,11 @@ class ApiUri {
     static GetCurrentAccountCFUCTree: string = '/authorities/current-account-data-cfuc-tree';
 
     /**
+     * 获取文件库信息
+     */
+    static GetLibraryInfo: string = '/file/library-info';
+
+    /**
      * 预备上传文件
      * @param configId 上传配置Id
      * @param md5 文件哈希值

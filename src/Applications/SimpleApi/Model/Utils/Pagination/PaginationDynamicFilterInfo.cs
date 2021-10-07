@@ -42,7 +42,7 @@ namespace Model.Utils.Pagination
         public FilterGroupRelation Relation { get; set; } = FilterGroupRelation.and;
 
         /// <summary>
-        /// 分组设置
+        /// 子条件
         /// </summary>
         [OpenApiSchema(OpenApiSchemaType.model, OpenApiSchemaFormat.model_once)]
         public List<PaginationDynamicFilterInfo> DynamicFilterInfo { get; set; }

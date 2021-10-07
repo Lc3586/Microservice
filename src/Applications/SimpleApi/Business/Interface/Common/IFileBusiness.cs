@@ -115,6 +115,12 @@ namespace Business.Interface.Common
         /// <returns></returns>
         Task<VideoInfo> GetVideoInfo(string id, bool format = true, bool streams = false, bool chapters = false, bool programs = false, bool version = false);
 
+        /// <summary>
+        /// 获取文件库信息
+        /// </summary>
+        /// <returns></returns>
+        List<LibraryInfo> GetLibraryInfo();
+
         #endregion
     }
 }

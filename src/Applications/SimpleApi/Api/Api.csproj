@@ -145,12 +145,18 @@
     <Content Remove="wwwroot\plug-in\naiveupload\Model\AppendFileResultStatus.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\ChunkFile.js" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\ChunkFile.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\FileInfo - 复制.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\FileInfo - 复制.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\FileInfo.js" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\FileInfo.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\FIleType - 复制.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\FIleType - 复制.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\FIleType.js" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\FIleType.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\HubState.js" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\HubState.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\LibraryInfo - 复制.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\LibraryInfo - 复制.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\MultipleUploadSetting.js" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\MultipleUploadSetting.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\PreUploadChunkFileResponse.js" />
@@ -525,6 +531,19 @@
     <None Include="wwwroot\plug-in\naiveupload\Model\ChunkFile.js.map">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\LibraryInfo - 复制.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <DependentUpon>LibraryInfo.js</DependentUpon>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\LibraryInfo - 复制.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\LibraryInfo.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\LibraryInfo.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="wwwroot\plug-in\naiveupload\Model\FileInfo.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -725,9 +744,6 @@
     </None>
     <None Include="wwwroot\swagger\extensions\systemConsole.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="wwwroot\swagger\ignore\swagger-ui-bundle-debug.js">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Include="wwwroot\swagger\main.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -996,6 +1012,10 @@
     <TypeScriptCompile Update="wwwroot\plug-in\naiveupload\Model\UploadConfigTreeList.ts">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </TypeScriptCompile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\swagger\ignore\" />
   </ItemGroup>
 
   <ProjectExtensions>

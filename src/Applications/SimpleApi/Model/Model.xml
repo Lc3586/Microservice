@@ -99,6 +99,36 @@
             当前成员映射选项
             </summary>
         </member>
+        <member name="T:Model.Common.FileDTO.LibraryInfo">
+            <summary>
+            文件库信息
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileDTO.LibraryInfo.FileType">
+            <summary>
+            文件类型
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileDTO.LibraryInfo.Total">
+            <summary>
+            文件总数
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileDTO.LibraryInfo._Bytes">
+            <summary>
+            文件总字节数
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileDTO.LibraryInfo.Bytes">
+            <summary>
+            文件总字节数
+            </summary>
+        </member>
+        <member name="P:Model.Common.FileDTO.LibraryInfo.Size">
+            <summary>
+            文件占用存储空间
+            </summary>
+        </member>
         <member name="T:Model.Common.FileState">
             <summary>
             文件状态
@@ -3260,7 +3290,7 @@
         </member>
         <member name="P:Model.Utils.Pagination.PaginationDynamicFilterInfo.DynamicFilterInfo">
             <summary>
-            分组设置
+            子条件
             </summary>
         </member>
         <member name="T:Model.Utils.Pagination.PaginationFilter">
@@ -3350,6 +3380,7 @@
         <member name="F:Model.Utils.Pagination.Schema.elementVue">
             <summary>
             element + Vue
+            <para>https://element-plus.org/#/zh-CN/component/pagination</para>
             </summary>
         </member>
         <member name="T:Model.Utils.Pagination.SortType">
