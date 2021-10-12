@@ -181,26 +181,24 @@ namespace Model.Utils.Config
         /// <summary>
         /// 网站根地址
         /// </summary>
-        public string WebRootUrl
-        {
-            get
-            {
-                if (RunMode == RunMode.Publish || RunMode == RunMode.Publish_Swagger)
-                    return PublishRootUrl;
-                else
-                    return LocalRootUrl;
-            }
-        }
+        public List<string> WebRootUrl => RunMode == RunMode.Publish || RunMode == RunMode.Publish_Swagger ? PublishRootUrl : LocalRootUrl;
+
+        /// <summary>
+        /// 网站根地址
+        /// </summary>
+        /// <param name="scheme">框架http/https</param>
+        /// <param name="contrary">false 返回匹配的数据,true 返回不匹配的数据</param>
+        public string WebRootUrlMatchScheme(string scheme, bool contrary = false) => WebRootUrl.Find(o => o.Contains($"{scheme}://") == !contrary);
 
         /// <summary>
         /// 发布后网站根地址
         /// </summary>
-        public string PublishRootUrl { get; set; }
+        public List<string> PublishRootUrl { get; set; }
 
         /// <summary>
         /// 本地调试根地址
         /// </summary>
-        public string LocalRootUrl { get; set; }
+        public List<string> LocalRootUrl { get; set; }
 
         /// <summary>
         /// 运行模式

@@ -25,16 +25,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.36" />
-    <PackageReference Include="Microservice.Library.File" Version="0.0.0.1-alpha-g1589df8f41" />
-    <PackageReference Include="Microservice.Library.NLogger" Version="0.0.0.1-alpha-g1589df8f41" />
-    <PackageReference Include="Microservice.Library.OfficeDocuments" Version="0.0.0.1-alpha-g1589df8f41" />
-    <PackageReference Include="Microservice.Library.SelectOption" Version="0.0.0.1-alpha-g1589df8f41" />
+    <PackageReference Include="GSS.Authentication.CAS.AspNetCore" Version="5.0.0" />
+    <PackageReference Include="GSS.Authentication.CAS.DistributedCache" Version="5.0.0" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.37" />
+    <PackageReference Include="Microservice.Library.File" Version="0.0.0.2-alpha-g8154ebcb77" />
+    <PackageReference Include="Microservice.Library.NLogger" Version="0.0.0.2-alpha-g8154ebcb77" />
+    <PackageReference Include="Microservice.Library.OfficeDocuments" Version="0.0.0.2-alpha-g8154ebcb77" />
+    <PackageReference Include="Microservice.Library.SelectOption" Version="0.0.0.2-alpha-g8154ebcb77" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.1.0" />
     <PackageReference Include="NewId" Version="3.0.3" />
-    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.10" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.13" />
   </ItemGroup>
 
 </Project>

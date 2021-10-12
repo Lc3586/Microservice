@@ -55,7 +55,8 @@ namespace Api.Configures
                 options.LoginPath = new PathString("/cas/login");
                 options.AccessDeniedPath = new PathString("/cas/access-denied");
                 options.LogoutPath = new PathString("/cas/logout");
-                options.Cookie.SameSite = SameSiteMode.None;
+                options.Cookie.SameSite = SameSiteMode.Strict;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
 
                 options.SessionStore = AutofacHelper.GetScopeService<ITicketStore>();
                 options.Events = new CookieAuthenticationEvents
@@ -66,7 +67,7 @@ namespace Api.Configures
                             || (context.Request.Path.Value.Equals("/cas/authorize", StringComparison.OrdinalIgnoreCase)
                                 && context.Request.Method.Equals(System.Net.Http.HttpMethod.Get.Method, StringComparison.OrdinalIgnoreCase)))
                         {
-                            context.Response.Redirect($"{options.LoginPath}?returnUrl={context.Request.Path.Value}{context.Request.QueryString}");
+                            context.Response.Redirect($"{config.WebRootUrlMatchScheme(context.Request.Scheme)}{options.LoginPath}?returnUrl={context.Request.Path.Value}{context.Request.QueryString}");
                             return Task.CompletedTask;
                         }
                         else
@@ -75,6 +76,7 @@ namespace Api.Configures
                             Console.WriteLine("输出未登录提示.");
 #endif
                             context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                            context.Response.ContentType = "text/plain;charset=UTF-8";
                             context.Response.WriteAsync("未登录");
                             return context.Response.CompleteAsync();
                         }
@@ -100,7 +102,7 @@ namespace Api.Configures
                             casUrl.Scheme,
                             new HostString(casUrl.Host, casUrl.Port),
                             casUrl.LocalPath, "/logout",
-                            QueryString.Create("service", config.WebRootUrl));
+                            QueryString.Create("service", config.WebRootUrlMatchScheme(context.Request.Scheme)));
 
                         var logoutRedirectContext = new RedirectContext<CookieAuthenticationOptions>(
                             context.HttpContext,
@@ -119,6 +121,8 @@ namespace Api.Configures
             {
                 options.CasServerUrlBase = config.CAS.BaseUrl;
                 options.AccessDeniedPath = new PathString("/cas/access-denied");
+                options.CorrelationCookie.SameSite = SameSiteMode.Strict;
+                options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
                 // required for CasSingleSignOutMiddleware
                 options.SaveTokens = true;
                 var protocolVersion = config.CAS.ProtocolVersion;
@@ -167,7 +171,7 @@ namespace Api.Configures
 
                         logger.Error(failure, failure.Message);
 
-                        context.Response.Redirect("/cas/ExternalLoginFailure");
+                        context.Response.Redirect($"{config.WebRootUrlMatchScheme(context.Request.Scheme)}/cas/ExternalLoginFailure");
                         context.HandleResponse();
 
                         return Task.CompletedTask;
@@ -192,7 +196,11 @@ namespace Api.Configures
 
             //启用单点注销
             if (config.CAS.EnableSingleSignOut)
-                app.UseMiddleware<Middleware.CasSingleSignOutMiddleware>();
+                app.UseMiddleware<CasSingleSignOutMiddleware>();
+
+            app.UseMiddleware<ChangeCookieSameSiteMiddleware>();
+            ChangeCookieSameSiteMiddleware.Paths.Add(new PathString("/cas/login"));
+            ChangeCookieSameSiteMiddleware.Paths.Add(new PathString("/signin-cas"));
 
             app.UseAuthentication();
             app.UseAuthorization();

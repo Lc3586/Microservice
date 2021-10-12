@@ -2390,6 +2390,13 @@
             网站根地址
             </summary>
         </member>
+        <member name="M:Model.Utils.Config.SystemConfig.WebRootUrlMatchScheme(System.String,System.Boolean)">
+            <summary>
+            网站根地址
+            </summary>
+            <param name="scheme">框架http/https</param>
+            <param name="contrary">false 返回匹配的数据,true 返回不匹配的数据</param>
+        </member>
         <member name="P:Model.Utils.Config.SystemConfig.PublishRootUrl">
             <summary>
             发布后网站根地址

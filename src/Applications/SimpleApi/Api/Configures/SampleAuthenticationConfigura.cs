@@ -1,4 +1,5 @@
-﻿using Business.Utils.Authorization;
+﻿using Api.Middleware;
+using Business.Utils.Authorization;
 using Microservice.Library.ConsoleTool;
 using Microservice.Library.Container;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -55,6 +56,7 @@ namespace Api.Configures
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
 
                 options.Cookie.SameSite = SameSiteMode.Strict;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
 
                 options.LoginPath = new PathString("/sa/login");
                 options.LogoutPath = new PathString("/sa/logout");
@@ -98,6 +100,9 @@ namespace Api.Configures
         public static IApplicationBuilder ConfiguraSampleAuthentication(this IApplicationBuilder app, SystemConfig config)
         {
             "配置简易身份认证服务.".ConsoleWrite();
+
+            app.UseMiddleware<ChangeCookieSameSiteMiddleware>();
+            ChangeCookieSameSiteMiddleware.Paths.Add(new PathString("/sa/login"));
 
             app.UseCookiePolicy();
             app.UseAuthentication();

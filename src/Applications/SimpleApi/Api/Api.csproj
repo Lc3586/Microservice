@@ -145,18 +145,12 @@
     <Content Remove="wwwroot\plug-in\naiveupload\Model\AppendFileResultStatus.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\ChunkFile.js" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\ChunkFile.js.map" />
-    <Content Remove="wwwroot\plug-in\naiveupload\Model\FileInfo - 复制.js" />
-    <Content Remove="wwwroot\plug-in\naiveupload\Model\FileInfo - 复制.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\FileInfo.js" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\FileInfo.js.map" />
-    <Content Remove="wwwroot\plug-in\naiveupload\Model\FIleType - 复制.js" />
-    <Content Remove="wwwroot\plug-in\naiveupload\Model\FIleType - 复制.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\FIleType.js" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\FIleType.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\HubState.js" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\HubState.js.map" />
-    <Content Remove="wwwroot\plug-in\naiveupload\Model\LibraryInfo - 复制.js" />
-    <Content Remove="wwwroot\plug-in\naiveupload\Model\LibraryInfo - 复制.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\MultipleUploadSetting.js" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\MultipleUploadSetting.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\PreUploadChunkFileResponse.js" />
@@ -181,8 +175,6 @@
     <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadConfigTreeList.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadProgress.js" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadProgress.js.map" />
-    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadTheme - 复制.js" />
-    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadTheme - 复制.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadTheme.js" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadTheme.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerCancelMessage.js" />
@@ -531,13 +523,6 @@
     <None Include="wwwroot\plug-in\naiveupload\Model\ChunkFile.js.map">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="wwwroot\plug-in\naiveupload\Model\LibraryInfo - 复制.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <DependentUpon>LibraryInfo.js</DependentUpon>
-    </None>
-    <None Include="wwwroot\plug-in\naiveupload\Model\LibraryInfo - 复制.js.map">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="wwwroot\plug-in\naiveupload\Model\LibraryInfo.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -808,27 +793,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="GSS.Authentication.CAS.AspNetCore" Version="5.0.0" />
-    <PackageReference Include="GSS.Authentication.CAS.DistributedCache" Version="5.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="5.0.1" />
-    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.3.5">
+    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.4.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.11.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.5" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.1.5" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.2.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="wwwroot\plug-in\naiveupload\Model\UploadConfigTreeList - 复制.js">
-      <DependentUpon>UploadConfigTreeList.js</DependentUpon>
-    </Content>
-    <Content Update="wwwroot\plug-in\naiveupload\Model\UploadConfigTreeList - 复制.js.map">
-      <DependentUpon>UploadConfigTreeList.js.map</DependentUpon>
-    </Content>
     <Content Update="wwwroot\utils\dayjs\dayjs.zh-cn.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -858,24 +835,6 @@
     </Content>
     <Content Update="wwwroot\plug-in\cagc\cagc.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="wwwroot\plug-in\naiveupload\Model\UploadWorkerMessagePostFile - 复制 - 复制.js">
-      <DependentUpon>UploadWorkerMessagePostFile - 复制.js</DependentUpon>
-    </Content>
-    <Content Update="wwwroot\plug-in\naiveupload\Model\UploadWorkerMessagePostFile - 复制 - 复制.js.map">
-      <DependentUpon>UploadWorkerMessagePostFile - 复制.js.map</DependentUpon>
-    </Content>
-    <Content Update="wwwroot\plug-in\naiveupload\Model\UploadWorkerMessagePostFile - 复制%282%29.js">
-      <DependentUpon>UploadWorkerFileMessage.js</DependentUpon>
-    </Content>
-    <Content Update="wwwroot\plug-in\naiveupload\Model\UploadWorkerMessagePostFile - 复制%282%29.js.map">
-      <DependentUpon>UploadWorkerFileMessage.js.map</DependentUpon>
-    </Content>
-    <Content Update="wwwroot\plug-in\naiveupload\Model\UploadWorkerMessagePostFile - 复制.js">
-      <DependentUpon>UploadWorkerFileMessage.js</DependentUpon>
-    </Content>
-    <Content Update="wwwroot\plug-in\naiveupload\Model\UploadWorkerMessagePostFile - 复制.js.map">
-      <DependentUpon>UploadWorkerFileMessage.js.map</DependentUpon>
     </Content>
     <Content Update="wwwroot\plug-in\wechat\confirm.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -242,6 +242,12 @@
             处理转发
             </summary>
         </member>
+        <member name="T:Business.Handler.ProxyCasAuthenticationHandler`1">
+            <summary>
+            代理服务器CAS验证处理类
+            </summary>
+            <typeparam name="TOptions"></typeparam>
+        </member>
         <member name="T:Business.Hub.CAGCHub">
             <summary>
             代码自动生成信息推送

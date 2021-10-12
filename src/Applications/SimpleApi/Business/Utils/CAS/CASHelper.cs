@@ -2,6 +2,7 @@
 using Microservice.Library.Container;
 using Microservice.Library.Extension;
 using Microservice.Library.Http;
+using Microsoft.AspNetCore.Http;
 using Model.Utils.CAS.CASDTO;
 using Model.Utils.Config;
 using Model.Utils.Result;
@@ -29,6 +30,18 @@ namespace Business.Utils.CAS
         }
 
         static SystemConfig _Config;
+
+        static IHttpContextAccessor HttpContextAccessor
+        {
+            get
+            {
+                if (_HttpContextAccessor == null)
+                    _HttpContextAccessor = AutofacHelper.GetService<IHttpContextAccessor>();
+                return _HttpContextAccessor;
+            }
+        }
+
+        static IHttpContextAccessor _HttpContextAccessor;
 
         /// <summary>
         /// 获取TGT
@@ -65,7 +78,7 @@ namespace Business.Utils.CAS
         /// <returns></returns>
         public static async Task<string> GetST(GetST getST)
         {
-            (HttpStatusCode, string) response = HttpHelper.PostDataWithState(string.Format(Config.CAS.STUrl + "?service={1}", getST.TGT, getST.Service ?? Config.WebRootUrl));
+            (HttpStatusCode, string) response = HttpHelper.PostDataWithState(string.Format(Config.CAS.STUrl + "?service={1}", getST.TGT, getST.Service ?? Config.WebRootUrlMatchScheme(HttpContextAccessor.HttpContext.Request.Scheme)));
             if (response.Item1 != HttpStatusCode.OK)
                 throw new MessageException(response.Item2);
             return await Task.FromResult(response.Item2);
@@ -78,7 +91,7 @@ namespace Business.Utils.CAS
         /// <returns></returns>
         public static async Task<UserInfo> GetUserInfo(GetUserInfo getUserInfo)
         {
-            (HttpStatusCode, string) response = HttpHelper.GetDataWithState(Config.CAS.UserInfoUrl, new Dictionary<string, object>() { { "service", getUserInfo.Service ?? Config.WebRootUrl }, { "ticket", getUserInfo.ST } });
+            (HttpStatusCode, string) response = HttpHelper.GetDataWithState(Config.CAS.UserInfoUrl, new Dictionary<string, object>() { { "service", getUserInfo.Service ?? Config.WebRootUrlMatchScheme(HttpContextAccessor.HttpContext.Request.Scheme) }, { "ticket", getUserInfo.ST } });
             if (response.Item1 != HttpStatusCode.OK)
                 throw new MessageException("验证失败", ErrorCode.validation);
             if (!GetUserInfo(response.Item2, out UserInfo userInfo))

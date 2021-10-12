@@ -2405,6 +2405,14 @@
             <param name="returnUrl">登录后重定向地址</param>
             <returns></returns>
         </member>
+        <member name="M:Api.Controllers.Utils.CASController.PreSigninCas(System.String,System.String)">
+            <summary>
+            预登录，在页面上进行跳转，防止丢失CSRF的cookie
+            </summary>
+            <param name="ticket">票据</param>
+            <param name="state">数据</param>
+            <returns></returns>
+        </member>
         <member name="M:Api.Controllers.Utils.CASController.LogOut(System.String,System.Boolean)">
             <summary>
             注销
@@ -2939,6 +2947,11 @@
         <member name="T:Api.Middleware.CasSingleSignOutMiddleware">
             <summary>
             CAS单点注销中间件
+            </summary>
+        </member>
+        <member name="T:Api.Middleware.ChangeCookieSameSiteMiddleware">
+            <summary>
+            Cookie同源政策自动更改中间件
             </summary>
         </member>
         <member name="T:Api.Middleware.CorsMiddleware">

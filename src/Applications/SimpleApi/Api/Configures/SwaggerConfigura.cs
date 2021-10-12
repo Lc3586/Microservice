@@ -165,12 +165,12 @@ namespace Api.Configures
                 {
                     swagger.Servers = new List<OpenApiServer> {
                         new OpenApiServer {
-                            Url = $"{httpReq.Scheme}://{httpReq.Host.Value}",
+                            Url =config.WebRootUrlMatchScheme(httpReq.Scheme),
                             Description = "当前地址"
                         },
                         new OpenApiServer {
-                            Url = config.PublishRootUrl,
-                            Description = "服务器地址"
+                            Url = config.WebRootUrlMatchScheme(httpReq.Scheme,true),
+                            Description = "其他地址"
                         }
                     };
                 });
