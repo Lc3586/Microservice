@@ -978,9 +978,7 @@
   </ItemGroup>
 
   <ProjectExtensions>
-    <VisualStudio>
-      <UserProperties jsonconfig_4database_1json__JsonSchema="https://json.schemastore.org/appsettings" jsonconfig_4swagger_1json__JsonSchema="https://json.schemastore.org/appsettings" jsonconfig_4wechatservice_1json__JsonSchema="https://json.schemastore.org/appsettings" />
-    </VisualStudio>
+    <VisualStudio><UserProperties jsonconfig_4database_1json__JsonSchema="https://json.schemastore.org/appsettings" jsonconfig_4swagger_1json__JsonSchema="https://json.schemastore.org/appsettings" jsonconfig_4wechatservice_1json__JsonSchema="https://json.schemastore.org/appsettings" properties_4launchsettings_1json__JsonSchema="" /></VisualStudio>
   </ProjectExtensions>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">

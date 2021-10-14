@@ -19,7 +19,7 @@ namespace Api.Middleware
 
         private readonly RequestDelegate _next;
 
-        public ChangeCookieSameSiteMiddleware(RequestDelegate next, ITicketStore store)
+        public ChangeCookieSameSiteMiddleware(RequestDelegate next)
         {
             _next = next;
         }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Model.Utils.Config;
 using Model.Utils.Log;
+using MySqlConnector;
 
 namespace Api.Configures
 {

@@ -29,15 +29,15 @@
 
   <ItemGroup>
     <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="3.1.0" />
-    <PackageReference Include="Microservice.Library.Cache" Version="0.0.0.2-alpha-g8154ebcb77" />
-    <PackageReference Include="Microservice.Library.Configuration" Version="0.0.0.2-alpha-g8154ebcb77" />
-    <PackageReference Include="Microservice.Library.ConsoleTool" Version="0.0.0.2-alpha-g8154ebcb77" />
-    <PackageReference Include="Microservice.Library.File" Version="0.0.0.2-alpha-g8154ebcb77" />
-    <PackageReference Include="Microservice.Library.FreeSql" Version="0.0.0.2-alpha-g8154ebcb77" />
-    <PackageReference Include="Microservice.Library.Http" Version="0.0.0.2-alpha-g8154ebcb77" />
-    <PackageReference Include="Microservice.Library.NLogger" Version="0.0.0.2-alpha-g8154ebcb77" />
-    <PackageReference Include="Microservice.Library.OfficeDocuments" Version="0.0.0.2-alpha-g8154ebcb77" />
-    <PackageReference Include="Microservice.Library.OpenApi" Version="0.0.0.2-alpha-g8154ebcb77" />
+    <PackageReference Include="Microservice.Library.Cache" Version="0.0.0.4-alpha-g8edfe947e5" />
+    <PackageReference Include="Microservice.Library.Configuration" Version="0.0.0.4-alpha-g8edfe947e5" />
+    <PackageReference Include="Microservice.Library.ConsoleTool" Version="0.0.0.4-alpha-g8edfe947e5" />
+    <PackageReference Include="Microservice.Library.File" Version="0.0.0.4-alpha-g8edfe947e5" />
+    <PackageReference Include="Microservice.Library.FreeSql" Version="0.0.0.4-alpha-g8edfe947e5" />
+    <PackageReference Include="Microservice.Library.Http" Version="0.0.0.4-alpha-g8edfe947e5" />
+    <PackageReference Include="Microservice.Library.NLogger" Version="0.0.0.4-alpha-g8edfe947e5" />
+    <PackageReference Include="Microservice.Library.OfficeDocuments" Version="0.0.0.4-alpha-g8edfe947e5" />
+    <PackageReference Include="Microservice.Library.OpenApi" Version="0.0.0.4-alpha-g8edfe947e5" />
     <PackageReference Include="System.CodeDom" Version="5.0.0" />
     <PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
   </ItemGroup>

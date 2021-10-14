@@ -14,10 +14,10 @@
 
   <ItemGroup>
     <PackageReference Include="Confluent.Kafka" Version="1.7.0" />
-    <PackageReference Include="Microservice.Library.Cache" Version="0.0.0.2-alpha-g8154ebcb77" />
-    <PackageReference Include="Microservice.Library.Configuration" Version="0.0.0.2-alpha-g8154ebcb77" />
-    <PackageReference Include="Microservice.Library.DataMapping" Version="0.0.0.2-alpha-g8154ebcb77" />
-    <PackageReference Include="Microservice.Library.WeChat" Version="0.0.0.2-alpha-g8154ebcb77" />
+    <PackageReference Include="Microservice.Library.Cache" Version="0.0.0.4-alpha-g8edfe947e5" />
+    <PackageReference Include="Microservice.Library.Configuration" Version="0.0.0.4-alpha-g8edfe947e5" />
+    <PackageReference Include="Microservice.Library.DataMapping" Version="0.0.0.4-alpha-g8edfe947e5" />
+    <PackageReference Include="Microservice.Library.WeChat" Version="0.0.0.4-alpha-g8edfe947e5" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.5" />
   </ItemGroup>
 

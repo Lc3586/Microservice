@@ -18,10 +18,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microservice.Library.Elasticsearch" Version="0.0.0.2-alpha-g8154ebcb77" />
-    <PackageReference Include="Microservice.Library.FreeSql" Version="0.0.0.2-alpha-g8154ebcb77" />
-    <PackageReference Include="Microservice.Library.OpenApi" Version="0.0.0.2-alpha-g8154ebcb77" />
-    <PackageReference Include="Microservice.Library.Soap" Version="0.0.0.2-alpha-g8154ebcb77" />
+    <PackageReference Include="FreeSql.Provider.MySqlConnector" Version="2.6.100" />
+    <PackageReference Include="Microservice.Library.Elasticsearch" Version="0.0.0.4-alpha-g8edfe947e5" />
+    <PackageReference Include="Microservice.Library.FreeSql" Version="0.0.0.4-alpha-g8edfe947e5" />
+    <PackageReference Include="Microservice.Library.OpenApi" Version="0.0.0.4-alpha-g8edfe947e5" />
+    <PackageReference Include="Microservice.Library.Soap" Version="0.0.0.4-alpha-g8edfe947e5" />
   </ItemGroup>
 
   <ItemGroup>
