@@ -475,6 +475,24 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:Api.Controllers.FileController.GetFileTypes">
+            <summary>
+            获取所有文件类型
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.FileController.GetStorageTypes">
+            <summary>
+            获取所有文件存储类型
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.FileController.GetFileStates">
+            <summary>
+            获取所有文件状态
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:Api.Controllers.Common.FileUploadConfigController">
             <summary>
             文件上传配置接口

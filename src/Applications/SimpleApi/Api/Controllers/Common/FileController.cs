@@ -58,7 +58,7 @@ namespace Api.Controllers
         /// </summary>
         /// <param name="id">Id</param>
         /// <returns></returns>
-        [HttpPost("detail-data/{id}")]
+        [HttpGet("detail-data/{id}")]
         [Consumes("application/json", "application/x-www-form-urlencoded")]
         [Produces("application/json")]
         [SwaggerResponse((int)HttpStatusCode.OK, "详情数据", typeof(FileInfo))]
@@ -227,6 +227,36 @@ namespace Api.Controllers
         public async Task<object> GetLibraryInfo()
         {
             return await Task.FromResult(ResponseDataFactory.Success(FileBusiness.GetLibraryInfo()));
+        }
+
+        /// <summary>
+        /// 获取所有文件类型
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("filetypes")]
+        public async Task<object> GetFileTypes()
+        {
+            return await Task.FromResult(Success(FileBusiness.GetFileTypes()));
+        }
+
+        /// <summary>
+        /// 获取所有文件存储类型
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("storagetypes")]
+        public async Task<object> GetStorageTypes()
+        {
+            return await Task.FromResult(Success(FileBusiness.GetStorageTypes()));
+        }
+
+        /// <summary>
+        /// 获取所有文件状态
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("filestates")]
+        public async Task<object> GetFileStates()
+        {
+            return await Task.FromResult(Success(FileBusiness.GetFileStates()));
         }
 
         #endregion

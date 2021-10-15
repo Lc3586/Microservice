@@ -429,14 +429,15 @@
                                 <div v-for="(folder, index) in library.folders"
                                      :class="GetFolderCLass(folder)"
                                      @mouseenter="folder.Hover=true"
-                                     @mouseleave="folder.Hover=false">
+                                     @mouseleave="folder.Hover=false"
+                                     title="点击查看文件列表"
+                                     @click="folderFileList(folder)">
                                     <div class="cube">
                                         <div :class="'plane front ' + folder.Class">
                                         </div>
                                         <div class="plane right">
-                                            <el-descriptions title="库信息"
+                                            <el-descriptions :title="folder.FileType"
                                                              :column="1">
-                                                <el-descriptions-item label="文件类型">{{folder.FileType}}</el-descriptions-item>
                                                 <el-descriptions-item label="文件总数">{{folder.Total}}</el-descriptions-item>
                                                 <el-descriptions-item label="占用存储空间">{{folder.Size}}</el-descriptions-item>
                                                 <el-descriptions-item label="总字节数">{{folder.Bytes}}</el-descriptions-item>
@@ -447,83 +448,141 @@
                             </div>
                         </div>
                         <div class="file-list">
-                            <el-col :span="6">
-                                <el-checkbox :indeterminate="library.isFileTypeIndeterminate" v-model="library.checkAllFileTypes" @change="libraryAllFileTypes">所有文件类型</el-checkbox>
-                                <div style="margin: 15px 0;"></div>
-                                <el-checkbox-group v-model="logDB.levels" @change="dbLevelChange">
-                                    <el-checkbox v-for="level in logConfig.levels" :label="level" :key="level">{{level}}</el-checkbox>
-                                </el-checkbox-group>
-                            </el-col>
-                            <el-col :span="6">
-                                <el-checkbox :indeterminate="logDB.isTypeIndeterminate" v-model="logDB.checkAllTypes" @change="dbAllType">所有日志类型</el-checkbox>
-                                <div style="margin: 15px 0;"></div>
-                                <el-checkbox-group v-model="logDB.types" @change="dbTypeChange">
-                                    <el-checkbox v-for="type in logConfig.types" :label="type" :key="type">{{type}}</el-checkbox>
-                                </el-checkbox-group>
-                            </el-col>
-                            <el-col :span="5" :offset="1">
-                                <el-date-picker v-model="logDB.date"
-                                                type="datetimerange"
-                                                unlink-panels
-                                                range-separator="至"
-                                                start-placeholder="开始日期"
-                                                end-placeholder="结束日期"
-                                                format="YYYY-MM-DD"
-                                                :shortcuts="dataRangShortcuts">
-                                </el-date-picker>
-                            </el-col>
-                            <el-col :span="3" :offset="1">
-                                <el-input v-model="logDB.content"
-                                          prefix-icon="el-icon-search"
-                                          placeholder="输入日志内容搜索" />
-                            </el-col>
+                            <el-row :gutter="20">
+                                <el-col :span="8">
+                                    <el-checkbox :indeterminate="library.file.isFileTypeIndeterminate" v-model="library.file.checkAllFileType" @change="allFileType">所有文件类型</el-checkbox>
+                                    <div style="margin: 15px 0;"></div>
+                                    <el-checkbox-group v-model="library.file.fileTypes" @change="fileTypeChange">
+                                        <el-checkbox v-for="fileType in config.fileTypes" :label="fileType" :key="fileType">{{fileType}}</el-checkbox>
+                                    </el-checkbox-group>
+                                </el-col>
+                                <el-col :span="8">
+                                    <el-checkbox :indeterminate="library.file.isStorageTypeIndeterminate" v-model="library.file.checkAllStorageType" @change="allStorageType">所有存储类型</el-checkbox>
+                                    <div style="margin: 15px 0;"></div>
+                                    <el-checkbox-group v-model="library.file.storageTypes" @change="storageTypeChange">
+                                        <el-checkbox v-for="storageType in config.storageTypes" :label="storageType" :key="storageType">{{storageType}}</el-checkbox>
+                                    </el-checkbox-group>
+                                </el-col>
+                                <el-col :span="8">
+                                    <el-checkbox :indeterminate="library.file.isFileStateIndeterminate" v-model="library.file.checkAllFileState" @change="allFileState">所有文件状态</el-checkbox>
+                                    <div style="margin: 15px 0;"></div>
+                                    <el-checkbox-group v-model="library.file.fileStates" @change="fileStateChange">
+                                        <el-checkbox v-for="fileState in config.fileStates" :label="fileState" :key="fileState">{{fileState}}</el-checkbox>
+                                    </el-checkbox-group>
+                                </el-col>
+                            </el-row>
+                            <el-row :gutter="20">
+                                <el-col :span="10">
+                                    <el-date-picker v-model="library.file.date"
+                                                    type="datetimerange"
+                                                    unlink-panels
+                                                    range-separator="至"
+                                                    start-placeholder="开始日期"
+                                                    end-placeholder="结束日期"
+                                                    format="YYYY-MM-DD"
+                                                    :shortcuts="library.file.dataRangShortcuts">
+                                    </el-date-picker>
+                                </el-col>
+                                <el-col :span="5">
+                                    <el-input v-model="library.file.name"
+                                              prefix-icon="el-icon-search"
+                                              placeholder="输入名称搜索" />
+                                </el-col>
+                                <el-col :span="3">
+                                    <el-input v-model="library.file.extension"
+                                              prefix-icon="el-icon-search"
+                                              placeholder="输入扩展名搜索" />
+                                </el-col>
+                            </el-row>
+                            <el-row :gutter="20">
+                                <el-col :span="8">
+                                    <el-input v-model="library.file.contentType"
+                                              prefix-icon="el-icon-search"
+                                              placeholder="输入内容类型搜索" />
+                                </el-col>
+                                <el-col :span="8">
+                                    <el-input v-model="library.file.md5"
+                                              prefix-icon="el-icon-search"
+                                              placeholder="输入MD5校验值搜索" />
+                                </el-col>
+                                <el-col :span="5">
+                                    <el-input v-model="library.file.serverKey"
+                                              prefix-icon="el-icon-search"
+                                              placeholder="输入服务器标识搜索" />
+                                </el-col>
                             </el-row>
                             <el-row :gutter="20">
                                 <el-col :span="24">
-                                    <el-table :data="logDB.list"
+                                    <el-table :data="library.file.list"
                                               stripe
-                                              :empty-text="logDB.error"
-                                              v-loading="logDB.loading"
-                                              @sort-change="logDBSort"
+                                              :empty-text="library.file.error"
+                                              v-loading="library.file.loading"
+                                              @sort-change="fileSort"
                                               style="width: 100%;"
-                                              :row-class-name="logDBListRowClassName">
-                                        <el-table-column label="级别"
-                                                         prop="Level"
+                                              :row-class-name="fileListRowClassName">
+                                        <el-table-column label="名称"
+                                                         prop="Name"
                                                          sortable="custom">
                                         </el-table-column>
-                                        <el-table-column label="类型"
-                                                         prop="LogType"
+                                        <el-table-column label="文件类型"
+                                                         prop="FileType"
                                                          sortable="custom">
                                         </el-table-column>
-                                        <el-table-column label="内容"
-                                                         prop="LogContent">
+                                        <el-table-column label="内容类型"
+                                                         prop="ContentType">
                                         </el-table-column>
-                                        <el-table-column label="操作者"
-                                                         prop="CreatorName">
+                                        <el-table-column label="文件扩展名"
+                                                         prop="Extension">
                                         </el-table-column>
-                                        <el-table-column label="操作时间"
+                                        <el-table-column label="MD5校验值"
+                                                         prop="MD5">
+                                        </el-table-column>
+                                        <el-table-column label="服务器标识"
+                                                         prop="ServerKey">
+                                        </el-table-column>
+                                        <el-table-column label="存储类型"
+                                                         prop="StorageType"
+                                                         sortable="custom">
+                                        </el-table-column>
+                                        <el-table-column label="文件大小"
+                                                         prop="Size"
+                                                         sortable="custom">
+                                        </el-table-column>
+                                        <el-table-column label="状态"
+                                                         prop="State"
+                                                         sortable="custom">
+                                        </el-table-column>
+                                        <el-table-column label="创建时间"
                                                          prop="CreateTime"
                                                          sortable="custom">
                                         </el-table-column>
                                         <el-table-column align="center">
                                             <template #default="scope">
                                                 <el-button size="mini"
-                                                           @click="LogDBDetail(scope.$index, scope.row)">详情</el-button>
+                                                           @click="fileDetail(scope.$index, scope.row)">详情</el-button>
+                                                <el-button size="mini"
+                                                           @click="previewFile(scope.$index, scope.row)">预览</el-button>
+                                                <el-button size="mini"
+                                                           @click="browseFile(scope.$index, scope.row)">浏览</el-button>
+                                                <el-button size="mini"
+                                                           @click="downloadFile(scope.$index, scope.row)">下载</el-button>
+                                                <el-button size="mini"
+                                                           @click="deleteFile(scope.$index, scope.row)">删除</el-button>
                                             </template>
                                         </el-table-column>
                                     </el-table>
                                 </el-col>
                             </el-row>
-                            <el-row :gutter="20">
+                            <el-row :gutter="20" v-if="library.file.list.length > 0">
                                 <el-col :span="24">
-                                    <el-pagination @size-change="logDBListSizeChange"
-                                                   @current-change="logDBListCurrentChange"
-                                                   :current-page="logDB.currentPage"
-                                                   :page-sizes="pageConfig.sizes"
-                                                   :page-size="logDB.pageSize"
+                                    <el-pagination @size-change="fileListSizeChange"
+                                                   @current-change="fileListCurrentChange"
+                                                   :current-page="library.file.currentPage"
+                                                   :page-sizes="config.page.sizes"
+                                                   :page-size="library.file.pageSize"
                                                    layout="total, sizes, prev, pager, next, jumper"
-                                                   :hide-on-single-page="logDB.hidePagination"
-                                                   :total="logDB.total">
+                                                   :hide-on-single-page="library.file.pageTotal === 1"
+                                                   :total="library.file.total">
                                     </el-pagination>
                                 </el-col>
                             </el-row>
@@ -552,6 +611,124 @@
             <template #footer>
                 <span class="dialog-footer">
                     <el-button type="primary" @click="SALogin">登录</el-button>
+                </span>
+            </template>
+        </el-dialog>
+
+        <!--文件详情-->
+        <el-dialog title="文件详情"
+                   v-model="library.file.detail.show">
+            <el-skeleton :loading="library.file.detail.loading"
+                         animated
+                         :throttle="500">
+                <template #template>
+                    <el-row :gutter="20">
+                        <el-col :span="10">
+                            <el-skeleton-item variant="text" />
+                        </el-col>
+                        <el-col :span="8">
+                            <el-skeleton-item variant="text" />
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+                        <el-col :span="10">
+                            <el-skeleton-item variant="text" />
+                        </el-col>
+                        <el-col :span="8">
+                            <el-skeleton-item variant="text" />
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+                        <el-col :span="20">
+                            <el-skeleton-item variant="text" />
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+                        <el-col :span="20">
+                            <el-skeleton-item variant="text" />
+                        </el-col>
+                    </el-row>
+                </template>
+                <template #default>
+                    <el-row :gutter="20">
+                        <el-col :span="2">
+                            <h3>名称</h3>
+                        </el-col>
+                        <el-col :span="10">
+                            <span>{{library.file.detail.Name}}</span>
+                        </el-col>
+                        <el-col :span="4">
+                            <h3>文件类型</h3>
+                        </el-col>
+                        <el-col :span="8">
+                            <span>{{library.file.detail.FileType}}</span>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+                        <el-col :span="2">
+                            <h3>内容类型</h3>
+                        </el-col>
+                        <el-col :span="10">
+                            <span>{{library.file.detail.ContentType}}</span>
+                        </el-col>
+                        <el-col :span="4">
+                            <h3>文件扩展名</h3>
+                        </el-col>
+                        <el-col :span="8">
+                            <span>{{library.file.detail.Extension}}</span>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+                        <el-col :span="2">
+                            <h3>MD5校验值</h3>
+                        </el-col>
+                        <el-col :span="10">
+                            <span>{{library.file.detail.MD5}}</span>
+                        </el-col>
+                        <el-col :span="4">
+                            <h3>服务器标识</h3>
+                        </el-col>
+                        <el-col :span="8">
+                            <span>{{library.file.detail.ServerKey}}</span>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+                        <el-col :span="2">
+                            <h3>存储类型</h3>
+                        </el-col>
+                        <el-col :span="10">
+                            <span>{{library.file.detail.StorageType}}</span>
+                        </el-col>
+                        <el-col :span="4">
+                            <h3>文件大小</h3>
+                        </el-col>
+                        <el-col :span="8">
+                            <span :title="`字节数：${library.file.detail.Bytes}`">{{library.file.detail.Size}}</span>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+                        <el-col :span="2">
+                            <h3>状态</h3>
+                        </el-col>
+                        <el-col :span="10">
+                            <el-tag :type="library.file.detail.StateTag">{{library.file.detail.State}}</el-tag>
+                        </el-col>
+                        <el-col :span="4">
+                            <h3>创建时间</h3>
+                        </el-col>
+                        <el-col :span="8">
+                            <span class="time">{{library.file.detail.CreateTime}}</span>
+                        </el-col>
+                    </el-row>
+                </template>
+            </el-skeleton>
+            <template #footer>
+                <span class="dialog-footer">
+                    <el-button @click="closeFileDetail">关闭</el-button>
+                    <el-button type="info" @click="previewFile">预览</el-button>
+                    <el-button type="info" @click="browseFile">浏览</el-button>
+                    <el-button type="info" @click="downloadFile">下载</el-button>
+                    <el-button type="danger" @click="deleteFile">删除</el-button>
                 </span>
             </template>
         </el-dialog>

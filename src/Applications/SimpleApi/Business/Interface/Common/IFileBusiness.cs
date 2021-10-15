@@ -121,6 +121,24 @@ namespace Business.Interface.Common
         /// <returns></returns>
         List<LibraryInfo> GetLibraryInfo();
 
+        /// <summary>
+        /// 获取所有文件类型
+        /// </summary>
+        /// <returns></returns>
+        List<string> GetFileTypes();
+
+        /// <summary>
+        /// 获取所有文件存储类型
+        /// </summary>
+        /// <returns></returns>
+        List<string> GetStorageTypes();
+
+        /// <summary>
+        /// 获取所有文件状态
+        /// </summary>
+        /// <returns></returns>
+        List<string> GetFileStates();
+
         #endregion
     }
 }

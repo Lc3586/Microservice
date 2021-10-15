@@ -914,6 +914,24 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:Business.Interface.Common.IFileBusiness.GetFileTypes">
+            <summary>
+            获取所有文件类型
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Interface.Common.IFileBusiness.GetStorageTypes">
+            <summary>
+            获取所有文件存储类型
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Interface.Common.IFileBusiness.GetFileStates">
+            <summary>
+            获取所有文件状态
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:Business.Interface.Common.IFileUploadBusiness">
             <summary>
             文件上传业务接口类

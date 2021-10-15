@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text.Encodings.Web;
@@ -419,6 +420,36 @@ namespace Business.Implementation.Common
                     return o;
                 })
                 .ToList();
+        }
+
+        public List<string> GetFileTypes()
+        {
+            var result = typeof(FileType)
+                .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+                .Where(fi => fi.IsLiteral && !fi.IsInitOnly)
+                .Select(o => o.GetValue(null).ToString())
+                .ToList();
+            return result;
+        }
+
+        public List<string> GetStorageTypes()
+        {
+            var result = typeof(StorageType)
+                .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+                .Where(fi => fi.IsLiteral && !fi.IsInitOnly)
+                .Select(o => o.GetValue(null).ToString())
+                .ToList();
+            return result;
+        }
+
+        public List<string> GetFileStates()
+        {
+            var result = typeof(FileState)
+                .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+                .Where(fi => fi.IsLiteral && !fi.IsInitOnly)
+                .Select(o => o.GetValue(null).ToString())
+                .ToList();
+            return result;
         }
 
         #endregion

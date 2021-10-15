@@ -22,10 +22,13 @@ var ApiUri = (function () {
         return "/file-upload/single-file-arraybuffer/" + configId + "?type=" + type + "&extension=" + extension + "&filename=" + filename;
     };
     ApiUri.Preview = function (id, width, height, time) {
-        return "/file/preview/" + id + "?width=" + width + "&height=" + height + "&time=" + time;
+        return "/file/preview/" + id + "?width=" + (width !== null && width !== void 0 ? width : 0) + "&height=" + (height !== null && height !== void 0 ? height : 0) + "&time=" + (time !== null && time !== void 0 ? time : '');
     };
     ApiUri.Browse = function (id) {
         return "/file/browse/" + id;
+    };
+    ApiUri.Download = function (id) {
+        return "/file/download/" + id;
     };
     ApiUri.SAAuthorized = '/sa/authorized';
     ApiUri.SALogin = '/sa/login';
@@ -43,10 +46,16 @@ var ApiUri = (function () {
     ApiUri.FileUploadConfigData = function (id) { return "/file-upload-config/data/" + id; };
     ApiUri.GetCurrentAccountCFUCTree = '/authorities/current-account-data-cfuc-tree';
     ApiUri.GetLibraryInfo = '/file/library-info';
+    ApiUri.GetFileTypes = '/file/filetypes';
+    ApiUri.GetStorageTypes = '/file/storagetypes';
+    ApiUri.GetFileStates = '/file/filestates';
+    ApiUri.GetFileList = '/file/list';
+    ApiUri.GetFileDetail = function (id) { return "/file/detail-data/" + id; };
     ApiUri.PreUploadFile = function (configId, md5, filename, section, type, extension, specs, total) {
         if (section === void 0) { section = false; }
         return "/file-upload/pre-file/" + configId + "/" + md5 + "?filename=" + filename + "&section=" + section + "&type=" + (type || '') + "&extension=" + (extension || '') + "&specs=" + (specs || '') + "&total=" + (total || '');
     };
+    ApiUri.Delete = '/file/list';
     ApiUri.CFMTHub = '/cfmthub';
     return ApiUri;
 }());

@@ -126,6 +126,8 @@
 
             const _ = (<any>window)._;
 
+            const Dayjs = (<any>window).dayjs;
+
             /**
              * 相当于vue app中的this对象
              * */
@@ -163,6 +165,15 @@
 
                     AddLoginFilter();
                     Authorized();
+
+                    getConfig();
+
+                    //延迟处理用户的输入内容
+                    Main.fileNameGetAnswer = _.debounce(getFileList, 500);
+                    Main.fileExtensionGetAnswer = _.debounce(getFileList, 500);
+                    Main.fileContentTypeGetAnswer = _.debounce(getFileList, 500);
+                    Main.fileMD5GetAnswer = _.debounce(getFileList, 500);
+                    Main.fileServerKeyGetAnswer = _.debounce(getFileList, 500);
                 },
                 methods: {
                     SALogin,
@@ -202,6 +213,25 @@
                     Clean,
 
                     GetFolderCLass,
+
+                    folderFileList,
+
+                    allFileType,
+                    fileTypeChange,
+                    allStorageType,
+                    storageTypeChange,
+                    allFileState,
+                    fileStateChange,
+                    fileSort,
+                    fileListSizeChange,
+                    fileListCurrentChange,
+                    fileListRowClassName,
+                    fileDetail: getFileDetail,
+                    closeFileDetail,
+                    previewFile,
+                    browseFile,
+                    downloadFile,
+                    deleteFile
                 },
                 watch: {
                     /**
@@ -260,13 +290,33 @@
                             this.$refs.configTree.filter(val);
                         }
                     },
+                    'library.file.date'(newValue, oldValue) {
+                        if (newValue[0] == oldValue[0] && newValue[1] == oldValue[1])
+                            return;
+                        getFileList();
+                    },
+                    'library.file.name'(newValue, oldValue) {
+                        this.fileNameGetAnswer();
+                    },
+                    'library.file.extension'(newValue, oldValue) {
+                        this.fileExtensionGetAnswer();
+                    },
+                    'library.file.contentType'(newValue, oldValue) {
+                        this.fileContentTypeGetAnswer();
+                    },
+                    'library.file.md5'(newValue, oldValue) {
+                        this.fileMD5GetAnswer();
+                    },
+                    'library.file.serverKey'(newValue, oldValue) {
+                        this.fileServerKeyGetAnswer();
+                    }
                 }
             };
 
             Upload.Init(MultipleUploadSettings).then(async () => {
                 //设置默认配置
                 try {
-                    await Upload.UpdateConfig('05FE0000-AA22-B025-2BAF-08D972A39270');
+                    await Upload.UpdateConfig('6D9A0000-F269-0025-F631-08D98FA532D4');
                 } catch (e) {
                     console.error(e);
                     ElementPlus.ElMessage(e.message);
@@ -293,7 +343,13 @@
                         password: ''
                     },
                     config: {
-                        type: 'Upload'
+                        type: 'Upload',
+                        fileTypes: [],
+                        storageTypes: [],
+                        fileStates: [],
+                        page: {
+                            sizes: [5, 10, 15, 20, 50, 100, 150, 200, 300, 400, 500]
+                        },
                     },
                     multipleUpload: {
                         settings: {
@@ -330,7 +386,66 @@
                         search: '',
                         folders: [],
                         error: '',
-                        loading: true
+                        loading: true,
+                        file: {
+                            init: false,
+                            loading: true,
+                            error: '',
+                            list: [],
+                            sorts: [],
+                            currentPage: 1,
+                            pageSize: 15,
+                            pageTotal: 0,
+                            total: 0,
+                            dataRangShortcuts: [
+                                {
+                                    text: '最近一周',
+                                    value: (() => {
+                                        const end = new Date()
+                                        const start = new Date()
+                                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+                                        return [start, end]
+                                    })(),
+                                },
+                                {
+                                    text: '最近一个月',
+                                    value: (() => {
+                                        const end = new Date()
+                                        const start = new Date()
+                                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+                                        return [start, end]
+                                    })(),
+                                },
+                                {
+                                    text: '最近三个月',
+                                    value: (() => {
+                                        const end = new Date()
+                                        const start = new Date()
+                                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+                                        return [start, end]
+                                    })(),
+                                }
+                            ],
+                            fileTypes: [],
+                            checkAllFileType: true,
+                            isFileTypeIndeterminate: false,
+                            storageTypes: [],
+                            checkAllStorageType: true,
+                            isStorageTypeIndeterminate: false,
+                            fileStates: [],
+                            checkAllFileState: true,
+                            isFileStateIndeterminate: false,
+                            date: [new Date().setTime(new Date().getTime() - 3600 * 1000 * 24 * 7), new Date()],
+                            name: '',
+                            md5: '',
+                            contentType: '',
+                            extension: '',
+                            serverKey: '',
+                            detail: {
+                                show: false,
+                                loading: false
+                            }
+                        }
                     }
                 };
             }
@@ -380,6 +495,8 @@
                 };
                 Axios.post(ApiUri.SALogin, data).then(function (response) {
                     if (response.data.Success) {
+                        window.location.reload();
+
                         Main.sa.username = '';
                         Main.sa.Password = '';
                         GetToken(data);
@@ -432,6 +549,76 @@
                     console.error(error);
                     ElementPlus.ElMessage('刷新Token时发生异常.');
                 });
+            }
+
+            /**
+             * 获取配置
+             * */
+            function getConfig() {
+                Axios.all([getFileTypes(), getStorageTypes(), getFileStates()])
+                    .then(Axios.spread((fileTypes, storageTypes, fileStates) => {
+                        Main.loading = false;
+
+                        if (fileTypes.data.Success) {
+                            Main.config.fileTypes = fileTypes.data.Data;
+
+                            Main.library.file.fileTypes = fileTypes.data.Data;
+                            Main.library.file.checkAllFileType = true;
+                            Main.library.file.isFileTypeIndeterminate = false;
+                        }
+                        else
+                            ElementPlus.ElMessage(fileTypes.data.Message);
+
+                        if (storageTypes.data.Success) {
+                            Main.config.storageTypes = storageTypes.data.Data;
+
+                            Main.library.file.storageTypes = storageTypes.data.Data;
+                            Main.library.file.checkAllStorageType = true;
+                            Main.library.file.isStorageTypeIndeterminate = false;
+                        }
+                        else
+                            ElementPlus.ElMessage(storageTypes.data.Message);
+
+                        if (fileStates.data.Success) {
+                            Main.config.fileStates = fileStates.data.Data;
+
+                            Main.library.file.fileStates = fileStates.data.Data;
+                            Main.library.file.checkAllFileState = true;
+                            Main.library.file.isFileStateIndeterminate = false;
+                        }
+                        else
+                            ElementPlus.ElMessage(fileStates.data.Message);
+
+                    }))
+                    .catch((error) => {
+                        Main.loading = false;
+                        if (!Main.sa.show)
+                            ElementPlus.ElMessage('获取配置时发生异常.');
+                    });
+            }
+
+            /**
+             * 获取所有文件类型
+             * 
+             * */
+            function getFileTypes() {
+                return Axios.get(ApiUri.GetFileTypes);
+            }
+
+            /**
+             * 获取所有文件存储类型
+             * 
+             * */
+            function getStorageTypes() {
+                return Axios.get(ApiUri.GetStorageTypes);
+            }
+
+            /**
+             * 获取所有文件状态
+             * 
+             * */
+            function getFileStates() {
+                return Axios.get(ApiUri.GetFileStates);
             }
 
             /**
@@ -993,8 +1180,376 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
                 }
             }
 
+            /**
+             * 获取页面文件夹容器类名
+             * @param folder
+             */
             function GetFolderCLass(folder) {
                 return `folder ${(folder.Hover ? ' hover' : '')}`;
+            }
+
+            /**
+             * 文件夹详情
+             * @param folder
+             */
+            function folderFileList(folder: FolderInfo) {
+                console.info(folder.FileType);
+
+                Main.library.file.pageSize = getPageSize();
+
+                getFileList();
+            }
+
+            /**
+             * 根据页面大小调整页面数据量
+             * */
+            function getPageSize() {
+                var current = window.innerHeight / 100,
+                    min,
+                    result;
+                for (var i in Main.config.page.sizes) {
+                    var size = Main.config.page.sizes[i];
+                    var abs = Math.abs(current - size);
+                    if (!min)
+                        min = abs;
+                    else if (abs <= min)
+                        min = abs;
+                    else
+                        continue;
+
+                    result = size;
+                }
+
+                return result;
+            }
+
+            /**
+             * 文件列表所有文件类型
+             * */
+            function allFileType(val) {
+                Main.library.file.fileTypes = val ? Main.config.fileTypes : [];
+                Main.library.file.isFileTypeIndeterminate = false;
+                getFileList();
+            }
+
+            /**
+             * 文件列表更改文件类型
+             * */
+            function fileTypeChange(val) {
+                getFileList();
+            }
+
+            /**
+             * 文件列表所有文件类型
+             * */
+            function allStorageType(val) {
+                Main.library.file.storageTypes = val ? Main.config.storageTypes : [];
+                Main.library.file.isStorageTypeIndeterminate = false;
+                getFileList();
+            }
+
+            /**
+             * 文件列表更改文件类型
+             * */
+            function storageTypeChange(val) {
+                getFileList();
+            }
+
+            /**
+             * 文件列表所有文件状态
+             * */
+            function allFileState(val) {
+                Main.library.file.fileStates = val ? Main.config.fileStates : [];
+                Main.library.file.isFileStateIndeterminate = false;
+                getFileList();
+            }
+
+            /**
+             * 文件列表更改文件状态
+             * */
+            function fileStateChange(val) {
+                getFileList();
+            }
+
+            /**
+             * 获取文件列表接口参数
+             * @param {any} target
+             */
+            function getFileListParams(target) {
+                var params = {
+                    PageIndex: target.currentPage,
+                    PageRows: target.pageSize,
+                    AdvancedSort: [
+                        {
+                            Field: "CreateTime",
+                            Type: "desc"
+                        }
+                    ],
+                    DynamicFilterInfo: []
+                };
+
+                if (target.sorts.length > 0)
+                    params.AdvancedSort = target.sorts;
+
+                if (target.fileTypes.length != 0 && target.fileTypes.length != Main.config.fileTypes.length)
+                    params.DynamicFilterInfo.push({
+                        Field: 'FileType',
+                        Value: target.fileTypes,
+                        Compare: 'inSet'
+                    });
+
+                if (target.storageTypes.length != 0 && target.storageTypes.length != Main.config.storageTypes.length)
+                    params.DynamicFilterInfo.push({
+                        Field: 'StorageType',
+                        Value: target.storageTypes,
+                        Compare: 'inSet'
+                    });
+
+                if (target.name && Main.library.file.name.length > 0)
+                    params.DynamicFilterInfo.push({
+                        Field: 'Name',
+                        Value: target.name,
+                        Compare: 'in'
+                    });
+
+                if (target.md5 && Main.library.file.md5.length > 0)
+                    params.DynamicFilterInfo.push({
+                        Field: 'MD5',
+                        Value: target.md5,
+                        Compare: 'in'
+                    });
+
+                if (target.contentType && Main.library.file.contentType.length > 0)
+                    params.DynamicFilterInfo.push({
+                        Field: 'ContentType',
+                        Value: target.contentType,
+                        Compare: 'in'
+                    });
+
+                if (target.extension && Main.library.file.extension.length > 0)
+                    params.DynamicFilterInfo.push({
+                        Field: 'Extension',
+                        Value: target.extension,
+                        Compare: 'in'
+                    });
+
+                if (target.serverKey && Main.library.file.serverKey.length > 0)
+                    params.DynamicFilterInfo.push({
+                        Field: 'ServerKey',
+                        Value: target.serverKey,
+                        Compare: 'in'
+                    });
+
+                if (target.date && target.date.length == 2)
+                    params.DynamicFilterInfo.push({
+                        Relation: 'and',
+                        DynamicFilterInfo: [
+                            {
+                                Field: 'CreateTime',
+                                Value: Dayjs(target.date[0]).format('YYYY-MM-DD HH:mm:ss'),
+                                Compare: 'ge'
+                            },
+                            {
+                                Field: 'CreateTime',
+                                Value: Dayjs(target.date[1]).format('YYYY-MM-DD HH:mm:ss'),
+                                Compare: 'le'
+                            }
+                        ]
+                    });
+
+                return params;
+            }
+
+            /**
+             * 获取文件库文件数据列表
+             * */
+            function getFileList() {
+                Main.library.file.loading = true;
+                Axios.post(ApiUri.GetFileList, getFileListParams(Main.library.file)).then(function (response) {
+                    if (response.data.Success) {
+                        Main.library.file.currentPage = response.data.Data.PageIndex;
+                        Main.library.file.pageSize = response.data.Data.PageSize;
+                        Main.library.file.pageTotal = response.data.Data.PageTotal;
+                        Main.library.file.total = response.data.Data.Total;
+                        Main.library.file.list = response.data.Data.List;
+                    }
+                    else {
+                        Main.library.file.error = response.data.Message;
+                        ElementPlus.ElMessage(response.data.Message);
+                    }
+                    Main.library.file.loading = false;
+                }).catch(function (error) {
+                    Main.library.file.loading = false;
+                    Main.library.file.error = error.message;
+                    ElementPlus.ElMessage('获取文件列表时发生异常.');
+                });
+                Main.library.file.init = true;
+            }
+
+            /**
+             * 文件库文件数据列表排序
+             * @param {any} val 值
+             */
+            function fileSort(val) {
+                if (val.prop == null)
+                    Main.library.file.sorts = [];
+                else if (!val.order)
+                    Main.library.file.sorts = Main.library.file.sorts.filter(data => data.field != val.prop);
+                else {
+                    for (var item in Main.library.file.sorts) {
+                        if (Main.library.file.sorts[item].field == val.prop) {
+                            Main.library.file.sorts[item].type = val.order == 'descending' ? 'desc' : 'asc';
+                            getFileList();
+                            return;
+                        }
+                    }
+                    Main.library.file.sorts.push({ field: val.prop, type: val.order == 'descending' ? 'desc' : 'asc' });
+                }
+                getFileList();
+            }
+
+            /**
+             * 更改文件库文件数据列表每页数据量
+             * @param {number} val
+             */
+            function fileListSizeChange(val) {
+                Main.library.file.pageSize = val;
+                getFileList();
+            }
+
+            /**
+             * 跳转至文件库文件数据列表指定页
+             * @param {number} val
+             */
+            function fileListCurrentChange(val) {
+                Main.library.file.currentPage = val;
+                getFileList();
+            }
+
+            /**
+             * 获取文件库文件数据指定的类名
+             * @param {any} param0
+             */
+            function fileListRowClassName({ row, rowIndex }) {
+                return '';
+
+                switch (row.Level) {
+                    case 'Trace':
+                    case 'Debug':
+                    case 'Info':
+                    default:
+                        return '';
+                    case 'Warn':
+                        return 'warning-row';
+                    case 'Error':
+                    case 'Fatal':
+                        return 'error-row';
+                }
+            }
+
+            /**
+             * 获取文件库文件数据详情
+             * @param {any} index
+             * @param {any} row
+             */
+            function getFileDetail(index, row) {
+                Main.library.file.detail.show = true;
+                Main.library.file.detail.loading = true;
+
+                Axios.get(ApiUri.GetFileDetail(row.Id))
+                    .then((response) => {
+                        if (response.data.Success) {
+                            Main.library.file.detail.StateTag = getFileStateTag(response.data.Data.State);
+                            for (var item in response.data.Data) {
+                                Main.library.file.detail[item] = response.data.Data[item];
+                            }
+                        }
+                        else {
+                            ElementPlus.ElMessage(response.data.Message);
+                        }
+                        Main.library.file.detail.loading = false;
+                    })
+                    .catch((error) => {
+                        Main.library.file.detail.loading = false;
+                        ElementPlus.ElMessage('获取文件详情时发生异常.');
+                    });
+            }
+
+            /**
+             * 获取文件状态指定的标签类型
+             * @param {any} state
+             */
+            function getFileStateTag(state) {
+                switch (state) {
+                    case '未上传':
+                        return 'info';
+                    case '上传中':
+                    case '处理中':
+                        return 'warning';
+                    case '可用':
+                    default:
+                        return 'primary';
+                    case '已删除':
+                        return 'danger';
+                }
+            }
+
+            /**
+             * 关闭文件详情
+             * */
+            function closeFileDetail() {
+                Main.library.file.detail.show = false;
+                for (var item in Main.library.file.detail) {
+                    if (item != 'show' && item != 'loding')
+                        Main.library.file.detail[item] = '';
+                }
+            }
+
+            /**
+             * 预览文件
+             * @param {any} index
+             * @param {any} data
+             */
+            function previewFile(index, data) {
+                window.open(ApiUri.Preview(data.Id));
+            }
+
+            /**
+             * 浏览文件
+             * @param {any} index
+             * @param {any} data
+             */
+            function browseFile(index, data) {
+                window.open(ApiUri.Browse(data.Id));
+            }
+
+            /**
+             * 下载文件
+             * @param {any} index
+             * @param {any} data
+             */
+            function downloadFile(index, data) {
+                window.open(ApiUri.Download(data.Id));
+            }
+
+            /**
+             * 删除文件
+             * @param {any} index
+             * @param {any} data
+             */
+            function deleteFile(index, data) {
+                Main.library.file.loading = true;
+                Axios.post(ApiUri.Delete, [data.Id]).then(function (response) {
+                    if (response.data.Success)
+                        getFileList();
+                    else {
+                        ElementPlus.ElMessage(response.data.Message);
+                        Main.library.file.loading = false;
+                    }
+                }).catch(function (error) {
+                    Main.library.file.loading = false;
+                    ElementPlus.ElMessage('删除文件时发生异常.');
+                });
             }
         });
 };

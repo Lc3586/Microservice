@@ -209,6 +209,29 @@
                 transform: rotateY(90deg) translateZ(100px);
             }
 
+.library-folders {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+    .library-folders .folder-list,
+    .library-folders .file-list {
+        position: absolute;
+    }
+
+    .library-folders.open {
+        transform-style: preserve-3d;
+        animation: froward linear .3s forwards;
+    }
+
+    .library-folders .folder-list {
+        transform: rotateY(0deg) translateZ(100px);
+    }
+
+    .library-folders .file-list {
+        transform: rotateY(90deg) translateZ(100px);
+    }
+
 @keyframes froward {
     from {
         transform: rotateY(0deg);

@@ -99,7 +99,7 @@ namespace Entity.Common
         /// <summary>
         /// 字节数
         /// </summary>
-        [OpenApiSubTag("_List")]
+        [OpenApiSubTag("_List", "Detail")]
         [Column(IsNullable = true)]
         public long? Bytes { get; set; }
 

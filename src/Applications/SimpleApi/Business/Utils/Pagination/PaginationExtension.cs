@@ -43,18 +43,18 @@ namespace Business.Utils.Pagination
 
                     string field = filter.Field;
                     if (alias != null)
-                        field = $"{alias}.\"{field}\"";
+                        field = $"{alias}.`{field}`";
                     else
-                        field = $"\"{field}\"";
+                        field = $"`{field}`";
 
                     string value = filter.Value?.ToString();
                     if (filter.ValueIsField)
                     {
 
                         if (alias != null)
-                            value = $"{alias}.\"{value}\"";
+                            value = $"{alias}.`{value}`";
                         else
-                            value = $"\"{value}\"";
+                            value = $"`{value}`";
                     }
 
                     bool skip = false;
@@ -196,9 +196,9 @@ namespace Business.Utils.Pagination
 
                         string field = item.Field;
                         if (alias != null)
-                            field = $" {alias}.\"{field}\" ";
+                            field = $" {alias}.`{field}` ";
                         else
-                            field = $" \"{field}\" ";
+                            field = $" `{field}` ";
                         string type = item.Type.ToString();
 
 
@@ -213,7 +213,7 @@ namespace Business.Utils.Pagination
                 }
                 else if (!string.IsNullOrEmpty(pagination.SortField))
                 {
-                    predicate += $" {(alias != null ? $" {alias}.\"{pagination.SortField}\" " : $" \"{pagination.SortField}\" ")} {pagination.SortType} ";
+                    predicate += $" {(alias != null ? $" {alias}.`{pagination.SortField}` " : $" `{pagination.SortField}` ")} {pagination.SortType} ";
                 }
 
                 if (!string.IsNullOrWhiteSpace(predicate))
