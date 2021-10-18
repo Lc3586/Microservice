@@ -209,26 +209,34 @@
                 transform: rotateY(90deg) translateZ(100px);
             }
 
-.library-folders {
+.library-folders-container {
+    position: relative;
+    width: 1000px;
+    height: 1000px;
+}
+
+.library-folders-cube {
     display: table-cell;
     vertical-align: middle;
 }
 
-    .library-folders .folder-list,
-    .library-folders .file-list {
-        position: absolute;
-    }
-
-    .library-folders.open {
+    .library-folders-cube.open {
         transform-style: preserve-3d;
         animation: froward linear .3s forwards;
     }
 
-    .library-folders .folder-list {
+.library-folders-plane {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+}
+
+    .library-folders-plane.library-folders {
         transform: rotateY(0deg) translateZ(100px);
     }
 
-    .library-folders .file-list {
+    .library-folders-plane.file-list {
         transform: rotateY(90deg) translateZ(100px);
     }
 

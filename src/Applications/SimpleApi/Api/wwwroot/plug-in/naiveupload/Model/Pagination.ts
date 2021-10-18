@@ -4,35 +4,37 @@
 class Pagination {
     /**
      * 当前页码
+     * 默认 1
      */
-    PageIndex: number;
+    PageIndex: number = 1;
 
     /**
      * 每页数据量
+     * 默认 15
      */
-    PageRows: number;
+    PageRows: number = 15;
 
     /**
      * 排序列
-     * 默认值 Id
+     * 默认 Id
      */
     SortField: string = 'Id';
 
     /**
      * 排序类型
-     * 默认值 desc
+     * 默认 desc
      */
     SortType: SortType = SortType.倒序;
 
     /**
      * 高级排序
      */
-    AdvancedSort: PaginationAdvancedSort[];
+    AdvancedSort: PaginationAdvancedSort[] = [];
 
     /**
      * 筛选条件
      */
-    Filter: PaginationFilter[];
+    Filter: PaginationFilter[] = [];
 
     /**
      * 别名
@@ -42,23 +44,23 @@ class Pagination {
     /**
      * 筛选条件
      */
-    DynamicFilterInfo: PaginationDynamicFilterInfo[];
+    DynamicFilterInfo: PaginationDynamicFilterInfo[] = [];
 
     /**
      * 架构
      * 默认值 defaul
      */
-    Schema: Schema;
+    Schema: Schema = Schema.默认;
 
     /**
      * 总记录数
      */
-    RecordCount: number;
+    RecordCount: number = 0;
 
     /**
      * 总页数
      */
-    PageCount: number;
+    PageCount: number = 0;
 }
 
 /**
@@ -252,34 +254,34 @@ class PaginationDynamicFilterInfo {
      * 要比较的字段
      * 注意区分大小写
      */
-    Field: string;
+    Field?: string;
 
     /**
      * 用于比较的值
      */
-    Value: any;
+    Value?: any;
 
     /**
      * Value值是用来比较的字段
      */
-    ValueIsField: boolean;
+    ValueIsField?: boolean;
 
     /**
      * 比较类型
      * 默认值 eq
      */
-    Compare: FilterCompare;
+    Compare?: FilterCompare;
 
     /**
      * 组内关系
      * 默认值 and
      */
-    Relation: FilterGroupRelation;
+    Relation?: FilterGroupRelation;
 
     /**
      * 子条件
      */
-    DynamicFilterInfo: PaginationDynamicFilterInfo[];
+    DynamicFilterInfo?: PaginationDynamicFilterInfo[];
 }
 
 /**
@@ -317,4 +319,101 @@ const enum Schema {
      * https://element-plus.org/#/zh-CN/component/pagination
      * */
     element_Vue = 'elementVue',
+}
+
+/**
+ * 分页设置返回数据
+ * ElementVue方案
+ * */
+class PaginationResult_ElementVue<T> {
+    /**
+     * 是否成功
+     */
+    Success: boolean;
+
+    /**
+     * 错误代码
+     */
+    ErrorCode: ErrorCode;
+
+    /**
+     * 消息
+     */
+    Message: string;
+
+    /**
+     * 数据
+     */
+    Data: PaginationResult_ElementVueData<T>;
+}
+
+/**
+ * 分页设置返回数据
+ * ElementVue方案
+ * */
+class PaginationResult_ElementVueData<T> {
+    /**
+     * 总页数
+     */
+    PageTotal: number;
+
+    /**
+     * 总记录数
+     */
+    Total: number;
+
+    /**
+     * 当前页面
+     */
+    PageIndex: number;
+
+    /**
+     * 页面数据量
+     */
+    PageSize: number;
+
+    /**
+     * 数据集合
+     */
+    List: T[];
+}
+
+/**
+ * 错误代码
+ * */
+const enum ErrorCode {
+    /**
+     * 无
+     * */
+    none = 0,
+
+    /**
+     * 未登录
+     * */
+    nologin,
+
+    /**
+     * 未授权
+     * */
+    unauthorized,
+
+    /**
+     * 权限不足
+     * */
+    forbidden,
+
+    /**
+     * 验证失败
+     * */
+    validation,
+
+    /**
+     * 业务错误
+     * */
+    business,
+
+    /**
+     * 系统错误
+     * */
+    error
 }

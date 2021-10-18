@@ -114,6 +114,13 @@
                     src: 'Model/Pagination.js'
                 }
             },
+            {
+                Tag: ImportFileTag.JS,
+                Attributes: {
+                    type: 'text/javascript',
+                    src: 'Model/LibraryInfo.js'
+                }
+            }
         ],
         () => {
             const Vue = (<any>window).Vue;
@@ -168,12 +175,17 @@
 
                     getConfig();
 
-                    //延迟处理用户的输入内容
-                    Main.fileNameGetAnswer = _.debounce(getFileList, 500);
-                    Main.fileExtensionGetAnswer = _.debounce(getFileList, 500);
-                    Main.fileContentTypeGetAnswer = _.debounce(getFileList, 500);
-                    Main.fileMD5GetAnswer = _.debounce(getFileList, 500);
-                    Main.fileServerKeyGetAnswer = _.debounce(getFileList, 500);
+                    //延迟响应用户的搜索条件更改事件
+                    Main.fileListFileStateGetAnswer = _.debounce(updateFileListPagination, 500);
+                    Main.fileListStorageTypeGetAnswer = _.debounce(updateFileListPagination, 500);
+                    Main.fileListFileStateGetAnswer = _.debounce(updateFileListPagination, 500);
+                    Main.fileListDataRangeGetAnswer = _.debounce(updateFileListPagination, 500);
+
+                    Main.fileListNameGetAnswer = _.debounce(updateFileListPagination, 500);
+                    Main.fileListExtensionGetAnswer = _.debounce(updateFileListPagination, 500);
+                    Main.fileListContentTypeGetAnswer = _.debounce(updateFileListPagination, 500);
+                    Main.fileListMD5GetAnswer = _.debounce(updateFileListPagination, 500);
+                    Main.fileListServerKeyGetAnswer = _.debounce(updateFileListPagination, 500);
                 },
                 methods: {
                     SALogin,
@@ -214,7 +226,7 @@
 
                     GetFolderCLass,
 
-                    folderFileList,
+                    OpenFolder,
 
                     allFileType,
                     fileTypeChange,
@@ -222,11 +234,13 @@
                     storageTypeChange,
                     allFileState,
                     fileStateChange,
+                    fileListDateRangeChange,
                     fileSort,
                     fileListSizeChange,
                     fileListCurrentChange,
                     fileListRowClassName,
-                    fileDetail: getFileDetail,
+                    fileDetail,
+                    getFileStateTag,
                     closeFileDetail,
                     previewFile,
                     browseFile,
@@ -289,26 +303,6 @@
                         handler(val) {
                             this.$refs.configTree.filter(val);
                         }
-                    },
-                    'library.file.date'(newValue, oldValue) {
-                        if (newValue[0] == oldValue[0] && newValue[1] == oldValue[1])
-                            return;
-                        getFileList();
-                    },
-                    'library.file.name'(newValue, oldValue) {
-                        this.fileNameGetAnswer();
-                    },
-                    'library.file.extension'(newValue, oldValue) {
-                        this.fileExtensionGetAnswer();
-                    },
-                    'library.file.contentType'(newValue, oldValue) {
-                        this.fileContentTypeGetAnswer();
-                    },
-                    'library.file.md5'(newValue, oldValue) {
-                        this.fileMD5GetAnswer();
-                    },
-                    'library.file.serverKey'(newValue, oldValue) {
-                        this.fileServerKeyGetAnswer();
                     }
                 }
             };
@@ -350,6 +344,35 @@
                         page: {
                             sizes: [5, 10, 15, 20, 50, 100, 150, 200, 300, 400, 500]
                         },
+                        dateRangShortcuts: [
+                            {
+                                text: '最近一周',
+                                value: (() => {
+                                    const end = new Date()
+                                    const start = new Date()
+                                    start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+                                    return [start, end]
+                                })(),
+                            },
+                            {
+                                text: '最近一个月',
+                                value: (() => {
+                                    const end = new Date()
+                                    const start = new Date()
+                                    start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+                                    return [start, end]
+                                })(),
+                            },
+                            {
+                                text: '最近三个月',
+                                value: (() => {
+                                    const end = new Date()
+                                    const start = new Date()
+                                    start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+                                    return [start, end]
+                                })(),
+                            }
+                        ]
                     },
                     multipleUpload: {
                         settings: {
@@ -387,64 +410,11 @@
                         folders: [],
                         error: '',
                         loading: true,
-                        file: {
-                            init: false,
+                        currentFolderIndex: -1,
+                        fileDetail: {
+                            show: false,
                             loading: true,
-                            error: '',
-                            list: [],
-                            sorts: [],
-                            currentPage: 1,
-                            pageSize: 15,
-                            pageTotal: 0,
-                            total: 0,
-                            dataRangShortcuts: [
-                                {
-                                    text: '最近一周',
-                                    value: (() => {
-                                        const end = new Date()
-                                        const start = new Date()
-                                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-                                        return [start, end]
-                                    })(),
-                                },
-                                {
-                                    text: '最近一个月',
-                                    value: (() => {
-                                        const end = new Date()
-                                        const start = new Date()
-                                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-                                        return [start, end]
-                                    })(),
-                                },
-                                {
-                                    text: '最近三个月',
-                                    value: (() => {
-                                        const end = new Date()
-                                        const start = new Date()
-                                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-                                        return [start, end]
-                                    })(),
-                                }
-                            ],
-                            fileTypes: [],
-                            checkAllFileType: true,
-                            isFileTypeIndeterminate: false,
-                            storageTypes: [],
-                            checkAllStorageType: true,
-                            isStorageTypeIndeterminate: false,
-                            fileStates: [],
-                            checkAllFileState: true,
-                            isFileStateIndeterminate: false,
-                            date: [new Date().setTime(new Date().getTime() - 3600 * 1000 * 24 * 7), new Date()],
-                            name: '',
-                            md5: '',
-                            contentType: '',
-                            extension: '',
-                            serverKey: '',
-                            detail: {
-                                show: false,
-                                loading: false
-                            }
+                            detail: {}
                         }
                     }
                 };
@@ -559,38 +529,24 @@
                     .then(Axios.spread((fileTypes, storageTypes, fileStates) => {
                         Main.loading = false;
 
-                        if (fileTypes.data.Success) {
+                        if (fileTypes.data.Success)
                             Main.config.fileTypes = fileTypes.data.Data;
-
-                            Main.library.file.fileTypes = fileTypes.data.Data;
-                            Main.library.file.checkAllFileType = true;
-                            Main.library.file.isFileTypeIndeterminate = false;
-                        }
                         else
                             ElementPlus.ElMessage(fileTypes.data.Message);
 
-                        if (storageTypes.data.Success) {
+                        if (storageTypes.data.Success)
                             Main.config.storageTypes = storageTypes.data.Data;
-
-                            Main.library.file.storageTypes = storageTypes.data.Data;
-                            Main.library.file.checkAllStorageType = true;
-                            Main.library.file.isStorageTypeIndeterminate = false;
-                        }
                         else
                             ElementPlus.ElMessage(storageTypes.data.Message);
 
-                        if (fileStates.data.Success) {
+                        if (fileStates.data.Success)
                             Main.config.fileStates = fileStates.data.Data;
-
-                            Main.library.file.fileStates = fileStates.data.Data;
-                            Main.library.file.checkAllFileState = true;
-                            Main.library.file.isFileStateIndeterminate = false;
-                        }
                         else
                             ElementPlus.ElMessage(fileStates.data.Message);
 
                     }))
                     .catch((error) => {
+                        console.error(error);
                         Main.loading = false;
                         if (!Main.sa.show)
                             ElementPlus.ElMessage('获取配置时发生异常.');
@@ -1023,7 +979,7 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
              * 开始
              */
             function Start() {
-                for (var i = 0; i < MultipleUploadSettings.ConcurrentFile; i++) {
+                for (let i = 0; i < MultipleUploadSettings.ConcurrentFile; i++) {
                     Upload.Upload();
                 }
             }
@@ -1131,9 +1087,23 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
                         if (response.data.Success) {
                             Main.library.folders = response.data.Data.map((item, index): FolderInfo => {
                                 let folder = item as FolderInfo;
-                                folder.Hover = false;
                                 folder.Class = GetFolderClassByType(folder.FileType);
-                                folder.Pagination = new Pagination();
+                                folder.Files = new FileListInfo();
+                                folder.Files.Filters.FileTypes = Main.config.fileTypes;
+                                folder.Files.CheckAllFileType = true;
+                                folder.Files.IsFileTypeIndeterminate = false;
+
+                                folder.Files.Filters.StorageTypes = Main.config.storageTypes;
+                                folder.Files.CheckAllStorageType = true;
+                                folder.Files.IsStorageTypeIndeterminate = false;
+
+                                folder.Files.Filters.FileStates = Main.config.fileStates;
+                                folder.Files.CheckAllFileState = true;
+                                folder.Files.IsFileStateIndeterminate = false;
+
+                                folder.Files.Pagination.AdvancedSort.push({ Field: 'CreateTime', Type: SortType.倒序 });
+
+                                console.info(folder.Files.List.length);
                                 return folder;
                             });
 
@@ -1189,13 +1159,16 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
             }
 
             /**
-             * 文件夹详情
+             * 打开文件夹
              * @param folder
+             * @param index
              */
-            function folderFileList(folder: FolderInfo) {
+            function OpenFolder(folder: FolderInfo, index: number) {
                 console.info(folder.FileType);
 
-                Main.library.file.pageSize = getPageSize();
+                Main.library.currentFolderIndex = index;
+                folder.Files.Pagination.PageRows = getPageSize();
+                folder.Open = true;
 
                 getFileList();
             }
@@ -1203,13 +1176,13 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
             /**
              * 根据页面大小调整页面数据量
              * */
-            function getPageSize() {
-                var current = window.innerHeight / 100,
+            function getPageSize(): number {
+                let current = window.innerHeight / 100,
                     min,
                     result;
-                for (var i in Main.config.page.sizes) {
-                    var size = Main.config.page.sizes[i];
-                    var abs = Math.abs(current - size);
+                for (const i in Main.config.page.sizes) {
+                    let size = Main.config.page.sizes[i];
+                    let abs = Math.abs(current - size);
                     if (!min)
                         min = abs;
                     else if (abs <= min)
@@ -1227,163 +1200,147 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
              * 文件列表所有文件类型
              * */
             function allFileType(val) {
-                Main.library.file.fileTypes = val ? Main.config.fileTypes : [];
-                Main.library.file.isFileTypeIndeterminate = false;
-                getFileList();
+                let folder: FolderInfo = Main.library.folders[Main.library.currentFolderIndex];
+
+                folder.Files.Filters.FileTypes = val ? Main.config.fileTypes : [];
+                folder.Files.IsFileTypeIndeterminate = false;
+                Main.fileListFileStateGetAnswer();
             }
 
             /**
              * 文件列表更改文件类型
              * */
             function fileTypeChange(val) {
-                getFileList();
+                Main.fileListFileStateGetAnswer();
             }
 
             /**
              * 文件列表所有文件类型
              * */
             function allStorageType(val) {
-                Main.library.file.storageTypes = val ? Main.config.storageTypes : [];
-                Main.library.file.isStorageTypeIndeterminate = false;
-                getFileList();
+                let folder: FolderInfo = Main.library.folders[Main.library.currentFolderIndex];
+
+                folder.Files.Filters.StorageTypes = val ? Main.config.storageTypes : [];
+                folder.Files.IsStorageTypeIndeterminate = false;
+                Main.fileListStorageTypeGetAnswer();
             }
 
             /**
              * 文件列表更改文件类型
              * */
             function storageTypeChange(val) {
-                getFileList();
+                Main.fileListStorageTypeGetAnswer();
             }
 
             /**
              * 文件列表所有文件状态
              * */
             function allFileState(val) {
-                Main.library.file.fileStates = val ? Main.config.fileStates : [];
-                Main.library.file.isFileStateIndeterminate = false;
-                getFileList();
+                let folder: FolderInfo = Main.library.folders[Main.library.currentFolderIndex];
+
+                folder.Files.Filters.FileStates = val ? Main.config.fileStates : [];
+                folder.Files.IsFileStateIndeterminate = false;
+                Main.fileListFileStateGetAnswer();
             }
 
             /**
              * 文件列表更改文件状态
              * */
             function fileStateChange(val) {
-                getFileList();
+                Main.fileListFileStateGetAnswer();
             }
 
             /**
-             * 获取文件列表接口参数
-             * @param {any} target
+             * 文件列表更改日期范围
+             * */
+            function fileListDateRangeChange(val) {
+                let folder: FolderInfo = Main.library.folders[Main.library.currentFolderIndex];
+                console.info(val[0], val[1]);
+                console.info(folder.Files.Filters.DateRang[0], folder.Files.Filters.DateRang[1]);
+                Main.fileListDataRangeGetAnswer();
+            }
+
+            /**
+             * 更新文件列表分页设置
              */
-            function getFileListParams(target) {
-                var params = {
-                    PageIndex: target.currentPage,
-                    PageRows: target.pageSize,
-                    AdvancedSort: [
-                        {
-                            Field: "CreateTime",
-                            Type: "desc"
-                        }
-                    ],
-                    DynamicFilterInfo: []
-                };
+            function updateFileListPagination() {
+                let folder: FolderInfo = Main.library.folders[Main.library.currentFolderIndex];
 
-                if (target.sorts.length > 0)
-                    params.AdvancedSort = target.sorts;
+                for (const field in folder.Files.Filters) {
+                    let _continue = false;
+                    const value = folder.Files.Filters[field];
 
-                if (target.fileTypes.length != 0 && target.fileTypes.length != Main.config.fileTypes.length)
-                    params.DynamicFilterInfo.push({
-                        Field: 'FileType',
-                        Value: target.fileTypes,
-                        Compare: 'inSet'
-                    });
-
-                if (target.storageTypes.length != 0 && target.storageTypes.length != Main.config.storageTypes.length)
-                    params.DynamicFilterInfo.push({
-                        Field: 'StorageType',
-                        Value: target.storageTypes,
-                        Compare: 'inSet'
-                    });
-
-                if (target.name && Main.library.file.name.length > 0)
-                    params.DynamicFilterInfo.push({
-                        Field: 'Name',
-                        Value: target.name,
-                        Compare: 'in'
-                    });
-
-                if (target.md5 && Main.library.file.md5.length > 0)
-                    params.DynamicFilterInfo.push({
-                        Field: 'MD5',
-                        Value: target.md5,
-                        Compare: 'in'
-                    });
-
-                if (target.contentType && Main.library.file.contentType.length > 0)
-                    params.DynamicFilterInfo.push({
-                        Field: 'ContentType',
-                        Value: target.contentType,
-                        Compare: 'in'
-                    });
-
-                if (target.extension && Main.library.file.extension.length > 0)
-                    params.DynamicFilterInfo.push({
-                        Field: 'Extension',
-                        Value: target.extension,
-                        Compare: 'in'
-                    });
-
-                if (target.serverKey && Main.library.file.serverKey.length > 0)
-                    params.DynamicFilterInfo.push({
-                        Field: 'ServerKey',
-                        Value: target.serverKey,
-                        Compare: 'in'
-                    });
-
-                if (target.date && target.date.length == 2)
-                    params.DynamicFilterInfo.push({
-                        Relation: 'and',
-                        DynamicFilterInfo: [
-                            {
-                                Field: 'CreateTime',
-                                Value: Dayjs(target.date[0]).format('YYYY-MM-DD HH:mm:ss'),
-                                Compare: 'ge'
-                            },
-                            {
-                                Field: 'CreateTime',
-                                Value: Dayjs(target.date[1]).format('YYYY-MM-DD HH:mm:ss'),
-                                Compare: 'le'
+                    for (var i = 0; i < folder.Files.Pagination.DynamicFilterInfo.length; i++) {
+                        let filter = folder.Files.Pagination.DynamicFilterInfo[i];
+                        if (filter.Field == field) {
+                            if (!value) {
+                                folder.Files.Pagination.DynamicFilterInfo.splice(i, 1);
+                                i--;
                             }
-                        ]
-                    });
+                            else
+                                filter.Value = value;
 
-                return params;
+                            _continue = true;
+                            break;
+                        }
+                    }
+
+                    if (!_continue && !value) {
+                        let filter: PaginationDynamicFilterInfo = field == 'DateRang' ?
+                            {
+                                Relation: FilterGroupRelation.并且,
+                                DynamicFilterInfo: [
+                                    {
+                                        Field: 'CreateTime',
+                                        Value: Dayjs(value.date[0]).format('YYYY-MM-DD HH:mm:ss'),
+                                        Compare: FilterCompare.大于等于
+                                    },
+                                    {
+                                        Field: 'CreateTime',
+                                        Value: Dayjs(value.date[1]).format('YYYY-MM-DD HH:mm:ss'),
+                                        Compare: FilterCompare.小于等于
+                                    }
+                                ]
+                            } :
+                            {
+                                Field: field,
+                                Value: value,
+                                Compare: Array.isArray(value) ? FilterCompare.在集合中 : FilterCompare.包含
+                            };
+
+                        folder.Files.Pagination.DynamicFilterInfo.push(filter);
+                    }
+                }
+
+                getFileList();
             }
 
             /**
              * 获取文件库文件数据列表
              * */
             function getFileList() {
-                Main.library.file.loading = true;
-                Axios.post(ApiUri.GetFileList, getFileListParams(Main.library.file)).then(function (response) {
+                let folder: FolderInfo = Main.library.folders[Main.library.currentFolderIndex];
+
+                folder.Files.Loading = true;
+                Axios.post(ApiUri.GetFileList, folder.Files.Pagination).then(function (response: { data: PaginationResult_ElementVue<FileInfo> }) {
                     if (response.data.Success) {
-                        Main.library.file.currentPage = response.data.Data.PageIndex;
-                        Main.library.file.pageSize = response.data.Data.PageSize;
-                        Main.library.file.pageTotal = response.data.Data.PageTotal;
-                        Main.library.file.total = response.data.Data.Total;
-                        Main.library.file.list = response.data.Data.List;
+                        folder.Files.Pagination.PageIndex = response.data.Data.PageIndex;
+                        folder.Files.Pagination.PageRows = response.data.Data.PageSize;
+                        folder.Files.Pagination.PageCount = response.data.Data.PageTotal;
+                        folder.Files.Pagination.RecordCount = response.data.Data.Total;
+                        folder.Files.List = response.data.Data.List;
                     }
                     else {
-                        Main.library.file.error = response.data.Message;
+                        folder.Files.Error = response.data.Message;
                         ElementPlus.ElMessage(response.data.Message);
                     }
-                    Main.library.file.loading = false;
+                    folder.Files.Loading = false;
                 }).catch(function (error) {
-                    Main.library.file.loading = false;
-                    Main.library.file.error = error.message;
+                    folder.Files.Loading = false;
+                    folder.Files.Error = error.message;
                     ElementPlus.ElMessage('获取文件列表时发生异常.');
                 });
-                Main.library.file.init = true;
+                folder.Files.Init = true;
             }
 
             /**
@@ -1391,19 +1348,22 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
              * @param {any} val 值
              */
             function fileSort(val) {
+                let folder: FolderInfo = Main.library.folders[Main.library.currentFolderIndex];
+
                 if (val.prop == null)
-                    Main.library.file.sorts = [];
+                    folder.Files.Pagination.AdvancedSort = [];
                 else if (!val.order)
-                    Main.library.file.sorts = Main.library.file.sorts.filter(data => data.field != val.prop);
+                    folder.Files.Pagination.AdvancedSort = folder.Files.Pagination.AdvancedSort.filter(data => data.Field != val.prop);
                 else {
-                    for (var item in Main.library.file.sorts) {
-                        if (Main.library.file.sorts[item].field == val.prop) {
-                            Main.library.file.sorts[item].type = val.order == 'descending' ? 'desc' : 'asc';
+                    const order = val.order == 'descending' ? SortType.倒序 : SortType.正序;
+                    for (let sort of folder.Files.Pagination.AdvancedSort) {
+                        if (sort.Field == val.prop) {
+                            sort.Type = order;
                             getFileList();
                             return;
                         }
                     }
-                    Main.library.file.sorts.push({ field: val.prop, type: val.order == 'descending' ? 'desc' : 'asc' });
+                    folder.Files.Pagination.AdvancedSort.push({ Field: val.prop, Type: order });
                 }
                 getFileList();
             }
@@ -1413,7 +1373,8 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
              * @param {number} val
              */
             function fileListSizeChange(val) {
-                Main.library.file.pageSize = val;
+                let folder: FolderInfo = Main.library.folders[Main.library.currentFolderIndex];
+                folder.Files.Pagination.PageRows = val;
                 getFileList();
             }
 
@@ -1422,7 +1383,8 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
              * @param {number} val
              */
             function fileListCurrentChange(val) {
-                Main.library.file.currentPage = val;
+                let folder: FolderInfo = Main.library.folders[Main.library.currentFolderIndex];
+                folder.Files.Pagination.PageIndex = val;
                 getFileList();
             }
 
@@ -1452,25 +1414,22 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
              * @param {any} index
              * @param {any} row
              */
-            function getFileDetail(index, row) {
-                Main.library.file.detail.show = true;
-                Main.library.file.detail.loading = true;
+            function fileDetail(index, row) {
+                Main.library.fileDetail.detail.show = true;
+                Main.library.fileDetail.detail.loading = true;
 
                 Axios.get(ApiUri.GetFileDetail(row.Id))
-                    .then((response) => {
+                    .then((response: { data: ResponseData_T<FileInfo> }) => {
                         if (response.data.Success) {
-                            Main.library.file.detail.StateTag = getFileStateTag(response.data.Data.State);
-                            for (var item in response.data.Data) {
-                                Main.library.file.detail[item] = response.data.Data[item];
-                            }
+                            Main.library.fileDetail.detail = response.data.Data;
                         }
                         else {
                             ElementPlus.ElMessage(response.data.Message);
                         }
-                        Main.library.file.detail.loading = false;
+                        Main.library.fileDetail.loading = false;
                     })
                     .catch((error) => {
-                        Main.library.file.detail.loading = false;
+                        Main.library.fileDetail.detail.loading = false;
                         ElementPlus.ElMessage('获取文件详情时发生异常.');
                     });
             }
@@ -1498,56 +1457,55 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
              * 关闭文件详情
              * */
             function closeFileDetail() {
-                Main.library.file.detail.show = false;
-                for (var item in Main.library.file.detail) {
-                    if (item != 'show' && item != 'loding')
-                        Main.library.file.detail[item] = '';
-                }
+                Main.library.fileDetail.detail.show = false;
+                Main.library.fileDetail.detail.detail = {};
             }
 
             /**
              * 预览文件
-             * @param {any} index
              * @param {any} data
+             * @param {any} index
              */
-            function previewFile(index, data) {
+            function previewFile(data, index = null) {
                 window.open(ApiUri.Preview(data.Id));
             }
 
             /**
              * 浏览文件
-             * @param {any} index
              * @param {any} data
+             * @param {any} index
              */
-            function browseFile(index, data) {
+            function browseFile(data, index = null) {
                 window.open(ApiUri.Browse(data.Id));
             }
 
             /**
              * 下载文件
-             * @param {any} index
              * @param {any} data
+             * @param {any} index
              */
-            function downloadFile(index, data) {
+            function downloadFile(data, index = null) {
                 window.open(ApiUri.Download(data.Id));
             }
 
             /**
              * 删除文件
-             * @param {any} index
              * @param {any} data
+             * @param {any} index
              */
-            function deleteFile(index, data) {
-                Main.library.file.loading = true;
-                Axios.post(ApiUri.Delete, [data.Id]).then(function (response) {
+            function deleteFile(data, index = null) {
+                let folder: FolderInfo = Main.library.folders[Main.library.currentFolderIndex];
+
+                folder.Files.Loading = true;
+                Axios.post(ApiUri.Delete, [data.Id]).then(function (response: { data: ResponseData }) {
                     if (response.data.Success)
                         getFileList();
                     else {
                         ElementPlus.ElMessage(response.data.Message);
-                        Main.library.file.loading = false;
+                        folder.Files.Loading = false;
                     }
                 }).catch(function (error) {
-                    Main.library.file.loading = false;
+                    folder.Files.Loading = false;
                     ElementPlus.ElMessage('删除文件时发生异常.');
                 });
             }
