@@ -130,17 +130,17 @@ class FileListFilters {
     /**
      * 文件类型集合
      */
-    FileTypes: string[];
+    FileType: string[];
 
     /**
      * 存储类型集合
      */
-    StorageTypes: string[];
+    StorageType: string[];
 
     /**
      * 文件状态集合
      */
-    FileStates: string[];
+    State: string[];
 
     /**
      * 搜索日期范围

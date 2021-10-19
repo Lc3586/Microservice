@@ -198,7 +198,7 @@
 
                                         <div class="item-loading"
                                              v-if="ShowLoading(multipleUpload.files[index])"
-                                             :style="GetLoadingStyle(multipleUpload.files[index]) "
+                                             :style="GetLoadingStyle(multipleUpload.files[index])"
                                              :title="GetLoadingTitle(multipleUpload.files[index])">
                                         </div>
                                         <div v-if="multipleUpload.files[index].Done" class="item-sub sub-done">
@@ -343,42 +343,52 @@
                                           style="width: 100%">
                                     <el-table-column label="服务器标识"
                                                      prop="ServerKey"
-                                                     sortable>
+                                                     sortable
+                                                     show-overflow-tooltip>
                                     </el-table-column>
                                     <el-table-column label="文件MD5校验值"
-                                                     prop="MD5">
+                                                     prop="MD5"
+                                                     show-overflow-tooltip>
                                     </el-table-column>
                                     <el-table-column label="名称"
                                                      prop="Name"
-                                                     sortable>
+                                                     sortable
+                                                     show-overflow-tooltip>
                                     </el-table-column>
                                     <el-table-column label="内容类型"
                                                      prop="ContentType"
-                                                     sortable>
+                                                     sortable
+                                                     show-overflow-tooltip>
                                     </el-table-column>
                                     <el-table-column label="文件扩展名"
                                                      prop="Extension"
-                                                     sortable>
+                                                     sortable
+                                                     show-overflow-tooltip>
                                     </el-table-column>
                                     <el-table-column label="字节数"
                                                      prop="Bytes"
-                                                     sortable>
+                                                     sortable
+                                                     show-overflow-tooltip>
                                     </el-table-column>
                                     <el-table-column label="文件大小"
                                                      prop="Size"
-                                                     sortable>
+                                                     sortable
+                                                     show-overflow-tooltip>
                                     </el-table-column>
                                     <el-table-column label="分片规格"
                                                      prop="Specs"
-                                                     sortable>
+                                                     sortable
+                                                     show-overflow-tooltip>
                                     </el-table-column>
                                     <el-table-column label="分片总数"
                                                      prop="Total"
-                                                     sortable>
+                                                     sortable
+                                                     show-overflow-tooltip>
                                     </el-table-column>
                                     <el-table-column label="状态"
                                                      prop="State"
-                                                     sortable>
+                                                     sortable
+                                                     show-overflow-tooltip>
                                     </el-table-column>
                                     <el-table-column label="分片来源">
                                         <template #default="scope">
@@ -404,19 +414,23 @@
                                     </el-table-column>
                                     <el-table-column label="信息"
                                                      prop="Info"
-                                                     sortable>
+                                                     sortable
+                                                     show-overflow-tooltip>
                                     </el-table-column>
                                     <el-table-column label="创建时间"
                                                      prop="CreateTime"
-                                                     sortable>
+                                                     sortable
+                                                     show-overflow-tooltip>
                                     </el-table-column>
                                     <el-table-column label="最近更新时间"
                                                      prop="ModifyTime"
-                                                     sortable>
+                                                     sortable
+                                                     show-overflow-tooltip>
                                     </el-table-column>
                                     <el-table-column label="完成时间"
                                                      prop="CompletedTime"
-                                                     sortable>
+                                                     sortable
+                                                     show-overflow-tooltip>
                                     </el-table-column>
                                 </el-table>
                             </el-col>
@@ -424,176 +438,208 @@
                     </el-tab-pane>
                     <el-tab-pane label="文件库" class="tab-pane" name="Library">
                         <div class="library-folders-container">
-                            <div class="library-folders-cube">
-                                <div class="library-folders library-folders-plane"
-                                     v-loading="library.loading">
-                                    <div class="folder-list">
-                                        <div v-for="(folder, index) in library.folders"
-                                             :key="index"
-                                             :class="GetFolderCLass(folder)"
-                                             @mouseenter="folder.Hover=true"
-                                             @mouseleave="folder.Hover=false"
-                                             title="点击打开文件夹"
-                                             @click="OpenFolder(folder, index)">
-                                            <div class="cube">
-                                                <div :class="'plane front ' + folder.Class">
-                                                </div>
-                                                <div class="plane right">
-                                                    <el-descriptions :title="folder.FileType"
-                                                                     :column="1">
-                                                        <el-descriptions-item label="文件总数">{{folder.Total}}</el-descriptions-item>
-                                                        <el-descriptions-item label="占用存储空间">{{folder.Size}}</el-descriptions-item>
-                                                        <el-descriptions-item label="总字节数">{{folder.Bytes}}</el-descriptions-item>
-                                                    </el-descriptions>
+                            <div class="library-folders"
+                                 v-loading="library.loading">
+                                <el-collapse v-model="library.activeCollapse"
+                                             accordion
+                                             @change="ActiveCollapseChange">
+                                    <el-collapse-item title="文件夹" name="folders" :disabled="library.activeCollapse === 'folders'">
+                                        <div class="folder-list">
+                                            <div v-for="(folder, index) in library.folders"
+                                                 :key="index"
+                                                 :class="GetFolderClass(folder)"
+                                                 @mouseenter="folder.Hover=true"
+                                                 @mouseleave="folder.Hover=false"
+                                                 title="点击打开文件夹"
+                                                 @click="OpenFolder(folder, index)">
+                                                <div class="cube">
+                                                    <div :class="'plane front ' + folder.Class">
+                                                    </div>
+                                                    <div class="plane right">
+                                                        <el-descriptions :title="folder.FileType"
+                                                                         :column="1">
+                                                            <el-descriptions-item label="文件总数">{{folder.Total}}</el-descriptions-item>
+                                                            <el-descriptions-item label="占用存储空间">{{folder.Size}}</el-descriptions-item>
+                                                            <el-descriptions-item label="总字节数">{{folder.Bytes}}</el-descriptions-item>
+                                                        </el-descriptions>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="file-list library-folders-plane"
-                                     v-if="library.currentFolderIndex >= 0"
-                                     v-for="(folder, index) in library.folders[library.currentFolderIndex]"
-                                     :key="index">
-                                    <el-row :gutter="20">
-                                        <el-col :span="8">
-                                            <el-checkbox :indeterminate="folder.Files.IsFileTypeIndeterminate" v-model="folder.Files.CheckAllFileType" @change="allFileType">所有文件类型</el-checkbox>
-                                            <div style="margin: 15px 0;"></div>
-                                            <el-checkbox-group v-model="folder.Files.Filters.FileTypes" @change="fileTypeChange">
-                                                <el-checkbox v-for="fileType in config.fileTypes" :label="fileType" :key="fileType">{{fileType}}</el-checkbox>
-                                            </el-checkbox-group>
-                                        </el-col>
-                                        <el-col :span="8">
-                                            <el-checkbox :indeterminate="folder.Files.IsStorageTypeIndeterminate" v-model="folder.Files.CheckAllStorageType" @change="allStorageType">所有存储类型</el-checkbox>
-                                            <div style="margin: 15px 0;"></div>
-                                            <el-checkbox-group v-model="folder.Files.Filters.StorageTypes" @change="storageTypeChange">
-                                                <el-checkbox v-for="storageType in config.storageTypes" :label="storageType" :key="storageType">{{storageType}}</el-checkbox>
-                                            </el-checkbox-group>
-                                        </el-col>
-                                        <el-col :span="8">
-                                            <el-checkbox :indeterminate="folder.Files.IsFileStateIndeterminate" v-model="folder.Files.CheckAllFileState" @change="allFileState">所有文件状态</el-checkbox>
-                                            <div style="margin: 15px 0;"></div>
-                                            <el-checkbox-group v-model="folder.Files.Filters.FileStates" @change="fileStateChange">
-                                                <el-checkbox v-for="fileState in config.fileStates" :label="fileState" :key="fileState">{{fileState}}</el-checkbox>
-                                            </el-checkbox-group>
-                                        </el-col>
-                                    </el-row>
-                                    <el-row :gutter="20">
-                                        <el-col :span="10">
-                                            <el-date-picker v-model="folder.Files.Filters.DateRang"
-                                                            type="datetimerange"
-                                                            unlink-panels
-                                                            range-separator="至"
-                                                            start-placeholder="开始日期"
-                                                            end-placeholder="结束日期"
-                                                            format="YYYY-MM-DD"
-                                                            :shortcuts="config.dateRangShortcuts"
-                                                            @change="">
-                                            </el-date-picker>
-                                        </el-col>
-                                        <el-col :span="5">
-                                            <el-input v-model="folder.Files.Filters.Name"
-                                                      prefix-icon="el-icon-search"
-                                                      placeholder="输入名称搜索" />
-                                        </el-col>
-                                        <el-col :span="3">
-                                            <el-input v-model="folder.Files.Filters.Extension"
-                                                      prefix-icon="el-icon-search"
-                                                      placeholder="输入扩展名搜索" />
-                                        </el-col>
-                                    </el-row>
-                                    <el-row :gutter="20">
-                                        <el-col :span="8">
-                                            <el-input v-model="folder.Files.Filters.ContentType"
-                                                      prefix-icon="el-icon-search"
-                                                      placeholder="输入内容类型搜索" />
-                                        </el-col>
-                                        <el-col :span="8">
-                                            <el-input v-model="folder.Files.Filters.MD5"
-                                                      prefix-icon="el-icon-search"
-                                                      placeholder="输入MD5校验值搜索" />
-                                        </el-col>
-                                        <el-col :span="5">
-                                            <el-input v-model="folder.Files.Filters.ServerKey"
-                                                      prefix-icon="el-icon-search"
-                                                      placeholder="输入服务器标识搜索" />
-                                        </el-col>
-                                    </el-row>
-                                    <el-row :gutter="20">
-                                        <el-col :span="24">
-                                            <el-table :data="folder.Files.List"
-                                                      stripe
-                                                      :empty-text="folder.Files.Error"
-                                                      v-loading="folder.Files.Loading"
-                                                      @sort-change="fileSort"
-                                                      style="width: 100%;"
-                                                      :row-class-name="fileListRowClassName">
-                                                <el-table-column label="名称"
-                                                                 prop="Name"
-                                                                 sortable="custom">
-                                                </el-table-column>
-                                                <el-table-column label="文件类型"
-                                                                 prop="FileType"
-                                                                 sortable="custom">
-                                                </el-table-column>
-                                                <el-table-column label="内容类型"
-                                                                 prop="ContentType">
-                                                </el-table-column>
-                                                <el-table-column label="文件扩展名"
-                                                                 prop="Extension">
-                                                </el-table-column>
-                                                <el-table-column label="MD5校验值"
-                                                                 prop="MD5">
-                                                </el-table-column>
-                                                <el-table-column label="服务器标识"
-                                                                 prop="ServerKey">
-                                                </el-table-column>
-                                                <el-table-column label="存储类型"
-                                                                 prop="StorageType"
-                                                                 sortable="custom">
-                                                </el-table-column>
-                                                <el-table-column label="文件大小"
-                                                                 prop="Size"
-                                                                 sortable="custom">
-                                                </el-table-column>
-                                                <el-table-column label="状态"
-                                                                 prop="State"
-                                                                 sortable="custom">
-                                                </el-table-column>
-                                                <el-table-column label="创建时间"
-                                                                 prop="CreateTime"
-                                                                 sortable="custom">
-                                                </el-table-column>
-                                                <el-table-column align="center">
-                                                    <template #default="scope">
-                                                        <el-button size="mini"
-                                                                   @click="fileDetail(scope.row, scope.$index)">详情</el-button>
-                                                        <el-button size="mini"
-                                                                   @click="previewFile(scope.row, scope.$index)">预览</el-button>
-                                                        <el-button size="mini"
-                                                                   @click="browseFile(scope.row, scope.$index)">浏览</el-button>
-                                                        <el-button size="mini"
-                                                                   @click="downloadFile(scope.row, scope.$index)">下载</el-button>
-                                                        <el-button size="mini"
-                                                                   @click="deleteFile(scope.row, scope.$index)">删除</el-button>
-                                                    </template>
-                                                </el-table-column>
-                                            </el-table>
-                                        </el-col>
-                                    </el-row>
-                                    <el-row :gutter="20" v-if="folder.Files.List.length > 0">
-                                        <el-col :span="24">
-                                            <el-pagination @size-change="fileListSizeChange"
-                                                           @current-change="fileListCurrentChange"
-                                                           :current-page="folder.Files.Pagination.PageIndex"
-                                                           :page-sizes="config.page.sizes"
-                                                           :page-size="folder.Files.Pagination.PageRows"
-                                                           layout="total, sizes, prev, pager, next, jumper"
-                                                           :hide-on-single-page="folder.Files.Pagination.PageCount === 1"
-                                                           :total="folder.Files.Pagination.RecordCount">
-                                            </el-pagination>
-                                        </el-col>
-                                    </el-row>
-                                </div>
+                                    </el-collapse-item>
+                                    <el-collapse-item title="文件列表"
+                                                      name="files"
+                                                      v-if="library.currentOpenFolder != null">
+                                        <div class="file-list">
+                                            <el-collapse>
+                                                <el-collapse-item title="└ 按文件类型、存储类型、文件状态搜索" name="filters0">
+                                                    <el-row :gutter="20">
+                                                        <el-col :span="8">
+                                                            <el-checkbox :indeterminate="library.currentOpenFolder.Files.IsFileTypeIndeterminate" v-model="library.currentOpenFolder.Files.CheckAllFileType" @change="(val) => { allFileType(library.currentOpenFolder, val); }">所有文件类型</el-checkbox>
+                                                            <div style="margin: 15px 0;"></div>
+                                                            <el-checkbox-group v-model="library.currentOpenFolder.Files.Filters.FileType" @change="(val) => { fileTypeChange(library.currentOpenFolder, val); }">
+                                                                <el-checkbox v-for="fileType in config.fileTypes" :label="fileType" :key="fileType">{{fileType}}</el-checkbox>
+                                                            </el-checkbox-group>
+                                                        </el-col>
+                                                        <el-col :span="8">
+                                                            <el-checkbox :indeterminate="library.currentOpenFolder.Files.IsStorageTypeIndeterminate" v-model="library.currentOpenFolder.Files.CheckAllStorageType" @change="(val) => { allStorageType(library.currentOpenFolder, val); }">所有存储类型</el-checkbox>
+                                                            <div style="margin: 15px 0;"></div>
+                                                            <el-checkbox-group v-model="library.currentOpenFolder.Files.Filters.StorageType" @change="(val) => { storageTypeChange(library.currentOpenFolder, val); }">
+                                                                <el-checkbox v-for="storageType in config.storageTypes" :label="storageType" :key="storageType">{{storageType}}</el-checkbox>
+                                                            </el-checkbox-group>
+                                                        </el-col>
+                                                        <el-col :span="8">
+                                                            <el-checkbox :indeterminate="library.currentOpenFolder.Files.IsFileStateIndeterminate" v-model="library.currentOpenFolder.Files.CheckAllFileState" @change="(val) => { allFileState(library.currentOpenFolder, val); }">所有文件状态</el-checkbox>
+                                                            <div style="margin: 15px 0;"></div>
+                                                            <el-checkbox-group v-model="library.currentOpenFolder.Files.Filters.State" @change="(val) => { fileStateChange(library.currentOpenFolder, val); }">
+                                                                <el-checkbox v-for="fileState in config.fileStates" :label="fileState" :key="fileState">{{fileState}}</el-checkbox>
+                                                            </el-checkbox-group>
+                                                        </el-col>
+                                                    </el-row>
+                                                </el-collapse-item>
+                                                <el-collapse-item title="└ 按日期、名称等信息搜索" name="filters1">
+                                                    <el-row :gutter="10">
+                                                        <el-col :span="9">
+                                                            <el-date-picker v-model="library.currentOpenFolder.Files.Filters.DateRang"
+                                                                            type="datetimerange"
+                                                                            unlink-panels
+                                                                            range-separator="至"
+                                                                            start-placeholder="开始日期"
+                                                                            end-placeholder="结束日期"
+                                                                            :shortcuts="config.dateRangShortcuts"
+                                                                            @change="(val) => { fileListDateRangeChange(library.currentOpenFolder, val); }">
+                                                            </el-date-picker>
+                                                        </el-col>
+                                                        <el-col :span="5">
+                                                            <el-input v-model="library.currentOpenFolder.Files.Filters.Name"
+                                                                      prefix-icon="el-icon-search"
+                                                                      placeholder="输入名称搜索"
+                                                                      @change="(val) => { fileListNameChange(library.currentOpenFolder, val); }" />
+                                                        </el-col>
+                                                        <el-col :span="3">
+                                                            <el-input v-model="library.currentOpenFolder.Files.Filters.Extension"
+                                                                      prefix-icon="el-icon-search"
+                                                                      placeholder="输入扩展名搜索"
+                                                                      @change="(val) => { fileListExtensionChange(library.currentOpenFolder, val); }" />
+                                                        </el-col>
+                                                        <el-col :span="5">
+                                                            <el-input v-model="library.currentOpenFolder.Files.Filters.ServerKey"
+                                                                      prefix-icon="el-icon-search"
+                                                                      placeholder="输入服务器标识搜索"
+                                                                      @change="(val) => { fileListServerKeyChange(library.currentOpenFolder, val); }" />
+                                                        </el-col>
+                                                    </el-row>
+                                                    <el-row :gutter="20">
+                                                        <el-col :span="8">
+                                                            <el-input v-model="library.currentOpenFolder.Files.Filters.ContentType"
+                                                                      prefix-icon="el-icon-search"
+                                                                      placeholder="输入内容类型搜索"
+                                                                      @change="(val) => { fileListContentTypeChange(library.currentOpenFolder, val); }" />
+                                                        </el-col>
+                                                        <el-col :span="8">
+                                                            <el-input v-model="library.currentOpenFolder.Files.Filters.MD5"
+                                                                      prefix-icon="el-icon-search"
+                                                                      placeholder="输入MD5校验值搜索"
+                                                                      @change="(val) => { fileListMD5Change(library.currentOpenFolder, val); }" />
+                                                        </el-col>
+                                                    </el-row>
+                                                </el-collapse-item>
+                                            </el-collapse>
+                                            <el-row :gutter="20">
+                                                <el-col :span="24">
+                                                    <el-table :data="library.currentOpenFolder.Files.List"
+                                                              stripe
+                                                              :empty-text="library.currentOpenFolder.Files.Error"
+                                                              v-loading="library.currentOpenFolder.Files.Loading"
+                                                              @sort-change="fileSort"
+                                                              style="width: 100%;">
+                                                        <el-table-column label="名称"
+                                                                         prop="Name"
+                                                                         sortable="custom"
+                                                                         show-overflow-tooltip>
+                                                        </el-table-column>
+                                                        <el-table-column label="文件类型"
+                                                                         prop="FileType"
+                                                                         sortable="custom"
+                                                                         show-overflow-tooltip>
+                                                        </el-table-column>
+                                                        <el-table-column label="内容类型"
+                                                                         prop="ContentType"
+                                                                         show-overflow-tooltip>
+                                                        </el-table-column>
+                                                        <el-table-column label="文件扩展名"
+                                                                         prop="Extension"
+                                                                         show-overflow-tooltip>
+                                                        </el-table-column>
+                                                        <el-table-column label="MD5校验值"
+                                                                         prop="MD5"
+                                                                         show-overflow-tooltip>
+                                                        </el-table-column>
+                                                        <el-table-column label="服务器标识"
+                                                                         prop="ServerKey"
+                                                                         show-overflow-tooltip>
+                                                        </el-table-column>
+                                                        <el-table-column label="存储类型"
+                                                                         prop="StorageType"
+                                                                         sortable="custom"
+                                                                         show-overflow-tooltip>
+                                                        </el-table-column>
+                                                        <el-table-column label="文件大小"
+                                                                         prop="Size"
+                                                                         sortable="custom"
+                                                                         show-overflow-tooltip>
+                                                        </el-table-column>
+                                                        <el-table-column label="状态"
+                                                                         prop="State"
+                                                                         sortable="custom"
+                                                                         show-overflow-tooltip>
+                                                        </el-table-column>
+                                                        <el-table-column label="创建时间"
+                                                                         prop="CreateTime"
+                                                                         sortable="custom"
+                                                                         default-sort="descending"
+                                                                         show-overflow-tooltip>
+                                                        </el-table-column>
+                                                        <el-table-column align="center">
+                                                            <template #default="scope">
+                                                                <el-dropdown :hide-on-click="true"
+                                                                             @command="(cmd) => { handleFileListCommand(cmd, scope.row, scope.$index); }">
+                                                                    <span class="el-dropdown-link">
+                                                                        ...<i class="el-icon-arrow-down el-icon--right"></i>
+                                                                    </span>
+                                                                    <template #dropdown>
+                                                                        <el-dropdown-menu>
+                                                                            <el-dropdown-item command="detail">详情</el-dropdown-item>
+                                                                            <el-dropdown-item command="preview">预览</el-dropdown-item>
+                                                                            <el-dropdown-item command="browse">浏览</el-dropdown-item>
+                                                                            <el-dropdown-item command="download">下载</el-dropdown-item>
+                                                                            <el-dropdown-item command="delete">删除</el-dropdown-item>
+                                                                            <!--<el-dropdown-item disabled>删除</el-dropdown-item>
+                                                                            <el-dropdown-item divided>蚵仔煎</el-dropdown-item>-->
+                                                                        </el-dropdown-menu>
+                                                                    </template>
+                                                                </el-dropdown>
+                                                            </template>
+                                                        </el-table-column>
+                                                    </el-table>
+                                                </el-col>
+                                            </el-row>
+                                            <el-row :gutter="20" v-if="library.currentOpenFolder.Files.List.length > 0">
+                                                <el-col :span="24">
+                                                    <el-pagination @size-change="fileListSizeChange"
+                                                                   @current-change="fileListCurrentChange"
+                                                                   :current-page="library.currentOpenFolder.Files.Pagination.PageIndex"
+                                                                   :page-sizes="config.page.sizes"
+                                                                   :page-size="library.currentOpenFolder.Files.Pagination.PageRows"
+                                                                   layout="total, sizes, prev, pager, next, jumper"
+                                                                   :hide-on-single-page="library.currentOpenFolder.Files.Pagination.PageCount === 1"
+                                                                   :total="library.currentOpenFolder.Files.Pagination.RecordCount">
+                                                    </el-pagination>
+                                                </el-col>
+                                            </el-row>
+                                        </div>
+                                    </el-collapse-item>
+                                </el-collapse>
                             </div>
                         </div>
                     </el-tab-pane>

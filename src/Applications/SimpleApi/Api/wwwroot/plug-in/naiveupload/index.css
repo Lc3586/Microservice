@@ -167,8 +167,6 @@
         flex-direction: row;
         flex-wrap: wrap;
         width: 100%;
-        padding: 20px;
-        margin: 10px;
         box-sizing: border-box;
     }
 
@@ -208,37 +206,6 @@
             .library-folders .folder-list .folder .cube .right {
                 transform: rotateY(90deg) translateZ(100px);
             }
-
-.library-folders-container {
-    position: relative;
-    width: 1000px;
-    height: 1000px;
-}
-
-.library-folders-cube {
-    display: table-cell;
-    vertical-align: middle;
-}
-
-    .library-folders-cube.open {
-        transform-style: preserve-3d;
-        animation: froward linear .3s forwards;
-    }
-
-.library-folders-plane {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0px;
-}
-
-    .library-folders-plane.library-folders {
-        transform: rotateY(0deg) translateZ(100px);
-    }
-
-    .library-folders-plane.file-list {
-        transform: rotateY(90deg) translateZ(100px);
-    }
 
 @keyframes froward {
     from {

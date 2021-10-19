@@ -176,7 +176,7 @@
                     getConfig();
 
                     //延迟响应用户的搜索条件更改事件
-                    Main.fileListFileStateGetAnswer = _.debounce(updateFileListPagination, 500);
+                    Main.fileListFileTypeGetAnswer = _.debounce(updateFileListPagination, 500);
                     Main.fileListStorageTypeGetAnswer = _.debounce(updateFileListPagination, 500);
                     Main.fileListFileStateGetAnswer = _.debounce(updateFileListPagination, 500);
                     Main.fileListDataRangeGetAnswer = _.debounce(updateFileListPagination, 500);
@@ -224,9 +224,17 @@
                     Continues,
                     Clean,
 
-                    GetFolderCLass,
+                    GetFolderClass,
 
                     OpenFolder,
+                    CloseFolder,
+                    ActiveCollapseChange,
+                    fileListNameChange,
+                    fileListExtensionChange,
+                    fileListServerKeyChange,
+                    fileListContentTypeChange,
+                    fileListMD5Change,
+                    handleFileListCommand,
 
                     allFileType,
                     fileTypeChange,
@@ -238,7 +246,6 @@
                     fileSort,
                     fileListSizeChange,
                     fileListCurrentChange,
-                    fileListRowClassName,
                     fileDetail,
                     getFileStateTag,
                     closeFileDetail,
@@ -406,11 +413,11 @@
                     },
                     library: {
                         init: false,
-                        search: '',
+                        activeCollapse: 'folders',
                         folders: [],
                         error: '',
                         loading: true,
-                        currentFolderIndex: -1,
+                        currentOpenFolder: null,
                         fileDetail: {
                             show: false,
                             loading: true,
@@ -1087,23 +1094,24 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
                         if (response.data.Success) {
                             Main.library.folders = response.data.Data.map((item, index): FolderInfo => {
                                 let folder = item as FolderInfo;
+                                folder.Hover = false;
+                                folder.Open = false;
                                 folder.Class = GetFolderClassByType(folder.FileType);
                                 folder.Files = new FileListInfo();
-                                folder.Files.Filters.FileTypes = Main.config.fileTypes;
-                                folder.Files.CheckAllFileType = true;
-                                folder.Files.IsFileTypeIndeterminate = false;
+                                folder.Files.Filters.FileType = [folder.FileType]; //Main.config.fileTypes;
+                                folder.Files.CheckAllFileType = false;
+                                folder.Files.IsFileTypeIndeterminate = true;
 
-                                folder.Files.Filters.StorageTypes = Main.config.storageTypes;
+                                folder.Files.Filters.StorageType = Main.config.storageTypes;
                                 folder.Files.CheckAllStorageType = true;
                                 folder.Files.IsStorageTypeIndeterminate = false;
 
-                                folder.Files.Filters.FileStates = Main.config.fileStates;
+                                folder.Files.Filters.State = Main.config.fileStates;
                                 folder.Files.CheckAllFileState = true;
                                 folder.Files.IsFileStateIndeterminate = false;
 
                                 folder.Files.Pagination.AdvancedSort.push({ Field: 'CreateTime', Type: SortType.倒序 });
 
-                                console.info(folder.Files.List.length);
                                 return folder;
                             });
 
@@ -1154,7 +1162,7 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
              * 获取页面文件夹容器类名
              * @param folder
              */
-            function GetFolderCLass(folder) {
+            function GetFolderClass(folder: FolderInfo) {
                 return `folder ${(folder.Hover ? ' hover' : '')}`;
             }
 
@@ -1164,13 +1172,39 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
              * @param index
              */
             function OpenFolder(folder: FolderInfo, index: number) {
-                console.info(folder.FileType);
-
-                Main.library.currentFolderIndex = index;
+                Main.library.currentOpenFolder = folder;
                 folder.Files.Pagination.PageRows = getPageSize();
                 folder.Open = true;
+                folder.Files.Filters.FileType = [folder.FileType];
+                Main.library.activeCollapse = 'files';
 
-                getFileList();
+                if (!folder.Files.Init)
+                    getFileList(folder);
+            }
+
+            /**
+             * 关闭文件夹
+             * @param folder
+             * @param index
+             */
+            function CloseFolder(folder: FolderInfo, index: number) {
+                folder.Open = false;
+                Main.library.currentOpenFolder = null;
+            }
+
+            /**
+             * 文件库折叠面板变更事件
+             * @param val
+             */
+            function ActiveCollapseChange(val) {
+                if (val !== 'folders')
+                    return;
+
+                if (!Main.library.currentOpenFolder)
+                    return;
+
+                Main.library.currentOpenFolder.Open = false;
+                Main.library.currentOpenFolder = null;
             }
 
             /**
@@ -1198,81 +1232,133 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
 
             /**
              * 文件列表所有文件类型
+             * @param folder
+             * @param val
              * */
-            function allFileType(val) {
-                let folder: FolderInfo = Main.library.folders[Main.library.currentFolderIndex];
-
-                folder.Files.Filters.FileTypes = val ? Main.config.fileTypes : [];
+            function allFileType(folder: FolderInfo, val) {
+                folder.Files.Filters.FileType = val ? Main.config.fileTypes : [];
                 folder.Files.IsFileTypeIndeterminate = false;
-                Main.fileListFileStateGetAnswer();
+                Main.fileListFileTypeGetAnswer(folder);
             }
 
             /**
              * 文件列表更改文件类型
+             * @param folder
+             * @param val
              * */
-            function fileTypeChange(val) {
-                Main.fileListFileStateGetAnswer();
+            function fileTypeChange(folder: FolderInfo, val) {
+                folder.Files.IsFileTypeIndeterminate = val.length != Main.config.fileTypes.length;
+                Main.fileListFileTypeGetAnswer(folder);
             }
 
             /**
              * 文件列表所有文件类型
+             * @param folder
+             * @param val
              * */
-            function allStorageType(val) {
-                let folder: FolderInfo = Main.library.folders[Main.library.currentFolderIndex];
-
-                folder.Files.Filters.StorageTypes = val ? Main.config.storageTypes : [];
+            function allStorageType(folder: FolderInfo, val) {
+                folder.Files.Filters.StorageType = val ? Main.config.storageTypes : [];
                 folder.Files.IsStorageTypeIndeterminate = false;
-                Main.fileListStorageTypeGetAnswer();
+                Main.fileListStorageTypeGetAnswer(folder);
             }
 
             /**
              * 文件列表更改文件类型
+             * @param folder
+             * @param val
              * */
-            function storageTypeChange(val) {
-                Main.fileListStorageTypeGetAnswer();
+            function storageTypeChange(folder: FolderInfo, val) {
+                folder.Files.IsStorageTypeIndeterminate = val.length != Main.config.storageTypes.length;
+                Main.fileListStorageTypeGetAnswer(folder);
             }
 
             /**
              * 文件列表所有文件状态
+             * @param folder
+             * @param val
              * */
-            function allFileState(val) {
-                let folder: FolderInfo = Main.library.folders[Main.library.currentFolderIndex];
-
-                folder.Files.Filters.FileStates = val ? Main.config.fileStates : [];
+            function allFileState(folder: FolderInfo, val) {
+                folder.Files.Filters.State = val ? Main.config.fileStates : [];
                 folder.Files.IsFileStateIndeterminate = false;
-                Main.fileListFileStateGetAnswer();
+                Main.fileListFileStateGetAnswer(folder);
             }
 
             /**
              * 文件列表更改文件状态
+             * @param folder
+             * @param val
              * */
-            function fileStateChange(val) {
-                Main.fileListFileStateGetAnswer();
+            function fileStateChange(folder: FolderInfo, val) {
+                folder.Files.IsFileStateIndeterminate = val.length != Main.config.fileStates.length;
+                Main.fileListFileStateGetAnswer(folder);
             }
 
             /**
              * 文件列表更改日期范围
+             * @param folder
+             * @param val
              * */
-            function fileListDateRangeChange(val) {
-                let folder: FolderInfo = Main.library.folders[Main.library.currentFolderIndex];
-                console.info(val[0], val[1]);
-                console.info(folder.Files.Filters.DateRang[0], folder.Files.Filters.DateRang[1]);
-                Main.fileListDataRangeGetAnswer();
+            function fileListDateRangeChange(folder: FolderInfo, val) {
+                Main.fileListDataRangeGetAnswer(folder);
+            }
+
+            /**
+             * 文件列表更改名称
+             * @param folder
+             * @param val
+             * */
+            function fileListNameChange(folder: FolderInfo, val) {
+                Main.fileListNameGetAnswer(folder);
+            }
+
+            /**
+             * 文件列表更改拓展名
+             * @param folder
+             * @param val
+             * */
+            function fileListExtensionChange(folder: FolderInfo, val) {
+                Main.fileListExtensionGetAnswer(folder);
+            }
+
+            /**
+             * 文件列表更改服务器标识
+             * @param folder
+             * @param val
+             * */
+            function fileListServerKeyChange(folder: FolderInfo, val) {
+                Main.fileListServerKeyGetAnswer(folder);
+            }
+
+            /**
+             * 文件列表更改内容类型
+             * @param folder
+             * @param val
+             * */
+            function fileListContentTypeChange(folder: FolderInfo, val) {
+                Main.fileListContentTypeGetAnswer(folder);
+            }
+
+            /**
+             * 文件列表更改文件MD5校验值
+             * @param folder
+             * @param val
+             * */
+            function fileListMD5Change(folder: FolderInfo, val) {
+                Main.fileListMD5GetAnswer(folder);
             }
 
             /**
              * 更新文件列表分页设置
+             * @param folder
              */
-            function updateFileListPagination() {
-                let folder: FolderInfo = Main.library.folders[Main.library.currentFolderIndex];
-
+            function updateFileListPagination(folder: FolderInfo) {
                 for (const field in folder.Files.Filters) {
                     let _continue = false;
                     const value = folder.Files.Filters[field];
 
                     for (var i = 0; i < folder.Files.Pagination.DynamicFilterInfo.length; i++) {
                         let filter = folder.Files.Pagination.DynamicFilterInfo[i];
-                        if (filter.Field == field) {
+                        if (filter.LocalState == field) {
                             if (!value) {
                                 folder.Files.Pagination.DynamicFilterInfo.splice(i, 1);
                                 i--;
@@ -1285,24 +1371,26 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
                         }
                     }
 
-                    if (!_continue && !value) {
+                    if (!_continue && value) {
                         let filter: PaginationDynamicFilterInfo = field == 'DateRang' ?
                             {
+                                LocalState: field,
                                 Relation: FilterGroupRelation.并且,
                                 DynamicFilterInfo: [
                                     {
                                         Field: 'CreateTime',
-                                        Value: Dayjs(value.date[0]).format('YYYY-MM-DD HH:mm:ss'),
+                                        Value: Dayjs(value[0]).format('YYYY-MM-DD HH:mm:ss'),
                                         Compare: FilterCompare.大于等于
                                     },
                                     {
                                         Field: 'CreateTime',
-                                        Value: Dayjs(value.date[1]).format('YYYY-MM-DD HH:mm:ss'),
+                                        Value: Dayjs(value[1]).format('YYYY-MM-DD HH:mm:ss'),
                                         Compare: FilterCompare.小于等于
                                     }
                                 ]
                             } :
                             {
+                                LocalState: field,
                                 Field: field,
                                 Value: value,
                                 Compare: Array.isArray(value) ? FilterCompare.在集合中 : FilterCompare.包含
@@ -1312,15 +1400,14 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
                     }
                 }
 
-                getFileList();
+                getFileList(folder);
             }
 
             /**
              * 获取文件库文件数据列表
+             * @param folder
              * */
-            function getFileList() {
-                let folder: FolderInfo = Main.library.folders[Main.library.currentFolderIndex];
-
+            function getFileList(folder: FolderInfo) {
                 folder.Files.Loading = true;
                 Axios.post(ApiUri.GetFileList, folder.Files.Pagination).then(function (response: { data: PaginationResult_ElementVue<FileInfo> }) {
                     if (response.data.Success) {
@@ -1329,6 +1416,9 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
                         folder.Files.Pagination.PageCount = response.data.Data.PageTotal;
                         folder.Files.Pagination.RecordCount = response.data.Data.Total;
                         folder.Files.List = response.data.Data.List;
+
+                        if (!folder.Files.Init)
+                            folder.Files.Init = true;
                     }
                     else {
                         folder.Files.Error = response.data.Message;
@@ -1340,7 +1430,6 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
                     folder.Files.Error = error.message;
                     ElementPlus.ElMessage('获取文件列表时发生异常.');
                 });
-                folder.Files.Init = true;
             }
 
             /**
@@ -1348,7 +1437,7 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
              * @param {any} val 值
              */
             function fileSort(val) {
-                let folder: FolderInfo = Main.library.folders[Main.library.currentFolderIndex];
+                let folder: FolderInfo = Main.library.currentOpenFolder;
 
                 if (val.prop == null)
                     folder.Files.Pagination.AdvancedSort = [];
@@ -1359,13 +1448,13 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
                     for (let sort of folder.Files.Pagination.AdvancedSort) {
                         if (sort.Field == val.prop) {
                             sort.Type = order;
-                            getFileList();
+                            getFileList(folder);
                             return;
                         }
                     }
                     folder.Files.Pagination.AdvancedSort.push({ Field: val.prop, Type: order });
                 }
-                getFileList();
+                getFileList(folder);
             }
 
             /**
@@ -1373,9 +1462,9 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
              * @param {number} val
              */
             function fileListSizeChange(val) {
-                let folder: FolderInfo = Main.library.folders[Main.library.currentFolderIndex];
+                let folder: FolderInfo = Main.library.currentOpenFolder;
                 folder.Files.Pagination.PageRows = val;
-                getFileList();
+                getFileList(folder);
             }
 
             /**
@@ -1383,40 +1472,19 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
              * @param {number} val
              */
             function fileListCurrentChange(val) {
-                let folder: FolderInfo = Main.library.folders[Main.library.currentFolderIndex];
+                let folder: FolderInfo = Main.library.currentOpenFolder;
                 folder.Files.Pagination.PageIndex = val;
-                getFileList();
-            }
-
-            /**
-             * 获取文件库文件数据指定的类名
-             * @param {any} param0
-             */
-            function fileListRowClassName({ row, rowIndex }) {
-                return '';
-
-                switch (row.Level) {
-                    case 'Trace':
-                    case 'Debug':
-                    case 'Info':
-                    default:
-                        return '';
-                    case 'Warn':
-                        return 'warning-row';
-                    case 'Error':
-                    case 'Fatal':
-                        return 'error-row';
-                }
+                getFileList(folder);
             }
 
             /**
              * 获取文件库文件数据详情
-             * @param {any} index
              * @param {any} row
+             * @param {any} index
              */
-            function fileDetail(index, row) {
-                Main.library.fileDetail.detail.show = true;
-                Main.library.fileDetail.detail.loading = true;
+            function fileDetail(row, index) {
+                Main.library.fileDetail.show = true;
+                Main.library.fileDetail.loading = true;
 
                 Axios.get(ApiUri.GetFileDetail(row.Id))
                     .then((response: { data: ResponseData_T<FileInfo> }) => {
@@ -1429,7 +1497,7 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
                         Main.library.fileDetail.loading = false;
                     })
                     .catch((error) => {
-                        Main.library.fileDetail.detail.loading = false;
+                        Main.library.fileDetail.loading = false;
                         ElementPlus.ElMessage('获取文件详情时发生异常.');
                     });
             }
@@ -1454,17 +1522,44 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
             }
 
             /**
+             * 预览文件
+             * @param {string} cmd
+             * @param {any} data
+             * @param {number} index
+             */
+            function handleFileListCommand(cmd: string, data, index = null) {
+                switch (cmd) {
+                    case 'detail':
+                        fileDetail(data, index);
+                        break;
+                    case 'preview':
+                        previewFile(data, index);
+                        break;
+                    case 'browse':
+                        browseFile(data, index);
+                        break;
+                    case 'download':
+                        downloadFile(data, index);
+                        break;
+                    case 'delete':
+                        deleteFile(data, index);
+                        break;
+                    default:
+                }
+            }
+
+            /**
              * 关闭文件详情
              * */
             function closeFileDetail() {
-                Main.library.fileDetail.detail.show = false;
-                Main.library.fileDetail.detail.detail = {};
+                Main.library.fileDetail.show = false;
+                Main.library.fileDetail.detail = {};
             }
 
             /**
              * 预览文件
              * @param {any} data
-             * @param {any} index
+             * @param {number} index
              */
             function previewFile(data, index = null) {
                 window.open(ApiUri.Preview(data.Id));
@@ -1473,7 +1568,7 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
             /**
              * 浏览文件
              * @param {any} data
-             * @param {any} index
+             * @param {number} index
              */
             function browseFile(data, index = null) {
                 window.open(ApiUri.Browse(data.Id));
@@ -1482,7 +1577,7 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
             /**
              * 下载文件
              * @param {any} data
-             * @param {any} index
+             * @param {number} index
              */
             function downloadFile(data, index = null) {
                 window.open(ApiUri.Download(data.Id));
@@ -1491,15 +1586,15 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
             /**
              * 删除文件
              * @param {any} data
-             * @param {any} index
+             * @param {number} index
              */
             function deleteFile(data, index = null) {
-                let folder: FolderInfo = Main.library.folders[Main.library.currentFolderIndex];
+                let folder: FolderInfo = Main.library.currentOpenFolder;
 
                 folder.Files.Loading = true;
                 Axios.post(ApiUri.Delete, [data.Id]).then(function (response: { data: ResponseData }) {
                     if (response.data.Success)
-                        getFileList();
+                        getFileList(folder);
                     else {
                         ElementPlus.ElMessage(response.data.Message);
                         folder.Files.Loading = false;

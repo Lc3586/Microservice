@@ -189,7 +189,7 @@ window.onload = function () {
                 AddLoginFilter();
                 Authorized();
                 getConfig();
-                Main.fileListFileStateGetAnswer = _.debounce(updateFileListPagination, 500);
+                Main.fileListFileTypeGetAnswer = _.debounce(updateFileListPagination, 500);
                 Main.fileListStorageTypeGetAnswer = _.debounce(updateFileListPagination, 500);
                 Main.fileListFileStateGetAnswer = _.debounce(updateFileListPagination, 500);
                 Main.fileListDataRangeGetAnswer = _.debounce(updateFileListPagination, 500);
@@ -231,8 +231,16 @@ window.onload = function () {
                 Pause: Pause,
                 Continues: Continues,
                 Clean: Clean,
-                GetFolderCLass: GetFolderCLass,
+                GetFolderClass: GetFolderClass,
                 OpenFolder: OpenFolder,
+                CloseFolder: CloseFolder,
+                ActiveCollapseChange: ActiveCollapseChange,
+                fileListNameChange: fileListNameChange,
+                fileListExtensionChange: fileListExtensionChange,
+                fileListServerKeyChange: fileListServerKeyChange,
+                fileListContentTypeChange: fileListContentTypeChange,
+                fileListMD5Change: fileListMD5Change,
+                handleFileListCommand: handleFileListCommand,
                 allFileType: allFileType,
                 fileTypeChange: fileTypeChange,
                 allStorageType: allStorageType,
@@ -243,7 +251,6 @@ window.onload = function () {
                 fileSort: fileSort,
                 fileListSizeChange: fileListSizeChange,
                 fileListCurrentChange: fileListCurrentChange,
-                fileListRowClassName: fileListRowClassName,
                 fileDetail: fileDetail,
                 getFileStateTag: getFileStateTag,
                 closeFileDetail: closeFileDetail,
@@ -397,11 +404,11 @@ window.onload = function () {
                 },
                 library: {
                     init: false,
-                    search: '',
+                    activeCollapse: 'folders',
                     folders: [],
                     error: '',
                     loading: true,
-                    currentFolderIndex: -1,
+                    currentOpenFolder: null,
                     fileDetail: {
                         show: false,
                         loading: true,
@@ -857,19 +864,20 @@ window.onload = function () {
                 if (response.data.Success) {
                     Main.library.folders = response.data.Data.map(function (item, index) {
                         var folder = item;
+                        folder.Hover = false;
+                        folder.Open = false;
                         folder.Class = GetFolderClassByType(folder.FileType);
                         folder.Files = new FileListInfo();
-                        folder.Files.Filters.FileTypes = Main.config.fileTypes;
-                        folder.Files.CheckAllFileType = true;
-                        folder.Files.IsFileTypeIndeterminate = false;
-                        folder.Files.Filters.StorageTypes = Main.config.storageTypes;
+                        folder.Files.Filters.FileType = [folder.FileType];
+                        folder.Files.CheckAllFileType = false;
+                        folder.Files.IsFileTypeIndeterminate = true;
+                        folder.Files.Filters.StorageType = Main.config.storageTypes;
                         folder.Files.CheckAllStorageType = true;
                         folder.Files.IsStorageTypeIndeterminate = false;
-                        folder.Files.Filters.FileStates = Main.config.fileStates;
+                        folder.Files.Filters.State = Main.config.fileStates;
                         folder.Files.CheckAllFileState = true;
                         folder.Files.IsFileStateIndeterminate = false;
                         folder.Files.Pagination.AdvancedSort.push({ Field: 'CreateTime', Type: "desc" });
-                        console.info(folder.Files.List.length);
                         return folder;
                     });
                     if (!Main.library.init)
@@ -909,15 +917,29 @@ window.onload = function () {
                     return 'icon-folder-none';
             }
         }
-        function GetFolderCLass(folder) {
+        function GetFolderClass(folder) {
             return "folder " + (folder.Hover ? ' hover' : '');
         }
         function OpenFolder(folder, index) {
-            console.info(folder.FileType);
-            Main.library.currentFolderIndex = index;
+            Main.library.currentOpenFolder = folder;
             folder.Files.Pagination.PageRows = getPageSize();
             folder.Open = true;
-            getFileList();
+            folder.Files.Filters.FileType = [folder.FileType];
+            Main.library.activeCollapse = 'files';
+            if (!folder.Files.Init)
+                getFileList(folder);
+        }
+        function CloseFolder(folder, index) {
+            folder.Open = false;
+            Main.library.currentOpenFolder = null;
+        }
+        function ActiveCollapseChange(val) {
+            if (val !== 'folders')
+                return;
+            if (!Main.library.currentOpenFolder)
+                return;
+            Main.library.currentOpenFolder.Open = false;
+            Main.library.currentOpenFolder = null;
         }
         function getPageSize() {
             var current = window.innerHeight / 100, min, result;
@@ -934,47 +956,58 @@ window.onload = function () {
             }
             return result;
         }
-        function allFileType(val) {
-            var folder = Main.library.folders[Main.library.currentFolderIndex];
-            folder.Files.Filters.FileTypes = val ? Main.config.fileTypes : [];
+        function allFileType(folder, val) {
+            folder.Files.Filters.FileType = val ? Main.config.fileTypes : [];
             folder.Files.IsFileTypeIndeterminate = false;
-            Main.fileListFileStateGetAnswer();
+            Main.fileListFileTypeGetAnswer(folder);
         }
-        function fileTypeChange(val) {
-            Main.fileListFileStateGetAnswer();
+        function fileTypeChange(folder, val) {
+            folder.Files.IsFileTypeIndeterminate = val.length != Main.config.fileTypes.length;
+            Main.fileListFileTypeGetAnswer(folder);
         }
-        function allStorageType(val) {
-            var folder = Main.library.folders[Main.library.currentFolderIndex];
-            folder.Files.Filters.StorageTypes = val ? Main.config.storageTypes : [];
+        function allStorageType(folder, val) {
+            folder.Files.Filters.StorageType = val ? Main.config.storageTypes : [];
             folder.Files.IsStorageTypeIndeterminate = false;
-            Main.fileListStorageTypeGetAnswer();
+            Main.fileListStorageTypeGetAnswer(folder);
         }
-        function storageTypeChange(val) {
-            Main.fileListStorageTypeGetAnswer();
+        function storageTypeChange(folder, val) {
+            folder.Files.IsStorageTypeIndeterminate = val.length != Main.config.storageTypes.length;
+            Main.fileListStorageTypeGetAnswer(folder);
         }
-        function allFileState(val) {
-            var folder = Main.library.folders[Main.library.currentFolderIndex];
-            folder.Files.Filters.FileStates = val ? Main.config.fileStates : [];
+        function allFileState(folder, val) {
+            folder.Files.Filters.State = val ? Main.config.fileStates : [];
             folder.Files.IsFileStateIndeterminate = false;
-            Main.fileListFileStateGetAnswer();
+            Main.fileListFileStateGetAnswer(folder);
         }
-        function fileStateChange(val) {
-            Main.fileListFileStateGetAnswer();
+        function fileStateChange(folder, val) {
+            folder.Files.IsFileStateIndeterminate = val.length != Main.config.fileStates.length;
+            Main.fileListFileStateGetAnswer(folder);
         }
-        function fileListDateRangeChange(val) {
-            var folder = Main.library.folders[Main.library.currentFolderIndex];
-            console.info(val[0], val[1]);
-            console.info(folder.Files.Filters.DateRang[0], folder.Files.Filters.DateRang[1]);
-            Main.fileListDataRangeGetAnswer();
+        function fileListDateRangeChange(folder, val) {
+            Main.fileListDataRangeGetAnswer(folder);
         }
-        function updateFileListPagination() {
-            var folder = Main.library.folders[Main.library.currentFolderIndex];
+        function fileListNameChange(folder, val) {
+            Main.fileListNameGetAnswer(folder);
+        }
+        function fileListExtensionChange(folder, val) {
+            Main.fileListExtensionGetAnswer(folder);
+        }
+        function fileListServerKeyChange(folder, val) {
+            Main.fileListServerKeyGetAnswer(folder);
+        }
+        function fileListContentTypeChange(folder, val) {
+            Main.fileListContentTypeGetAnswer(folder);
+        }
+        function fileListMD5Change(folder, val) {
+            Main.fileListMD5GetAnswer(folder);
+        }
+        function updateFileListPagination(folder) {
             for (var field in folder.Files.Filters) {
                 var _continue = false;
                 var value = folder.Files.Filters[field];
                 for (var i = 0; i < folder.Files.Pagination.DynamicFilterInfo.length; i++) {
                     var filter = folder.Files.Pagination.DynamicFilterInfo[i];
-                    if (filter.Field == field) {
+                    if (filter.LocalState == field) {
                         if (!value) {
                             folder.Files.Pagination.DynamicFilterInfo.splice(i, 1);
                             i--;
@@ -985,24 +1018,26 @@ window.onload = function () {
                         break;
                     }
                 }
-                if (!_continue && !value) {
+                if (!_continue && value) {
                     var filter = field == 'DateRang' ?
                         {
+                            LocalState: field,
                             Relation: "and",
                             DynamicFilterInfo: [
                                 {
                                     Field: 'CreateTime',
-                                    Value: Dayjs(value.date[0]).format('YYYY-MM-DD HH:mm:ss'),
+                                    Value: Dayjs(value[0]).format('YYYY-MM-DD HH:mm:ss'),
                                     Compare: "ge"
                                 },
                                 {
                                     Field: 'CreateTime',
-                                    Value: Dayjs(value.date[1]).format('YYYY-MM-DD HH:mm:ss'),
+                                    Value: Dayjs(value[1]).format('YYYY-MM-DD HH:mm:ss'),
                                     Compare: "le"
                                 }
                             ]
                         } :
                         {
+                            LocalState: field,
                             Field: field,
                             Value: value,
                             Compare: Array.isArray(value) ? "inSet" : "in"
@@ -1010,10 +1045,9 @@ window.onload = function () {
                     folder.Files.Pagination.DynamicFilterInfo.push(filter);
                 }
             }
-            getFileList();
+            getFileList(folder);
         }
-        function getFileList() {
-            var folder = Main.library.folders[Main.library.currentFolderIndex];
+        function getFileList(folder) {
             folder.Files.Loading = true;
             Axios.post(ApiUri.GetFileList, folder.Files.Pagination).then(function (response) {
                 if (response.data.Success) {
@@ -1022,6 +1056,8 @@ window.onload = function () {
                     folder.Files.Pagination.PageCount = response.data.Data.PageTotal;
                     folder.Files.Pagination.RecordCount = response.data.Data.Total;
                     folder.Files.List = response.data.Data.List;
+                    if (!folder.Files.Init)
+                        folder.Files.Init = true;
                 }
                 else {
                     folder.Files.Error = response.data.Message;
@@ -1033,10 +1069,9 @@ window.onload = function () {
                 folder.Files.Error = error.message;
                 ElementPlus.ElMessage('获取文件列表时发生异常.');
             });
-            folder.Files.Init = true;
         }
         function fileSort(val) {
-            var folder = Main.library.folders[Main.library.currentFolderIndex];
+            var folder = Main.library.currentOpenFolder;
             if (val.prop == null)
                 folder.Files.Pagination.AdvancedSort = [];
             else if (!val.order)
@@ -1047,43 +1082,27 @@ window.onload = function () {
                     var sort = _a[_i];
                     if (sort.Field == val.prop) {
                         sort.Type = order;
-                        getFileList();
+                        getFileList(folder);
                         return;
                     }
                 }
                 folder.Files.Pagination.AdvancedSort.push({ Field: val.prop, Type: order });
             }
-            getFileList();
+            getFileList(folder);
         }
         function fileListSizeChange(val) {
-            var folder = Main.library.folders[Main.library.currentFolderIndex];
+            var folder = Main.library.currentOpenFolder;
             folder.Files.Pagination.PageRows = val;
-            getFileList();
+            getFileList(folder);
         }
         function fileListCurrentChange(val) {
-            var folder = Main.library.folders[Main.library.currentFolderIndex];
+            var folder = Main.library.currentOpenFolder;
             folder.Files.Pagination.PageIndex = val;
-            getFileList();
+            getFileList(folder);
         }
-        function fileListRowClassName(_a) {
-            var row = _a.row, rowIndex = _a.rowIndex;
-            return '';
-            switch (row.Level) {
-                case 'Trace':
-                case 'Debug':
-                case 'Info':
-                default:
-                    return '';
-                case 'Warn':
-                    return 'warning-row';
-                case 'Error':
-                case 'Fatal':
-                    return 'error-row';
-            }
-        }
-        function fileDetail(index, row) {
-            Main.library.fileDetail.detail.show = true;
-            Main.library.fileDetail.detail.loading = true;
+        function fileDetail(row, index) {
+            Main.library.fileDetail.show = true;
+            Main.library.fileDetail.loading = true;
             Axios.get(ApiUri.GetFileDetail(row.Id))
                 .then(function (response) {
                 if (response.data.Success) {
@@ -1095,7 +1114,7 @@ window.onload = function () {
                 Main.library.fileDetail.loading = false;
             })
                 .catch(function (error) {
-                Main.library.fileDetail.detail.loading = false;
+                Main.library.fileDetail.loading = false;
                 ElementPlus.ElMessage('获取文件详情时发生异常.');
             });
         }
@@ -1113,9 +1132,30 @@ window.onload = function () {
                     return 'danger';
             }
         }
+        function handleFileListCommand(cmd, data, index) {
+            if (index === void 0) { index = null; }
+            switch (cmd) {
+                case 'detail':
+                    fileDetail(data, index);
+                    break;
+                case 'preview':
+                    previewFile(data, index);
+                    break;
+                case 'browse':
+                    browseFile(data, index);
+                    break;
+                case 'download':
+                    downloadFile(data, index);
+                    break;
+                case 'delete':
+                    deleteFile(data, index);
+                    break;
+                default:
+            }
+        }
         function closeFileDetail() {
-            Main.library.fileDetail.detail.show = false;
-            Main.library.fileDetail.detail.detail = {};
+            Main.library.fileDetail.show = false;
+            Main.library.fileDetail.detail = {};
         }
         function previewFile(data, index) {
             if (index === void 0) { index = null; }
@@ -1131,11 +1171,11 @@ window.onload = function () {
         }
         function deleteFile(data, index) {
             if (index === void 0) { index = null; }
-            var folder = Main.library.folders[Main.library.currentFolderIndex];
+            var folder = Main.library.currentOpenFolder;
             folder.Files.Loading = true;
             Axios.post(ApiUri.Delete, [data.Id]).then(function (response) {
                 if (response.data.Success)
-                    getFileList();
+                    getFileList(folder);
                 else {
                     ElementPlus.ElMessage(response.data.Message);
                     folder.Files.Loading = false;

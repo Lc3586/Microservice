@@ -282,6 +282,12 @@ class PaginationDynamicFilterInfo {
      * 子条件
      */
     DynamicFilterInfo?: PaginationDynamicFilterInfo[];
+
+    /**
+     * 本地状态
+     * 此字段和接口无关
+     */
+    LocalState?: string;
 }
 
 /**
