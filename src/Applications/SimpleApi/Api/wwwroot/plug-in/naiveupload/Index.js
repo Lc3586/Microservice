@@ -432,11 +432,12 @@ window.onload = function () {
                         error: '',
                         detail: {},
                         fileId: '',
+                        previewId: '',
                         previewTicks: 0,
                         previewTimespan: [0, 0, 0, 1],
                         previewState: false
                     },
-                    previewImage: ''
+                    previewImages: []
                 }
             };
         }
@@ -1163,21 +1164,23 @@ window.onload = function () {
                 ElementPlus.ElMessage('获取视频信息时发生异常.');
             });
         }
-        function filePreviewStart(data) {
-            Main.library.previewImage = ApiUri.Preview(data.Id);
+        function filePreviewStart(data, index) {
+            Main.library.previewImages[index] = ApiUri.Preview(data.Id);
             if (data.FileType === "\u89C6\u9891") {
-                Main.library.videoInfo.fileId = data.Id;
+                Main.library.videoInfo.previewId = data.Id;
                 Main.library.videoInfo.previewState = true;
             }
         }
-        function videoPreviewNext(data) {
-            if (Main.library.videoInfo.fileId != data.Id)
+        function videoPreviewNext(data, index) {
+            if (Main.library.videoInfo.previewId != data.Id)
                 return;
             if (data.FileType === "\u89C6\u9891") {
-                Main.library.videoInfo.previewTicks = setTimeout(videoPreview, 100, data);
+                if (!Main.library.videoInfo.previewState)
+                    return;
+                Main.library.videoInfo.previewTicks = setTimeout(videoPreview, 200, data, index);
             }
         }
-        function videoPreview(data) {
+        function videoPreview(data, index) {
             if (data.FileType === "\u89C6\u9891") {
                 if (!Main.library.videoInfo.previewState)
                     return;
@@ -1206,16 +1209,16 @@ window.onload = function () {
                             }
                         }
                         var blob = new Blob([response.data], { type: response.headers['content-type'] });
-                        Main.library.previewImage = URL.createObjectURL(blob);
+                        Main.library.previewImages[index] = URL.createObjectURL(blob);
                     }
                 }).catch(function (error) {
                     console.error(error);
                     ElementPlus.ElMessage('获取视频图像时发生异常.');
-                    filePreviewEnd(data);
+                    filePreviewEnd(data, index);
                 });
             }
         }
-        function filePreviewEnd(data) {
+        function filePreviewEnd(data, index) {
             if (data.FileType === "\u89C6\u9891") {
                 clearTimeout(Main.library.videoInfo.previewTicks);
                 Main.library.videoInfo.previewState = false;

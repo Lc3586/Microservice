@@ -612,13 +612,14 @@
                                                                             <el-dropdown-item command="detail">详情</el-dropdown-item>
                                                                             <el-dropdown-item v-if="scope.row.FileType == '视频'" command="videoInfo">视频信息</el-dropdown-item>
                                                                             <el-popover effect="dark"
+                                                                                        width="200"
                                                                                         trigger="hover"
                                                                                         placement="left"
-                                                                                        @show="() => filePreviewStart(scope.row)"
-                                                                                        @hide="() => filePreviewEnd(scope.row)">
-                                                                                <img :src="library.previewImage"
+                                                                                        @show="() => filePreviewStart(scope.row, 0)"
+                                                                                        @hide="() => filePreviewEnd(scope.row, 0)">
+                                                                                <img :src="library.previewImages[0]"
                                                                                      class="preview-img"
-                                                                                     @load="() => videoPreviewNext(scope.row)">
+                                                                                     @load="() => videoPreviewNext(scope.row, 0)">
                                                                                 <template #reference>
                                                                                     <el-dropdown-item command="preview">预览</el-dropdown-item>
                                                                                 </template>
@@ -789,19 +790,19 @@
             </el-skeleton>
             <template #footer>
                 <span class="dialog-footer">
-                    <el-button @click="closeFileDetail">关闭</el-button>
                     <el-button v-if="library.fileDetail.detail.FileType == '视频'"
                                type="info"
                                @click="videoInfo(library.fileDetail.detail)">视频信息</el-button>
 
                     <el-popover effect="dark"
+                                width="200"
                                 trigger="hover"
-                                placement="left"
-                                @show="() => filePreviewStart(library.fileDetail.detail)"
-                                @hide="() => filePreviewEnd(library.fileDetail.detail)">
-                        <img :src="library.previewImage"
+                                placement="top"
+                                @show="() => filePreviewStart(library.fileDetail.detail, 1)"
+                                @hide="() => filePreviewEnd(library.fileDetail.detail, 1)">
+                        <img :src="library.previewImages[1]"
                              class="preview-img"
-                             @load="() => videoPreviewNext(library.fileDetail.detail)">
+                             @load="() => videoPreviewNext(library.fileDetail.detail, 1)">
                         <template #reference>
                             <el-button type="info" @click="previewFile(library.fileDetail.detail)">预览</el-button>
                         </template>
@@ -809,6 +810,7 @@
                     <el-button type="info" @click="browseFile(library.fileDetail.detail)">浏览</el-button>
                     <el-button type="info" @click="downloadFile(library.fileDetail.detail)">下载</el-button>
                     <el-button type="danger" @click="deleteFile(library.fileDetail.detail)">删除</el-button>
+                    <el-button @click="closeFileDetail">关闭</el-button>
                 </span>
             </template>
         </el-dialog>

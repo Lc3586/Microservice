@@ -442,11 +442,12 @@
                             error: '',
                             detail: {},
                             fileId: '',
+                            previewId: '',
                             previewTicks: 0,
                             previewTimespan: [0, 0, 0, 1],
                             previewState: false
                         },
-                        previewImage: ''
+                        previewImages: []
                     }
                 };
             }
@@ -1558,12 +1559,13 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
             /**
              * 文件预览开始
              * @param data
+             * @param index
              */
-            function filePreviewStart(data: FileInfo) {
-                Main.library.previewImage = ApiUri.Preview(data.Id);
+            function filePreviewStart(data: FileInfo, index: number) {
+                Main.library.previewImages[index] = ApiUri.Preview(data.Id);
 
                 if (data.FileType === FileType.视频) {
-                    Main.library.videoInfo.fileId = data.Id;
+                    Main.library.videoInfo.previewId = data.Id;
                     Main.library.videoInfo.previewState = true;
                 }
             }
@@ -1571,20 +1573,26 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
             /**
              * 视频文件预览下一张图片
              * @param data
+             * @param index
              * */
-            function videoPreviewNext(data: FileInfo) {
-                if (Main.library.videoInfo.fileId != data.Id)
+            function videoPreviewNext(data: FileInfo, index: number) {
+                if (Main.library.videoInfo.previewId != data.Id)
                     return;
 
                 if (data.FileType === FileType.视频) {
-                    Main.library.videoInfo.previewTicks = setTimeout(videoPreview, 100, data);
+                    if (!Main.library.videoInfo.previewState)
+                        return;
+
+                    Main.library.videoInfo.previewTicks = setTimeout(videoPreview, 200, data, index);
                 }
             }
 
             /**
              * 视频文件预览下一张图片
+             * @param data
+             * @param index
              * */
-            function videoPreview(data: FileInfo) {
+            function videoPreview(data: FileInfo, index: number) {
                 if (data.FileType === FileType.视频) {
                     if (!Main.library.videoInfo.previewState)
                         return;
@@ -1621,12 +1629,12 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
                             }
 
                             const blob = new Blob([response.data], { type: response.headers['content-type'] });
-                            Main.library.previewImage = URL.createObjectURL(blob);
+                            Main.library.previewImages[index] = URL.createObjectURL(blob);
                         }
                     }).catch((error) => {
                         console.error(error);
                         ElementPlus.ElMessage('获取视频图像时发生异常.');
-                        filePreviewEnd(data);
+                        filePreviewEnd(data, index);
                     });
                 }
             }
@@ -1634,8 +1642,9 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
             /**
              * 文件预览结束
              * @param data
+             * @param index
              */
-            function filePreviewEnd(data: FileInfo) {
+            function filePreviewEnd(data: FileInfo, index: number) {
                 if (data.FileType === FileType.视频) {
                     clearTimeout(Main.library.videoInfo.previewTicks);
                     Main.library.videoInfo.previewState = false;
