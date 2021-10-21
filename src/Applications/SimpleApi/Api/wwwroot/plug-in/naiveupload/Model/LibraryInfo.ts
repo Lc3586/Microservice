@@ -146,7 +146,7 @@ class FileListFilters {
      * 搜索日期范围
      * 默认 近7天
      */
-    DateRang: Date[] = [new Date(new Date().setTime(new Date().getTime() - 3600 * 1000 * 24 * 7)), new Date()];
+    DateRang: Date[];//= [new Date(new Date().setTime(new Date().getTime() - 3600 * 1000 * 24 * 7)), new Date()];
 
     /**
      * 搜索文件名

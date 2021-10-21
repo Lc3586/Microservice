@@ -156,6 +156,13 @@ window.onload = function () {
                 type: 'text/javascript',
                 src: 'Model/LibraryInfo.js'
             }
+        },
+        {
+            Tag: "script",
+            Attributes: {
+                type: 'text/javascript',
+                src: 'Model/VideoInfo.js'
+            }
         }
     ], function () {
         var Vue = window.Vue;
@@ -257,7 +264,11 @@ window.onload = function () {
                 previewFile: previewFile,
                 browseFile: browseFile,
                 downloadFile: downloadFile,
-                deleteFile: deleteFile
+                deleteFile: deleteFile,
+                videoInfo: videoInfo,
+                filePreviewStart: filePreviewStart,
+                videoPreviewNext: videoPreviewNext,
+                filePreviewEnd: filePreviewEnd
             },
             watch: {
                 'multipleUpload.settings': {
@@ -413,7 +424,19 @@ window.onload = function () {
                         show: false,
                         loading: true,
                         detail: {}
-                    }
+                    },
+                    videoInfo: {
+                        activeTab: '',
+                        enable: false,
+                        loading: true,
+                        error: '',
+                        detail: {},
+                        fileId: '',
+                        previewTicks: 0,
+                        previewTimespan: [0, 0, 0, 1],
+                        previewState: false
+                    },
+                    previewImage: ''
                 }
             };
         }
@@ -926,8 +949,7 @@ window.onload = function () {
             folder.Open = true;
             folder.Files.Filters.FileType = [folder.FileType];
             Main.library.activeCollapse = 'files';
-            if (!folder.Files.Init)
-                getFileList(folder);
+            updateFileListPagination(folder);
         }
         function CloseFolder(folder, index) {
             folder.Open = false;
@@ -1118,6 +1140,87 @@ window.onload = function () {
                 ElementPlus.ElMessage('获取文件详情时发生异常.');
             });
         }
+        function videoInfo(data) {
+            Main.library.videoInfo.show = true;
+            if (Main.library.videoInfo.fileId === data.Id)
+                return;
+            Main.library.videoInfo.loading = true;
+            Axios.get(ApiUri.GetVideoInfo(data.Id, true, true, true, true, true))
+                .then(function (response) {
+                if (response.data.Success) {
+                    Main.library.videoInfo.fileId = data.Id;
+                    Main.library.videoInfo.detail = response.data.Data;
+                    Main.library.videoInfo.activeTab = 'Streams';
+                }
+                else {
+                    Main.library.videoInfo.error = response.data.Message;
+                    ElementPlus.ElMessage(response.data.Message);
+                }
+                Main.library.videoInfo.loading = false;
+            })
+                .catch(function (error) {
+                Main.library.videoInfo.loading = false;
+                ElementPlus.ElMessage('获取视频信息时发生异常.');
+            });
+        }
+        function filePreviewStart(data) {
+            Main.library.previewImage = ApiUri.Preview(data.Id);
+            if (data.FileType === "\u89C6\u9891") {
+                Main.library.videoInfo.fileId = data.Id;
+                Main.library.videoInfo.previewState = true;
+            }
+        }
+        function videoPreviewNext(data) {
+            if (Main.library.videoInfo.fileId != data.Id)
+                return;
+            if (data.FileType === "\u89C6\u9891") {
+                Main.library.videoInfo.previewTicks = setTimeout(videoPreview, 100, data);
+            }
+        }
+        function videoPreview(data) {
+            if (data.FileType === "\u89C6\u9891") {
+                if (!Main.library.videoInfo.previewState)
+                    return;
+                Axios.get(ApiUri.Preview(data.Id, 500, 500, Main.library.videoInfo.previewTimespan[0].toString().padStart(2, '0') + ":" + Main.library.videoInfo.previewTimespan[1].toString().padStart(2, '0') + ":" + Main.library.videoInfo.previewTimespan[2].toString().padStart(2, '0') + "." + Main.library.videoInfo.previewTimespan[3].toString().padStart(3, '0')), {
+                    responseType: "blob",
+                    onDownloadProgress: function (progressEvent) {
+                    }
+                }).then(function (response) {
+                    if (response.status !== 200)
+                        throw new Error('请求图片失败.');
+                    if (response.headers['content-length'] === '0') {
+                        Main.library.videoInfo.previewTimespan = [0, 0, 0, 1];
+                    }
+                    else {
+                        Main.library.videoInfo.previewTimespan[3] += 500;
+                        if (Main.library.videoInfo.previewTimespan[3] >= 999) {
+                            Main.library.videoInfo.previewTimespan[3] = 1;
+                            Main.library.videoInfo.previewTimespan[2]++;
+                            if (Main.library.videoInfo.previewTimespan[2] >= 59) {
+                                Main.library.videoInfo.previewTimespan[2] = 0;
+                                Main.library.videoInfo.previewTimespan[1]++;
+                                if (Main.library.videoInfo.previewTimespan[1] >= 59) {
+                                    Main.library.videoInfo.previewTimespan[1] = 0;
+                                    Main.library.videoInfo.previewTimespan[0]++;
+                                }
+                            }
+                        }
+                        var blob = new Blob([response.data], { type: response.headers['content-type'] });
+                        Main.library.previewImage = URL.createObjectURL(blob);
+                    }
+                }).catch(function (error) {
+                    console.error(error);
+                    ElementPlus.ElMessage('获取视频图像时发生异常.');
+                    filePreviewEnd(data);
+                });
+            }
+        }
+        function filePreviewEnd(data) {
+            if (data.FileType === "\u89C6\u9891") {
+                clearTimeout(Main.library.videoInfo.previewTicks);
+                Main.library.videoInfo.previewState = false;
+            }
+        }
         function getFileStateTag(state) {
             switch (state) {
                 case '未上传':
@@ -1137,6 +1240,9 @@ window.onload = function () {
             switch (cmd) {
                 case 'detail':
                     fileDetail(data, index);
+                    break;
+                case 'videoInfo':
+                    videoInfo(data);
                     break;
                 case 'preview':
                     previewFile(data, index);

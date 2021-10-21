@@ -56,7 +56,7 @@ namespace Business.Interface.Common
         /// <param name="height">指定高度</param>
         /// <param name="time">视频的时间轴位置</param>
         /// <returns></returns>
-        Task Preview(string id, int width, int height, TimeSpan? time = null);
+        Task Preview(string id, int? width = null, int? height = null, TimeSpan? time = null);
 
         /// <summary>
         /// 浏览

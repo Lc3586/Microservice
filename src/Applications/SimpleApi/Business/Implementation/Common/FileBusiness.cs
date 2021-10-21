@@ -186,10 +186,30 @@ namespace Business.Implementation.Common
                 var s = $"{(file.Extension.IsNullOrWhiteSpace() ? file.Path : file.Path.Replace(file.Extension, ""))}-Screenshot";
                 if (Directory.Exists(s))
                     Directory.Delete(s, true);
+
+                void handler()
+                {
+                    if (Repository.UpdateDiy
+                        .Where(o => o.Id == file.Id)
+                        .Set(o => o.State, FileState.已删除)
+                        .ExecuteAffrows() <= 0)
+                        throw new MessageException("更新文件信息失败.", new { file.Id });
+
+                    if (Orm.GetRepository<Common_PersonalFileInfo>().UpdateDiy
+                        .Where(o => o.FileId == file.Id)
+                        .Set(o => o.State, PersonalFileInfoState.不可用)
+                        .ExecuteAffrows() < 0)
+                        throw new MessageException("更新个人文件信息失败.", new { file.Id });
+                }
+
+                (bool success, Exception ex) = Orm.RunTransaction(handler);
+
+                if (!success)
+                    throw new MessageException("文件信息更新失败.", ex);
             }
         }
 
-        public async Task Preview(string id, int width, int height, TimeSpan? time = null)
+        public async Task Preview(string id, int? width = null, int? height = null, TimeSpan? time = null)
         {
             var file = Repository.Get(id);
             if (file == null)
@@ -219,6 +239,9 @@ namespace Business.Implementation.Common
             }
             //throw new MessageException("文件已被删除.", file.Path);
 
+            width ??= 500;
+            height ??= 500;
+
             if (file.FileType == FileType.图片)
             {
                 var imagePath = $"{(file.Extension.IsNullOrWhiteSpace() ? file.Path : file.Path.Replace(file.Extension, ""))}-Screenshot/{width}x{height}{file.Extension}";
@@ -235,7 +258,7 @@ namespace Business.Implementation.Common
                         var image = new Image(fs);
 
                         using var newFS = File.Create(imagePath);
-                        image.Resize(width, height)
+                        image.Resize(width.Value, height.Value)
                            .Save(newFS);
                     }
                     catch (Exception ex)
@@ -257,7 +280,7 @@ namespace Business.Implementation.Common
             else if (file.FileType == FileType.视频)
             {
                 time ??= TimeSpan.FromSeconds(0.001);
-                var imagePath = $"{(file.Extension.IsNullOrWhiteSpace() ? file.Path : file.Path.Replace(file.Extension, ""))}-Screenshot/{width}x{height}-{time.Value:c}.jpg";
+                var imagePath = $"{(file.Extension.IsNullOrWhiteSpace() ? file.Path : file.Path.Replace(file.Extension, ""))}-Screenshot/{width}x{height}-{time.Value.ToString("c").Replace(':', '：')}.jpg";
 
                 if (!File.Exists(imagePath))
                 {

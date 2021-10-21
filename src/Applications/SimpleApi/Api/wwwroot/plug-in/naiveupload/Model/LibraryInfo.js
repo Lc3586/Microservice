@@ -46,7 +46,6 @@ var FileListInfo = (function () {
 }());
 var FileListFilters = (function () {
     function FileListFilters() {
-        this.DateRang = [new Date(new Date().setTime(new Date().getTime() - 3600 * 1000 * 24 * 7)), new Date()];
     }
     return FileListFilters;
 }());

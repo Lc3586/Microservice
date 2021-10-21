@@ -120,6 +120,13 @@
                     type: 'text/javascript',
                     src: 'Model/LibraryInfo.js'
                 }
+            },
+            {
+                Tag: ImportFileTag.JS,
+                Attributes: {
+                    type: 'text/javascript',
+                    src: 'Model/VideoInfo.js'
+                }
             }
         ],
         () => {
@@ -252,7 +259,12 @@
                     previewFile,
                     browseFile,
                     downloadFile,
-                    deleteFile
+                    deleteFile,
+                    videoInfo,
+
+                    filePreviewStart,
+                    videoPreviewNext,
+                    filePreviewEnd
                 },
                 watch: {
                     /**
@@ -422,7 +434,19 @@
                             show: false,
                             loading: true,
                             detail: {}
-                        }
+                        },
+                        videoInfo: {
+                            activeTab: '',
+                            enable: false,
+                            loading: true,
+                            error: '',
+                            detail: {},
+                            fileId: '',
+                            previewTicks: 0,
+                            previewTimespan: [0, 0, 0, 1],
+                            previewState: false
+                        },
+                        previewImage: ''
                     }
                 };
             }
@@ -1178,8 +1202,8 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
                 folder.Files.Filters.FileType = [folder.FileType];
                 Main.library.activeCollapse = 'files';
 
-                if (!folder.Files.Init)
-                    getFileList(folder);
+                //if (!folder.Files.Init)
+                updateFileListPagination(folder);
             }
 
             /**
@@ -1503,6 +1527,122 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
             }
 
             /**
+             * 获取视频信息
+             */
+            function videoInfo(data) {
+                Main.library.videoInfo.show = true;
+
+                if (Main.library.videoInfo.fileId === data.Id)
+                    return;
+
+                Main.library.videoInfo.loading = true;
+                Axios.get(ApiUri.GetVideoInfo(data.Id, true, true, true, true, true))
+                    .then((response: { data: ResponseData_T<VideoInfo> }) => {
+                        if (response.data.Success) {
+                            Main.library.videoInfo.fileId = data.Id;
+                            Main.library.videoInfo.detail = response.data.Data;
+                            Main.library.videoInfo.activeTab = 'Streams';
+                        }
+                        else {
+                            Main.library.videoInfo.error = response.data.Message;
+                            ElementPlus.ElMessage(response.data.Message);
+                        }
+                        Main.library.videoInfo.loading = false;
+                    })
+                    .catch((error) => {
+                        Main.library.videoInfo.loading = false;
+                        ElementPlus.ElMessage('获取视频信息时发生异常.');
+                    });
+            }
+
+            /**
+             * 文件预览开始
+             * @param data
+             */
+            function filePreviewStart(data: FileInfo) {
+                Main.library.previewImage = ApiUri.Preview(data.Id);
+
+                if (data.FileType === FileType.视频) {
+                    Main.library.videoInfo.fileId = data.Id;
+                    Main.library.videoInfo.previewState = true;
+                }
+            }
+
+            /**
+             * 视频文件预览下一张图片
+             * @param data
+             * */
+            function videoPreviewNext(data: FileInfo) {
+                if (Main.library.videoInfo.fileId != data.Id)
+                    return;
+
+                if (data.FileType === FileType.视频) {
+                    Main.library.videoInfo.previewTicks = setTimeout(videoPreview, 100, data);
+                }
+            }
+
+            /**
+             * 视频文件预览下一张图片
+             * */
+            function videoPreview(data: FileInfo) {
+                if (data.FileType === FileType.视频) {
+                    if (!Main.library.videoInfo.previewState)
+                        return;
+
+                    Axios.get(ApiUri.Preview(data.Id, 500, 500, `${(<any>Main.library.videoInfo.previewTimespan[0].toString()).padStart(2, '0')}:${(<any>Main.library.videoInfo.previewTimespan[1].toString()).padStart(2, '0')}:${(<any>Main.library.videoInfo.previewTimespan[2].toString()).padStart(2, '0')}.${(<any>Main.library.videoInfo.previewTimespan[3].toString()).padStart(3, '0')}`), {
+                        responseType: "blob",
+                        onDownloadProgress: (progressEvent) => {
+                            //console.info(progressEvent);
+                        }
+                    }).then((response) => {
+                        if (response.status !== 200)
+                            throw new Error('请求图片失败.');
+
+                        if (response.headers['content-length'] === '0') {
+                            //可能是预览的时长超过了视频的时长
+                            Main.library.videoInfo.previewTimespan = [0, 0, 0, 1];
+                        } else {
+                            Main.library.videoInfo.previewTimespan[3] += 500;
+
+                            if (Main.library.videoInfo.previewTimespan[3] >= 999) {
+                                Main.library.videoInfo.previewTimespan[3] = 1;
+
+                                Main.library.videoInfo.previewTimespan[2]++;
+                                if (Main.library.videoInfo.previewTimespan[2] >= 59) {
+                                    Main.library.videoInfo.previewTimespan[2] = 0;
+
+                                    Main.library.videoInfo.previewTimespan[1]++;
+                                    if (Main.library.videoInfo.previewTimespan[1] >= 59) {
+                                        Main.library.videoInfo.previewTimespan[1] = 0;
+
+                                        Main.library.videoInfo.previewTimespan[0]++;
+                                    }
+                                }
+                            }
+
+                            const blob = new Blob([response.data], { type: response.headers['content-type'] });
+                            Main.library.previewImage = URL.createObjectURL(blob);
+                        }
+                    }).catch((error) => {
+                        console.error(error);
+                        ElementPlus.ElMessage('获取视频图像时发生异常.');
+                        filePreviewEnd(data);
+                    });
+                }
+            }
+
+            /**
+             * 文件预览结束
+             * @param data
+             */
+            function filePreviewEnd(data: FileInfo) {
+                if (data.FileType === FileType.视频) {
+                    clearTimeout(Main.library.videoInfo.previewTicks);
+                    Main.library.videoInfo.previewState = false;
+                }
+            }
+
+            /**
              * 获取文件状态指定的标签类型
              * @param {any} state
              */
@@ -1531,6 +1671,9 @@ background: -webkit-linear-gradient(left, ${color} ${value1}%, transparent ${val
                 switch (cmd) {
                     case 'detail':
                         fileDetail(data, index);
+                        break;
+                    case 'videoInfo':
+                        videoInfo(data);
                         break;
                     case 'preview':
                         previewFile(data, index);

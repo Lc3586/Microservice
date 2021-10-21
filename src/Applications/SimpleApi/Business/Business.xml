@@ -842,7 +842,7 @@
             <param name="ids">Id集合</param>
             <returns></returns>
         </member>
-        <member name="M:Business.Interface.Common.IFileBusiness.Preview(System.String,System.Int32,System.Int32,System.Nullable{System.TimeSpan})">
+        <member name="M:Business.Interface.Common.IFileBusiness.Preview(System.String,System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.TimeSpan})">
             <summary>
             预览
             </summary>

@@ -113,8 +113,20 @@ class ApiUri {
 
     /**
      * 获取文件详情数据
+     * @param Id 上传配置Id
      */
     static GetFileDetail: (id: string) => string = (id: string) => `/file/detail-data/${id}`;
+
+    /**
+     * 获取文件详情数据
+     * @param Id 上传配置Id
+     * @param format 获取有关输入多媒体流的容器格式的信息
+     * @param streams 获取有关输入多媒体流中包含的每个媒体流的信息
+     * @param chapters 获取有关以该格式存储的章节的信息
+     * @param programs 获取有关程序及其输入多媒体流中包含的流的信息
+     * @param version 获取与程序版本有关的信息、获取与库版本有关的信息、获取与程序和库版本有关的信息
+     */
+    static GetVideoInfo: (id: string, format?: boolean, streams?: boolean, chapters?: boolean, programs?: boolean, version?: boolean) => string = (id: string, format: boolean = true, streams: boolean = false, chapters: boolean = false, programs: boolean = false, version: boolean = false) => `/file/video-info/${id}?format=${format}&streams=${streams}&chapters=${chapters}&programs=${programs}&version=${version}`;
 
     /**
      * 预备上传文件
@@ -200,7 +212,7 @@ class ApiUri {
      * @param time 视频的时间轴位置（默认值: 00:00:00.001）
      * */
     static Preview(id: string, width?: number, height?: number, time?: string) {
-        return `/file/preview/${id}?width=${width ?? 0}&height=${height ?? 0}&time=${time ?? ''}`;
+        return `/file/preview/${id}?width=${width ?? ''}&height=${height ?? ''}&time=${time ?? ''}`;
     }
 
     /**

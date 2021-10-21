@@ -438,7 +438,7 @@
                     </el-tab-pane>
                     <el-tab-pane label="文件库" class="tab-pane" name="Library">
                         <div class="library-folders-container">
-                            <div class="library-folders"
+                            <div class="library-folders pretty-scrollbar"
                                  v-loading="library.loading">
                                 <el-collapse v-model="library.activeCollapse"
                                              accordion
@@ -470,7 +470,7 @@
                                     <el-collapse-item title="文件列表"
                                                       name="files"
                                                       v-if="library.currentOpenFolder != null">
-                                        <div class="file-list">
+                                        <div class="file-list pretty-scrollbar">
                                             <el-collapse>
                                                 <el-collapse-item title="└ 按文件类型、存储类型、文件状态搜索" name="filters0">
                                                     <el-row :gutter="20">
@@ -604,18 +604,28 @@
                                                             <template #default="scope">
                                                                 <el-dropdown :hide-on-click="true"
                                                                              @command="(cmd) => { handleFileListCommand(cmd, scope.row, scope.$index); }">
-                                                                    <span class="el-dropdown-link">
-                                                                        ...<i class="el-icon-arrow-down el-icon--right"></i>
+                                                                    <span class="el-dropdown-link" title="选项">
+                                                                        ...
                                                                     </span>
                                                                     <template #dropdown>
                                                                         <el-dropdown-menu>
                                                                             <el-dropdown-item command="detail">详情</el-dropdown-item>
-                                                                            <el-dropdown-item command="preview">预览</el-dropdown-item>
+                                                                            <el-dropdown-item v-if="scope.row.FileType == '视频'" command="videoInfo">视频信息</el-dropdown-item>
+                                                                            <el-popover effect="dark"
+                                                                                        trigger="hover"
+                                                                                        placement="left"
+                                                                                        @show="() => filePreviewStart(scope.row)"
+                                                                                        @hide="() => filePreviewEnd(scope.row)">
+                                                                                <img :src="library.previewImage"
+                                                                                     class="preview-img"
+                                                                                     @load="() => videoPreviewNext(scope.row)">
+                                                                                <template #reference>
+                                                                                    <el-dropdown-item command="preview">预览</el-dropdown-item>
+                                                                                </template>
+                                                                            </el-popover>
                                                                             <el-dropdown-item command="browse">浏览</el-dropdown-item>
                                                                             <el-dropdown-item command="download">下载</el-dropdown-item>
                                                                             <el-dropdown-item command="delete">删除</el-dropdown-item>
-                                                                            <!--<el-dropdown-item disabled>删除</el-dropdown-item>
-                                                                            <el-dropdown-item divided>蚵仔煎</el-dropdown-item>-->
                                                                         </el-dropdown-menu>
                                                                     </template>
                                                                 </el-dropdown>
@@ -780,10 +790,162 @@
             <template #footer>
                 <span class="dialog-footer">
                     <el-button @click="closeFileDetail">关闭</el-button>
-                    <el-button type="info" @click="previewFile(library.fileDetail.detail)">预览</el-button>
+                    <el-button v-if="library.fileDetail.detail.FileType == '视频'"
+                               type="info"
+                               @click="videoInfo(library.fileDetail.detail)">视频信息</el-button>
+
+                    <el-popover effect="dark"
+                                trigger="hover"
+                                placement="left"
+                                @show="() => filePreviewStart(library.fileDetail.detail)"
+                                @hide="() => filePreviewEnd(library.fileDetail.detail)">
+                        <img :src="library.previewImage"
+                             class="preview-img"
+                             @load="() => videoPreviewNext(library.fileDetail.detail)">
+                        <template #reference>
+                            <el-button type="info" @click="previewFile(library.fileDetail.detail)">预览</el-button>
+                        </template>
+                    </el-popover>
                     <el-button type="info" @click="browseFile(library.fileDetail.detail)">浏览</el-button>
                     <el-button type="info" @click="downloadFile(library.fileDetail.detail)">下载</el-button>
                     <el-button type="danger" @click="deleteFile(library.fileDetail.detail)">删除</el-button>
+                </span>
+            </template>
+        </el-dialog>
+
+        <!--视频信息-->
+        <el-dialog title="视频信息"
+                   v-model="library.videoInfo.show"
+                   v-loading="library.videoInfo.loading"
+                   width="90%"
+                   custom-class="video-info-dialog">
+            <div class="video-info-container">
+                <el-tabs v-model="library.videoInfo.activeTab">
+                    <el-tab-pane v-if="library.videoInfo.detail.Streams"
+                                 label="媒体流"
+                                 name="Streams">
+                        <div class="video-info pretty-scrollbar">
+                            <el-descriptions v-for="(stream, index) in library.videoInfo.detail.Streams"
+                                             :title="`${stream.Index}`"
+                                             border>
+                                <el-descriptions-item label="语言">{{stream.Tags.Language}}</el-descriptions-item>
+                                <el-descriptions-item label="处理器名字">{{stream.Tags.Handler_Name}}</el-descriptions-item>
+                                <el-descriptions-item label="创建时间">{{stream.Tags.Creation_Time}}</el-descriptions-item>
+
+                                <el-descriptions-item label="编码器名">{{stream.Codec_Name}} ({{stream.Codec_Long_Name}})</el-descriptions-item>
+                                <el-descriptions-item label="简介">{{stream.Profile}}</el-descriptions-item>
+                                <el-descriptions-item label="编码器类型">{{stream.Codec_Type}}</el-descriptions-item>
+                                <el-descriptions-item label="编码器每帧时长">{{stream.Codec_Time_Base}}</el-descriptions-item>
+                                <el-descriptions-item label="编码器标签名">{{stream.Codec_Tag_String}}</el-descriptions-item>
+                                <el-descriptions-item label="编码器标签">{{stream.Codec_Tag}}</el-descriptions-item>
+                                <el-descriptions-item label="采样点格式">{{stream.Sample_Fmt}}</el-descriptions-item>
+                                <el-descriptions-item label="采样率">{{stream.Sample_Rate}}</el-descriptions-item>
+                                <el-descriptions-item label="音频通道数">{{stream.Channels}}</el-descriptions-item>
+                                <el-descriptions-item label="音频通道布局">{{stream.Channel_Layout}}</el-descriptions-item>
+                                <el-descriptions-item label="采样点bit数">{{stream.Bits_Per_Sample}}</el-descriptions-item>
+                                <el-descriptions-item label="帧宽度">{{stream.Width}}</el-descriptions-item>
+                                <el-descriptions-item label="帧高度">{{stream.Height}}</el-descriptions-item>
+                                <el-descriptions-item label="视频帧宽度">{{stream.Coded_Width}}</el-descriptions-item>
+                                <el-descriptions-item label="视频帧高度">{{stream.Coded_Height}}</el-descriptions-item>
+                                <el-descriptions-item label="Closed Captions">{{stream.Closed_Captions}}</el-descriptions-item>
+                                <el-descriptions-item label="记录帧缓存大小" title="视频的延迟帧数">{{stream.Has_B_Frames}}</el-descriptions-item>
+                                <el-descriptions-item label="像素格式">{{stream.Pix_Fmt}}</el-descriptions-item>
+                                <el-descriptions-item label="级别">{{stream.Level}}</el-descriptions-item>
+                                <el-descriptions-item label="色度样品的位置">{{stream.Chroma_Location}}</el-descriptions-item>
+                                <el-descriptions-item label="Is Avc">{{stream.Is_Avc}}</el-descriptions-item>
+                                <el-descriptions-item label="表示用几个字节表示NALU的长度">{{stream.Nal_Length_Size}}</el-descriptions-item>
+                                <el-descriptions-item label="真实基础帧率">{{stream.R_Frame_Rate}}</el-descriptions-item>
+                                <el-descriptions-item label="平均帧率">{{stream.Avg_Frame_Rate}}</el-descriptions-item>
+                                <el-descriptions-item label="每帧时长">{{stream.Time_Base}}</el-descriptions-item>
+                                <el-descriptions-item label="流开始时间" title="基于每帧时长">{{stream.Start_Pts}}</el-descriptions-item>
+                                <el-descriptions-item label="首帧时间">{{stream.Start_Time_Convert}}</el-descriptions-item>
+                                <el-descriptions-item label="流时长" title="基于每帧时长">{{stream.Duration_Ts}}</el-descriptions-item>
+                                <el-descriptions-item label="时长">{{stream.Duration_Convert}}</el-descriptions-item>
+                                <el-descriptions-item label="码率">{{stream.Bit_Rate}}</el-descriptions-item>
+                                <el-descriptions-item label="原生采样的比特数/位深">{{stream.Bits_Per_Raw_Sample}}</el-descriptions-item>
+                                <el-descriptions-item label="视频流帧数">{{stream.Nb_Frames}}</el-descriptions-item>
+                                <el-descriptions-item label="Extradata"><p v-text="stream.Extradata"></p></el-descriptions-item>
+
+                                <el-descriptions-item label="Default">{{stream.Disposition.Default}}</el-descriptions-item>
+                                <el-descriptions-item label="Dub">{{stream.Disposition.Dub}}</el-descriptions-item>
+                                <el-descriptions-item label="Original">{{stream.Disposition.Original}}</el-descriptions-item>
+                                <el-descriptions-item label="Comment">{{stream.Disposition.Comment}}</el-descriptions-item>
+                                <el-descriptions-item label="Lyrics">{{stream.Disposition.Lyrics}}</el-descriptions-item>
+                                <el-descriptions-item label="Karaoke">{{stream.Disposition.Karaoke}}</el-descriptions-item>
+                                <el-descriptions-item label="Forced">{{stream.Disposition.Forced}}</el-descriptions-item>
+                                <el-descriptions-item label="Hearing_Impaired">{{stream.Disposition.Hearing_Impaired}}</el-descriptions-item>
+                                <el-descriptions-item label="Visual_Impaired">{{stream.Disposition.Visual_Impaired}}</el-descriptions-item>
+                                <el-descriptions-item label="Clean_Effects">{{stream.Disposition.Clean_Effects}}</el-descriptions-item>
+                                <el-descriptions-item label="Attached_Pic">{{stream.Disposition.Attached_Pic}}</el-descriptions-item>
+                                <el-descriptions-item label="Timed_Thumbnails">{{stream.Disposition.Timed_Thumbnails}}</el-descriptions-item>
+                            </el-descriptions>
+                        </div>
+                    </el-tab-pane>
+                    <el-tab-pane v-if="library.videoInfo.detail.Format"
+                                 label="格式"
+                                 name="Format">
+                        <div class="video-info pretty-scrollbar">
+                            <el-descriptions border>
+                                <el-descriptions-item label="文件绝对路径">{{library.videoInfo.detail.Format.Filename}}</el-descriptions-item>
+                                <el-descriptions-item label="输入视频的AVStream个数">{{library.videoInfo.detail.Format.Nb_Streams}}</el-descriptions-item>
+                                <el-descriptions-item label="Nb Programs">{{library.videoInfo.detail.Format.Nb_Programs}}</el-descriptions-item>
+                                <el-descriptions-item label="格式名">{{library.videoInfo.detail.Format.Format_Name}} ({{library.videoInfo.detail.Format.Format_Long_Name}})</el-descriptions-item>
+                                <el-descriptions-item label="首帧时间">{{library.videoInfo.detail.Format.Start_Time_Convert}}</el-descriptions-item>
+                                <el-descriptions-item label="时长">{{library.videoInfo.detail.Format.Duration_Convert}}</el-descriptions-item>
+                                <el-descriptions-item label="文件大小">{{library.videoInfo.detail.Format.Size}}</el-descriptions-item>
+                                <el-descriptions-item label="码率">{{library.videoInfo.detail.Format.Bit_Rate}}</el-descriptions-item>
+                                <el-descriptions-item label="文件内容与文件拓展名匹配程度"
+                                                      title="100为最高分, 低于25分时文件拓展名可能被串改.">{{library.videoInfo.detail.Format.Probe_Score}}</el-descriptions-item>
+
+                                <el-descriptions-item label="主品牌">{{library.videoInfo.detail.Format.Tags.Major_Brand}}</el-descriptions-item>
+                                <el-descriptions-item label="次要版本">{{library.videoInfo.detail.Format.Tags.Minor_Version}}</el-descriptions-item>
+                                <el-descriptions-item label="兼容性品牌">{{library.videoInfo.detail.Format.Tags.Compatible_Brands}}</el-descriptions-item>
+                                <el-descriptions-item label="编码器">{{library.videoInfo.detail.Format.Tags.Encoder}}</el-descriptions-item>
+                                <el-descriptions-item label="创建时间">{{library.videoInfo.detail.Format.Tags.Creation_Time}}</el-descriptions-item>
+                            </el-descriptions>
+                        </div>
+                    </el-tab-pane>
+                    <el-tab-pane v-if="library.videoInfo.detail.Chapters"
+                                 label="章节"
+                                 name="Chapters">
+                        <div class="video-info pretty-scrollbar">
+                        </div>
+                    </el-tab-pane>
+                    <el-tab-pane v-if="library.videoInfo.detail.Programs"
+                                 label="程序" name="Programs">
+                        <div class="video-info pretty-scrollbar">
+                        </div>
+                    </el-tab-pane>
+                    <el-tab-pane v-if="library.videoInfo.detail.Program_Version"
+                                 label="程序版本" name="Program_Version">
+                        <div class="video-info pretty-scrollbar">
+                            <el-descriptions border>
+                                <el-descriptions-item label="Version">{{library.videoInfo.detail.Program_Version.Version}}</el-descriptions-item>
+                                <el-descriptions-item label="Copyright">{{library.videoInfo.detail.Program_Version.Copyright}}</el-descriptions-item>
+                                <el-descriptions-item label="Compiler Ident">{{library.videoInfo.detail.Program_Version.Compiler_Ident}}</el-descriptions-item>
+                                <el-descriptions-item label="Configuration">{{library.videoInfo.detail.Program_Version.Configuration}}</el-descriptions-item>
+                            </el-descriptions>
+                        </div>
+                    </el-tab-pane>
+                    <el-tab-pane v-if="library.videoInfo.detail.Library_Versions"
+                                 label="库版本" name="Library_Versions">
+                        <div class="video-info pretty-scrollbar">
+                            <el-descriptions v-for="(library_Versions, index) in library.videoInfo.detail.Library_Versions"
+                                             :title="`${library_Versions.Name}`"
+                                             border>
+                                <el-descriptions-item label="Major">{{library_Versions.Major}}</el-descriptions-item>
+                                <el-descriptions-item label="Minor">{{library_Versions.Minor}}</el-descriptions-item>
+                                <el-descriptions-item label="Micro">{{library_Versions.Micro}}</el-descriptions-item>
+                                <el-descriptions-item label="Version">{{library_Versions.Version}}</el-descriptions-item>
+                                <el-descriptions-item label="Ident">{{library_Versions.Ident}}</el-descriptions-item>
+                            </el-descriptions>
+                        </div>
+                    </el-tab-pane>
+                </el-tabs>
+            </div>
+            <template #footer>
+                <span class="dialog-footer">
+                    <el-button @click="library.videoInfo.show = false">关闭</el-button>
                 </span>
             </template>
         </el-dialog>
