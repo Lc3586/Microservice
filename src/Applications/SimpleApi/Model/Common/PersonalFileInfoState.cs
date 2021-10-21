@@ -8,5 +8,7 @@
         public const string 可用 = "可用";
 
         public const string 锁定 = "锁定";
+
+        public const string 不可用 = "不可用";
     }
 }

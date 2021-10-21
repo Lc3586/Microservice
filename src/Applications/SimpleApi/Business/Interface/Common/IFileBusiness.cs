@@ -56,7 +56,7 @@ namespace Business.Interface.Common
         /// <param name="height">指定高度</param>
         /// <param name="time">视频的时间轴位置</param>
         /// <returns></returns>
-        Task Preview(string id, int width, int height, TimeSpan? time = null);
+        Task Preview(string id, int? width = null, int? height = null, TimeSpan? time = null);
 
         /// <summary>
         /// 浏览
@@ -114,6 +114,30 @@ namespace Business.Interface.Common
         /// <param name="version">获取与程序版本有关的信息、获取与库版本有关的信息、获取与程序和库版本有关的信息</param>
         /// <returns></returns>
         Task<VideoInfo> GetVideoInfo(string id, bool format = true, bool streams = false, bool chapters = false, bool programs = false, bool version = false);
+
+        /// <summary>
+        /// 获取文件库信息
+        /// </summary>
+        /// <returns></returns>
+        List<LibraryInfo> GetLibraryInfo();
+
+        /// <summary>
+        /// 获取所有文件类型
+        /// </summary>
+        /// <returns></returns>
+        List<string> GetFileTypes();
+
+        /// <summary>
+        /// 获取所有文件存储类型
+        /// </summary>
+        /// <returns></returns>
+        List<string> GetStorageTypes();
+
+        /// <summary>
+        /// 获取所有文件状态
+        /// </summary>
+        /// <returns></returns>
+        List<string> GetFileStates();
 
         #endregion
     }

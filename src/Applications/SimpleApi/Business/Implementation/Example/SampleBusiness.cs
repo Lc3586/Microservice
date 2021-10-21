@@ -273,18 +273,24 @@ namespace Business.Implementation.Example
                 throw new MessageException("导入失败, 文件有误（请检查格式）.", _ex);
             }
 
-            var entityList = new List<Sample_DB>();
+            var type = typeof(Create);
+
+            var properties = type.GetProperties();
+
+            var tag = type.GetMainTag();
+
+            var dataList = new List<Create>();
 
             var errors = new List<ErrorInfo>();
 
             for (int i = 0; i < table.Rows.Count; i++)
             {
                 var row = table.Rows[i];
-                var entity = new Sample_DB();
+                var data = new Create();
 
                 var _errors = new List<ErrorInfo>();
 
-                entity.GetType().GetProperties().ForEach(o =>
+                properties.ForEach(o =>
                 {
                     if (!o.HasTag(typeof(Create).GetMainTag()))
                         return;
@@ -302,7 +308,7 @@ namespace Business.Implementation.Example
                     try
                     {
                         if (o.PropertyType == typeof(bool))
-                            o.SetValue(entity, row[attr.Description].ToString() == "是");
+                            o.SetValue(data, row[attr.Description].ToString() == "是");
                         else if (o.PropertyType == typeof(string))
                         {
                             var attrColumn = o.GetCustomAttribute<ColumnAttribute>();
@@ -315,10 +321,10 @@ namespace Business.Implementation.Example
                                 _errors.Add(new ErrorInfo(i + 3, attr.Description, $"数据长度过长, 不可超过{attrColumn.StringLength}个字符（其中每个中文占两个字符）。"));
                                 return;
                             }
-                            o.SetValue(entity, value);
+                            o.SetValue(data, value);
                         }
                         else
-                            o.SetValue(entity, row[attr.Description].ChangeType(o.PropertyType));
+                            o.SetValue(data, row[attr.Description].ChangeType(o.PropertyType));
                     }
                     catch
                     {
@@ -332,18 +338,18 @@ namespace Business.Implementation.Example
                     continue;
                 }
 
-                if (entity.Name.IsNullOrEmpty())
+                if (data.Name.IsNullOrEmpty())
                 {
                     errors.Add(new ErrorInfo(i + 3, "名称", "内容不能为空。"));
                     continue;
                 }
-                else if (entity.Content.IsNullOrEmpty())
+                else if (data.Content.IsNullOrEmpty())
                 {
                     errors.Add(new ErrorInfo(i + 3, "内容", "内容不能为空。"));
                     continue;
                 }
 
-                entityList.Add(entity);
+                dataList.Add(data);
             }
 
             if (errors.Any())
@@ -356,7 +362,7 @@ namespace Business.Implementation.Example
                 var newDataList = new List<Sample_DB>();
                 var editDataList = new List<Sample_DB>();
 
-                entityList.ForEach(entity =>
+                dataList.ForEach(entity =>
                 {
                     var idSelect = Repository.Where(o => o.Name == entity.Name);
                     if (idSelect.Any())
@@ -438,7 +444,7 @@ namespace Business.Implementation.Example
                         row[d.Key] = string.Join(" \r\n",
                                                 value.ToString()
                                                 .Split(',')
-                                                .Select(e => $"{Config.WebRootUrl}/file/download/{e}"));
+                                                .Select(e => $"{Config.WebRootUrlMatchScheme(HttpContextAccessor.HttpContext.Request.Scheme)}/file/download/{e}"));
                     else if (d.Value.PropertyType == typeof(DateTime) || d.Value.PropertyType == typeof(DateTime?))
                     {
                         var attr = d.Value.GetCustomAttribute<JsonConverterAttribute>();

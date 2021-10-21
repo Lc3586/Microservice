@@ -397,14 +397,14 @@
             <param name="ids">id集合</param>
             <returns></returns>
         </member>
-        <member name="M:Api.Controllers.FileController.Preview(System.String,System.Int32,System.Int32,System.Nullable{System.TimeSpan})">
+        <member name="M:Api.Controllers.FileController.Preview(System.String,System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.TimeSpan})">
             <summary>
             预览
             </summary>
             <remarks>用于查看文件缩略图或视频截图</remarks>
             <param name="id">文件Id</param>
-            <param name="width">指定宽度</param>
-            <param name="height">指定高度</param>
+            <param name="width">指定宽度（默认值: 500）</param>
+            <param name="height">指定高度（默认值: 500）</param>
             <param name="time">视频的时间轴位置（默认值: 00:00:00.001）</param>
             <returns></returns>
         </member>
@@ -467,6 +467,30 @@
             <param name="chapters">获取有关以该格式存储的章节的信息</param>
             <param name="programs">获取有关程序及其输入多媒体流中包含的流的信息</param>
             <param name="version">获取与程序版本有关的信息、获取与库版本有关的信息、获取与程序和库版本有关的信息</param>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.FileController.GetLibraryInfo">
+            <summary>
+            获取文件库信息
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.FileController.GetFileTypes">
+            <summary>
+            获取所有文件类型
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.FileController.GetStorageTypes">
+            <summary>
+            获取所有文件存储类型
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Api.Controllers.FileController.GetFileStates">
+            <summary>
+            获取所有文件状态
+            </summary>
             <returns></returns>
         </member>
         <member name="T:Api.Controllers.Common.FileUploadConfigController">
@@ -2399,6 +2423,14 @@
             <param name="returnUrl">登录后重定向地址</param>
             <returns></returns>
         </member>
+        <member name="M:Api.Controllers.Utils.CASController.PreSigninCas(System.String,System.String)">
+            <summary>
+            预登录，在页面上进行跳转，防止丢失CSRF的cookie
+            </summary>
+            <param name="ticket">票据</param>
+            <param name="state">数据</param>
+            <returns></returns>
+        </member>
         <member name="M:Api.Controllers.Utils.CASController.LogOut(System.String,System.Boolean)">
             <summary>
             注销
@@ -2933,6 +2965,11 @@
         <member name="T:Api.Middleware.CasSingleSignOutMiddleware">
             <summary>
             CAS单点注销中间件
+            </summary>
+        </member>
+        <member name="T:Api.Middleware.ChangeCookieSameSiteMiddleware">
+            <summary>
+            Cookie同源政策自动更改中间件
             </summary>
         </member>
         <member name="T:Api.Middleware.CorsMiddleware">

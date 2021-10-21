@@ -126,7 +126,7 @@ namespace Api.Controllers
                 }
             });
 
-            var url = $"{Config.WebRootUrl}{Config.WeChatService.OAuthUserInfoUrl}?state={state}";
+            var url = $"{Config.WebRootUrlMatchScheme(HttpContextAccessor.HttpContext.Request.Scheme)}{Config.WeChatService.OAuthUserInfoUrl}?state={state}";
 
             return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(new UrlInfo
             {
@@ -154,7 +154,7 @@ namespace Api.Controllers
                 }
             });
 
-            var url = $"{Config.WebRootUrl}{Config.WeChatService.OAuthBaseUrl}?state={state}";
+            var url = $"{Config.WebRootUrlMatchScheme(HttpContextAccessor.HttpContext.Request.Scheme)}{Config.WeChatService.OAuthBaseUrl}?state={state}";
 
             return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(new UrlInfo
             {
@@ -198,7 +198,7 @@ namespace Api.Controllers
                 }
             });
 
-            var url = $"{Config.WebRootUrl}{Config.WeChatService.OAuthUserInfoUrl}?state={state}";
+            var url = $"{Config.WebRootUrlMatchScheme(HttpContextAccessor.HttpContext.Request.Scheme)}{Config.WeChatService.OAuthUserInfoUrl}?state={state}";
 
             return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(new UrlInfo
             {

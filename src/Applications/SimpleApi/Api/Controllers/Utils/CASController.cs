@@ -1,12 +1,12 @@
 ﻿using Business.Utils.Authorization;
 using Microservice.Library.Extension;
-using Microservice.Library.Http;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Model.Utils.CAS.CASDTO;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
 using System.Linq;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
@@ -95,9 +95,12 @@ namespace Api.Controllers.Utils
         public async Task AccessDenied()
         {
             if (Context.User.Identity.IsAuthenticated)
-                await Task.Run(() => Context.Response.Redirect("/cas/authorize"));
+                await Task.Run(() => Context.Response.Redirect($"{Config.WebRootUrlMatchScheme(Context.Request.Scheme)}/cas/authorize"));
             else
+            {
+                Context.Response.ContentType = "application/json; charset=utf-8";
                 await Context.Response.WriteAsync("拒绝访问");
+            }
         }
 
         /// <summary>
@@ -109,9 +112,12 @@ namespace Api.Controllers.Utils
         public async Task ExternalLoginFailure()
         {
             if (Context.User.Identity.IsAuthenticated)
-                await Task.Run(() => Context.Response.Redirect("/cas/authorize"));
+                await Task.Run(() => Context.Response.Redirect($"{Config.WebRootUrlMatchScheme(Context.Request.Scheme)}/cas/authorize"));
             else
+            {
+                Context.Response.ContentType = "application/json; charset=utf-8";
                 await Context.Response.WriteAsync("系统繁忙");
+            }
         }
 
         /// <summary>
@@ -131,6 +137,22 @@ namespace Api.Controllers.Utils
         }
 
         /// <summary>
+        /// 预登录，在页面上进行跳转，防止丢失CSRF的cookie
+        /// </summary>
+        /// <param name="ticket">票据</param>
+        /// <param name="state">数据</param>
+        /// <returns></returns>
+        [HttpGet("pre-signin")]
+        [AllowAnonymous]
+        public async Task PreSigninCas(string ticket, string state = null)
+        {
+            var authorizationEndpoint = $"{Config.WebRootUrlMatchScheme(Context.Request.Scheme)}/signin-cas?ticket={ticket}&state={Uri.EscapeDataString(state)}";
+            var content = $"<script>location.href='{authorizationEndpoint}';</script><a href='{authorizationEndpoint}'>如页面未能自动跳转，请点击此链接以继续。</a>";
+            Context.Response.ContentType = "text/html";
+            await Context.Response.WriteAsync(content);
+        }
+
+        /// <summary>
         /// 注销
         /// </summary>
         /// <param name="returnUrl">注销后重定向地址</param>
@@ -141,7 +163,7 @@ namespace Api.Controllers.Utils
         public async Task LogOut(string returnUrl, bool logoutCAS = false)
         {
             if (string.IsNullOrEmpty(returnUrl))
-                returnUrl = $"{Config.WebRootUrl}/cas/login";
+                returnUrl = $"{Config.WebRootUrlMatchScheme(Context.Request.Scheme)}/cas/login";
 
             await LogOut();
 

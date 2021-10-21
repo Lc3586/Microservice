@@ -38,7 +38,6 @@ namespace Api
                 if (!context.Response.HasStarted)
                     context.Response.ContentType = "application/json; charset=utf-8";
                 await context.Response.WriteAsync(ExceptionHelper.HandleException(ex, context.Request.Path.Value).ToJson());
-
             }
         }
     }

@@ -143,12 +143,34 @@ window.onload = function () {
                 src: 'Model/UploadConfigDetail.js'
             }
         },
+        {
+            Tag: "script",
+            Attributes: {
+                type: 'text/javascript',
+                src: 'Model/Pagination.js'
+            }
+        },
+        {
+            Tag: "script",
+            Attributes: {
+                type: 'text/javascript',
+                src: 'Model/LibraryInfo.js'
+            }
+        },
+        {
+            Tag: "script",
+            Attributes: {
+                type: 'text/javascript',
+                src: 'Model/VideoInfo.js'
+            }
+        }
     ], function () {
         var Vue = window.Vue;
         var ElementPlus = window.ElementPlus;
         var Axios = window.axios;
         var Promise = window.Promise;
         var _ = window._;
+        var Dayjs = window.dayjs;
         var Main;
         var MultipleUploadSettings = new MultipleUploadSetting();
         MultipleUploadSettings.Axios = Axios;
@@ -173,6 +195,16 @@ window.onload = function () {
                 Upload.SelectedFileList = this.multipleUpload.files;
                 AddLoginFilter();
                 Authorized();
+                getConfig();
+                Main.fileListFileTypeGetAnswer = _.debounce(updateFileListPagination, 500);
+                Main.fileListStorageTypeGetAnswer = _.debounce(updateFileListPagination, 500);
+                Main.fileListFileStateGetAnswer = _.debounce(updateFileListPagination, 500);
+                Main.fileListDataRangeGetAnswer = _.debounce(updateFileListPagination, 500);
+                Main.fileListNameGetAnswer = _.debounce(updateFileListPagination, 500);
+                Main.fileListExtensionGetAnswer = _.debounce(updateFileListPagination, 500);
+                Main.fileListContentTypeGetAnswer = _.debounce(updateFileListPagination, 500);
+                Main.fileListMD5GetAnswer = _.debounce(updateFileListPagination, 500);
+                Main.fileListServerKeyGetAnswer = _.debounce(updateFileListPagination, 500);
             },
             methods: {
                 SALogin: SALogin,
@@ -205,7 +237,38 @@ window.onload = function () {
                 Start: Start,
                 Pause: Pause,
                 Continues: Continues,
-                Clean: Clean
+                Clean: Clean,
+                GetFolderClass: GetFolderClass,
+                OpenFolder: OpenFolder,
+                CloseFolder: CloseFolder,
+                ActiveCollapseChange: ActiveCollapseChange,
+                fileListNameChange: fileListNameChange,
+                fileListExtensionChange: fileListExtensionChange,
+                fileListServerKeyChange: fileListServerKeyChange,
+                fileListContentTypeChange: fileListContentTypeChange,
+                fileListMD5Change: fileListMD5Change,
+                handleFileListCommand: handleFileListCommand,
+                allFileType: allFileType,
+                fileTypeChange: fileTypeChange,
+                allStorageType: allStorageType,
+                storageTypeChange: storageTypeChange,
+                allFileState: allFileState,
+                fileStateChange: fileStateChange,
+                fileListDateRangeChange: fileListDateRangeChange,
+                fileSort: fileSort,
+                fileListSizeChange: fileListSizeChange,
+                fileListCurrentChange: fileListCurrentChange,
+                fileDetail: fileDetail,
+                getFileStateTag: getFileStateTag,
+                closeFileDetail: closeFileDetail,
+                previewFile: previewFile,
+                browseFile: browseFile,
+                downloadFile: downloadFile,
+                deleteFile: deleteFile,
+                videoInfo: videoInfo,
+                filePreviewStart: filePreviewStart,
+                videoPreviewNext: videoPreviewNext,
+                filePreviewEnd: filePreviewEnd
             },
             watch: {
                 'multipleUpload.settings': {
@@ -249,7 +312,7 @@ window.onload = function () {
                     handler: function (val) {
                         this.$refs.configTree.filter(val);
                     }
-                },
+                }
             }
         };
         Upload.Init(MultipleUploadSettings).then(function () { return __awaiter(_this, void 0, void 0, function () {
@@ -258,7 +321,7 @@ window.onload = function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4, Upload.UpdateConfig('05FE0000-AA22-B025-2BAF-08D972A39270')];
+                        return [4, Upload.UpdateConfig('6D9A0000-F269-0025-F631-08D98FA532D4')];
                     case 1:
                         _a.sent();
                         return [3, 3];
@@ -287,7 +350,42 @@ window.onload = function () {
                     password: ''
                 },
                 config: {
-                    type: 'Upload'
+                    type: 'Upload',
+                    fileTypes: [],
+                    storageTypes: [],
+                    fileStates: [],
+                    page: {
+                        sizes: [5, 10, 15, 20, 50, 100, 150, 200, 300, 400, 500]
+                    },
+                    dateRangShortcuts: [
+                        {
+                            text: '最近一周',
+                            value: (function () {
+                                var end = new Date();
+                                var start = new Date();
+                                start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                                return [start, end];
+                            })(),
+                        },
+                        {
+                            text: '最近一个月',
+                            value: (function () {
+                                var end = new Date();
+                                var start = new Date();
+                                start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                                return [start, end];
+                            })(),
+                        },
+                        {
+                            text: '最近三个月',
+                            value: (function () {
+                                var end = new Date();
+                                var start = new Date();
+                                start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+                                return [start, end];
+                            })(),
+                        }
+                    ]
                 },
                 multipleUpload: {
                     settings: {
@@ -314,6 +412,32 @@ window.onload = function () {
                     list: [],
                     error: '',
                     loading: true
+                },
+                library: {
+                    init: false,
+                    activeCollapse: 'folders',
+                    folders: [],
+                    error: '',
+                    loading: true,
+                    currentOpenFolder: null,
+                    fileDetail: {
+                        show: false,
+                        loading: true,
+                        detail: {}
+                    },
+                    videoInfo: {
+                        activeTab: '',
+                        enable: false,
+                        loading: true,
+                        error: '',
+                        detail: {},
+                        fileId: '',
+                        previewId: '',
+                        previewTicks: 0,
+                        previewTimespan: [0, 0, 0, 1],
+                        previewState: false
+                    },
+                    previewImages: []
                 }
             };
         }
@@ -351,6 +475,7 @@ window.onload = function () {
             };
             Axios.post(ApiUri.SALogin, data).then(function (response) {
                 if (response.data.Success) {
+                    window.location.reload();
                     Main.sa.username = '';
                     Main.sa.Password = '';
                     GetToken(data);
@@ -391,6 +516,39 @@ window.onload = function () {
                 console.error(error);
                 ElementPlus.ElMessage('刷新Token时发生异常.');
             });
+        }
+        function getConfig() {
+            Axios.all([getFileTypes(), getStorageTypes(), getFileStates()])
+                .then(Axios.spread(function (fileTypes, storageTypes, fileStates) {
+                Main.loading = false;
+                if (fileTypes.data.Success)
+                    Main.config.fileTypes = fileTypes.data.Data;
+                else
+                    ElementPlus.ElMessage(fileTypes.data.Message);
+                if (storageTypes.data.Success)
+                    Main.config.storageTypes = storageTypes.data.Data;
+                else
+                    ElementPlus.ElMessage(storageTypes.data.Message);
+                if (fileStates.data.Success)
+                    Main.config.fileStates = fileStates.data.Data;
+                else
+                    ElementPlus.ElMessage(fileStates.data.Message);
+            }))
+                .catch(function (error) {
+                console.error(error);
+                Main.loading = false;
+                if (!Main.sa.show)
+                    ElementPlus.ElMessage('获取配置时发生异常.');
+            });
+        }
+        function getFileTypes() {
+            return Axios.get(ApiUri.GetFileTypes);
+        }
+        function getStorageTypes() {
+            return Axios.get(ApiUri.GetStorageTypes);
+        }
+        function getFileStates() {
+            return Axios.get(ApiUri.GetFileStates);
         }
         function LoadConfig(node, resolve) {
             var _a;
@@ -489,6 +647,9 @@ window.onload = function () {
                     InitChunkFileMergeTaskList();
                     break;
                 case 'Library':
+                    if (Main.library.init)
+                        return;
+                    GetLibraryInfo();
                     break;
                 default:
                     break;
@@ -717,6 +878,420 @@ window.onload = function () {
                             return [2];
                     }
                 });
+            });
+        }
+        function GetLibraryInfo() {
+            Main.library.loading = true;
+            Axios.get(ApiUri.GetLibraryInfo)
+                .then(function (response) {
+                Main.library.loading = false;
+                if (response.data.Success) {
+                    Main.library.folders = response.data.Data.map(function (item, index) {
+                        var folder = item;
+                        folder.Hover = false;
+                        folder.Open = false;
+                        folder.Class = GetFolderClassByType(folder.FileType);
+                        folder.Files = new FileListInfo();
+                        folder.Files.Filters.FileType = [folder.FileType];
+                        folder.Files.CheckAllFileType = false;
+                        folder.Files.IsFileTypeIndeterminate = true;
+                        folder.Files.Filters.StorageType = Main.config.storageTypes;
+                        folder.Files.CheckAllStorageType = true;
+                        folder.Files.IsStorageTypeIndeterminate = false;
+                        folder.Files.Filters.State = Main.config.fileStates;
+                        folder.Files.CheckAllFileState = true;
+                        folder.Files.IsFileStateIndeterminate = false;
+                        folder.Files.Pagination.AdvancedSort.push({ Field: 'CreateTime', Type: "desc" });
+                        return folder;
+                    });
+                    if (!Main.library.init)
+                        Main.library.init = true;
+                }
+                else {
+                    Main.library.error = response.data.Message;
+                    ElementPlus.ElMessage(Main.library.error);
+                }
+            }).catch(function (error) {
+                Main.library.loading = false;
+                console.error(error);
+                Main.library.error = '加载文件上传配置详情时发生异常.';
+                ElementPlus.ElMessage(Main.library.error);
+            });
+        }
+        function GetFolderClassByType(fileType) {
+            switch (fileType) {
+                case "\u97F3\u9891":
+                    return 'icon-folder-audio';
+                case "\u89C6\u9891":
+                    return 'icon-folder-video';
+                case "\u56FE\u7247":
+                    return 'icon-folder-picture';
+                case "\u6587\u672C\u6587\u4EF6":
+                    return 'icon-folder-text';
+                case "\u7535\u5B50\u8868\u683C":
+                    return 'icon-folder-excel';
+                case "\u7535\u5B50\u6587\u6863":
+                    return 'icon-folder-word';
+                case "\u538B\u7F29\u5305":
+                    return 'icon-folder-zip';
+                case "\u5916\u94FE\u8D44\u6E90":
+                    return 'icon-folder-uri';
+                case "\u672A\u77E5":
+                default:
+                    return 'icon-folder-none';
+            }
+        }
+        function GetFolderClass(folder) {
+            return "folder " + (folder.Hover ? ' hover' : '');
+        }
+        function OpenFolder(folder, index) {
+            Main.library.currentOpenFolder = folder;
+            folder.Files.Pagination.PageRows = getPageSize();
+            folder.Open = true;
+            folder.Files.Filters.FileType = [folder.FileType];
+            Main.library.activeCollapse = 'files';
+            updateFileListPagination(folder);
+        }
+        function CloseFolder(folder, index) {
+            folder.Open = false;
+            Main.library.currentOpenFolder = null;
+        }
+        function ActiveCollapseChange(val) {
+            if (val !== 'folders')
+                return;
+            if (!Main.library.currentOpenFolder)
+                return;
+            Main.library.currentOpenFolder.Open = false;
+            Main.library.currentOpenFolder = null;
+        }
+        function getPageSize() {
+            var current = window.innerHeight / 100, min, result;
+            for (var i in Main.config.page.sizes) {
+                var size = Main.config.page.sizes[i];
+                var abs = Math.abs(current - size);
+                if (!min)
+                    min = abs;
+                else if (abs <= min)
+                    min = abs;
+                else
+                    continue;
+                result = size;
+            }
+            return result;
+        }
+        function allFileType(folder, val) {
+            folder.Files.Filters.FileType = val ? Main.config.fileTypes : [];
+            folder.Files.IsFileTypeIndeterminate = false;
+            Main.fileListFileTypeGetAnswer(folder);
+        }
+        function fileTypeChange(folder, val) {
+            folder.Files.IsFileTypeIndeterminate = val.length != Main.config.fileTypes.length;
+            Main.fileListFileTypeGetAnswer(folder);
+        }
+        function allStorageType(folder, val) {
+            folder.Files.Filters.StorageType = val ? Main.config.storageTypes : [];
+            folder.Files.IsStorageTypeIndeterminate = false;
+            Main.fileListStorageTypeGetAnswer(folder);
+        }
+        function storageTypeChange(folder, val) {
+            folder.Files.IsStorageTypeIndeterminate = val.length != Main.config.storageTypes.length;
+            Main.fileListStorageTypeGetAnswer(folder);
+        }
+        function allFileState(folder, val) {
+            folder.Files.Filters.State = val ? Main.config.fileStates : [];
+            folder.Files.IsFileStateIndeterminate = false;
+            Main.fileListFileStateGetAnswer(folder);
+        }
+        function fileStateChange(folder, val) {
+            folder.Files.IsFileStateIndeterminate = val.length != Main.config.fileStates.length;
+            Main.fileListFileStateGetAnswer(folder);
+        }
+        function fileListDateRangeChange(folder, val) {
+            Main.fileListDataRangeGetAnswer(folder);
+        }
+        function fileListNameChange(folder, val) {
+            Main.fileListNameGetAnswer(folder);
+        }
+        function fileListExtensionChange(folder, val) {
+            Main.fileListExtensionGetAnswer(folder);
+        }
+        function fileListServerKeyChange(folder, val) {
+            Main.fileListServerKeyGetAnswer(folder);
+        }
+        function fileListContentTypeChange(folder, val) {
+            Main.fileListContentTypeGetAnswer(folder);
+        }
+        function fileListMD5Change(folder, val) {
+            Main.fileListMD5GetAnswer(folder);
+        }
+        function updateFileListPagination(folder) {
+            for (var field in folder.Files.Filters) {
+                var _continue = false;
+                var value = folder.Files.Filters[field];
+                for (var i = 0; i < folder.Files.Pagination.DynamicFilterInfo.length; i++) {
+                    var filter = folder.Files.Pagination.DynamicFilterInfo[i];
+                    if (filter.LocalState == field) {
+                        if (!value) {
+                            folder.Files.Pagination.DynamicFilterInfo.splice(i, 1);
+                            i--;
+                        }
+                        else
+                            filter.Value = value;
+                        _continue = true;
+                        break;
+                    }
+                }
+                if (!_continue && value) {
+                    var filter = field == 'DateRang' ?
+                        {
+                            LocalState: field,
+                            Relation: "and",
+                            DynamicFilterInfo: [
+                                {
+                                    Field: 'CreateTime',
+                                    Value: Dayjs(value[0]).format('YYYY-MM-DD HH:mm:ss'),
+                                    Compare: "ge"
+                                },
+                                {
+                                    Field: 'CreateTime',
+                                    Value: Dayjs(value[1]).format('YYYY-MM-DD HH:mm:ss'),
+                                    Compare: "le"
+                                }
+                            ]
+                        } :
+                        {
+                            LocalState: field,
+                            Field: field,
+                            Value: value,
+                            Compare: Array.isArray(value) ? "inSet" : "in"
+                        };
+                    folder.Files.Pagination.DynamicFilterInfo.push(filter);
+                }
+            }
+            getFileList(folder);
+        }
+        function getFileList(folder) {
+            folder.Files.Loading = true;
+            Axios.post(ApiUri.GetFileList, folder.Files.Pagination).then(function (response) {
+                if (response.data.Success) {
+                    folder.Files.Pagination.PageIndex = response.data.Data.PageIndex;
+                    folder.Files.Pagination.PageRows = response.data.Data.PageSize;
+                    folder.Files.Pagination.PageCount = response.data.Data.PageTotal;
+                    folder.Files.Pagination.RecordCount = response.data.Data.Total;
+                    folder.Files.List = response.data.Data.List;
+                    if (!folder.Files.Init)
+                        folder.Files.Init = true;
+                }
+                else {
+                    folder.Files.Error = response.data.Message;
+                    ElementPlus.ElMessage(response.data.Message);
+                }
+                folder.Files.Loading = false;
+            }).catch(function (error) {
+                folder.Files.Loading = false;
+                folder.Files.Error = error.message;
+                ElementPlus.ElMessage('获取文件列表时发生异常.');
+            });
+        }
+        function fileSort(val) {
+            var folder = Main.library.currentOpenFolder;
+            if (val.prop == null)
+                folder.Files.Pagination.AdvancedSort = [];
+            else if (!val.order)
+                folder.Files.Pagination.AdvancedSort = folder.Files.Pagination.AdvancedSort.filter(function (data) { return data.Field != val.prop; });
+            else {
+                var order = val.order == 'descending' ? "desc" : "asc";
+                for (var _i = 0, _a = folder.Files.Pagination.AdvancedSort; _i < _a.length; _i++) {
+                    var sort = _a[_i];
+                    if (sort.Field == val.prop) {
+                        sort.Type = order;
+                        getFileList(folder);
+                        return;
+                    }
+                }
+                folder.Files.Pagination.AdvancedSort.push({ Field: val.prop, Type: order });
+            }
+            getFileList(folder);
+        }
+        function fileListSizeChange(val) {
+            var folder = Main.library.currentOpenFolder;
+            folder.Files.Pagination.PageRows = val;
+            getFileList(folder);
+        }
+        function fileListCurrentChange(val) {
+            var folder = Main.library.currentOpenFolder;
+            folder.Files.Pagination.PageIndex = val;
+            getFileList(folder);
+        }
+        function fileDetail(row, index) {
+            Main.library.fileDetail.show = true;
+            Main.library.fileDetail.loading = true;
+            Axios.get(ApiUri.GetFileDetail(row.Id))
+                .then(function (response) {
+                if (response.data.Success) {
+                    Main.library.fileDetail.detail = response.data.Data;
+                }
+                else {
+                    ElementPlus.ElMessage(response.data.Message);
+                }
+                Main.library.fileDetail.loading = false;
+            })
+                .catch(function (error) {
+                Main.library.fileDetail.loading = false;
+                ElementPlus.ElMessage('获取文件详情时发生异常.');
+            });
+        }
+        function videoInfo(data) {
+            Main.library.videoInfo.show = true;
+            if (Main.library.videoInfo.fileId === data.Id)
+                return;
+            Main.library.videoInfo.loading = true;
+            Axios.get(ApiUri.GetVideoInfo(data.Id, true, true, true, true, true))
+                .then(function (response) {
+                if (response.data.Success) {
+                    Main.library.videoInfo.fileId = data.Id;
+                    Main.library.videoInfo.detail = response.data.Data;
+                    Main.library.videoInfo.activeTab = 'Streams';
+                }
+                else {
+                    Main.library.videoInfo.error = response.data.Message;
+                    ElementPlus.ElMessage(response.data.Message);
+                }
+                Main.library.videoInfo.loading = false;
+            })
+                .catch(function (error) {
+                Main.library.videoInfo.loading = false;
+                ElementPlus.ElMessage('获取视频信息时发生异常.');
+            });
+        }
+        function filePreviewStart(data, index) {
+            Main.library.previewImages[index] = ApiUri.Preview(data.Id);
+            if (data.FileType === "\u89C6\u9891") {
+                Main.library.videoInfo.previewId = data.Id;
+                Main.library.videoInfo.previewState = true;
+            }
+        }
+        function videoPreviewNext(data, index) {
+            if (Main.library.videoInfo.previewId != data.Id)
+                return;
+            if (data.FileType === "\u89C6\u9891") {
+                if (!Main.library.videoInfo.previewState)
+                    return;
+                Main.library.videoInfo.previewTicks = setTimeout(videoPreview, 200, data, index);
+            }
+        }
+        function videoPreview(data, index) {
+            if (data.FileType === "\u89C6\u9891") {
+                if (!Main.library.videoInfo.previewState)
+                    return;
+                Axios.get(ApiUri.Preview(data.Id, 500, 500, Main.library.videoInfo.previewTimespan[0].toString().padStart(2, '0') + ":" + Main.library.videoInfo.previewTimespan[1].toString().padStart(2, '0') + ":" + Main.library.videoInfo.previewTimespan[2].toString().padStart(2, '0') + "." + Main.library.videoInfo.previewTimespan[3].toString().padStart(3, '0')), {
+                    responseType: "blob",
+                    onDownloadProgress: function (progressEvent) {
+                    }
+                }).then(function (response) {
+                    if (response.status !== 200)
+                        throw new Error('请求图片失败.');
+                    if (response.headers['content-length'] === '0') {
+                        Main.library.videoInfo.previewTimespan = [0, 0, 0, 1];
+                    }
+                    else {
+                        Main.library.videoInfo.previewTimespan[3] += 500;
+                        if (Main.library.videoInfo.previewTimespan[3] >= 999) {
+                            Main.library.videoInfo.previewTimespan[3] = 1;
+                            Main.library.videoInfo.previewTimespan[2]++;
+                            if (Main.library.videoInfo.previewTimespan[2] >= 59) {
+                                Main.library.videoInfo.previewTimespan[2] = 0;
+                                Main.library.videoInfo.previewTimespan[1]++;
+                                if (Main.library.videoInfo.previewTimespan[1] >= 59) {
+                                    Main.library.videoInfo.previewTimespan[1] = 0;
+                                    Main.library.videoInfo.previewTimespan[0]++;
+                                }
+                            }
+                        }
+                        var blob = new Blob([response.data], { type: response.headers['content-type'] });
+                        Main.library.previewImages[index] = URL.createObjectURL(blob);
+                    }
+                }).catch(function (error) {
+                    console.error(error);
+                    ElementPlus.ElMessage('获取视频图像时发生异常.');
+                    filePreviewEnd(data, index);
+                });
+            }
+        }
+        function filePreviewEnd(data, index) {
+            if (data.FileType === "\u89C6\u9891") {
+                clearTimeout(Main.library.videoInfo.previewTicks);
+                Main.library.videoInfo.previewState = false;
+            }
+        }
+        function getFileStateTag(state) {
+            switch (state) {
+                case '未上传':
+                    return 'info';
+                case '上传中':
+                case '处理中':
+                    return 'warning';
+                case '可用':
+                default:
+                    return 'primary';
+                case '已删除':
+                    return 'danger';
+            }
+        }
+        function handleFileListCommand(cmd, data, index) {
+            if (index === void 0) { index = null; }
+            switch (cmd) {
+                case 'detail':
+                    fileDetail(data, index);
+                    break;
+                case 'videoInfo':
+                    videoInfo(data);
+                    break;
+                case 'preview':
+                    previewFile(data, index);
+                    break;
+                case 'browse':
+                    browseFile(data, index);
+                    break;
+                case 'download':
+                    downloadFile(data, index);
+                    break;
+                case 'delete':
+                    deleteFile(data, index);
+                    break;
+                default:
+            }
+        }
+        function closeFileDetail() {
+            Main.library.fileDetail.show = false;
+            Main.library.fileDetail.detail = {};
+        }
+        function previewFile(data, index) {
+            if (index === void 0) { index = null; }
+            window.open(ApiUri.Preview(data.Id));
+        }
+        function browseFile(data, index) {
+            if (index === void 0) { index = null; }
+            window.open(ApiUri.Browse(data.Id));
+        }
+        function downloadFile(data, index) {
+            if (index === void 0) { index = null; }
+            window.open(ApiUri.Download(data.Id));
+        }
+        function deleteFile(data, index) {
+            if (index === void 0) { index = null; }
+            var folder = Main.library.currentOpenFolder;
+            folder.Files.Loading = true;
+            Axios.post(ApiUri.Delete, [data.Id]).then(function (response) {
+                if (response.data.Success)
+                    getFileList(folder);
+                else {
+                    ElementPlus.ElMessage(response.data.Message);
+                    folder.Files.Loading = false;
+                }
+            }).catch(function (error) {
+                folder.Files.Loading = false;
+                ElementPlus.ElMessage('删除文件时发生异常.');
             });
         }
     });

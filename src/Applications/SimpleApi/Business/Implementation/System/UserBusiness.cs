@@ -499,6 +499,11 @@ namespace Business.Implementation.System
 
         public AuthenticationInfo Login(string account, string password)
         {
+            var again = false;
+            again:
+            if (again)
+                throw new MessageException("登录失败.");
+
             var user = Repository.Where(o => o.Account == account)
                 .ToOne(o => new { o.Id, o.Account, o.Name, o.Nickname, o.Sex, o.Face, o.Enable, o.Password });
 
@@ -508,7 +513,9 @@ namespace Business.Implementation.System
                 {
                     InitAdmin();
 
-                    throw new MessageException("账号已初始化, 请重新登录.");
+                    //throw new MessageException("账号已初始化, 请重新登录.");
+                    again = true;
+                    goto again;
                 }
 
                 throw new MessageException("账号不存在或已被移除.");

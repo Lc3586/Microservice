@@ -242,6 +242,12 @@
             处理转发
             </summary>
         </member>
+        <member name="T:Business.Handler.ProxyCasAuthenticationHandler`1">
+            <summary>
+            代理服务器CAS验证处理类
+            </summary>
+            <typeparam name="TOptions"></typeparam>
+        </member>
         <member name="T:Business.Hub.CAGCHub">
             <summary>
             代码自动生成信息推送
@@ -836,7 +842,7 @@
             <param name="ids">Id集合</param>
             <returns></returns>
         </member>
-        <member name="M:Business.Interface.Common.IFileBusiness.Preview(System.String,System.Int32,System.Int32,System.Nullable{System.TimeSpan})">
+        <member name="M:Business.Interface.Common.IFileBusiness.Preview(System.String,System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.TimeSpan})">
             <summary>
             预览
             </summary>
@@ -900,6 +906,30 @@
             <param name="chapters">获取有关以该格式存储的章节的信息</param>
             <param name="programs">获取有关程序及其输入多媒体流中包含的流的信息</param>
             <param name="version">获取与程序版本有关的信息、获取与库版本有关的信息、获取与程序和库版本有关的信息</param>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Interface.Common.IFileBusiness.GetLibraryInfo">
+            <summary>
+            获取文件库信息
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Interface.Common.IFileBusiness.GetFileTypes">
+            <summary>
+            获取所有文件类型
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Interface.Common.IFileBusiness.GetStorageTypes">
+            <summary>
+            获取所有文件存储类型
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Business.Interface.Common.IFileBusiness.GetFileStates">
+            <summary>
+            获取所有文件状态
+            </summary>
             <returns></returns>
         </member>
         <member name="T:Business.Interface.Common.IFileUploadBusiness">

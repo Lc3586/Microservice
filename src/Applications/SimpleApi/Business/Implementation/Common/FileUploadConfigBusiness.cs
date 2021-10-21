@@ -613,6 +613,8 @@ new
 
             var type = typeof(Import);
 
+            var properties = type.GetProperties();
+
             var tag = type.GetMainTag();
 
             var dataList = new List<Import>();
@@ -628,8 +630,7 @@ new
 
                 var _errors = new List<ErrorInfo>();
 
-                type.GetProperties()
-                    .ForEach(o =>
+                properties.ForEach(o =>
                     {
                         if (o.DeclaringType?.Name != type.Name && !o.HasTag(tag))
                             return;
@@ -966,7 +967,7 @@ new
                         row[d.Key] = string.Join(" \r\n",
                                                 value.ToString()
                                                 .Split(',')
-                                                .Select(e => $"{Config.WebRootUrl}/file/download/{e}"));
+                                                .Select(e => $"{Config.WebRootUrlMatchScheme(HttpContextAccessor.HttpContext.Request.Scheme)}/file/download/{e}"));
                     else if (d.Value.PropertyType == typeof(DateTime) || d.Value.PropertyType == typeof(DateTime?))
                     {
                         var attr = d.Value.GetCustomAttribute<JsonConverterAttribute>();

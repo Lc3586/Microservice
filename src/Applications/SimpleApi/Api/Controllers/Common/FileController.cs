@@ -58,7 +58,7 @@ namespace Api.Controllers
         /// </summary>
         /// <param name="id">Id</param>
         /// <returns></returns>
-        [HttpPost("detail-data/{id}")]
+        [HttpGet("detail-data/{id}")]
         [Consumes("application/json", "application/x-www-form-urlencoded")]
         [Produces("application/json")]
         [SwaggerResponse((int)HttpStatusCode.OK, "详情数据", typeof(FileInfo))]
@@ -100,12 +100,12 @@ namespace Api.Controllers
         /// </summary>
         /// <remarks>用于查看文件缩略图或视频截图</remarks>
         /// <param name="id">文件Id</param>
-        /// <param name="width">指定宽度</param>
-        /// <param name="height">指定高度</param>
+        /// <param name="width">指定宽度（默认值: 500）</param>
+        /// <param name="height">指定高度（默认值: 500）</param>
         /// <param name="time">视频的时间轴位置（默认值: 00:00:00.001）</param>
         /// <returns></returns>
         [HttpGet("preview/{id}")]
-        public async Task Preview(string id, int width = 500, int height = 500, TimeSpan? time = null)
+        public async Task Preview(string id, int? width = null, int? height = null, TimeSpan? time = null)
         {
             await FileBusiness.Preview(id, width, height, time);
         }
@@ -215,6 +215,48 @@ namespace Api.Controllers
         public async Task<object> GetVideoInfo(string id, bool format = true, bool streams = false, bool chapters = false, bool programs = false, bool version = false)
         {
             return ResponseDataFactory.Success(await FileBusiness.GetVideoInfo(id, format, streams, chapters, programs, version));
+        }
+
+        /// <summary>
+        /// 获取文件库信息
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("library-info")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "文件库信息", typeof(LibraryInfo))]
+        [AllowAnonymous]
+        public async Task<object> GetLibraryInfo()
+        {
+            return await Task.FromResult(ResponseDataFactory.Success(FileBusiness.GetLibraryInfo()));
+        }
+
+        /// <summary>
+        /// 获取所有文件类型
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("filetypes")]
+        public async Task<object> GetFileTypes()
+        {
+            return await Task.FromResult(Success(FileBusiness.GetFileTypes()));
+        }
+
+        /// <summary>
+        /// 获取所有文件存储类型
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("storagetypes")]
+        public async Task<object> GetStorageTypes()
+        {
+            return await Task.FromResult(Success(FileBusiness.GetStorageTypes()));
+        }
+
+        /// <summary>
+        /// 获取所有文件状态
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("filestates")]
+        public async Task<object> GetFileStates()
+        {
+            return await Task.FromResult(Success(FileBusiness.GetFileStates()));
         }
 
         #endregion

@@ -4,8 +4,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Model.Utils.Config;
-using Senparc.CO2NET.RegisterServices;
-using Senparc.Weixin.RegisterServices;
 
 namespace Api.Configures
 {
