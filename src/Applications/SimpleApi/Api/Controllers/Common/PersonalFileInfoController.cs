@@ -144,6 +144,7 @@ namespace Api.Controllers
         [HttpPost("delete")]
         [Consumes("application/json", "application/x-www-form-urlencoded")]
         [Produces("application/json")]
+        [NoJsonParamter]
         public async Task<object> Delete(IEnumerable<string> ids)
         {
             PersonalFileInfoBusiness.Delete(ids?.ToList());

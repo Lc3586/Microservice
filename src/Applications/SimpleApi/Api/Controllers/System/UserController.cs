@@ -118,6 +118,7 @@ namespace Api.Controllers
         /// <param name="ids">Id集合</param>
         /// <returns></returns>
         [HttpPost("delete")]
+        [NoJsonParamter]
         public async Task<object> Delete(IEnumerable<string> ids)
         {
             UserBusiness.Delete(ids?.ToList());

@@ -28,6 +28,9 @@ namespace Api.Middleware
         {
             await _next.Invoke(context).ConfigureAwait(true);
 
+            if (context.Response.HasStarted)
+                return;
+
             if (context?.Request.Method.Equals(HttpMethod.Get.Method, StringComparison.OrdinalIgnoreCase) == true
                 && Paths.Any(o => context.Request.Path.Equals(o, StringComparison.OrdinalIgnoreCase) == true))
             {
