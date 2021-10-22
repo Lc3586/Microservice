@@ -641,7 +641,13 @@ namespace Business.Implementation.Common
             count = 0;
 
             if (range.Length > 1)
-                count = range[1].ToLong() - start;
+            {
+                var end = range[1].ToLong();
+                if (end <= start)
+                    end = bytes;
+
+                count = end - start;
+            }
 
             if (count == 0 || start + count > bytes)
                 count = bytes - start;
