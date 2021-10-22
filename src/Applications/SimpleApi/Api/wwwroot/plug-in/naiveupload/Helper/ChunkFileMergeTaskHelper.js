@@ -48,7 +48,7 @@ var ChunkFileMergeTaskHelper = (function () {
                             Tag: "script",
                             Attributes: {
                                 type: 'text/javascript',
-                                src: '../../../utils/signalr.min.js'
+                                src: ApiUri.BaseUrl + '/../utils/signalr.min.js'
                             }
                         }
                     ], function () {

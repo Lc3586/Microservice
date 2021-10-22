@@ -11,30 +11,30 @@ window.onDomLoaded(() => {
             {
                 tag: 'script',
                 type: 'text/javascript',
-                src: '../../jquery/jquery-2.2.4.min.js'
+                src: ApiUri.BaseUrl + '/jquery/jquery-2.2.4.min.js'
             },
             {
                 tag: 'script',
                 type: 'text/javascript',
-                src: '../../jquery/jquery-ui.min.js'
+                src: ApiUri.BaseUrl + '/jquery/jquery-ui.min.js'
             },
             {
                 tag: 'link',
                 type: 'text/css',
                 rel: 'stylesheet',
-                href: '../../jquery/jquery-ui.min.css'
+                href: ApiUri.BaseUrl + '/jquery/jquery-ui.min.css'
             },
             {
                 tag: 'link',
                 type: 'text/css',
                 rel: 'stylesheet',
-                href: '../../jquery/jquery-ui.theme.min.css'
+                href: ApiUri.BaseUrl + '/jquery/jquery-ui.theme.min.css'
             },
             {
                 tag: 'link',
                 type: 'text/css',
                 rel: 'stylesheet',
-                href: '../../jquery/jquery-ui.structure.min.css'
+                href: ApiUri.BaseUrl + '/jquery/jquery-ui.structure.min.css'
             }
         ],
         () => {

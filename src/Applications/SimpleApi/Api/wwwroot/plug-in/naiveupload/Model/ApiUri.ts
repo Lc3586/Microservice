@@ -5,6 +5,11 @@ class ApiUri {
     /**
      * SA登录验证
      * */
+    static BaseUrl: string = '/api';
+
+    /**
+     * SA登录验证
+     * */
     static SAAuthorized: string = '/sa/authorized';
 
     /**

@@ -11,30 +11,30 @@ window.onDomLoaded(() => {
             {
                 tag: 'script',
                 type: 'text/javascript',
-                src: '../../jquery/jquery-2.2.4.min.js'
+                src: ApiUri.BaseUrl + '/jquery/jquery-2.2.4.min.js'
             },
             {
                 tag: 'script',
                 type: 'text/javascript',
-                src: '../../jquery/jquery-ui.min.js'
+                src: ApiUri.BaseUrl + '/jquery/jquery-ui.min.js'
             },
             {
                 tag: 'link',
                 type: 'text/css',
                 rel: 'stylesheet',
-                href: '../../jquery/jquery-ui.min.css'
+                href: ApiUri.BaseUrl + '/jquery/jquery-ui.min.css'
             },
             {
                 tag: 'link',
                 type: 'text/css',
                 rel: 'stylesheet',
-                href: '../../jquery/jquery-ui.theme.min.css'
+                href: ApiUri.BaseUrl + '/jquery/jquery-ui.theme.min.css'
             },
             {
                 tag: 'link',
                 type: 'text/css',
                 rel: 'stylesheet',
-                href: '../../jquery/jquery-ui.structure.min.css'
+                href: ApiUri.BaseUrl + '/jquery/jquery-ui.structure.min.css'
             }
         ],
         () => {
@@ -51,7 +51,7 @@ window.onDomLoaded(() => {
                 $.ajax({
                     type: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    url: "/cas/authorized",
+                    url: ApiUri.BaseUrl + '/cas/authorized',
                     dataType: 'json',
                     success: function (data) {
                         typeof (appOffline) != "undefined" ? appOffline = false : 1;
@@ -210,7 +210,7 @@ window.onDomLoaded(() => {
             let login = (mode) => {
                 switch (mode) {
                     case 2:
-                        location.href = "/cas/authorize?returnUrl=" + location.href;
+                        location.href = ApiUri.BaseUrl + '/cas/authorize?returnUrl=' + location.href;
                         break;
                     case 1:
                     default:

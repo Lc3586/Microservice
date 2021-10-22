@@ -11,30 +11,30 @@ window.onInformationLoaded(() => {
             {
                 tag: 'script',
                 type: 'text/javascript',
-                src: '../../jquery/jquery-2.2.4.min.js'
+                src: ApiUri.BaseUrl + '/jquery/jquery-2.2.4.min.js'
             },
             {
                 tag: 'script',
                 type: 'text/javascript',
-                src: '../../jquery/jquery-ui.min.js'
+                src: ApiUri.BaseUrl + '/jquery/jquery-ui.min.js'
             },
             {
                 tag: 'link',
                 type: 'text/css',
                 rel: 'stylesheet',
-                href: '../../jquery/jquery-ui.min.css'
+                href: ApiUri.BaseUrl + '/jquery/jquery-ui.min.css'
             },
             {
                 tag: 'link',
                 type: 'text/css',
                 rel: 'stylesheet',
-                href: '../../jquery/jquery-ui.theme.min.css'
+                href: ApiUri.BaseUrl + '/jquery/jquery-ui.theme.min.css'
             },
             {
                 tag: 'link',
                 type: 'text/css',
                 rel: 'stylesheet',
-                href: '../../jquery/jquery-ui.structure.min.css'
+                href: ApiUri.BaseUrl + '/jquery/jquery-ui.structure.min.css'
             }
         ],
         () => {
@@ -56,7 +56,7 @@ window.onInformationLoaded(() => {
                         'Content-Type': 'application/json',
                         'Authorization': 'Bearer ' + tokenInfo.AccessToken
                     },
-                    url: "/jwt/authorized",
+                    url: ApiUri.BaseUrl + '/jwt/authorized',
                     dataType: 'json',
                     success: function (data) {
                         typeof (appOffline) != "undefined" ? appOffline = false : 1;
@@ -186,7 +186,7 @@ window.onInformationLoaded(() => {
                 $.ajax({
                     type: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    url: "/jwt/get-token",
+                    url: ApiUri.BaseUrl + '/jwt/get-token',
                     dataType: 'json',
                     data: JSON.stringify({
                         account: account,
@@ -234,7 +234,7 @@ window.onInformationLoaded(() => {
                         'Content-Type': 'application/json',
                         'Authorization': 'Bearer ' + tokenInfo.AccessToken
                     },
-                    url: "/jwt/refresh-token",
+                    url: ApiUri.BaseUrl + '/jwt/refresh-token',
                     dataType: 'json',
                     success: function (data) {
                         if (data.Success) {

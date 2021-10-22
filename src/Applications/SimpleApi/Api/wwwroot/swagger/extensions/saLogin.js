@@ -11,30 +11,30 @@ window.onDomLoaded(() => {
             {
                 tag: 'script',
                 type: 'text/javascript',
-                src: '../../jquery/jquery-2.2.4.min.js'
+                src: ApiUri.BaseUrl + '/jquery/jquery-2.2.4.min.js'
             },
             {
                 tag: 'script',
                 type: 'text/javascript',
-                src: '../../jquery/jquery-ui.min.js'
+                src: ApiUri.BaseUrl + '/jquery/jquery-ui.min.js'
             },
             {
                 tag: 'link',
                 type: 'text/css',
                 rel: 'stylesheet',
-                href: '../../jquery/jquery-ui.min.css'
+                href: ApiUri.BaseUrl + '/jquery/jquery-ui.min.css'
             },
             {
                 tag: 'link',
                 type: 'text/css',
                 rel: 'stylesheet',
-                href: '../../jquery/jquery-ui.theme.min.css'
+                href: ApiUri.BaseUrl + '/jquery/jquery-ui.theme.min.css'
             },
             {
                 tag: 'link',
                 type: 'text/css',
                 rel: 'stylesheet',
-                href: '../../jquery/jquery-ui.structure.min.css'
+                href: ApiUri.BaseUrl + '/jquery/jquery-ui.structure.min.css'
             }
         ],
         () => {
@@ -50,7 +50,7 @@ window.onDomLoaded(() => {
                 $.ajax({
                     type: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    url: "/sa/authorized",
+                    url: ApiUri.BaseUrl + '/sa/authorized',
                     dataType: 'json',
                     success: function (data) {
                         typeof (appOffline) != "undefined" ? appOffline = false : 1;
@@ -178,7 +178,7 @@ window.onDomLoaded(() => {
                         $.ajax({
                             type: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            url: "/sa/login",
+                            url: ApiUri.BaseUrl + '/sa/login',
                             dataType: 'json',
                             data: JSON.stringify({
                                 account: account,

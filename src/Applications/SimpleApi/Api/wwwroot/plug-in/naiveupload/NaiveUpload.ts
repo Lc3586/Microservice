@@ -14,49 +14,49 @@ class NaiveUpload {
                     Tag: ImportFileTag.JS,
                     Attributes: {
                         type: 'text/javascript',
-                        src: 'Model/UploadConfig.js'
+                        src: ApiUri.BaseUrl + '/Model/UploadConfig.js'
                     }
                 },
                 {
                     Tag: ImportFileTag.JS,
                     Attributes: {
                         type: 'text/javascript',
-                        src: 'Model/SelectedFile.js'
+                        src: ApiUri.BaseUrl + '/Model/SelectedFile.js'
                     }
                 },
                 {
                     Tag: ImportFileTag.JS,
                     Attributes: {
                         type: 'text/javascript',
-                        src: 'Model/RawFile.js'
+                        src: ApiUri.BaseUrl + '/Model/RawFile.js'
                     }
                 },
                 {
                     Tag: ImportFileTag.JS,
                     Attributes: {
                         type: 'text/javascript',
-                        src: 'Model/ChunkFile.js'
+                        src: ApiUri.BaseUrl + '/Model/ChunkFile.js'
                     }
                 },
                 {
                     Tag: ImportFileTag.JS,
                     Attributes: {
                         type: 'text/javascript',
-                        src: 'Model/ApiUri.js'
+                        src: ApiUri.BaseUrl + '/Model/ApiUri.js'
                     }
                 },
                 {
                     Tag: ImportFileTag.JS,
                     Attributes: {
                         type: 'text/javascript',
-                        src: 'Helper/HashHelper.js'
+                        src: ApiUri.BaseUrl + '/Helper/HashHelper.js'
                     }
                 },
                 {
                     Tag: ImportFileTag.JS,
                     Attributes: {
                         type: 'text/javascript',
-                        src: 'Helper/UploadHelper.js'
+                        src: ApiUri.BaseUrl + '/Helper/UploadHelper.js'
                     }
                 }
             ];
@@ -66,7 +66,7 @@ class NaiveUpload {
                     Tag: ImportFileTag.JS,
                     Attributes: {
                         type: 'text/javascript',
-                        src: '../../utils/axios.min.js'
+                        src: ApiUri.BaseUrl + '/utils/axios.min.js'
                     }
                 });
 

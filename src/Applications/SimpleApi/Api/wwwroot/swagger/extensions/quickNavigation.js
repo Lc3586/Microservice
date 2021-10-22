@@ -11,7 +11,7 @@ window.onInformationLoaded(() => {
             {
                 tag: 'script',
                 type: 'text/javascript',
-                src: '../../jquery/jquery-2.2.4.min.js'
+                src: ApiUri.BaseUrl + '/jquery/jquery-2.2.4.min.js'
             }
         ],
         () => {

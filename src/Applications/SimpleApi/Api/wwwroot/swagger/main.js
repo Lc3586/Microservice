@@ -407,13 +407,13 @@ if (!window.importFile) {
      *      {
      *          tag: 'script', 标签
      *          type: 'text/javascript', 类型
-     *          src: 'http://a.b.com:8080/c' 地址
+     *          src: ApiUri.BaseUrl + '/http://a.b.com:8080/c' 地址
      *      },
      *      {
      *          tag: 'link', 标签
      *          type: 'text/css', 类型
      *          rel: 'stylesheet', 
-     *          href: 'http://a.b.com:8080/d' 地址
+     *          href: ApiUri.BaseUrl + '/http://a.b.com:8080/d' 地址
      *      }
      * ]
      * @param {any} done 回调
