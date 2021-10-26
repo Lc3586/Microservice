@@ -30,6 +30,7 @@ var ApiUri = (function () {
     ApiUri.Download = function (id) {
         return "/file/download/" + id;
     };
+    ApiUri.BaseUrl = '/api';
     ApiUri.SAAuthorized = '/sa/authorized';
     ApiUri.SALogin = '/sa/login';
     ApiUri.GetToken = '/jwt/get-token';

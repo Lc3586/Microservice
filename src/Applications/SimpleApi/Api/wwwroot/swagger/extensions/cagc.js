@@ -3,7 +3,7 @@
 *
 *   LCTR 2021-06-25
 */
-window.onDomLoaded(() => {
+window.onInformationLoaded(() => {
     console.info('正在加载功能 => 代码自动生成');
 
     window.importFile(
@@ -11,30 +11,30 @@ window.onDomLoaded(() => {
             {
                 tag: 'script',
                 type: 'text/javascript',
-                src: '../../jquery/jquery-2.2.4.min.js'
+                src: window.baseUri + '/jquery/jquery-2.2.4.min.js'
             },
             {
                 tag: 'script',
                 type: 'text/javascript',
-                src: '../../jquery/jquery-ui.min.js'
+                src: window.baseUri + '/jquery/jquery-ui.min.js'
             },
             {
                 tag: 'link',
                 type: 'text/css',
                 rel: 'stylesheet',
-                href: '../../jquery/jquery-ui.min.css'
+                href: window.baseUri + '/jquery/jquery-ui.min.css'
             },
             {
                 tag: 'link',
                 type: 'text/css',
                 rel: 'stylesheet',
-                href: '../../jquery/jquery-ui.theme.min.css'
+                href: window.baseUri + '/jquery/jquery-ui.theme.min.css'
             },
             {
                 tag: 'link',
                 type: 'text/css',
                 rel: 'stylesheet',
-                href: '../../jquery/jquery-ui.structure.min.css'
+                href: window.baseUri + '/jquery/jquery-ui.structure.min.css'
             }
         ],
         () => {

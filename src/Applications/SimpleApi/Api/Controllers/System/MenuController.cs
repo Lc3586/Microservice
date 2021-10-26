@@ -117,6 +117,7 @@ namespace Api.Controllers
         /// <param name="ids">Id集合</param>
         /// <returns></returns>
         [HttpPost("delete")]
+        [NoJsonParamter]
         public async Task<object> Delete(IEnumerable<string> ids)
         {
             MenuBusiness.Delete(ids?.ToList());
@@ -171,6 +172,7 @@ namespace Api.Controllers
         /// <param name="resourcesIds">资源Id集合</param>
         /// <returns></returns>
         [HttpPost("associate-resources/{id}")]
+        [NoJsonParamter]
         public async Task<object> AssociateResources(string id, IEnumerable<string> resourcesIds)
         {
             MenuBusiness.AssociateResources(id, resourcesIds?.ToList());
@@ -184,6 +186,7 @@ namespace Api.Controllers
         /// <param name="resourcesIds">资源Id集合</param>
         /// <returns></returns>
         [HttpPost("disassociate-resources/{id}")]
+        [NoJsonParamter]
         public async Task<object> DisassociateResources(string id, IEnumerable<string> resourcesIds)
         {
             MenuBusiness.DisassociateResources(id, resourcesIds?.ToList());

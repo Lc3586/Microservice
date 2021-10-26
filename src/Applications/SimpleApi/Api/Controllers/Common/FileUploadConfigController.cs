@@ -127,6 +127,7 @@ namespace Api.Controllers.Common
         /// <param name="keys">[主键]</param>
         /// <returns></returns>
         [HttpPost("delete")]
+        [NoJsonParamter]
         public async Task<object> Delete(IEnumerable<string> keys)
         {
             FileUploadConfigBusiness.Delete(keys?.ToList());

@@ -58,7 +58,7 @@ var UploadHelper = (function () {
                             Tag: "script",
                             Attributes: {
                                 type: 'text/javascript',
-                                src: 'Helper/FileReadHelper.js'
+                                src: ApiUri.BaseUrl + '/Helper/FileReadHelper.js'
                             }
                         }
                     ], function () {
@@ -120,7 +120,7 @@ var UploadHelper = (function () {
                                     Tag: "script",
                                     Attributes: {
                                         type: 'text/javascript',
-                                        src: '../../../utils/axios.min.js'
+                                        src: ApiUri.BaseUrl + '/../utils/axios.min.js'
                                     }
                                 }
                             ], function () {

@@ -3,7 +3,7 @@
 *
 *   LCTR 2020-03-13
 */
-window.onDomLoaded(() => {
+window.onInformationLoaded(() => {
     console.info('正在加载功能 => CAS身份验证');
 
     window.importFile(
@@ -11,30 +11,30 @@ window.onDomLoaded(() => {
             {
                 tag: 'script',
                 type: 'text/javascript',
-                src: '../../jquery/jquery-2.2.4.min.js'
+                src: window.baseUri + '/jquery/jquery-2.2.4.min.js'
             },
             {
                 tag: 'script',
                 type: 'text/javascript',
-                src: '../../jquery/jquery-ui.min.js'
+                src: window.baseUri + '/jquery/jquery-ui.min.js'
             },
             {
                 tag: 'link',
                 type: 'text/css',
                 rel: 'stylesheet',
-                href: '../../jquery/jquery-ui.min.css'
+                href: window.baseUri + '/jquery/jquery-ui.min.css'
             },
             {
                 tag: 'link',
                 type: 'text/css',
                 rel: 'stylesheet',
-                href: '../../jquery/jquery-ui.theme.min.css'
+                href: window.baseUri + '/jquery/jquery-ui.theme.min.css'
             },
             {
                 tag: 'link',
                 type: 'text/css',
                 rel: 'stylesheet',
-                href: '../../jquery/jquery-ui.structure.min.css'
+                href: window.baseUri + '/jquery/jquery-ui.structure.min.css'
             }
         ],
         () => {
@@ -51,7 +51,7 @@ window.onDomLoaded(() => {
                 $.ajax({
                     type: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    url: "/cas/authorized",
+                    url: window.baseUri + '/cas/authorized',
                     dataType: 'json',
                     success: function (data) {
                         typeof (appOffline) != "undefined" ? appOffline = false : 1;
@@ -210,11 +210,11 @@ window.onDomLoaded(() => {
             let login = (mode) => {
                 switch (mode) {
                     case 2:
-                        location.href = "/cas/authorize?returnUrl=" + location.href;
+                        location.href = window.apiUri.BaseUrl + '/cas/authorize?returnUrl=' + location.href;
                         break;
                     case 1:
                     default:
-                        location.href = $('[for="servers"] select').val() + '/cas/login?returnUrl=' + location.href;
+                        location.href = window.apiUri.BaseUrl + '/cas/login?returnUrl=' + location.href;
                         break;
                 }
             };
@@ -234,7 +234,7 @@ window.onDomLoaded(() => {
                     case 1:
                     default:
                         let done = (logoutCAS) => {
-                            location.href = $('[for="servers"] select').val() + '/cas/logout?returnUrl=' + location.href + '&logoutCAS=' + logoutCAS;
+                            location.href = window.apiUri.BaseUrl + '/cas/logout?returnUrl=' + location.href + '&logoutCAS=' + logoutCAS;
                         };
 
                         window.showDialog(

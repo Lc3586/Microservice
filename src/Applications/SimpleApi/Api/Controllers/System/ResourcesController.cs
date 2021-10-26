@@ -104,6 +104,7 @@ namespace Api.Controllers
         /// <param name="ids">Id集合</param>
         /// <returns></returns>
         [HttpPost("delete")]
+        [NoJsonParamter]
         public async Task<object> Delete(IEnumerable<string> ids)
         {
             ResourcesBusiness.Delete(ids?.ToList());
@@ -134,6 +135,7 @@ namespace Api.Controllers
         /// <param name="menuIds">菜单Id集合</param>
         /// <returns></returns>
         [HttpPost("associate-menus/{id}")]
+        [NoJsonParamter]
         public async Task<object> AssociateMenus(string id, IEnumerable<string> menuIds)
         {
             ResourcesBusiness.AssociateMenus(id, menuIds?.ToList());
@@ -147,6 +149,7 @@ namespace Api.Controllers
         /// <param name="menuIds">菜单Id集合</param>
         /// <returns></returns>
         [HttpPost("disassociate-menus/{id}")]
+        [NoJsonParamter]
         public async Task<object> DisassociateMenus(string id, IEnumerable<string> menuIds)
         {
             ResourcesBusiness.DisassociateMenus(id, menuIds?.ToList());

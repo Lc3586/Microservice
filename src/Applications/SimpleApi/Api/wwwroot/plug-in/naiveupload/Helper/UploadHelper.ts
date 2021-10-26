@@ -77,7 +77,7 @@ class UploadHelper {
                         Tag: ImportFileTag.JS,
                         Attributes: {
                             type: 'text/javascript',
-                            src: 'Helper/FileReadHelper.js'
+                            src: ApiUri.BaseUrl + '/Helper/FileReadHelper.js'
                         }
                     }],
                 () => {
@@ -123,7 +123,7 @@ class UploadHelper {
                                     Tag: ImportFileTag.JS,
                                     Attributes: {
                                         type: 'text/javascript',
-                                        src: '../../../utils/axios.min.js'
+                                        src: ApiUri.BaseUrl + '/../utils/axios.min.js'
                                     }
                                 }],
                             () => {

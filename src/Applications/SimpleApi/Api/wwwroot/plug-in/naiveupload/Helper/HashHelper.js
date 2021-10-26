@@ -53,7 +53,7 @@ var HashHelper = (function () {
                             Tag: "script",
                             Attributes: {
                                 type: 'text/javascript',
-                                src: 'Helper/FileReadHelper.js'
+                                src: ApiUri.BaseUrl + '/Helper/FileReadHelper.js'
                             }
                         }
                     ], function () {
@@ -74,7 +74,7 @@ var HashHelper = (function () {
                                     Tag: "script",
                                     Attributes: {
                                         type: 'text/javascript',
-                                        src: '../../../utils/spark-md5.min.js'
+                                        src: ApiUri.BaseUrl + '/../utils/spark-md5.min.js'
                                     }
                                 }
                             ], function () {

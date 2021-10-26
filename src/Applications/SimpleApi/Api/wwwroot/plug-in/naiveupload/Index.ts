@@ -6,126 +6,126 @@
                 Attributes: {
                     type: 'text/css',
                     rel: 'stylesheet',
-                    href: '../../element-plus/theme-chalk/element-plus.index.css'
+                    href: ApiUri.BaseUrl + '/element-plus/theme-chalk/element-plus.index.css'
                 }
             },
             {
                 Tag: ImportFileTag.JS,
                 Attributes: {
                     type: 'text/javascript',
-                    src: '../../vue/vue.global.prod.js'
+                    src: ApiUri.BaseUrl + '/vue/vue.global.prod.js'
                 }
             },
             {
                 Tag: ImportFileTag.JS,
                 Attributes: {
                     type: 'text/javascript',
-                    src: '../../utils/axios.min.js'
+                    src: ApiUri.BaseUrl + '/utils/axios.min.js'
                 }
             },
             {
                 Tag: ImportFileTag.JS,
                 Attributes: {
                     type: 'text/javascript',
-                    src: '../../element-plus/element-plus.index.full.js'
+                    src: ApiUri.BaseUrl + '/element-plus/element-plus.index.full.js'
                 }
             },
             {
                 Tag: ImportFileTag.JS,
                 Attributes: {
                     type: 'text/javascript',
-                    src: '../../element-plus/element-plus.index.full.js'
+                    src: ApiUri.BaseUrl + '/element-plus/element-plus.index.full.js'
                 }
             },
             {
                 Tag: ImportFileTag.JS,
                 Attributes: {
                     type: 'text/javascript',
-                    src: '../../element-plus/element-plus.es.js'
+                    src: ApiUri.BaseUrl + '/element-plus/element-plus.es.js'
                 }
             },
             {
                 Tag: ImportFileTag.JS,
                 Attributes: {
                     type: 'text/javascript',
-                    src: '../../element-plus/element-plus.zh-cn.js'
+                    src: ApiUri.BaseUrl + '/element-plus/element-plus.zh-cn.js'
                 }
             },
             {
                 Tag: ImportFileTag.JS,
                 Attributes: {
                     type: 'text/javascript',
-                    src: '../../utils/dayjs/dayjs.min.js'
+                    src: ApiUri.BaseUrl + '/utils/dayjs/dayjs.min.js'
                 }
             },
             {
                 Tag: ImportFileTag.JS,
                 Attributes: {
                     type: 'text/javascript',
-                    src: '../../utils/dayjs/dayjs.zh-cn.js'
+                    src: ApiUri.BaseUrl + '/utils/dayjs/dayjs.zh-cn.js'
                 }
             },
             {
                 Tag: ImportFileTag.JS,
                 Attributes: {
                     type: 'text/javascript',
-                    src: '../../utils/lodash.min.js'
+                    src: ApiUri.BaseUrl + '/utils/lodash.min.js'
                 }
             },
             {
                 Tag: ImportFileTag.JS,
                 Attributes: {
                     type: 'text/javascript',
-                    src: 'NaiveUpload.js'
+                    src: ApiUri.BaseUrl + '/NaiveUpload.js'
                 }
             },
             {
                 Tag: ImportFileTag.JS,
                 Attributes: {
                     type: 'text/javascript',
-                    src: 'Model/MultipleUploadSetting.js'
+                    src: ApiUri.BaseUrl + '/Model/MultipleUploadSetting.js'
                 }
             },
             {
                 Tag: ImportFileTag.JS,
                 Attributes: {
                     type: 'text/javascript',
-                    src: 'Model/ApiUri.js'
+                    src: ApiUri.BaseUrl + '/Model/ApiUri.js'
                 }
             },
             {
                 Tag: ImportFileTag.JS,
                 Attributes: {
                     type: 'text/javascript',
-                    src: 'Helper/ChunkFileMergeTaskHelper.js'
+                    src: ApiUri.BaseUrl + '/Helper/ChunkFileMergeTaskHelper.js'
                 }
             },
             {
                 Tag: ImportFileTag.JS,
                 Attributes: {
                     type: 'text/javascript',
-                    src: 'Model/UploadConfigDetail.js'
+                    src: ApiUri.BaseUrl + '/Model/UploadConfigDetail.js'
                 }
             },
             {
                 Tag: ImportFileTag.JS,
                 Attributes: {
                     type: 'text/javascript',
-                    src: 'Model/Pagination.js'
+                    src: ApiUri.BaseUrl + '/Model/Pagination.js'
                 }
             },
             {
                 Tag: ImportFileTag.JS,
                 Attributes: {
                     type: 'text/javascript',
-                    src: 'Model/LibraryInfo.js'
+                    src: ApiUri.BaseUrl + '/Model/LibraryInfo.js'
                 }
             },
             {
                 Tag: ImportFileTag.JS,
                 Attributes: {
                     type: 'text/javascript',
-                    src: 'Model/VideoInfo.js'
+                    src: ApiUri.BaseUrl + '/Model/VideoInfo.js'
                 }
             }
         ],

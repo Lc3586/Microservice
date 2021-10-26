@@ -196,7 +196,7 @@ namespace Api.Configures
                     var groups = config.Swagger.Groups.Where(o => o.Versions.Contains(apiVersion.Version));
                     foreach (var group in groups)
                     {
-                        s.SwaggerEndpoint($"/swagger/{UrlEncoder.Default.Encode($"{apiVersion.Version} {group.Name}")}/swagger.json", $"{apiVersion.Name} {group.Name}");
+                        s.SwaggerEndpoint($"swagger/{UrlEncoder.Default.Encode($"{apiVersion.Version} {group.Name}")}/swagger.json", $"{apiVersion.Name} {group.Name}");
                     }
                 }
 

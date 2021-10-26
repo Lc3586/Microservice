@@ -98,7 +98,7 @@ namespace Entity.System
         /// <summary>
         /// 图标
         /// </summary>
-        [OpenApiSubTag("List", "TreeList", "Create", "Edit", "Detail")]
+        [OpenApiSubTag("List", "TreeList", "Create", "Edit", "Detail", "Authorities")]
         [Description("图标")]
         [Column(StringLength = 36)]
         public string Icon { get; set; }
@@ -106,7 +106,7 @@ namespace Entity.System
         /// <summary>
         /// 启用缓存
         /// </summary>
-        [OpenApiSubTag("List", "TreeList", "Create", "Edit", "Detail")]
+        [OpenApiSubTag("List", "TreeList", "Create", "Edit", "Detail", "Authorities")]
         [Description("启用缓存")]
         public bool Cache { get; set; }
 

@@ -242,6 +242,7 @@ namespace Api.Controllers
         /// <returns></returns>
         [HttpPost("revocation-role-for-all-user")]
         [SwaggerOperation(Tags = new[] { "撤销授权" })]
+        [NoJsonParamter]
         public async Task<object> RevocationRoleForAllUser(IEnumerable<string> roleIds)
         {
             AuthoritiesBusiness.RevocationRoleForAllUser(roleIds?.ToList());
@@ -255,6 +256,7 @@ namespace Api.Controllers
         /// <returns></returns>
         [HttpPost("revocation-role-for-all-member")]
         [SwaggerOperation(Tags = new[] { "撤销授权" })]
+        [NoJsonParamter]
         public async Task<object> RevocationRoleForAllMember(IEnumerable<string> roleIds)
         {
             AuthoritiesBusiness.RevocationRoleForAllMember(roleIds?.ToList());
@@ -268,6 +270,7 @@ namespace Api.Controllers
         /// <returns></returns>
         [HttpPost("revocation-all-role-for-user")]
         [SwaggerOperation(Tags = new[] { "撤销授权" })]
+        [NoJsonParamter]
         public async Task<object> RevocationRoleForUser(IEnumerable<string> userIds)
         {
             AuthoritiesBusiness.RevocationRoleForUser(userIds?.ToList());
@@ -281,6 +284,7 @@ namespace Api.Controllers
         /// <returns></returns>
         [HttpPost("revocation-all-role-for-member")]
         [SwaggerOperation(Tags = new[] { "撤销授权" })]
+        [NoJsonParamter]
         public async Task<object> RevocationRoleForMember(IEnumerable<string> memberIds)
         {
             AuthoritiesBusiness.RevocationRoleForMember(memberIds?.ToList());
@@ -294,6 +298,7 @@ namespace Api.Controllers
         /// <returns></returns>
         [HttpPost("revocation-all-menu-for-user")]
         [SwaggerOperation(Tags = new[] { "撤销授权" })]
+        [NoJsonParamter]
         public async Task<object> RevocationMenuForUser(IEnumerable<string> userIds)
         {
             AuthoritiesBusiness.RevocationMenuForUser(userIds?.ToList());
@@ -307,6 +312,7 @@ namespace Api.Controllers
         /// <returns></returns>
         [HttpPost("revocation-all-resources-for-user")]
         [SwaggerOperation(Tags = new[] { "撤销授权" })]
+        [NoJsonParamter]
         public async Task<object> RevocationResourcesForUser(IEnumerable<string> userIds)
         {
             AuthoritiesBusiness.RevocationResourcesForUser(userIds?.ToList());
@@ -320,6 +326,7 @@ namespace Api.Controllers
         /// <returns></returns>
         [HttpPost("revocation-all-cfuc-for-user")]
         [SwaggerOperation(Tags = new[] { "撤销授权" })]
+        [NoJsonParamter]
         public async Task<object> RevocationCFUCForUser(IEnumerable<string> userIds)
         {
             AuthoritiesBusiness.RevocationCFUCForUser(userIds?.ToList());
@@ -333,6 +340,7 @@ namespace Api.Controllers
         /// <returns></returns>
         [HttpPost("revocation-all-menu-for-role")]
         [SwaggerOperation(Tags = new[] { "撤销授权" })]
+        [NoJsonParamter]
         public async Task<object> RevocationMenuForRole(IEnumerable<string> roleIds)
         {
             AuthoritiesBusiness.RevocationMenuForRole(roleIds?.ToList());
@@ -346,6 +354,7 @@ namespace Api.Controllers
         /// <returns></returns>
         [HttpPost("revocation-all-resources-for-role")]
         [SwaggerOperation(Tags = new[] { "撤销授权" })]
+        [NoJsonParamter]
         public async Task<object> RevocationResourcesForRole(IEnumerable<string> roleIds)
         {
             AuthoritiesBusiness.RevocationResourcesForRole(roleIds?.ToList());
@@ -359,6 +368,7 @@ namespace Api.Controllers
         /// <returns></returns>
         [HttpPost("revocation-all-cfuc-for-role")]
         [SwaggerOperation(Tags = new[] { "撤销授权" })]
+        [NoJsonParamter]
         public async Task<object> RevocationCFUCForRole(IEnumerable<string> roleIds)
         {
             AuthoritiesBusiness.RevocationCFUCForRole(roleIds?.ToList());
@@ -566,6 +576,7 @@ namespace Api.Controllers
         /// <returns></returns>
         [HttpPost("revocation-menu-for-all")]
         [SwaggerOperation(Tags = new[] { "撤销授权" })]
+        [NoJsonParamter]
         public async Task<object> RevocationMenuForAll(IEnumerable<string> menuIds)
         {
             AuthoritiesBusiness.RevocationMenuForAll(menuIds?.ToList());
@@ -579,6 +590,7 @@ namespace Api.Controllers
         /// <returns></returns>
         [HttpPost("revocation-resources-for-all")]
         [SwaggerOperation(Tags = new[] { "撤销授权" })]
+        [NoJsonParamter]
         public async Task<object> RevocationResourcesForAll(IEnumerable<string> resourcesIds)
         {
             AuthoritiesBusiness.RevocationResourcesForAll(resourcesIds?.ToList());
@@ -592,6 +604,7 @@ namespace Api.Controllers
         /// <returns></returns>
         [HttpPost("revocation-cfuc-for-all")]
         [SwaggerOperation(Tags = new[] { "撤销授权" })]
+        [NoJsonParamter]
         public async Task<object> RevocationCFUCForAll(IEnumerable<string> configIds)
         {
             AuthoritiesBusiness.RevocationCFUCForAll(configIds?.ToList());
