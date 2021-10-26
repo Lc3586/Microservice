@@ -407,13 +407,13 @@ if (!window.importFile) {
      *      {
      *          tag: 'script', 标签
      *          type: 'text/javascript', 类型
-     *          src: ApiUri.BaseUrl + '/http://a.b.com:8080/c' 地址
+     *          src: window.baseUri + '/http://a.b.com:8080/c' 地址
      *      },
      *      {
      *          tag: 'link', 标签
      *          type: 'text/css', 类型
      *          rel: 'stylesheet', 
-     *          href: ApiUri.BaseUrl + '/http://a.b.com:8080/d' 地址
+     *          href: window.baseUri + '/http://a.b.com:8080/d' 地址
      *      }
      * ]
      * @param {any} done 回调
@@ -915,7 +915,7 @@ if (!window.onInformationLoaded) {
 
         window.onInformationLoaded(() => {
             window.domMutationObserver(
-                $(".swagger-container .swagger-ui")[0],
+                document.getElementsByClassName('swagger-container')[0].getElementsByClassName('swagger-ui')[0],
                 () => {
                     funs.forEach(item => { item(); });
                 });
@@ -981,3 +981,27 @@ if (!window.doubleClick) {
         return el;
     }
 }
+
+/**
+ * 接口地址
+ * */
+Object.defineProperty(window, 'baseUri', {
+    set: function (val) {
+        throw new Error("readonly value!");
+    },
+    get: function () {
+        return document.getElementsByClassName('servers')[0].getElementsByTagName('select')[0].value;
+    }
+});
+//window.apiUri = {
+//    name: "baseUri",
+//    work: function () {
+//        console.log("wording...");
+//    },
+//    get baseUri() {
+//        return document.getElementsByClassName('servers')[0].getElementsByTagName('select')[0].value;
+//    },
+//    set baseUri(val) {
+//        throw new Error("readonly value!");
+//    }
+//}

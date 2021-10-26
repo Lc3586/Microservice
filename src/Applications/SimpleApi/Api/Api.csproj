@@ -201,7 +201,6 @@
     <Content Remove="wwwroot\plug-in\systemconsole\systemconsole.css" />
     <Content Remove="wwwroot\plug-in\systemconsole\systemconsole.html" />
     <Content Remove="wwwroot\plug-in\systemconsole\systemconsole.js" />
-    <Content Remove="wwwroot\swagger\ApiUri.js" />
     <Content Remove="wwwroot\swagger\casLogin.js" />
     <Content Remove="wwwroot\swagger\custom-javascript.js" />
     <Content Remove="wwwroot\swagger\custom-stylesheet.css" />
@@ -711,9 +710,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="wwwroot\plug-in\systemconsole\systemconsole.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="wwwroot\swagger\ApiUri.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="wwwroot\swagger\extensions\apiVersion.js">
