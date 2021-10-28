@@ -1,4 +1,5 @@
 ﻿using Api.Middleware;
+using Business.Utils.Authorization;
 using GSS.Authentication.CAS;
 using GSS.Authentication.CAS.AspNetCore;
 using GSS.Authentication.CAS.Validation;
@@ -48,7 +49,19 @@ namespace Api.Configures
 
             services.AddSingleton<IServiceTicketStore, DistributedCacheServiceTicketStore>();
             services.AddSingleton<ITicketStore, TicketStoreWrapper>();
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(nameof(ApiAuthorizeRequirement), policy =>
+                {
+                    policy.AuthenticationSchemes.Add(CookieAuthenticationDefaults.AuthenticationScheme);
+                    policy.Requirements.Add(new ApiAuthorizeRequirement());
+                });
+            })
+            .AddScoped<IAuthorizationHandler, ApiPermissionHandlerr<ApiAuthorizeRequirement>>()
+            .AddScoped<IAuthorizationHandler, ApiPermissionDefaultHttpContextHandlerr<ApiAuthorizeRequirement>>()
+            .AddScoped<IAuthorizationHandler, ApiPermissionAuthorizationFilterContextHandlerr<ApiAuthorizeRequirement>>()
+            .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(options =>
             {
                 //options.Cookie.Name = ".Cas";
@@ -89,32 +102,32 @@ namespace Api.Configures
                     //    return Task.CompletedTask;
                     //},
                     OnSigningOut = context =>
+                {
+                    if (context.HttpContext.User.Identity.IsAuthenticated)
                     {
-                        if (context.HttpContext.User.Identity.IsAuthenticated)
-                        {
-                            var id = context.HttpContext.User.Claims?.FirstOrDefault(t => t.Type == "id").Value;
+                        var id = context.HttpContext.User.Claims?.FirstOrDefault(t => t.Type == "id").Value;
 
-                        }
-
-                        // Single Sign-Out
-                        var casUrl = new Uri(config.CAS.BaseUrl);
-                        var redirectUri = UriHelper.BuildAbsolute(
-                            casUrl.Scheme,
-                            new HostString(casUrl.Host, casUrl.Port),
-                            casUrl.LocalPath, "/logout",
-                            QueryString.Create("service", config.WebRootUrlMatchScheme(context.Request.Scheme)));
-
-                        var logoutRedirectContext = new RedirectContext<CookieAuthenticationOptions>(
-                            context.HttpContext,
-                            context.Scheme,
-                            context.Options,
-                            context.Properties,
-                            redirectUri
-                        );
-                        context.Response.StatusCode = 204; //Prevent RedirectToReturnUrl
-                        context.Options.Events.RedirectToLogout(logoutRedirectContext);
-                        return Task.CompletedTask;
                     }
+
+                    // Single Sign-Out
+                    var casUrl = new Uri(config.CAS.BaseUrl);
+                    var redirectUri = UriHelper.BuildAbsolute(
+                        casUrl.Scheme,
+                        new HostString(casUrl.Host, casUrl.Port),
+                        casUrl.LocalPath, "/logout",
+                        QueryString.Create("service", config.WebRootUrlMatchScheme(context.Request.Scheme)));
+
+                    var logoutRedirectContext = new RedirectContext<CookieAuthenticationOptions>(
+                        context.HttpContext,
+                        context.Scheme,
+                        context.Options,
+                        context.Properties,
+                        redirectUri
+                    );
+                    context.Response.StatusCode = 204; //Prevent RedirectToReturnUrl
+                    context.Options.Events.RedirectToLogout(logoutRedirectContext);
+                    return Task.CompletedTask;
+                }
                 };
             })
             .AddCAS(options =>

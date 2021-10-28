@@ -2380,32 +2380,30 @@
             超级管理员账号初始化密码
             </summary>
         </member>
-        <member name="P:Model.Utils.Config.SystemConfig.ProjectName">
+        <member name="P:Model.Utils.Config.SystemConfig.SystemName">
             <summary>
-            项目名称
+            系统名称
             </summary>
         </member>
         <member name="P:Model.Utils.Config.SystemConfig.WebRootUrl">
             <summary>
             网站根地址
             </summary>
+            <remarks>key: HttpScheme,value: url</remarks>
+        </member>
+        <member name="M:Model.Utils.Config.SystemConfig.WebRootUrlMatchScheme(Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpScheme,System.Boolean)">
+            <summary>
+            网站根地址
+            </summary>
+            <param name="scheme">请求框架</param>
+            <param name="contrary"></param>
         </member>
         <member name="M:Model.Utils.Config.SystemConfig.WebRootUrlMatchScheme(System.String,System.Boolean)">
             <summary>
             网站根地址
             </summary>
-            <param name="scheme">框架http/https</param>
-            <param name="contrary">false 返回匹配的数据,true 返回不匹配的数据</param>
-        </member>
-        <member name="P:Model.Utils.Config.SystemConfig.PublishRootUrl">
-            <summary>
-            发布后网站根地址
-            </summary>
-        </member>
-        <member name="P:Model.Utils.Config.SystemConfig.LocalRootUrl">
-            <summary>
-            本地调试根地址
-            </summary>
+            <param name="scheme">请求框架 Http/Https</param>
+            <param name="contrary"></param>
         </member>
         <member name="P:Model.Utils.Config.SystemConfig.RunMode">
             <summary>

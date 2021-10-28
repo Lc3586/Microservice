@@ -102,7 +102,7 @@ HttpHelper.SafeSignRequest
                 return;
             }
 
-            string guidKey = $"{Config.ProjectName}_apiGuid_{guid}";
+            string guidKey = $"{Config.SystemName}_apiGuid_{guid}";
             if (Cache.GetCache(guidKey).IsNullOrEmpty())
                 Cache.SetCache(guidKey, "1", new TimeSpan(0, 10, 0));
             else

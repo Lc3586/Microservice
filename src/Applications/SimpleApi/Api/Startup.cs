@@ -4,6 +4,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Autofac.Extras.DynamicProxy;
 using Business.Handler;
+using Business.Utils;
 using IocServiceDemo;
 using Microservice.Library.Configuration;
 using Microservice.Library.ConsoleTool;
@@ -50,8 +51,8 @@ namespace Api
             Config = new ConfigHelper(Configuration).GetModel<SystemConfig>("SystemConfig");
             "已读取配置.".ConsoleWrite();
             Bar?.Normal(6);
-            Console.Title = Config.ProjectName;
-            Config.ProjectName.ConsoleWrite();
+            Console.Title = Config.SystemName;
+            Config.SystemName.ConsoleWrite();
             $"运行模式 => {Config.RunMode}.".ConsoleWrite();
         }
 
@@ -165,6 +166,9 @@ namespace Api
             if (Config.EnableCache)
                 services.RegisterCache(Config);
 
+            if (Config.EnableCAS && Config.EnableSampleAuthentication)
+                throw new MessageException("禁止同时启用简易身份认证（SA）和统一身份认证（CAS）.");
+
             Bar?.Normal(17);
             if (Config.EnableSampleAuthentication)
                 services.RegisterSampleAuthentication(Config);
@@ -222,6 +226,9 @@ namespace Api
             Bar?.Normal(28);
             if (Config.EnableRSA)
                 services.RegisterRSAHelper(Config);
+
+            "关闭默认模型状态过滤器.".ConsoleWrite();
+            services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
         }
 
         /// <summary>

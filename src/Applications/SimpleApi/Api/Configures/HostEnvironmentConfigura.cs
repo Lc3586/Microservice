@@ -29,7 +29,7 @@ namespace Api.Configures
         {
             "配置主机环境.".ConsoleWrite();
 
-            webHostEnvironment.ApplicationName = config.ProjectName;
+            webHostEnvironment.ApplicationName = config.SystemName;
             if (webHostEnvironment.EnvironmentName == "Development")
             {
                 "当前为开发环境(Development).".ConsoleWrite();
@@ -51,7 +51,7 @@ namespace Api.Configures
                 webHostEnvironment.WebRootPath = config.AbsoluteWWWRootDirectory;
             }
 
-            hostingEnvironment.ApplicationName = config.ProjectName;
+            hostingEnvironment.ApplicationName = config.SystemName;
             if (hostingEnvironment.EnvironmentName != "Development")
             {
                 hostingEnvironment.ContentRootPath = config.AbsoluteStorageDirectory;

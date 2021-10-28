@@ -2926,17 +2926,11 @@
             忽略字段
             </summary>
         </member>
-        <member name="M:Api.CheckModelAttribute.OnActionExecuting(Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext)">
+        <member name="M:Api.CheckModelAttribute.OnActionExecutionAsync(Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext,Microsoft.AspNetCore.Mvc.Filters.ActionExecutionDelegate)">
             <summary>
             Action执行之前执行
             </summary>
             <param name="context">过滤器上下文</param>
-        </member>
-        <member name="M:Api.CheckModelAttribute.OnActionExecuted(Microsoft.AspNetCore.Mvc.Filters.ActionExecutedContext)">
-            <summary>
-            Action执行完毕之后执行
-            </summary>
-            <param name="filterContext"></param>
         </member>
         <member name="T:Api.NoCheckModelAttribute">
             <summary>

@@ -637,7 +637,7 @@ namespace Business.Implementation.Common
 
             return stateInfo.Type switch
             {
-                WeChatStateType.系统用户登录 => $"您正在登录至{Config.ProjectName}",
+                WeChatStateType.系统用户登录 => $"您正在登录至{Config.SystemName}",
                 WeChatStateType.系统用户绑定微信 => $"您正在将微信绑定至账号: {Repository_User.Where(o => o.Id == stateInfo.Data["UserId"].ToString()).ToOne(o => o.Account)}",
                 _ => "无效操作"
             };

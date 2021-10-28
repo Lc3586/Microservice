@@ -50,7 +50,7 @@ namespace Api.Controllers.Utils
         {
             var info = new AuthorizedInfo()
             {
-                AppName = Config.ProjectName,
+                AppName = Config.SystemName,
                 Id = Context.User.Claims?.FirstOrDefault(o => o.Type == "id")?.Value,
                 Account = Context.User.Claims?.FirstOrDefault(o => o.Type == "account")?.Value,
                 Name = Context.User.Claims?.FirstOrDefault(o => o.Type == "name")?.Value
@@ -76,7 +76,7 @@ namespace Api.Controllers.Utils
         {
             var info = new AuthorizedInfo()
             {
-                AppName = Config.ProjectName,
+                AppName = Config.SystemName,
                 Id = Context.User.Claims?.FirstOrDefault(o => o.Type == "id")?.Value,
                 Account = Context.User.Claims?.FirstOrDefault(o => o.Type == "account")?.Value,
                 Name = Context.User.Claims?.FirstOrDefault(o => o.Type == "name")?.Value,

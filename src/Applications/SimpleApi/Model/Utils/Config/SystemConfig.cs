@@ -1,5 +1,6 @@
 ﻿using Microservice.Library.Cache.Model;
 using Microservice.Library.Configuration.Annotations;
+using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -174,31 +175,43 @@ namespace Model.Utils.Config
         public string AdminInitPassword { get; set; }
 
         /// <summary>
-        /// 项目名称
+        /// 系统名称
         /// </summary>
-        public string ProjectName { get; set; }
+        public string SystemName { get; set; }
 
         /// <summary>
         /// 网站根地址
         /// </summary>
-        public List<string> WebRootUrl => RunMode == RunMode.Publish || RunMode == RunMode.Publish_Swagger ? PublishRootUrl : LocalRootUrl;
+        /// <remarks>key: HttpScheme,value: url</remarks>
+        public Dictionary<string, string> WebRootUrl { get; set; }
 
         /// <summary>
         /// 网站根地址
         /// </summary>
-        /// <param name="scheme">框架http/https</param>
-        /// <param name="contrary">false 返回匹配的数据,true 返回不匹配的数据</param>
-        public string WebRootUrlMatchScheme(string scheme, bool contrary = false) => WebRootUrl.Find(o => o.Contains($"{scheme}://") == !contrary);
+        /// <param name="scheme">请求框架</param>
+        /// <param name="contrary"></param>
+        public string WebRootUrlMatchScheme(HttpScheme scheme, bool contrary = false) => WebRootUrlMatchScheme(scheme.ToString(), contrary);
 
         /// <summary>
-        /// 发布后网站根地址
+        /// 网站根地址
         /// </summary>
-        public List<string> PublishRootUrl { get; set; }
+        /// <param name="scheme">请求框架 Http/Https</param>
+        /// <param name="contrary"></param>
+        public string WebRootUrlMatchScheme(string scheme, bool contrary = false)
+        {
+            scheme = $"{char.ToUpper(scheme[0])}{scheme[1..].ToLower()}";
 
-        /// <summary>
-        /// 本地调试根地址
-        /// </summary>
-        public List<string> LocalRootUrl { get; set; }
+            if (!contrary)
+                return WebRootUrl[scheme];
+
+            foreach (var item in WebRootUrl)
+            {
+                if (item.Key != scheme)
+                    return item.Value;
+            }
+
+            throw new ApplicationException("未找到可供使用的WebRootUrl.");
+        }
 
         /// <summary>
         /// 运行模式

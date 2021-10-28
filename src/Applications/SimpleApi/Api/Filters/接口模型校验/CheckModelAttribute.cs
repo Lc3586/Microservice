@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Model.Utils.Result;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Api
 {
@@ -18,7 +18,7 @@ namespace Api
     /// 接口模型校验
     /// LCTR 2019-12-12
     /// </summary>
-    public class CheckModelAttribute : ValidationAttribute, IActionFilter
+    public class CheckModelAttribute : Attribute, IAsyncActionFilter
     {
         public CheckModelAttribute(params string[] ignore)
             : base()
@@ -35,7 +35,7 @@ namespace Api
         /// Action执行之前执行
         /// </summary>
         /// <param name="context">过滤器上下文</param>
-        public void OnActionExecuting(ActionExecutingContext context)
+        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             if (context.ContainsFilter<NoCheckModelAttribute>())
                 return;
@@ -83,16 +83,12 @@ namespace Api
                     .ToList() : null;
 
             if (ModelErrors.Any_Ex())
+            {
                 context.Result = new ContentResult { Content = ResponseDataFactory.Error("数据验证失败", ModelErrors).ToJson(), ContentType = "application/json;charset=utf-8" };
-        }
+                return;
+            }
 
-        /// <summary>
-        /// Action执行完毕之后执行
-        /// </summary>
-        /// <param name="filterContext"></param>
-        public void OnActionExecuted(ActionExecutedContext filterContext)
-        {
-
+            await next.Invoke().ConfigureAwait(false);
         }
     }
 }

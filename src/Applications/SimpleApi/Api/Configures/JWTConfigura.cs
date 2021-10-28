@@ -1,4 +1,5 @@
-﻿using Business.Utils.Log;
+﻿using Business.Utils.Authorization;
+using Business.Utils.Log;
 using Microservice.Library.ConsoleTool;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -59,7 +60,18 @@ namespace Api.Configures
                                     });
             }
             else
-                builder = services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme);
+                builder = services.AddAuthorization(options =>
+                {
+                    options.AddPolicy(nameof(ApiAuthorizeRequirement), policy =>
+                    {
+                        policy.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
+                        policy.Requirements.Add(new ApiAuthorizeRequirement());
+                    });
+                })
+                .AddScoped<IAuthorizationHandler, ApiPermissionHandlerr<ApiAuthorizeRequirement>>()
+                .AddScoped<IAuthorizationHandler, ApiPermissionDefaultHttpContextHandlerr<ApiAuthorizeRequirement>>()
+                .AddScoped<IAuthorizationHandler, ApiPermissionAuthorizationFilterContextHandlerr<ApiAuthorizeRequirement>>()
+                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme);
 
             builder.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
             {
@@ -109,7 +121,9 @@ namespace Api.Configures
         /// </summary>
         /// <param name="app"></param>
         /// <param name="config"></param>
+#pragma warning disable IDE0060 // 删除未使用的参数
         public static IApplicationBuilder ConfiguraJWT(this IApplicationBuilder app, SystemConfig config)
+#pragma warning restore IDE0060 // 删除未使用的参数
         {
             "配置JWT服务.".ConsoleWrite();
 

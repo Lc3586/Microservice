@@ -202,7 +202,7 @@ namespace Api.Configures
 
                 #region 页面自定义选项
 
-                s.DocumentTitle = $"{config.ProjectName}接口文档";//页面标题
+                s.DocumentTitle = $"{config.SystemName}接口文档";//页面标题
                 s.DisplayOperationId();//显示操作Id
                 s.DisplayRequestDuration();//显示请求持续时间
                 s.EnableFilter();//启用顶部筛选框
