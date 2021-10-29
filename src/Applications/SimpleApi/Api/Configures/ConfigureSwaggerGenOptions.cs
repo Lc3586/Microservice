@@ -46,10 +46,10 @@ namespace Api.Configures
                 if (apiDescription.GroupName == null)
                     return true;
 
-                if (apiDescription.GroupName == "测试")
-                {
-                    var a = 1;
-                }
+                //if (apiDescription.GroupName == "测试")
+                //{
+                //    var a = 1;
+                //}
 
                 var type = typeof(ApiVersionAttribute);
 

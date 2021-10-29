@@ -35,6 +35,8 @@ namespace Api
         /// Action执行之前执行
         /// </summary>
         /// <param name="context">过滤器上下文</param>
+        /// <param name="next"></param>
+        /// <returns></returns>
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             if (context.ContainsFilter<NoCheckModelAttribute>())

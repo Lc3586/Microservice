@@ -23,14 +23,13 @@ namespace Api.Middleware
         protected static XName AuthenticationFailure = Namespace + "authenticationFailure";
         protected static XName User = Namespace + "user";
         protected const string Code = "code";
-        protected static ICasOptions Options;
 
         public CasCustomServiceTicketValidator(
             ICasOptions options,
             HttpClient? httpClient = null)
             : base("serviceValidate", options, httpClient)
         {
-            Options = options;
+
         }
 
         protected CasCustomServiceTicketValidator(
@@ -39,7 +38,7 @@ namespace Api.Middleware
             HttpClient? httpClient = null)
             : base(suffix, options, httpClient)
         {
-            Options = options;
+
         }
 
         protected override ICasPrincipal? BuildPrincipal(string responseBody)

@@ -30,19 +30,18 @@ namespace Api.Configures
             "配置主机环境.".ConsoleWrite();
 
             webHostEnvironment.ApplicationName = config.SystemName;
+
+            $"当前为{webHostEnvironment.EnvironmentName}环境.".ConsoleWrite();
+
             if (webHostEnvironment.EnvironmentName == "Development")
             {
-                "当前为开发环境(Development).".ConsoleWrite();
-
                 //config.AbsoluteStorageDirectory = webHostEnvironment.ContentRootPath;
                 config.AbsoluteWWWRootDirectory = webHostEnvironment.WebRootPath;
             }
             else
             {
-                $"当前为{webHostEnvironment.EnvironmentName}环境.".ConsoleWrite();
-
                 //转移静态文件目录
-                if (webHostEnvironment.WebRootPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).ToUpperInvariant()
+                if (webHostEnvironment.WebRootPath?.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).ToUpperInvariant()
                     != config.AbsoluteWWWRootDirectory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).ToUpperInvariant()
                         && Directory.Exists(webHostEnvironment.WebRootPath))
                     webHostEnvironment.WebRootPath.CopyTo(config.AbsoluteWWWRootDirectory, true, true);

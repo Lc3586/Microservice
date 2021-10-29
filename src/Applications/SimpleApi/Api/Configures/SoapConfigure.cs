@@ -51,8 +51,10 @@ namespace Api.Configures
                 });
 
             //消息拦截器
+#pragma warning disable CS0612 // 类型或成员已过时
             services.AddSingleton<IMessageFilter, MessageFilter>();
-            //services.AddSingleton<IMessageInspector, MessageInspector>();
+#pragma warning restore CS0612 // 类型或成员已过时
+                              //services.AddSingleton<IMessageInspector, MessageInspector>();
 
             return services;
         }
