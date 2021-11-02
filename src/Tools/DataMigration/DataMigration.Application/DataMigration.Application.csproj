@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <PackageId />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="appsettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="3.1.0" />
+    <PackageReference Include="Microservice.Library.Cache" Version="0.0.0.6-alpha-gb10a556293" />
+    <PackageReference Include="Microservice.Library.Configuration" Version="0.0.0.6-alpha-gb10a556293" />
+    <PackageReference Include="Microservice.Library.ConsoleTool" Version="0.0.0.6-alpha-gb10a556293" />
+    <PackageReference Include="Microservice.Library.File" Version="0.0.0.6-alpha-gb10a556293" />
+    <PackageReference Include="Microservice.Library.FreeSql" Version="0.0.0.6-alpha-gb10a556293" />
+    <PackageReference Include="Microservice.Library.Http" Version="0.0.0.6-alpha-gb10a556293" />
+    <PackageReference Include="Microservice.Library.NLogger" Version="0.0.0.6-alpha-gb10a556293" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Handler\" />
+    <Folder Include="Extension\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="jsonconfig\config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="NOTICE.TXT">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
