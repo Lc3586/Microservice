@@ -1,5 +1,12 @@
 ﻿{
   "Config": {
-    "Version": "v0.0.0.1"
+    "Version": "v0.0.0.1",
+    "FileList": {
+      "CAGC": {
+        "WINDOWS": "Tools/T4CAGC/Windows/T4CAGC.exe",
+        "LINUX": "Tools/T4CAGC/Linux/T4CAGC",
+        "OSX": "Tools/T4CAGC/OSX/T4CAGC"
+      }
+    }
   }
 }

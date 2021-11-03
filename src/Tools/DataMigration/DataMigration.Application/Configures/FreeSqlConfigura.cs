@@ -1,8 +1,10 @@
-﻿using DataMigration.Application.Log;
+﻿using DataMigration.Application.Handler;
+using DataMigration.Application.Log;
 using DataMigration.Application.Model;
 using Microservice.Library.ConsoleTool;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Linq;
 
 namespace DataMigration.Application.Configures
 {
@@ -70,12 +72,15 @@ namespace DataMigration.Application.Configures
                              content);
                      };
 
-                     options.FreeSqlDevOptions.AutoSyncStructure = config.OperationType != OperationType.Data;
+                     options.FreeSqlDevOptions.AutoSyncStructure = false;
                      options.FreeSqlDevOptions.SyncStructureNameConvert = config.SyncStructureNameConvert;
-                     options.FreeSqlDevOptions.SyncStructureOnStartup = config.OperationType != OperationType.Data;
+                     options.FreeSqlDevOptions.SyncStructureOnStartup = false;
 
-                     options.FreeSqlDbContextOptions.EnableAddOrUpdateNavigateList = config.OperationType != OperationType.Schema;
-                     options.FreeSqlDbContextOptions.EntityAssembly = config.EntityAssemblys;
+                     options.FreeSqlDbContextOptions.EnableAddOrUpdateNavigateList = true;
+                     if (config.GenerateEntitys)
+                         options.FreeSqlDbContextOptions.EntityAssemblyFiles = config.EntityAssemblys.Select(o => EntityHandler.BuildFileAbsolutePath(o)).ToList();
+                     else
+                         options.FreeSqlDbContextOptions.EntityAssemblys = config.EntityAssemblys;
                  });
 
                  options.Add(1, options =>
@@ -109,12 +114,15 @@ namespace DataMigration.Application.Configures
                              content);
                      };
 
-                     options.FreeSqlDevOptions.AutoSyncStructure = config.OperationType != OperationType.Data;
+                     options.FreeSqlDevOptions.AutoSyncStructure = false;
                      options.FreeSqlDevOptions.SyncStructureNameConvert = config.SyncStructureNameConvert;
-                     options.FreeSqlDevOptions.SyncStructureOnStartup = config.OperationType != OperationType.Data;
+                     options.FreeSqlDevOptions.SyncStructureOnStartup = false;
 
-                     options.FreeSqlDbContextOptions.EnableAddOrUpdateNavigateList = config.OperationType != OperationType.Schema;
-                     options.FreeSqlDbContextOptions.EntityAssembly = config.EntityAssemblys;
+                     options.FreeSqlDbContextOptions.EnableAddOrUpdateNavigateList = true;
+                     if (config.GenerateEntitys)
+                         options.FreeSqlDbContextOptions.EntityAssemblyFiles = config.EntityAssemblys.Select(o => EntityHandler.BuildFileAbsolutePath(o)).ToList();
+                     else
+                         options.FreeSqlDbContextOptions.EntityAssemblys = config.EntityAssemblys;
                  });
              });
 

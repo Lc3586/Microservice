@@ -241,11 +241,11 @@ namespace Api
 
             "配置Autofac容器.".ConsoleWrite();
 
-            "注册IDependency接口.".ConsoleWrite();
-
             // 在这里添加服务注册
             var baseType = typeof(IDependency);
 
+            Bar?.Normal(59);
+            "注册IDependency接口.".ConsoleWrite();
             //自动注入IDependency接口,支持AOP,生命周期为InstancePerDependency
             var diTypes = Config.FxAssembly.GetTypes()
                 .Where(x => baseType.IsAssignableFrom(x) && x != baseType)
@@ -257,19 +257,19 @@ namespace Api
                 .EnableInterfaceInterceptors()
                 .InterceptedBy(typeof(Interceptor));
 
-            Bar?.Normal(59);
+            Bar?.Normal(60);
             "注册控制器.".ConsoleWrite();
             //注册Controller
             builder.RegisterAssemblyTypes(typeof(Startup).GetTypeInfo().Assembly)
                 .Where(t => typeof(Controller).IsAssignableFrom(t) && t.Name.EndsWith(nameof(Controller), StringComparison.Ordinal))
                 .PropertiesAutowired();
 
-            Bar?.Normal(50);
+            Bar?.Normal(61);
             "注册Interceptor(AOP).".ConsoleWrite();
             //AOP
             builder.RegisterType<Interceptor>();
 
-            Bar?.Normal(51);
+            Bar?.Normal(62);
             "注册DisposableContainer(请求结束自动释放).".ConsoleWrite();
             //请求结束自动释放
             builder.RegisterType<DisposableContainer>()

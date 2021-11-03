@@ -1,5 +1,7 @@
-﻿using Autofac.Extensions.DependencyInjection;
+﻿using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using DataMigration.Application.Configures;
+using DataMigration.Application.Handler;
 using DataMigration.Application.Log;
 using DataMigration.Application.Model;
 using FreeSql;
@@ -9,10 +11,11 @@ using Microservice.Library.Configuration;
 using Microservice.Library.ConsoleTool;
 using Microservice.Library.Container;
 using Microservice.Library.Extension;
-using Microservice.Library.FreeSql.Gen;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -52,7 +55,7 @@ namespace DataMigration.Application
 
         #region 参数
 
-        [Argument(1, Description = "实体类命名空间（半角逗号[,]分隔）.")]
+        [Argument(1, Description = "实体类命名空间（存在多个时使用半角逗号[,]分隔，未设置此值时，将会自动生成实体类）.")]
         string EntityAssemblys { get; } = null;
 
         [Argument(2, Description = "实体类名 -> 数据库表名&列名，命名转换规则（类名、属性名都生效）（默认None）.")]
@@ -153,12 +156,16 @@ namespace DataMigration.Application
 
                 if (EntityAssemblys.IsNullOrWhiteSpace())
                 {
-                    $"未设置实体类命名空间.".ConsoleWrite();
-                    return 1;
+                    $"未设置实体类命名空间，将使用工具自动生成实体类.".ConsoleWrite();
+                    config.EntityAssemblys = new List<string> { $"Entitys_{Guid.NewGuid():N}" };
+                    config.GenerateEntitys = true;
+                    $"实体类命名空间: {config.EntityAssemblys[0]}.\r\n".ConsoleWrite();
                 }
-
-                config.EntityAssemblys = EntityAssemblys.Split(',').ToList();
-                $"实体类命名空间: {EntityAssemblys}.\r\n".ConsoleWrite();
+                else
+                {
+                    config.EntityAssemblys = EntityAssemblys.Split(',').ToList();
+                    $"实体类命名空间: {EntityAssemblys}.\r\n".ConsoleWrite();
+                }
 
                 config.OperationType = OperationType;
                 $"操作类型: {OperationType}.\r\n".ConsoleWrite();
@@ -175,22 +182,28 @@ namespace DataMigration.Application
 
                 services.RegisterFreeSql(config);
 
-                AutofacHelper.Container = new AutofacServiceProviderFactory()
-                    .CreateBuilder(services)
-                    .Build();
+                var builder = new AutofacServiceProviderFactory().CreateBuilder(services);
+
+                var handlerType = typeof(IHandler);
+                var handlers = typeof(Program)
+                    .GetTypeInfo()
+                    .Assembly
+                    .GetTypes()
+                    .Where(o => handlerType.IsAssignableFrom(o) && o != handlerType)
+                    .ToArray();
+                builder.RegisterTypes(handlers);
+
+                AutofacHelper.Container = builder.Build();
 
                 "已应用Autofac容器.\r\n".ConsoleWrite();
 
                 try
                 {
-                    var provider = AutofacHelper.GetService<IFreeSqlMultipleProvider<int>>();
-                    var orms = provider.GetAllFreeSqlWithKey();
-
-                    //GenerateHandler.Generate();
+                    AutofacHelper.GetService<DataMigrationHandler>().Handler();
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log(NLog.LogLevel.Error, LogType.系统异常, $"生成失败, {GetExceptionAllMsg(ex)}", null, ex);
+                    Logger.Log(NLog.LogLevel.Error, LogType.系统异常, $"处理失败, {GetExceptionAllMsg(ex)}", null, ex);
                     return 1;
                 }
 

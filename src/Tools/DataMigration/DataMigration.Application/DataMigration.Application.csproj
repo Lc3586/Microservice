@@ -18,17 +18,16 @@
 
   <ItemGroup>
     <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="3.1.0" />
-    <PackageReference Include="Microservice.Library.Cache" Version="0.0.0.6-alpha-gb10a556293" />
-    <PackageReference Include="Microservice.Library.Configuration" Version="0.0.0.6-alpha-gb10a556293" />
-    <PackageReference Include="Microservice.Library.ConsoleTool" Version="0.0.0.6-alpha-gb10a556293" />
-    <PackageReference Include="Microservice.Library.File" Version="0.0.0.6-alpha-gb10a556293" />
-    <PackageReference Include="Microservice.Library.FreeSql" Version="0.0.0.6-alpha-gb10a556293" />
-    <PackageReference Include="Microservice.Library.Http" Version="0.0.0.6-alpha-gb10a556293" />
-    <PackageReference Include="Microservice.Library.NLogger" Version="0.0.0.6-alpha-gb10a556293" />
+    <PackageReference Include="Microservice.Library.Cache" Version="0.0.0.7-alpha-g18d4a82684" />
+    <PackageReference Include="Microservice.Library.Configuration" Version="0.0.0.7-alpha-g18d4a82684" />
+    <PackageReference Include="Microservice.Library.ConsoleTool" Version="0.0.0.7-alpha-g18d4a82684" />
+    <PackageReference Include="Microservice.Library.File" Version="0.0.0.7-alpha-g18d4a82684" />
+    <PackageReference Include="Microservice.Library.FreeSql" Version="0.0.0.7-alpha-g18d4a82684" />
+    <PackageReference Include="Microservice.Library.Http" Version="0.0.0.7-alpha-g18d4a82684" />
+    <PackageReference Include="Microservice.Library.NLogger" Version="0.0.0.7-alpha-g18d4a82684" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Handler\" />
     <Folder Include="Extension\" />
   </ItemGroup>
 
@@ -40,5 +39,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties jsonconfig_4config_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>

@@ -10,7 +10,7 @@
         /// </summary>
         All,
         /// <summary>
-        /// 仅架构
+        /// 仅模式
         /// </summary>
         Schema,
         /// <summary>
