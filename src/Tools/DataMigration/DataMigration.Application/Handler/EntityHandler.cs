@@ -30,7 +30,7 @@ namespace DataMigration.Application.Handler
         /// <summary>
         /// 临时文件存放目录
         /// </summary>
-        static readonly string TempDirectory = "Entitys.Project";
+        static readonly string TempDirectory = $"Entitys.Project/Time_{DateTime.Now.ToFileTimeUtc()}";
 
         /// <summary>
         /// 临时文件存放路径
@@ -112,8 +112,8 @@ namespace DataMigration.Application.Handler
         {
             try
             {
-                await CallCmd("FreeSql.Generator --help");
-                return true;
+                var result = await CallCmd("FreeSql.Generator --help");
+                return result.Contains("FreeSql 快速生成数据库的实体类");
             }
             catch (Exception ex)
             {
@@ -128,9 +128,8 @@ namespace DataMigration.Application.Handler
         /// <returns></returns>
         async Task CallTool()
         {
-            var cmd = $"FreeSql.Generate -Razor 2 -NameSpace \"DataMigration.Entitys\" -DB \"{Config.SourceDataType},{Config.SourceConnectingString}\" -Output \"{TempDirectoryAbsolutePath}\"";
-            await CallCmd(cmd, AppContext.BaseDirectory);
-
+            var cmd = $"FreeSql.Generate -Razor \"{Config.EntityRazorTemplateFile}\" -NameSpace \"DataMigration.Entitys\" -DB \"{Config.SourceDataType},{Config.SourceConnectingString}\" -Output \"{TempDirectoryAbsolutePath}\"";
+            await CallCmd(cmd, null, AppContext.BaseDirectory);
         }
 
         /// <summary>
@@ -139,15 +138,21 @@ namespace DataMigration.Application.Handler
         /// <returns></returns>
         async Task CreateCSProject()
         {
-            var cmd = $"dotnet new classlib --language \"C#\" --framework \"netstandard2.0\" -n \"{Config.EntityAssemblys[0]}\" -o \"{TempDirectoryAbsolutePath}\"";
-            await CallCmd(cmd, AppContext.BaseDirectory);
+            var cmd = $"dotnet new classlib --language \"C#\" --framework \"netstandard2.0\" --force -n \"{Config.EntityAssemblys[0]}\" -o \"{TempDirectoryAbsolutePath}\"";
+            await CallCmd(cmd, null, AppContext.BaseDirectory);
+
+            //清除自动生成的cs文件
+            foreach (var file in Directory.GetFiles(TempDirectoryAbsolutePath, "*.cs", SearchOption.TopDirectoryOnly))
+            {
+                File.Delete(file);
+            }
 
             //安装Nuget包
             var packages = new string[] { "Newtonsoft.Json", "FreeSql" };
             foreach (var package in packages)
             {
-                var cmd_nuget = $"dotnet add package \"{package}\"";
-                await CallCmd(cmd_nuget, AppContext.BaseDirectory);
+                var cmd_nuget = $"dotnet add \"{Config.EntityAssemblys[0]}.csproj\" package \"{package}\"";
+                await CallCmd(cmd_nuget, null, TempDirectoryAbsolutePath);
             }
         }
 
@@ -163,19 +168,23 @@ namespace DataMigration.Application.Handler
 #endif
 
             var cmd = $"dotnet build --configuration {configuration} -o \"{BuildDirectoryAbsolutePath}\"";
-            await CallCmd(cmd, AppContext.BaseDirectory);
+            await CallCmd(cmd, null, TempDirectoryAbsolutePath);
         }
 
         /// <summary>
         /// 调用命令
         /// </summary>
-        /// <param name="arguments">命令参数</param>
+        /// <param name="cmd">命令</param>
+        /// <param name="arguments">参数</param>
         /// <param name="workingDirectory">工作目录</param>
         /// <returns></returns>
-        async Task CallCmd(string arguments, string workingDirectory = null)
+        async Task<string> CallCmd(string cmd, string arguments = null, string workingDirectory = null)
         {
-            using var process = GetProcess(arguments, workingDirectory);
+            using var process = GetCmdProcess(arguments, workingDirectory);
             process.Start();
+
+            process.StandardInput.WriteLine($"{cmd.TrimEnd('&')}&exit");
+            process.StandardInput.AutoFlush = true;
 
             var output = await process.StandardOutput.ReadToEndAsync();
             var error = process.StandardError.ReadToEnd();
@@ -186,6 +195,11 @@ namespace DataMigration.Application.Handler
 #endif
 
             process.WaitForExit();
+
+            if (!error.IsNullOrWhiteSpace())
+                throw new ApplicationException(error);
+
+            return output;
         }
 
         /// <summary>
@@ -194,17 +208,21 @@ namespace DataMigration.Application.Handler
         /// <param name="arguments">参数</param>
         /// <param name="workingDirectory">工作目录</param>
         /// <returns></returns>
-        Process GetProcess(string arguments, string workingDirectory = null)
+        Process GetCmdProcess(string arguments, string workingDirectory = null)
         {
             var process = new Process();
             process.StartInfo.CreateNoWindow = true;
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 
+            process.StartInfo.RedirectStandardInput = true;
+            //process.StartInfo.StandardInputEncoding = new UTF8Encoding(true);
             process.StartInfo.RedirectStandardOutput = true;
             //process.StartInfo.StandardOutputEncoding = new UTF8Encoding(true);
             process.StartInfo.RedirectStandardError = true;
             //process.StartInfo.StandardErrorEncoding = new UTF8Encoding(true);
+
+            process.StartInfo.FileName = "cmd.exe";
 
             process.StartInfo.Arguments = arguments;
             if (!workingDirectory.IsNullOrWhiteSpace())

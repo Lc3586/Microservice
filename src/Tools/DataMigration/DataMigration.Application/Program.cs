@@ -14,6 +14,7 @@ using Microservice.Library.Extension;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -27,6 +28,13 @@ namespace DataMigration.Application
     class Program
     {
         static Task<int> Main(string[] args) => CommandLineApplication.ExecuteAsync<Program>(args);
+
+        #region 参数
+
+        //[Argument(1, Description = "参数1.")]
+        //string Param1 { get; } = "";
+
+        #endregion
 
         #region 配置
 
@@ -48,18 +56,17 @@ namespace DataMigration.Application
         [Option("-tt|--TargetDataType", Description = "目标数据库类型.")]
         public DataType TargetDataType { get; }
 
-        [Option("-o|--OperationType", Description = "操作类型（默认All）.")]
-        public OperationType OperationType { get; } = OperationType.All;
-
-        #endregion
-
-        #region 参数
-
-        [Argument(1, Description = "实体类命名空间（存在多个时使用半角逗号[,]分隔，未设置此值时，将会自动生成实体类）.")]
+        [Option("-e|--EntityAssemblys", Description = "实体类命名空间（存在多个时使用半角逗号[,]分隔，未设置此值时，将会自动生成实体类）.")]
         string EntityAssemblys { get; } = null;
 
-        [Argument(2, Description = "实体类名 -> 数据库表名&列名，命名转换规则（类名、属性名都生效）（默认None）.")]
+        [Option("-nc|--SyncStructureNameConvert", Description = "实体类名 -> 数据库表名&列名，命名转换规则（类名、属性名都生效）（默认None）.")]
         NameConvertType? SyncStructureNameConvert { get; } = null;
+
+        [Option("-rt|--EntityRazorTemplateFile", Description = "实体类Razor模板文件.")]
+        string EntityRazorTemplateFile { get; } = "RazorTemplates/实体类+特性+导航属性（支持子父级结构）.cshtml";
+
+        [Option("-o|--OperationType", Description = "操作类型（默认All）.")]
+        public OperationType OperationType { get; } = OperationType.All;
 
         #endregion
 
@@ -171,6 +178,9 @@ namespace DataMigration.Application
                 $"操作类型: {OperationType}.\r\n".ConsoleWrite();
                 config.SyncStructureNameConvert = SyncStructureNameConvert;
                 $"实体类名 -> 数据库表名&列名，命名转换规则: {SyncStructureNameConvert}.\r\n".ConsoleWrite();
+                config.EntityRazorTemplateFile = Path.IsPathRooted(EntityRazorTemplateFile) ? EntityRazorTemplateFile : Path.GetFullPath(EntityRazorTemplateFile, AppContext.BaseDirectory);
+                $"实体类Razor模板文件: {EntityRazorTemplateFile}.\r\n".ConsoleWrite();
+
                 config.LoggerType = LoggerType;
                 $"日志组件类型: {LoggerType}.\r\n".ConsoleWrite();
 

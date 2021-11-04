@@ -48,46 +48,6 @@ namespace DataMigration.Application.Model
         private string _CurrentOS { get; set; }
 
         /// <summary>
-        /// 文件清单
-        /// <para>[{文件名 : [{平台 : 文件路径}]}]</para>
-        /// </summary>
-        public Dictionary<string, Dictionary<string, string>> FileList { get; set; }
-
-        private Dictionary<string, Dictionary<string, string>> FileAbsolutePathList { get; set; } = new Dictionary<string, Dictionary<string, string>>();
-
-        /// <summary>
-        /// 获取文件清单中文件的绝对路径
-        /// </summary>
-        /// <param name="filename">文件名</param>
-        /// <returns></returns>
-        public string GetFileAbsolutePath(string filename)
-        {
-            string result;
-            if (FileAbsolutePathList.ContainsKey(filename) && FileAbsolutePathList[filename].ContainsKey(CurrentOS))
-                result = FileAbsolutePathList[filename][CurrentOS];
-            else
-            {
-                if (!FileList.ContainsKey(filename))
-                    throw new ApplicationException("未在config.json中配置{filename}文件");
-
-                if (!FileList[filename].ContainsKey(CurrentOS))
-                    throw new ApplicationException($"未找到符合当前系统【{CurrentOS}】版本的{filename}文件");
-
-                result = Path.GetFullPath(FileList[filename][CurrentOS], AppContext.BaseDirectory);
-
-                if (!FileAbsolutePathList.ContainsKey(filename))
-                    FileAbsolutePathList.Add(filename, new Dictionary<string, string>());
-
-                FileAbsolutePathList[filename].Add(CurrentOS, result);
-            }
-
-            if (!File.Exists(result))
-                throw new ApplicationException($"指定目录下未找到{filename}文件: {result}.");
-
-            return result;
-        }
-
-        /// <summary>
         /// 源数据库连接字符串
         /// </summary>
         public string SourceConnectingString { get; set; }
@@ -139,5 +99,10 @@ namespace DataMigration.Application.Model
         /// 生成实体类
         /// </summary>
         public bool GenerateEntitys { get; set; } = false;
+
+        /// <summary>
+        /// 实体类Razor模板文件
+        /// </summary>
+        public string EntityRazorTemplateFile { get; set; }
     }
 }
