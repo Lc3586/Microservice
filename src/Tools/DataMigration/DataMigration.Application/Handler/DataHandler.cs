@@ -34,11 +34,16 @@ namespace DataMigration.Application.Handler
         /// </summary>
         public void Handler()
         {
-            FreeSqlMultipleProvider.Test();
+            try
+            {
+                FreeSqlMultipleProvider.Test();
 
-            var orms = FreeSqlMultipleProvider.GetAllFreeSqlWithKey();
-
-            FreeSqlMultipleProvider.Dispose();
+                var orms = FreeSqlMultipleProvider.GetAllFreeSqlWithKey();
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("目标数据库同步结构失败.", ex);
+            }
         }
     }
 }

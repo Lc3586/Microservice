@@ -1,10 +1,8 @@
-﻿using DataMigration.Application.Handler;
-using DataMigration.Application.Log;
+﻿using DataMigration.Application.Log;
 using DataMigration.Application.Model;
 using Microservice.Library.ConsoleTool;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Linq;
 
 namespace DataMigration.Application.Configures
 {
@@ -77,10 +75,7 @@ namespace DataMigration.Application.Configures
                      options.FreeSqlDevOptions.SyncStructureOnStartup = false;
 
                      options.FreeSqlDbContextOptions.EnableAddOrUpdateNavigateList = true;
-                     if (config.GenerateEntitys)
-                         options.FreeSqlDbContextOptions.EntityAssemblyFiles = config.EntityAssemblys.Select(o => EntityHandler.BuildFileAbsolutePath(o)).ToList();
-                     else
-                         options.FreeSqlDbContextOptions.EntityAssemblys = config.EntityAssemblys;
+                     options.FreeSqlDbContextOptions.EntityAssemblyFiles = config.EntityAssemblyFiles;
                  });
 
                  options.Add(1, options =>
@@ -119,10 +114,7 @@ namespace DataMigration.Application.Configures
                      options.FreeSqlDevOptions.SyncStructureOnStartup = false;
 
                      options.FreeSqlDbContextOptions.EnableAddOrUpdateNavigateList = true;
-                     if (config.GenerateEntitys)
-                         options.FreeSqlDbContextOptions.EntityAssemblyFiles = config.EntityAssemblys.Select(o => EntityHandler.BuildFileAbsolutePath(o)).ToList();
-                     else
-                         options.FreeSqlDbContextOptions.EntityAssemblys = config.EntityAssemblys;
+                     options.FreeSqlDbContextOptions.EntityAssemblyFiles = config.EntityAssemblyFiles;
                  });
              });
 

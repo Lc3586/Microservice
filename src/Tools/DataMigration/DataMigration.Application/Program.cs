@@ -11,6 +11,7 @@ using Microservice.Library.Configuration;
 using Microservice.Library.ConsoleTool;
 using Microservice.Library.Container;
 using Microservice.Library.Extension;
+using Microservice.Library.FreeSql.Gen;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -155,7 +156,11 @@ namespace DataMigration.Application
                     return 1;
                 }
 
+#if DEBUG
+                config.TargetConnectingString = $"Server=127.0.0.1;Port=3306;Database=data_migration_test;User ID=root;Password=root666;Charset=utf8;SslMode=none;Max pool size=500;";
+#else
                 config.TargetConnectingString = TargetConnectingString;
+#endif
                 //$"目标数据库: {TargetConnectingString}.\r\n".ConsoleWrite();
 
                 config.TargetDataType = TargetDataType;
@@ -163,15 +168,15 @@ namespace DataMigration.Application
 
                 if (EntityAssemblys.IsNullOrWhiteSpace())
                 {
-                    $"未设置实体类命名空间，将使用工具自动生成实体类.".ConsoleWrite();
-                    config.EntityAssemblys = new List<string> { $"Entitys_{Guid.NewGuid():N}" };
+                    $"未设置实体类dll文件，将使用工具自动生成实体类.".ConsoleWrite();
+                    config.EntityAssemblyFiles = new List<string> { EntityHandler.BuildFileAbsolutePath };
                     config.GenerateEntitys = true;
-                    $"实体类命名空间: {config.EntityAssemblys[0]}.\r\n".ConsoleWrite();
+                    $"实体类dll文件: {config.EntityAssemblyFiles[0]}.\r\n".ConsoleWrite();
                 }
                 else
                 {
-                    config.EntityAssemblys = EntityAssemblys.Split(',').ToList();
-                    $"实体类命名空间: {EntityAssemblys}.\r\n".ConsoleWrite();
+                    config.EntityAssemblyFiles = EntityAssemblys.Split(',').Select(o => Path.IsPathRooted(o) ? o : Path.GetFullPath(o, AppContext.BaseDirectory)).ToList();
+                    $"实体类dll文件: {EntityAssemblys}.\r\n".ConsoleWrite();
                 }
 
                 config.OperationType = OperationType;
@@ -215,6 +220,10 @@ namespace DataMigration.Application
                 {
                     Logger.Log(NLog.LogLevel.Error, LogType.系统异常, $"处理失败, {GetExceptionAllMsg(ex)}", null, ex);
                     return 1;
+                }
+                finally
+                {
+                    AutofacHelper.GetService<IFreeSqlMultipleProvider<int>>()?.Dispose();
                 }
 
                 return 0;

@@ -4,7 +4,7 @@ using FreeSql.Internal;
 using NLog;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace DataMigration.Application.Model
@@ -22,30 +22,30 @@ namespace DataMigration.Application.Model
         /// <summary>
         /// 当前操作系统平台
         /// </summary>
-        public string CurrentOS
+        public OSPlatform CurrentOS
         {
             get
             {
                 if (_CurrentOS != null)
-                    return _CurrentOS;
+                    return _CurrentOS.Value;
 
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                    _CurrentOS = OSPlatform.Windows.ToString();
+                    _CurrentOS = OSPlatform.Windows;
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                    _CurrentOS = OSPlatform.Linux.ToString();
+                    _CurrentOS = OSPlatform.Linux;
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                    _CurrentOS = OSPlatform.OSX.ToString();
+                    _CurrentOS = OSPlatform.OSX;
                 else
                     throw new ApplicationException("无法获取当前的操作系统平台.");
 
-                return _CurrentOS;
+                return _CurrentOS.Value;
             }
         }
 
         /// <summary>
         /// 当前操作系统平台
         /// </summary>
-        private string _CurrentOS { get; set; }
+        private OSPlatform? _CurrentOS { get; set; }
 
         /// <summary>
         /// 源数据库连接字符串
@@ -89,6 +89,24 @@ namespace DataMigration.Application.Model
         /// 实体类名 -> 数据库表名&列名，命名转换规则（类名、属性名都生效）
         /// </summary>
         public NameConvertType? SyncStructureNameConvert { get; set; }
+
+        /// <summary>
+        /// 实体类dll文件
+        /// </summary>
+        public List<string> EntityAssemblyFiles
+        {
+            get
+            {
+                return _EntityAssemblyFiles;
+            }
+            set
+            {
+                _EntityAssemblyFiles = value;
+                EntityAssemblys = value.Select(o => o.Replace(".dll", "")).ToList();
+            }
+        }
+
+        List<string> _EntityAssemblyFiles { get; set; }
 
         /// <summary>
         /// 实体类命名空间

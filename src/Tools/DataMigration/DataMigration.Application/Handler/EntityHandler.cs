@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace DataMigration.Application.Handler
@@ -28,9 +29,14 @@ namespace DataMigration.Application.Handler
         readonly Config Config;
 
         /// <summary>
+        /// 临时项目名称
+        /// </summary>
+        public static readonly string TempProjectName = $"Entity_{DateTime.Now.ToFileTimeUtc()}";
+
+        /// <summary>
         /// 临时文件存放目录
         /// </summary>
-        static readonly string TempDirectory = $"Entitys.Project/Time_{DateTime.Now.ToFileTimeUtc()}";
+        static readonly string TempDirectory = $"Entitys.Project/{TempProjectName}";
 
         /// <summary>
         /// 临时文件存放路径
@@ -40,32 +46,36 @@ namespace DataMigration.Application.Handler
         /// <summary>
         /// 项目生成文件存放路径
         /// </summary>
-        static readonly string BuildDirectoryAbsolutePath = Path.Combine(TempDirectoryAbsolutePath, "Build");
+        static readonly string BuildDirectoryAbsolutePath = Path.Combine(TempDirectoryAbsolutePath, "Build",
+#if DEBUG
+             "Debug"
+#else
+             "Release"
+#endif
+            );
 
         /// <summary>
         /// 项目生成文件存放路径
         /// </summary>
-        public static string BuildFileAbsolutePath(string entityAssembly) => Path.Combine(BuildDirectoryAbsolutePath, $"{entityAssembly}.dll");
+        public static string BuildFileAbsolutePath = Path.Combine(BuildDirectoryAbsolutePath, $"{TempProjectName}.dll");
+
+        /// <summary>
+        /// 脚本文件存放路径
+        /// </summary>
+        static readonly string ShellDirectoryAbsolutePath = Path.GetFullPath("shell", AppContext.BaseDirectory);
 
         /// <summary>
         /// 处理
         /// </summary>
         public void Handler()
         {
-            var flag = false;
-
             if (Config.GenerateEntitys)
-            {
                 Generate().GetAwaiter().GetResult();
-                flag = Config.EntityAssemblys.Select(o => Assembly.LoadFile(o).GetTypes()).Any();
-            }
-            else
-            {
-                flag = Config.EntityAssemblys.Select(o => Assembly.Load(o).GetTypes()).Any();
-            }
 
-            if (!flag)
-                throw new ApplicationException($"指定命名空间[{string.Join(',', Config.EntityAssemblys)}]下未找到任何的实体类.");
+            if (!Config.EntityAssemblyFiles.SelectMany(o => Assembly.LoadFile(o).GetTypes()).Any())
+                throw new ApplicationException($"未找到指定实体类dll文件[{string.Join(',', Config.EntityAssemblyFiles)}].");
+
+            var types = Config.EntityAssemblyFiles.SelectMany(o => Assembly.LoadFile(o).GetTypes()).ToList();
         }
 
         /// <summary>
@@ -73,22 +83,72 @@ namespace DataMigration.Application.Handler
         /// </summary>
         async Task Generate()
         {
-            await InstallTool();
+            await InstallDotnetSDK();
+
+            await InstallFreeSqlTool();
 
             await CreateCSProject();
 
-            await CallTool();
+            await CallFreeSqlTool();
 
             await BuildCSProject();
         }
 
         /// <summary>
-        /// 安装工具
+        /// 安装.NET SDK
         /// </summary>
         /// <returns></returns>
-        async Task InstallTool()
+        async Task InstallDotnetSDK()
         {
-            if (await CheckTool())
+            if (await CheckDotnetSDK())
+                return;
+
+            try
+            {
+                string cmd;
+                if (Config.CurrentOS == OSPlatform.Windows)
+                    cmd = "./dotnet-install.ps1 -Channel LTS";
+                else if (Config.CurrentOS == OSPlatform.Linux || Config.CurrentOS == OSPlatform.OSX)
+                    cmd = "./dotnet-install.sh --channel LTS";
+                else
+                    throw new ApplicationException("不支持在当前操作系统执行此操作.");
+
+                await CallCmd(cmd, null, ShellDirectoryAbsolutePath);
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException(".NET SDK安装失败.", ex);
+            }
+
+            if (!await CheckDotnetSDK())
+                throw new ApplicationException(".NET SDK安装失败.");
+        }
+
+        /// <summary>
+        /// 检查.NET SDK
+        /// </summary>
+        /// <returns></returns>
+        async Task<bool> CheckDotnetSDK()
+        {
+            try
+            {
+                var result = await CallCmd("dotnet --info");
+                return result.Contains(".NET SDK");
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(NLog.LogLevel.Error, LogType.警告信息, "未安装.NET SDK.", null, ex);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 安装FreeSql工具
+        /// </summary>
+        /// <returns></returns>
+        async Task InstallFreeSqlTool()
+        {
+            if (await CheckFreeSqlTool())
                 return;
 
             try
@@ -100,15 +160,15 @@ namespace DataMigration.Application.Handler
                 throw new ApplicationException("FreeSql.Generator安装失败.", ex);
             }
 
-            if (!await CheckTool())
+            if (!await CheckFreeSqlTool())
                 throw new ApplicationException("FreeSql.Generator安装失败.");
         }
 
         /// <summary>
-        /// 检查工具是否可用
+        /// 检查FreeSql工具是否可用
         /// </summary>
         /// <returns></returns>
-        async Task<bool> CheckTool()
+        async Task<bool> CheckFreeSqlTool()
         {
             try
             {
@@ -117,19 +177,26 @@ namespace DataMigration.Application.Handler
             }
             catch (Exception ex)
             {
-                Logger.Log(NLog.LogLevel.Error, LogType.系统异常, "未安装FreeSql.Generator.", null, ex);
+                Logger.Log(NLog.LogLevel.Error, LogType.警告信息, "未安装FreeSql.Generator.", null, ex);
                 return false;
             }
         }
 
         /// <summary>
-        /// 调用工具
+        /// 调用FreeSql工具
         /// </summary>
         /// <returns></returns>
-        async Task CallTool()
+        async Task CallFreeSqlTool()
         {
-            var cmd = $"FreeSql.Generate -Razor \"{Config.EntityRazorTemplateFile}\" -NameSpace \"DataMigration.Entitys\" -DB \"{Config.SourceDataType},{Config.SourceConnectingString}\" -Output \"{TempDirectoryAbsolutePath}\"";
-            await CallCmd(cmd, null, AppContext.BaseDirectory);
+            try
+            {
+                var cmd = $"FreeSql.Generator -Razor \"{Config.EntityRazorTemplateFile}\" -NameSpace \"DataMigration.Entitys\" -DB \"{Config.SourceDataType},{Config.SourceConnectingString}\" -Output \"{TempDirectoryAbsolutePath}\"";
+                await CallCmd(cmd, null, AppContext.BaseDirectory);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(NLog.LogLevel.Error, LogType.警告信息, "生成实体类时发生异常.", null, ex);
+            }
         }
 
         /// <summary>
@@ -138,7 +205,7 @@ namespace DataMigration.Application.Handler
         /// <returns></returns>
         async Task CreateCSProject()
         {
-            var cmd = $"dotnet new classlib --language \"C#\" --framework \"netstandard2.0\" --force -n \"{Config.EntityAssemblys[0]}\" -o \"{TempDirectoryAbsolutePath}\"";
+            var cmd = $"dotnet new classlib --language \"C#\" --framework \"netstandard2.0\" --force -n \"{TempProjectName}\" -o \"{TempDirectoryAbsolutePath}\"";
             await CallCmd(cmd, null, AppContext.BaseDirectory);
 
             //清除自动生成的cs文件
@@ -151,7 +218,7 @@ namespace DataMigration.Application.Handler
             var packages = new string[] { "Newtonsoft.Json", "FreeSql" };
             foreach (var package in packages)
             {
-                var cmd_nuget = $"dotnet add \"{Config.EntityAssemblys[0]}.csproj\" package \"{package}\"";
+                var cmd_nuget = $"dotnet add \"{TempProjectName}.csproj\" package \"{package}\"";
                 await CallCmd(cmd_nuget, null, TempDirectoryAbsolutePath);
             }
         }
@@ -185,8 +252,8 @@ namespace DataMigration.Application.Handler
 
             process.StandardInput.WriteLine($"{cmd.TrimEnd('&')}&exit");
             process.StandardInput.AutoFlush = true;
-
-            var output = await process.StandardOutput.ReadToEndAsync();
+            
+            var output = process.StandardOutput.ReadToEnd();
             var error = process.StandardError.ReadToEnd();
 
 #if DEBUG
@@ -222,7 +289,12 @@ namespace DataMigration.Application.Handler
             process.StartInfo.RedirectStandardError = true;
             //process.StartInfo.StandardErrorEncoding = new UTF8Encoding(true);
 
-            process.StartInfo.FileName = "cmd.exe";
+            if (Config.CurrentOS == OSPlatform.Windows)
+                process.StartInfo.FileName = "cmd.exe";
+            else if (Config.CurrentOS == OSPlatform.Linux || Config.CurrentOS == OSPlatform.OSX)
+                process.StartInfo.FileName = Environment.GetEnvironmentVariable("SHELL");
+            else
+                throw new ApplicationException("不支持在当前操作系统执行此操作.");
 
             process.StartInfo.Arguments = arguments;
             if (!workingDirectory.IsNullOrWhiteSpace())

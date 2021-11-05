@@ -1,187 +1,410 @@
-@using FreeSql.DatabaseModel;@{
+@using FreeSql;
+@using FreeSql.DatabaseModel;
+@using System;
+@using System.Collections.Generic;
+@using System.Text.RegularExpressions;
+@{
 
-var isLazying = true; //延时加载
-var isOneToMany = true; //一对多，集合属性
-var isManyToMany = true; //多对多，集合属性
+    var isLazying = true; //延时加载
+    var isOneToMany = true; //一对多，集合属性
+    var isManyToMany = true; //多对多，集合属性
 
-var gen = Model as RazorModel;
-var fks = gen.table.Foreigns;
+    var gen = Model as RazorModel;
+    var fks = gen.table.Foreigns;
 
-Func<string, string> GetAttributeString = attr => {
-	if (string.IsNullOrEmpty(attr)) return "";
-	return string.Concat(", ", attr.Trim('[', ']'));
-};
-Func<string, string> GetDefaultValue = defval => {
-    if (string.IsNullOrEmpty(defval)) return "";
-    return " = " + defval + ";";
-};
+    Func<string, string> GetAttributeString = attr =>
+    {
+        if (string.IsNullOrEmpty(attr)) return "";
+        return string.Concat(", ", attr.Trim('[', ']'));
+    };
+    Func<string, string> GetDefaultValue = defval =>
+    {
+        if (string.IsNullOrEmpty(defval)) return "";
+        return " = " + defval + ";";
+    };
 
-Func<DbForeignInfo, string> GetFkObjectName = fkx => {
-	var eqfks = fks.Where(fk22a => fk22a.ReferencedTable.Name == fkx.ReferencedTable.Name);
-	if (eqfks.Count() == 1) return fkx.ReferencedTable.Name;
-	var fkretname = fkx.Columns[0].Name;
-	if (fkretname.EndsWith(fkx.ReferencedColumns[0].Name, StringComparison.CurrentCultureIgnoreCase)) fkretname = fkretname.Substring(0, fkretname.Length - fkx.ReferencedColumns[0].Name.Length).TrimEnd('_');
-	if (fkretname.EndsWith(fkx.ReferencedTable.Name, StringComparison.CurrentCultureIgnoreCase)) fkretname = fkretname.Substring(0, fkretname.Length - fkx.ReferencedTable.Name.Length).TrimEnd('_');
-	if (fkretname.StartsWith(fkx.ReferencedTable.Name, StringComparison.CurrentCultureIgnoreCase)) fkretname = fkretname.Substring(fkx.ReferencedTable.Name.Length).TrimStart('_');
-	return fkx.ReferencedTable.Name + (string.IsNullOrEmpty(fkretname) ? "" : ("_" + fkretname));
-};
-Func<DbForeignInfo, string> GetFkObjectNameOutside = fkx => {
-	var eqfks = fkx.Table.Foreigns.Where(fk22a => fk22a.ReferencedTable.Name == fkx.ReferencedTable.Name);
-	if (eqfks.Count() == 1) return fkx.Table.Name;
-	var fkretname = fkx.Columns[0].Name;
-	if (fkretname.EndsWith(fkx.ReferencedColumns[0].Name, StringComparison.CurrentCultureIgnoreCase)) fkretname = fkretname.Substring(0, fkretname.Length - fkx.ReferencedColumns[0].Name.Length).TrimEnd('_');
-	if (fkretname.EndsWith(fkx.ReferencedTable.Name, StringComparison.CurrentCultureIgnoreCase)) fkretname = fkretname.Substring(0, fkretname.Length - fkx.ReferencedTable.Name.Length).TrimEnd('_');
-	if (fkretname.StartsWith(fkx.ReferencedTable.Name, StringComparison.CurrentCultureIgnoreCase)) fkretname = fkretname.Substring(fkx.ReferencedTable.Name.Length).TrimStart('_');
-	return fkx.Table.Name + (string.IsNullOrEmpty(fkretname) ? "" : ("_" + fkretname));
-};
+    Func<DbForeignInfo, string> GetFkObjectName = fkx =>
+    {
+        var eqfks = fks.Where(fk22a => fk22a.ReferencedTable.Name == fkx.ReferencedTable.Name);
+        if (eqfks.Count() == 1) return fkx.ReferencedTable.Name;
+        var fkretname = fkx.Columns[0].Name;
+        if (fkretname.EndsWith(fkx.ReferencedColumns[0].Name, StringComparison.CurrentCultureIgnoreCase)) fkretname = fkretname.Substring(0, fkretname.Length - fkx.ReferencedColumns[0].Name.Length).TrimEnd('_');
+        if (fkretname.EndsWith(fkx.ReferencedTable.Name, StringComparison.CurrentCultureIgnoreCase)) fkretname = fkretname.Substring(0, fkretname.Length - fkx.ReferencedTable.Name.Length).TrimEnd('_');
+        if (fkretname.StartsWith(fkx.ReferencedTable.Name, StringComparison.CurrentCultureIgnoreCase)) fkretname = fkretname.Substring(fkx.ReferencedTable.Name.Length).TrimStart('_');
+        return fkx.ReferencedTable.Name + (string.IsNullOrEmpty(fkretname) ? "" : ("_" + fkretname));
+    };
+    Func<DbForeignInfo, string> GetFkObjectNameOutside = fkx =>
+    {
+        var eqfks = fkx.Table.Foreigns.Where(fk22a => fk22a.ReferencedTable.Name == fkx.ReferencedTable.Name);
+        if (eqfks.Count() == 1) return fkx.Table.Name;
+        var fkretname = fkx.Columns[0].Name;
+        if (fkretname.EndsWith(fkx.ReferencedColumns[0].Name, StringComparison.CurrentCultureIgnoreCase)) fkretname = fkretname.Substring(0, fkretname.Length - fkx.ReferencedColumns[0].Name.Length).TrimEnd('_');
+        if (fkretname.EndsWith(fkx.ReferencedTable.Name, StringComparison.CurrentCultureIgnoreCase)) fkretname = fkretname.Substring(0, fkretname.Length - fkx.ReferencedTable.Name.Length).TrimEnd('_');
+        if (fkretname.StartsWith(fkx.ReferencedTable.Name, StringComparison.CurrentCultureIgnoreCase)) fkretname = fkretname.Substring(fkx.ReferencedTable.Name.Length).TrimStart('_');
+        return fkx.Table.Name + (string.IsNullOrEmpty(fkretname) ? "" : ("_" + fkretname));
+    };
+    Func<DbColumnInfo, bool, string> GetColumnAttribute = (col, isInsertValueSql) =>
+    {
+        var sb = new List<string>();
+
+        if (gen.GetCsName(col.Name) != col.Name)
+            sb.Add("Name = \"" + col.Name + "\"");
+
+        if (col.CsType != null)
+        {
+            var dbinfo = gen.fsql.CodeFirst.GetDbInfo(col.CsType);
+            if (dbinfo != null && string.Compare(dbinfo.dbtypeFull.Replace("NOT NULL", "").Trim(), col.DbTypeTextFull, true) != 0)
+            {
+                #region StringLength 反向
+                switch (gen.fsql.Ado.DataType)
+                {
+                    case DataType.MySql:
+                    case DataType.OdbcMySql:
+                        switch (col.DbTypeTextFull.ToLower())
+                        {
+                            case "longtext": sb.Add("StringLength = -2"); break;
+                            case "text": sb.Add("StringLength = -1"); break;
+                            default:
+                                var m_stringLength = Regex.Match(col.DbTypeTextFull, @"^varchar\s*\((\w+)\)$", RegexOptions.IgnoreCase);
+                                if (m_stringLength.Success) sb.Add($"StringLength = {m_stringLength.Groups[1].Value}");
+                                else sb.Add("DbType = \"" + col.DbTypeTextFull + "\"");
+                                break;
+                        }
+                        break;
+                    case DataType.SqlServer:
+                    case DataType.OdbcSqlServer:
+                        switch (col.DbTypeTextFull.ToLower())
+                        {
+                            case "nvarchar(max)": sb.Add("StringLength = -2"); break;
+                            default:
+                                var m_stringLength = Regex.Match(col.DbTypeTextFull, @"^nvarchar\s*\((\w+)\)$", RegexOptions.IgnoreCase);
+                                if (m_stringLength.Success) sb.Add($"StringLength = {m_stringLength.Groups[1].Value}");
+                                else sb.Add("DbType = \"" + col.DbTypeTextFull + "\"");
+                                break;
+                        }
+                        break;
+                    case DataType.PostgreSQL:
+                    case DataType.OdbcPostgreSQL:
+                    case DataType.OdbcKingbaseES:
+                    case DataType.ShenTong:
+                        switch (col.DbTypeTextFull.ToLower())
+                        {
+                            case "text": sb.Add("StringLength = -2"); break;
+                            default:
+                                var m_stringLength = Regex.Match(col.DbTypeTextFull, @"^varchar\s*\((\w+)\)$", RegexOptions.IgnoreCase);
+                                if (m_stringLength.Success) sb.Add($"StringLength = {m_stringLength.Groups[1].Value}");
+                                else sb.Add("DbType = \"" + col.DbTypeTextFull + "\"");
+                                break;
+                        }
+                        break;
+                    case DataType.Oracle:
+                    case DataType.OdbcOracle:
+                        switch (col.DbTypeTextFull.ToLower())
+                        {
+                            case "clob": case "nclob": sb.Add("StringLength = -2"); break;
+                            default:
+                                var m_stringLength_1 = Regex.Match(col.DbTypeTextFull, @"^varchar2\s*\((\w+) byte\)$", RegexOptions.IgnoreCase);
+                                if (m_stringLength_1.Success)
+                                {
+                                    sb.Add($"StringLength = {m_stringLength_1.Groups[1].Value}");
+                                    break;
+                                }
+
+                                var m_stringLength_2 = Regex.Match(col.DbTypeTextFull, @"^nvarchar2\s*\((\w+)\)$", RegexOptions.IgnoreCase);
+                                if (m_stringLength_2.Success)
+                                {
+                                    sb.Add($"StringLength = {m_stringLength_2.Groups[1].Value}");
+                                    break;
+                                }
+
+                                if (col.CsType == typeof(DateTime) || col.CsType == typeof(TimeSpan) || col.CsType == typeof(int))
+                                    break;
+
+                                var m_numberLength_1 = Regex.Match(col.DbTypeTextFull, @"^number\s*\((\w+)\)$", RegexOptions.IgnoreCase);
+                                if (m_numberLength_1.Success)
+                                {
+                                    sb.Add($"Precision = {m_numberLength_1.Groups[1].Value}");
+                                    break;
+                                }
+
+                                var m_numberLength_2 = Regex.Match(col.DbTypeTextFull, @"^number\s*\((\w+),(\w+)\)$", RegexOptions.IgnoreCase);
+                                if (m_numberLength_2.Success)
+                                {
+                                    sb.Add($"Precision = {m_numberLength_1.Groups[1].Value}");
+                                    sb.Add($"Scale = {m_numberLength_1.Groups[2].Value}");
+                                    break;
+                                }
+
+                                var m_raw_1 = Regex.Match(col.DbTypeTextFull, @"^raw\s*\((\w+)\)$", RegexOptions.IgnoreCase);
+                                if (m_raw_1.Success)
+                                {
+                                    sb.Add($"StringLength = {m_raw_1.Groups[1].Value}");
+                                    break;
+                                }
+
+                                sb.Add("DbType = \"" + col.DbTypeTextFull + "\"");
+                                break;
+                        }
+                        break;
+                    case DataType.Dameng:
+                    case DataType.OdbcDameng:
+                        switch (col.DbTypeTextFull.ToLower())
+                        {
+                            case "text": sb.Add("StringLength = -2"); break;
+                            default:
+                                var m_stringLength = Regex.Match(col.DbTypeTextFull, @"^nvarchar2\s*\((\w+)\)$", RegexOptions.IgnoreCase);
+                                if (m_stringLength.Success) sb.Add($"StringLength = {m_stringLength.Groups[1].Value}");
+                                else sb.Add("DbType = \"" + col.DbTypeTextFull + "\"");
+                                break;
+                        }
+                        break;
+                    case DataType.Sqlite:
+                        switch (col.DbTypeTextFull.ToLower())
+                        {
+                            case "text": sb.Add("StringLength = -2"); break;
+                            default:
+                                var m_stringLength = Regex.Match(col.DbTypeTextFull, @"^nvarchar\s*\((\w+)\)$", RegexOptions.IgnoreCase);
+                                if (m_stringLength.Success) sb.Add($"StringLength = {m_stringLength.Groups[1].Value}");
+                                else sb.Add("DbType = \"" + col.DbTypeTextFull + "\"");
+                                break;
+                        }
+                        break;
+                    case DataType.MsAccess:
+                        switch (col.DbTypeTextFull.ToLower())
+                        {
+                            case "longtext": sb.Add("StringLength = -2"); break;
+                            default:
+                                var m_stringLength = Regex.Match(col.DbTypeTextFull, @"^varchar\s*\((\w+)\)$", RegexOptions.IgnoreCase);
+                                if (m_stringLength.Success) sb.Add($"StringLength = {m_stringLength.Groups[1].Value}");
+                                else sb.Add("DbType = \"" + col.DbTypeTextFull + "\"");
+                                break;
+                        }
+                        break;
+                }
+                #endregion
+            }
+            if (col.IsPrimary)
+                sb.Add("IsPrimary = true");
+            if (col.IsIdentity)
+                sb.Add("IsIdentity = true");
+
+            if (dbinfo != null && dbinfo.isnullable != col.IsNullable)
+            {
+                if (col.IsNullable && gen.fsql.DbFirst.GetCsType(col).Contains("?") == false && col.CsType.IsValueType)
+                    sb.Add("IsNullable = true");
+                if (col.IsNullable == false && gen.fsql.DbFirst.GetCsType(col).Contains("?") == true)
+                    sb.Add("IsNullable = false");
+            }
+
+            if (isInsertValueSql)
+            {
+                var defval = gen.GetColumnDefaultValue(col, false);
+                if (defval == null) //c#默认属性值，就不需要设置 InsertValueSql 了
+                {
+                    defval = gen.GetColumnDefaultValue(col, true);
+                    if (defval != null)
+                    {
+                        sb.Add("InsertValueSql = \"" + defval.Replace("\"", "\\\"") + "\"");
+                        sb.Add("CanInsert = false");
+                    }
+                }
+                else
+                    sb.Add("CanInsert = false");
+            }
+        }
+        if (sb.Any() == false) return null;
+        return "[Column(" + string.Join(", ", sb) + ")]";
+    };
+    Func<List<DbIndexInfo>, List<string>> GetIndex = Indexes =>
+    {
+        if (Indexes?.Any() != true) return new List<string>();
+        var result = new List<string>();
+        foreach (var index in Indexes)
+        {
+            var item = $"[Index(\"{index.Name}\", ";
+            foreach (var column in index.Columns)
+            {
+                item += $"nameof({column.Column.Name}) + \" {(column.IsDesc ? "DESC" : "ASC")}\"";
+            }
+            item += ")]";
+        }
+        return result;
+    };
 }@{
-switch (gen.fsql.Ado.DataType) {
-	case FreeSql.DataType.PostgreSQL:
-@:using System;
-@:using System.Collections.Generic;
-@:using Newtonsoft.Json;
-@:using FreeSql.DataAnnotations;
-@:using System.Net;
-@:using Newtonsoft.Json.Linq;
-@:using System.Net.NetworkInformation;
-@:using NpgsqlTypes;
-@:using Npgsql.LegacyPostgis;
-		break;
-	case FreeSql.DataType.SqlServer:
-	case FreeSql.DataType.MySql:
-	default:
-@:using System;
-@:using System.Collections.Generic;
-@:using Newtonsoft.Json;
-@:using FreeSql.DataAnnotations;
-		break;
-}
+    switch (gen.fsql.Ado.DataType)
+    {
+        case FreeSql.DataType.PostgreSQL:
+    @:using System;
+    @:using System.Collections.Generic;
+    @:using Newtonsoft.Json;
+    @:using FreeSql.DataAnnotations;
+    @:using System.Net;
+    @:using Newtonsoft.Json.Linq;
+    @:using System.Net.NetworkInformation;
+    @:using NpgsqlTypes;
+    @:using Npgsql.LegacyPostgis;
+            break;
+        case FreeSql.DataType.SqlServer:
+        case FreeSql.DataType.MySql:
+        default:
+    @:using System;
+    @:using System.Collections.Generic;
+    @:using Newtonsoft.Json;
+    @:using FreeSql.DataAnnotations;
+            break;
+    }
 }
 
 namespace @gen.NameSpace {
 
-@if (string.IsNullOrEmpty(gen.table.Comment) == false) {
-	@:/// <summary>
-	@:/// @gen.table.Comment.Replace("\r\n", "\n").Replace("\n", "\r\n		/// ")
-	@:/// </summary>
-}
-	[JsonObject(MemberSerialization.OptIn)@GetAttributeString(gen.GetTableAttribute())]
-	public partial class @gen.GetCsName(gen.FullTableName) {
+@if (string.IsNullOrEmpty(gen.table.Comment) == false)
+{
+@:/// <summary>
+    @:/// @gen.table.Comment.Replace("\r\n", "\n").Replace("\n", "\r\n		/// ")
+    @:/// </summary>
+    }
+	[JsonObject(MemberSerialization.OptIn)@GetAttributeString(gen.GetTableAttribute().Replace("DisableSyncStructure = true", "DisableSyncStructure = false"))]
+    @foreach (var index in GetIndex(gen.table.Indexes))
+    {
+    @index
+    }
+    public partial class @gen.GetCsName(gen.FullTableName) {
 
-	@foreach (var col in gen.columns) {
+    @foreach (var col in gen.columns)
+    {
 
-		var findfks = fks.Where(fkaa => fkaa.Columns.Where(fkaac1 => fkaac1.Name == col.Name).Any());
-		var csname = gen.GetCsName(col.Name);
+        var findfks = fks.Where(fkaa => fkaa.Columns.Where(fkaac1 => fkaac1.Name == col.Name).Any());
+        var csname = gen.GetCsName(col.Name);
 
-		if (string.IsNullOrEmpty(col.Coment) == false) {
-		@:/// <summary>
-		@:/// @col.Coment.Replace("\r\n", "\n").Replace("\n", "\r\n		/// ")
-		@:/// </summary>
-		}
-		@:@("[JsonProperty" + GetAttributeString(gen.GetColumnAttribute(col, true)) + "]")
-		if (findfks.Any() == false) {
-		@:public @gen.GetCsType(col) @csname { get; set; }@GetDefaultValue(gen.GetColumnDefaultValue(col, false))
-		} else {
-		@:public @gen.GetCsType(col) @csname { get => _@csname; set {
-			@:if (_@csname == value) return;
-			@:_@csname = value;
-			foreach (var fkcok2 in findfks) {
-                var fkTableName = (fkcok2.ReferencedTable.Schema + "." + fkcok2.ReferencedTable.Name).Trim('.');
-                if (fkcok2.ReferencedTable.Schema == "public" || fkcok2.ReferencedTable.Schema == "dbo")
+        if (string.IsNullOrEmpty(col.Coment) == false)
+        {
+    @:/// <summary>
+        @:/// @col.Coment.Replace("\r\n", "\n").Replace("\n", "\r\n		/// ")
+        @:/// </summary>
+            }
+        @:@("[JsonProperty" + GetAttributeString(GetColumnAttribute(col, false)) + "]")
+            if (findfks.Any() == false)
+            {
+        @:public @gen.GetCsType(col) @csname { get; set; }@GetDefaultValue(gen.GetColumnDefaultValue(col, false))
+            }
+            else
+            {
+        @:public @gen.GetCsType(col) @csname { get => _@csname; set {
+        @:if (_@csname == value) return;
+        @:_@csname = value;
+                foreach (var fkcok2 in findfks)
                 {
-                    fkTableName = fkTableName.Replace(fkcok2.ReferencedTable.Schema + ".", "");
+                    var fkTableName = (fkcok2.ReferencedTable.Schema + "." + fkcok2.ReferencedTable.Name).Trim('.');
+                    if (fkcok2.ReferencedTable.Schema == "public" || fkcok2.ReferencedTable.Schema == "dbo")
+                    {
+                        fkTableName = fkTableName.Replace(fkcok2.ReferencedTable.Schema + ".", "");
+                    }
+        @:@(gen.GetCsName(gen.FullTableName) == gen.GetCsName(fkTableName) ? "Parent" : gen.GetCsName(GetFkObjectName(fkcok2))) = null;
                 }
-			@:@(gen.GetCsName(gen.FullTableName) == gen.GetCsName(fkTableName) ? "Parent" : gen.GetCsName(GetFkObjectName(fkcok2))) = null;
-			}
-		@:} }
-		@:private @gen.GetCsType(col) _@csname@GetDefaultValue(gen.GetColumnDefaultValue(col, false)).TrimEnd(';');
-		}
-@:
-	}
-@if (fks.Any()) {
-@:
-		@:#region 外键 => 导航属性，ManyToOne/OneToOne
-		foreach (var fk in fks) {
-			var fkTableName = (fk.ReferencedTable.Schema + "." + fk.ReferencedTable.Name).Trim('.');
+        @:} }
+        @:private @gen.GetCsType(col) _@csname@GetDefaultValue(gen.GetColumnDefaultValue(col, false)).TrimEnd(';');
+            }
+        @:
+        }
+    @if (fks.Any())
+    {
+    @:
+    @:#region 外键 => 导航属性，ManyToOne/OneToOne
+        foreach (var fk in fks)
+        {
+            var fkTableName = (fk.ReferencedTable.Schema + "." + fk.ReferencedTable.Name).Trim('.');
             if (fk.ReferencedTable.Schema == "public" || fk.ReferencedTable.Schema == "dbo")
             {
                 fkTableName = fkTableName.Replace(fk.ReferencedTable.Schema + ".", "");
             }
-@:
-		@:[Navigate("@string.Join(", ", fk.Columns.Select(a => gen.GetCsName(a.Name)))")]
-		@:public@(isLazying ? " virtual" : "") @gen.GetCsName(fkTableName) @(gen.GetCsName(gen.FullTableName) == gen.GetCsName(GetFkObjectName(fk)) ? "Parent" : gen.GetCsName(GetFkObjectName(fk))) { get; set; }
-		}
-@:
-		@:#endregion
-}
-@if (isOneToMany && gen.tables.Where(tmpft => tmpft.Foreigns.Where(tmpftfk => tmpftfk.ReferencedTable.Schema == gen.table.Schema && tmpftfk.ReferencedTable.Name == gen.table.Name && tmpftfk.Columns.Where(tmpcol => tmpcol.IsPrimary).Count() != tmpftfk.Columns.Count).Any()).Any()) {
-@:
-		@:#region 外键 => 导航属性，OneToMany
-	foreach (var ft in gen.tables) {
-        var ftfks = ft.Foreigns.Where(ftfk => ftfk.ReferencedTable.Schema == gen.table.Schema && ftfk.ReferencedTable.Name == gen.table.Name && ftfk.Columns.Where(tmpcol => tmpcol.IsPrimary).Count() != ftfk.Columns.Count).ToArray();
-        foreach (var fk in ftfks) {
-            var fkTableName = (ft.Schema + "." + ft.Name).Trim('.');
-            if (ft.Schema == "public" || ft.Schema == "dbo")
-            {
-                fkTableName = fkTableName.Replace(ft.Schema + ".", "");
-            }
-@:
-		@:[Navigate("@string.Join(", ", fk.Columns.Select(a => gen.GetCsName(a.Name)))")]
-		@:public@(isLazying ? " virtual" : "") List<@gen.GetCsName(fkTableName)> @(gen.GetCsName(gen.FullTableName) == gen.GetCsName(GetFkObjectNameOutside(fk)) ? "Child" : gen.GetCsName(GetFkObjectNameOutside(fk)))s { get; set; }
-		}
-	}
-@:
-		@:#endregion
-}
-@if (isManyToMany) {
-	var manyAny = false;
-	foreach (var ft in gen.tables) {
-        if (ft != gen.table) {
-            var ftfks = ft.Foreigns.Where(ftfk => ftfk.Columns.Where(ftfkcol => ftfkcol.IsPrimary == false).Any() == false).ToArray();
-            if (ftfks.Length == 2) {
-                var fk1 = ftfks.Where(ftfk => (ftfk.ReferencedTable.Schema + "." + ftfk.ReferencedTable.Name).Trim('.') == gen.FullTableName).ToArray();
-                if (fk1.Length == 1) {
-                    var fk2 = ftfks.Where(ftfk => fk1.Contains(ftfk) == false).ToArray();
-
-                    var midft = ft;
-                    var leftft = gen.table;
-                    DbTableInfo rightft = null;
-                    if (fk2.Any()) {
-                        rightft = fk2[0].ReferencedTable;
-                    } else {
-                        rightft = fk1[1].ReferencedTable;
-                    }
-
-                    var fkTableName = (rightft.Schema + "." + rightft.Name).Trim('.');
-                    if (rightft.Schema == "public" || rightft.Schema == "dbo")
-                    {
-                        fkTableName = fkTableName.Replace(rightft.Schema + ".", "");
-                    }
-                    var middleTableName = (midft.Schema + "." + midft.Name).Trim('.');
-                    if (midft.Schema == "public" || midft.Schema == "dbo")
-                    {
-                        middleTableName = middleTableName.Replace(midft.Schema + ".", "");
-                    }
-                    var csname = rightft.Name;
-                    if (manyAny == false)
-                    {
-                        manyAny = true;
-@:
-		@:#region 外键 => 导航属性，ManyToMany
-                    }
-@:
-		@:[Navigate(ManyToMany = typeof(@gen.GetCsName(middleTableName)))]
-		@:public@(isLazying ? " virtual" : "") List<@gen.GetCsName(fkTableName)> @gen.GetCsName(csname)s { get; set; }
-				}
-			}
-		}
-	}
-    if (manyAny)
-    {
-@:
-		@:#endregion
+    @:
+    @:[Navigate("@string.Join(", ", fk.Columns.Select(a => gen.GetCsName(a.Name)))")]
+    @:public@(isLazying ? " virtual" : "") @gen.GetCsName(fkTableName) @(gen.GetCsName(gen.FullTableName) == gen.GetCsName(GetFkObjectName(fk)) ? "Parent" : gen.GetCsName(GetFkObjectName(fk))) { get; set; }
+        }
+    @:
+    @:#endregion
     }
-}
-	}
-@gen.GetMySqlEnumSetDefine()
-}
+    @if (isOneToMany && gen.tables.Where(tmpft => tmpft.Foreigns.Where(tmpftfk => tmpftfk.ReferencedTable.Schema == gen.table.Schema && tmpftfk.ReferencedTable.Name == gen.table.Name && tmpftfk.Columns.Where(tmpcol => tmpcol.IsPrimary).Count() != tmpftfk.Columns.Count).Any()).Any())
+    {
+    @:
+    @:#region 外键 => 导航属性，OneToMany
+        foreach (var ft in gen.tables)
+        {
+            var ftfks = ft.Foreigns.Where(ftfk => ftfk.ReferencedTable.Schema == gen.table.Schema && ftfk.ReferencedTable.Name == gen.table.Name && ftfk.Columns.Where(tmpcol => tmpcol.IsPrimary).Count() != ftfk.Columns.Count).ToArray();
+            foreach (var fk in ftfks)
+            {
+                var fkTableName = (ft.Schema + "." + ft.Name).Trim('.');
+                if (ft.Schema == "public" || ft.Schema == "dbo")
+                {
+                    fkTableName = fkTableName.Replace(ft.Schema + ".", "");
+                }
+    @:
+    @:[Navigate("@string.Join(", ", fk.Columns.Select(a => gen.GetCsName(a.Name)))")]
+    @:public@(isLazying ? " virtual" : "") List<@gen.GetCsName(fkTableName)>
+        @(gen.GetCsName(gen.FullTableName) == gen.GetCsName(GetFkObjectNameOutside(fk)) ? "Child" : gen.GetCsName(GetFkObjectNameOutside(fk)))@:s { get; set; }
+                }
+            }
+        @:
+        @:#endregion
+        }
+    @if (isManyToMany)
+    {
+        var manyAny = false;
+        foreach (var ft in gen.tables)
+        {
+            if (ft != gen.table)
+            {
+                var ftfks = ft.Foreigns.Where(ftfk => ftfk.Columns.Where(ftfkcol => ftfkcol.IsPrimary == false).Any() == false).ToArray();
+                if (ftfks.Length == 2)
+                {
+                    var fk1 = ftfks.Where(ftfk => (ftfk.ReferencedTable.Schema + "." + ftfk.ReferencedTable.Name).Trim('.') == gen.FullTableName).ToArray();
+                    if (fk1.Length == 1)
+                    {
+                        var fk2 = ftfks.Where(ftfk => fk1.Contains(ftfk) == false).ToArray();
+
+                        var midft = ft;
+                        var leftft = gen.table;
+                        DbTableInfo rightft = null;
+                        if (fk2.Any())
+                        {
+                            rightft = fk2[0].ReferencedTable;
+                        }
+                        else
+                        {
+                            rightft = fk1[1].ReferencedTable;
+                        }
+
+                        var fkTableName = (rightft.Schema + "." + rightft.Name).Trim('.');
+                        if (rightft.Schema == "public" || rightft.Schema == "dbo")
+                        {
+                            fkTableName = fkTableName.Replace(rightft.Schema + ".", "");
+                        }
+                        var middleTableName = (midft.Schema + "." + midft.Name).Trim('.');
+                        if (midft.Schema == "public" || midft.Schema == "dbo")
+                        {
+                            middleTableName = middleTableName.Replace(midft.Schema + ".", "");
+                        }
+                        var csname = rightft.Name;
+                        if (manyAny == false)
+                        {
+                            manyAny = true;
+    @:
+    @:#region 外键 => 导航属性，ManyToMany
+                        }
+    @:
+    @:[Navigate(ManyToMany = typeof(@gen.GetCsName(middleTableName)))]
+    @:public@(isLazying ? " virtual" : "") List<@gen.GetCsName(fkTableName)>
+        @gen.GetCsName(csname)@:s { get; set; }
+                        }
+                    }
+                }
+            }
+            if (manyAny)
+            {
+        @:
+        @:#endregion
+            }
+        }
+    }
+    @gen.GetMySqlEnumSetDefine()
+    }

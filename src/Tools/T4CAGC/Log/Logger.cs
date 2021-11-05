@@ -22,6 +22,8 @@ namespace T4CAGC.Log
             };
 
             log.Properties[LoggerConfig.LogType] = LogType.GetName(logType);
+            if (exception != null)
+                data += "\r\n\tStack Trace: " + exception.ExceptionToString();
             log.Properties[LoggerConfig.Data] = data;
 
             nLogger.Log(log);
