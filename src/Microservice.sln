@@ -45,8 +45,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataMigration", "DataMigrat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataMigration.Application", "Tools\DataMigration\DataMigration.Application\DataMigration.Application.csproj", "{4716057C-CF82-4DCB-868F-CD554ECEE1BA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestEntity", "Tools\DataMigration\TestEntity\TestEntity.csproj", "{D1470EFE-E829-46E1-B41E-69B245797B23}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -175,14 +173,6 @@ Global
 		{4716057C-CF82-4DCB-868F-CD554ECEE1BA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4716057C-CF82-4DCB-868F-CD554ECEE1BA}.Release|x64.ActiveCfg = Release|Any CPU
 		{4716057C-CF82-4DCB-868F-CD554ECEE1BA}.Release|x64.Build.0 = Release|Any CPU
-		{D1470EFE-E829-46E1-B41E-69B245797B23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D1470EFE-E829-46E1-B41E-69B245797B23}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D1470EFE-E829-46E1-B41E-69B245797B23}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{D1470EFE-E829-46E1-B41E-69B245797B23}.Debug|x64.Build.0 = Debug|Any CPU
-		{D1470EFE-E829-46E1-B41E-69B245797B23}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D1470EFE-E829-46E1-B41E-69B245797B23}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D1470EFE-E829-46E1-B41E-69B245797B23}.Release|x64.ActiveCfg = Release|Any CPU
-		{D1470EFE-E829-46E1-B41E-69B245797B23}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -206,7 +196,6 @@ Global
 		{CF74256A-BDB4-4283-B95E-1F16A7897752} = {FDFFEBCF-91AC-46A2-A4D0-1A153F56781A}
 		{2A60B79F-CF16-4EB1-BF74-EBD6F178AB17} = {FDFFEBCF-91AC-46A2-A4D0-1A153F56781A}
 		{4716057C-CF82-4DCB-868F-CD554ECEE1BA} = {2A60B79F-CF16-4EB1-BF74-EBD6F178AB17}
-		{D1470EFE-E829-46E1-B41E-69B245797B23} = {2A60B79F-CF16-4EB1-BF74-EBD6F178AB17}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B5D6B189-9157-4B74-A637-5512D79924D8}
