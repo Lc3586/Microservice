@@ -17,8 +17,9 @@ namespace Business.Utils.Pagination
         /// <param name="pagination">分页设置</param>
         /// <param name="sql">sql语句</param>
         /// <param name="alias">别名</param>
+        /// <param name="character">名称标识符</param>
         /// <returns>筛选条件是否有误</returns>
-        public static bool FilterToSql(this PaginationDTO pagination, ref string sql, string alias = null)
+        public static bool FilterToSql(this PaginationDTO pagination, ref string sql, string alias = null, char character = '"')
         {
 #pragma warning disable CS0618 // 类型或成员已过时
             if (pagination.Filter == null || !pagination.Filter.Any())
@@ -43,18 +44,18 @@ namespace Business.Utils.Pagination
 
                     string field = filter.Field;
                     if (alias != null)
-                        field = $"{alias}.`{field}`";
+                        field = $"{character}{alias}{character}.{character}{field}{character}";
                     else
-                        field = $"`{field}`";
+                        field = $"{character}{field}{character}";
 
                     string value = filter.Value?.ToString();
                     if (filter.ValueIsField)
                     {
 
                         if (alias != null)
-                            value = $"{alias}.`{value}`";
+                            value = $"{character}{alias}{character}.{character}{value}{character}";
                         else
-                            value = $"`{value}`";
+                            value = $"{character}{value}{character}";
                     }
 
                     bool skip = false;
@@ -179,9 +180,10 @@ namespace Business.Utils.Pagination
         /// <param name="pagination">分页设置</param>
         /// <param name="sql">sql语句</param>
         /// <param name="alias">别名</param>
+        /// <param name="character">名称标识符</param>
         /// <param name="withOrderByKeyword">附加orderby关键词</param>
         /// <returns>排序条件是否有误</returns>
-        public static bool OrderByToSql(this PaginationDTO pagination, ref string sql, string alias = null, bool withOrderByKeyword = false)
+        public static bool OrderByToSql(this PaginationDTO pagination, ref string sql, string alias = null, char character = '"', bool withOrderByKeyword = false)
         {
             try
             {
@@ -196,9 +198,9 @@ namespace Business.Utils.Pagination
 
                         string field = item.Field;
                         if (alias != null)
-                            field = $" {alias}.`{field}` ";
+                            field = $" {character}{alias}{character}.{character}{field}{character} ";
                         else
-                            field = $" `{field}` ";
+                            field = $" {character}{field}{character} ";
                         string type = item.Type.ToString();
 
 
@@ -213,7 +215,7 @@ namespace Business.Utils.Pagination
                 }
                 else if (!string.IsNullOrEmpty(pagination.SortField))
                 {
-                    predicate += $" {(alias != null ? $" {alias}.`{pagination.SortField}` " : $" `{pagination.SortField}` ")} {pagination.SortType} ";
+                    predicate += $" {(alias != null ? $" {character}{alias}{character}.{character}{pagination.SortField}{character} " : $" {character}{pagination.SortField}{character} ")} {pagination.SortType} ";
                 }
 
                 if (!string.IsNullOrWhiteSpace(predicate))

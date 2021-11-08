@@ -3509,22 +3509,24 @@
             分页设置拓展方法
             </summary>
         </member>
-        <member name="M:Business.Utils.Pagination.PaginationExtension.FilterToSql(Model.Utils.Pagination.PaginationDTO,System.String@,System.String)">
+        <member name="M:Business.Utils.Pagination.PaginationExtension.FilterToSql(Model.Utils.Pagination.PaginationDTO,System.String@,System.String,System.Char)">
             <summary>
             筛选条件转sql语句
             </summary>
             <param name="pagination">分页设置</param>
             <param name="sql">sql语句</param>
             <param name="alias">别名</param>
+            <param name="character">名称标识符</param>
             <returns>筛选条件是否有误</returns>
         </member>
-        <member name="M:Business.Utils.Pagination.PaginationExtension.OrderByToSql(Model.Utils.Pagination.PaginationDTO,System.String@,System.String,System.Boolean)">
+        <member name="M:Business.Utils.Pagination.PaginationExtension.OrderByToSql(Model.Utils.Pagination.PaginationDTO,System.String@,System.String,System.Char,System.Boolean)">
             <summary>
             排序条件转sql语句
             </summary>
             <param name="pagination">分页设置</param>
             <param name="sql">sql语句</param>
             <param name="alias">别名</param>
+            <param name="character">名称标识符</param>
             <param name="withOrderByKeyword">附加orderby关键词</param>
             <returns>排序条件是否有误</returns>
         </member>

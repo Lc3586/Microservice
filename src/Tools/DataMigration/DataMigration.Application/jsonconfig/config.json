@@ -1,6 +1,7 @@
 ﻿{
   "Config": {
     "Version": "v0.0.0.1",
+    "LoggerType": "Console",
     "FileList": {
       "CAGC": {
         "WINDOWS": "Tools/T4CAGC/Windows/T4CAGC.exe",

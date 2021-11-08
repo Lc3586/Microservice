@@ -13,6 +13,7 @@ using Microservice.Library.Container;
 using Microservice.Library.Extension;
 using Microservice.Library.FreeSql.Gen;
 using Microsoft.Extensions.DependencyInjection;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,6 +21,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Logger = DataMigration.Application.Log.Logger;
 
 namespace DataMigration.Application
 {
@@ -45,20 +47,23 @@ namespace DataMigration.Application
         [Option("-l|--LoggerType", Description = "日志类型（默认Console）.")]
         public LoggerType LoggerType { get; } = LoggerType.Console;
 
+        [Option("-mll|--MinLogLevel", Description = "需要记录的日志的最低等级（默认Trace）.")]
+        public string MinLogLevel { get; }
+
         [Option("-sc|--SourceConnectingString", Description = "源数据库连接字符串.")]
-        public string SourceConnectingString { get; }
+        public string SourceConnectingString { get; set; }
 
         [Option("-st|--SourceDataType", Description = "源数据库类型.")]
-        public DataType SourceDataType { get; }
+        public DataType SourceDataType { get; set; }
 
         [Option("-tc|--TargetConnectingString", Description = "目标数据库连接字符串.")]
-        public string TargetConnectingString { get; }
+        public string TargetConnectingString { get; set; }
 
         [Option("-tt|--TargetDataType", Description = "目标数据库类型.")]
-        public DataType TargetDataType { get; }
+        public DataType TargetDataType { get; set; }
 
         [Option("-e|--EntityAssemblys", Description = "实体类命名空间（存在多个时使用半角逗号[,]分隔，未设置此值时，将会自动生成实体类）.")]
-        string EntityAssemblys { get; } = null;
+        string EntityAssemblys { get; set; } = null;
 
         [Option("-nc|--SyncStructureNameConvert", Description = "实体类名 -> 数据库表名&列名，命名转换规则（类名、属性名都生效）（默认None）.")]
         NameConvertType? SyncStructureNameConvert { get; } = null;
@@ -145,7 +150,9 @@ namespace DataMigration.Application
                 }
 
                 config.SourceConnectingString = SourceConnectingString;
-                //$"源数据库: {SourceConnectingString}.\r\n".ConsoleWrite();
+#if DEBUG
+                $"源数据库: {SourceConnectingString}.\r\n".ConsoleWrite();
+#endif
 
                 config.SourceDataType = SourceDataType;
                 $"源数据库类型: {SourceDataType}.\r\n".ConsoleWrite();
@@ -157,14 +164,19 @@ namespace DataMigration.Application
                 }
 
 #if DEBUG
-                config.TargetConnectingString = $"Server=127.0.0.1;Port=3306;Database=data_migration_test;User ID=root;Password=root666;Charset=utf8;SslMode=none;Max pool size=500;";
-#else
-                config.TargetConnectingString = TargetConnectingString;
+                TargetConnectingString = $"Server=127.0.0.1;Port=3306;Database=data_migration_test;User ID=root;Password=root666;Charset=utf8;SslMode=none;Max pool size=500;";
 #endif
-                //$"目标数据库: {TargetConnectingString}.\r\n".ConsoleWrite();
+                config.TargetConnectingString = TargetConnectingString;
+#if DEBUG
+                $"目标数据库: {TargetConnectingString}.\r\n".ConsoleWrite();
+#endif
 
                 config.TargetDataType = TargetDataType;
                 $"目标数据库类型: {TargetDataType}.\r\n".ConsoleWrite();
+
+#if DEBUG
+                EntityAssemblys = "Entitys.Project/Entity_132808334922190308/Build/Debug/Entity_132808334922190308.dll";
+#endif
 
                 if (EntityAssemblys.IsNullOrWhiteSpace())
                 {
@@ -189,13 +201,21 @@ namespace DataMigration.Application
                 config.LoggerType = LoggerType;
                 $"日志组件类型: {LoggerType}.\r\n".ConsoleWrite();
 
+                config.MinLogLevel = MinLogLevel.IsNullOrWhiteSpace() ?
+#if DEBUG
+                    LogLevel.Trace.Ordinal :
+#else
+                    LogLevel.Info.Ordinal :
+#endif
+                    LogLevel.FromString(MinLogLevel).Ordinal;
+                $"日志等级: {LogLevel.FromOrdinal(config.MinLogLevel).Name}.\r\n".ConsoleWrite();
+
                 var services = new ServiceCollection();
 
                 services.AddSingleton(config)
                     .AddLogging()
-                    .RegisterNLog(config.LoggerType, config.MinLogLevel);
-
-                services.RegisterFreeSql(config);
+                    .RegisterNLog(config.LoggerType, config.MinLogLevel)
+                    .RegisterFreeSql(config);
 
                 var builder = new AutofacServiceProviderFactory().CreateBuilder(services);
 

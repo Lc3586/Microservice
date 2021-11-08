@@ -70,7 +70,7 @@ namespace DataMigration.Application.Handler
                     throw new ApplicationException($"不支持的操作类型 {Config.OperationType}");
             }
 
-            Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, "处理结束.");
+            Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "处理结束.");
         }
     }
 }

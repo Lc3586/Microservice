@@ -18,13 +18,13 @@
 
   <ItemGroup>
     <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="3.1.0" />
-    <PackageReference Include="Microservice.Library.Cache" Version="0.0.0.8-alpha-g62c869a9cd" />
-    <PackageReference Include="Microservice.Library.Configuration" Version="0.0.0.8-alpha-g62c869a9cd" />
-    <PackageReference Include="Microservice.Library.ConsoleTool" Version="0.0.0.8-alpha-g62c869a9cd" />
-    <PackageReference Include="Microservice.Library.File" Version="0.0.0.8-alpha-g62c869a9cd" />
-    <PackageReference Include="Microservice.Library.FreeSql" Version="0.0.0.8-alpha-g62c869a9cd" />
-    <PackageReference Include="Microservice.Library.Http" Version="0.0.0.8-alpha-g62c869a9cd" />
-    <PackageReference Include="Microservice.Library.NLogger" Version="0.0.0.8-alpha-g62c869a9cd" />
+    <PackageReference Include="Microservice.Library.Cache" Version="0.0.0.9-alpha-gf379ddcf33" />
+    <PackageReference Include="Microservice.Library.Configuration" Version="0.0.0.9-alpha-gf379ddcf33" />
+    <PackageReference Include="Microservice.Library.ConsoleTool" Version="0.0.0.9-alpha-gf379ddcf33" />
+    <PackageReference Include="Microservice.Library.File" Version="0.0.0.9-alpha-gf379ddcf33" />
+    <PackageReference Include="Microservice.Library.FreeSql" Version="0.0.0.9-alpha-gf379ddcf33" />
+    <PackageReference Include="Microservice.Library.Http" Version="0.0.0.9-alpha-gf379ddcf33" />
+    <PackageReference Include="Microservice.Library.NLogger" Version="0.0.0.9-alpha-gf379ddcf33" />
   </ItemGroup>
 
   <ItemGroup>

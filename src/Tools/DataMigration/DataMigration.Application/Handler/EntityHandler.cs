@@ -19,7 +19,7 @@ namespace DataMigration.Application.Handler
         public EntityHandler(Config config)
         {
             Config = config;
-            if (!Directory.Exists(TempDirectoryAbsolutePath))
+            if (config.GenerateEntitys && !Directory.Exists(TempDirectoryAbsolutePath))
                 Directory.CreateDirectory(TempDirectoryAbsolutePath);
         }
 
@@ -76,6 +76,7 @@ namespace DataMigration.Application.Handler
                 throw new ApplicationException($"未找到指定实体类dll文件[{string.Join(',', Config.EntityAssemblyFiles)}].");
 
             var types = Config.EntityAssemblyFiles.SelectMany(o => Assembly.LoadFile(o).GetTypes()).ToList();
+            types.ForEach(o => Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"已获取实体类: {o.FullName}."));
         }
 
         /// <summary>
@@ -83,13 +84,23 @@ namespace DataMigration.Application.Handler
         /// </summary>
         async Task Generate()
         {
+            Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "安装.NET SDK.");
+
             await InstallDotnetSDK();
+
+            Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "安装FreeSql.Generator.");
 
             await InstallFreeSqlTool();
 
+            Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "创建实体类项目.");
+
             await CreateCSProject();
 
+            Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "生成实体类.");
+
             await CallFreeSqlTool();
+
+            Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "生成项目.");
 
             await BuildCSProject();
         }
@@ -137,7 +148,7 @@ namespace DataMigration.Application.Handler
             }
             catch (Exception ex)
             {
-                Logger.Log(NLog.LogLevel.Error, LogType.警告信息, "未安装.NET SDK.", null, ex);
+                Logger.Log(NLog.LogLevel.Warn, LogType.警告信息, "未安装.NET SDK.", null, ex);
                 return false;
             }
         }
@@ -177,7 +188,7 @@ namespace DataMigration.Application.Handler
             }
             catch (Exception ex)
             {
-                Logger.Log(NLog.LogLevel.Error, LogType.警告信息, "未安装FreeSql.Generator.", null, ex);
+                Logger.Log(NLog.LogLevel.Warn, LogType.警告信息, "未安装FreeSql.Generator.", null, ex);
                 return false;
             }
         }
@@ -195,7 +206,7 @@ namespace DataMigration.Application.Handler
             }
             catch (Exception ex)
             {
-                Logger.Log(NLog.LogLevel.Error, LogType.警告信息, "生成实体类时发生异常.", null, ex);
+                Logger.Log(NLog.LogLevel.Warn, LogType.警告信息, "生成实体类时发生异常.", null, ex);
             }
         }
 
@@ -252,7 +263,7 @@ namespace DataMigration.Application.Handler
 
             process.StandardInput.WriteLine($"{cmd.TrimEnd('&')}&exit");
             process.StandardInput.AutoFlush = true;
-            
+
             var output = process.StandardOutput.ReadToEnd();
             var error = process.StandardError.ReadToEnd();
 

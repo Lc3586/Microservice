@@ -1,7 +1,6 @@
 ﻿using DataMigration.Application.Log;
 using FreeSql;
 using FreeSql.Internal;
-using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -70,20 +69,17 @@ namespace DataMigration.Application.Model
         /// <summary>
         /// 日志组件类型
         /// </summary>
-        /// <remarks>默认 <see cref="LoggerType.File"/></remarks>
-        public LoggerType LoggerType { get; set; } = LoggerType.File;
+        public LoggerType LoggerType { get; set; }
 
         /// <summary>
-        /// 需要记录的日志的最低等级
+        /// 日志等级
         /// </summary>
-        /// <remarks>默认 <see cref="LogLevel.Trace.Ordinal"/></remarks>
-        public int MinLogLevel { get; set; } = LogLevel.Trace.Ordinal;
+        public int MinLogLevel { get; set; }
 
         /// <summary>
         /// 操作类型
         /// </summary>
-        /// <remarks>默认 <see cref="DataMigration.Application.Model.OperationType.All"/> 全部</remarks>
-        public OperationType OperationType { get; set; } = OperationType.All;
+        public OperationType OperationType { get; set; }
 
         /// <summary>
         /// 实体类名 -> 数据库表名&列名，命名转换规则（类名、属性名都生效）

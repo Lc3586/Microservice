@@ -133,7 +133,7 @@ namespace Business.Utils.Pagination
             Check(pagination.Filter);
 #pragma warning restore CS0618 // 类型或成员已过时
 
-            if (!pagination.FilterToSql(ref where, alias))
+            if (!pagination.FilterToSql(ref where, alias, Orm.Ado.GetCharacter()))
                 throw new MessageException("搜索条件不支持");
 
             if (!string.IsNullOrWhiteSpace(where))
@@ -167,7 +167,7 @@ namespace Business.Utils.Pagination
             Check();
 
             string orderby = string.Empty;
-            if (!pagination.OrderByToSql(ref orderby, alias))
+            if (!pagination.OrderByToSql(ref orderby, alias, Orm.Ado.GetCharacter()))
                 throw new MessageException("排序条件不支持");
 
             if (!string.IsNullOrWhiteSpace(orderby))
