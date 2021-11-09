@@ -83,14 +83,40 @@ namespace DataMigration.Application.Handler
                 var orm_source = FreeSqlMultipleProvider.GetFreeSql(0);
                 var orm_target = FreeSqlMultipleProvider.GetFreeSql(1);
 
-                var tables = orm_source.DbFirst.GetTablesByDatabase();
-                foreach (var table in tables)
+                var tables_source = orm_source.DbFirst.GetTablesByDatabase();
+                var tables_target = orm_target.DbFirst.GetTablesByDatabase();
+                foreach (var table_source in tables_source)
                 {
-                    Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"已获取数据表: {table.Name}.");
+                    Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"已获取源数据库数据表: {table_source.Name}.");
 
-                    foreach (var foreign in table.ForeignsDict)
+                    var table_target = tables_target.FirstOrDefault(o => o.Name.ToLower() == table_source.Name.ToLower());
+
+                    if (table_target == null)
+                    {
+                        Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "已忽略: 目标数据库数据表不存在.");
+                        continue;
+                    }
+
+                    if (!table_source.ForeignsDict.Any())
+                    {
+                        Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "已忽略: 源数据库数据表未检测到任何外键.");
+                        continue;
+                    }
+
+                    foreach (var foreign in table_source.ForeignsDict)
                     {
                         Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到外键: {foreign.Key}({foreign.Value.Table.Name}.{string.Join(",", foreign.Value.Columns.Select(o => o.Name))} => {foreign.Value.ReferencedTable.Name}.{string.Join(",", foreign.Value.ReferencedColumns.Select(o => o.Name))}).");
+
+                        if (table_target.ForeignsDict.ContainsKey(foreign.Key)
+                            || table_target.ForeignsDict.Values.Any(o =>
+                            o.Table.Name.ToLower() == foreign.Value.Table.Name.ToLower()
+                            && o.ReferencedTable.Name.ToLower() == foreign.Value.ReferencedTable.Name.ToLower()
+                            && o.Table.Columns.Count == o.Table.Columns.Count(p => foreign.Value.Table.Columns.Any(q => q.Name == p.Name))
+                            && o.ReferencedTable.Columns.Count == o.ReferencedTable.Columns.Count(p => foreign.Value.ReferencedTable.Columns.Any(q => q.Name == p.Name))))
+                        {
+                            Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "已忽略: 目标数据库数据表已存在该外键.");
+                            continue;
+                        }
 
                         try
                         {
@@ -134,6 +160,7 @@ namespace DataMigration.Application.Handler
                                     if (orm_target.Ado.ExecuteNonQuery(fk_add_sql) < 0)
                                         throw new ApplicationException($"添加外键失败: {fk_add_sql}.");
 
+                                    Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "已添加.");
                                     break;
                                 case FreeSql.DataType.Sqlite:
                                     throw new ApplicationException("Sqlite不支持SQL-92中移除&添加外键的语法.");
@@ -141,7 +168,7 @@ namespace DataMigration.Application.Handler
                         }
                         catch (Exception ex)
                         {
-                            Logger.Log(NLog.LogLevel.Warn, LogType.警告信息, $"添加外键失败: {table.Name}.", null, ex);
+                            Logger.Log(NLog.LogLevel.Warn, LogType.警告信息, $"添加外键失败: {table_source.Name}.", null, ex);
                         }
                     }
                 }
