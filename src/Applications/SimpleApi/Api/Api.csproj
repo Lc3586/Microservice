@@ -216,12 +216,13 @@
     <Content Remove="wwwroot\swagger\saLogin.js" />
     <Content Remove="wwwroot\swagger\waiting.css" />
     <Content Remove="wwwroot\swagger\waiting.min.js" />
+    <Content Remove="wwwroot\utils\baseUrl.js" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="appsettings.Development.json" />
     <None Include="appsettings.Production.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Include="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -746,6 +747,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="wwwroot\swagger\extensions\saLogin.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\utils\baseUrl.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="wwwroot\utils\waiting.css">

@@ -58,49 +58,42 @@ var NaiveUpload = (function () {
                                 Tag: "script",
                                 Attributes: {
                                     type: 'text/javascript',
-                                    src: ApiUri.BaseUrl + '/Model/UploadConfig.js'
+                                    src: ApiUri.BaseUrl + '/plug-in/naiveupload/Model/UploadConfig.js'
                                 }
                             },
                             {
                                 Tag: "script",
                                 Attributes: {
                                     type: 'text/javascript',
-                                    src: ApiUri.BaseUrl + '/Model/SelectedFile.js'
+                                    src: ApiUri.BaseUrl + '/plug-in/naiveupload/Model/SelectedFile.js'
                                 }
                             },
                             {
                                 Tag: "script",
                                 Attributes: {
                                     type: 'text/javascript',
-                                    src: ApiUri.BaseUrl + '/Model/RawFile.js'
+                                    src: ApiUri.BaseUrl + '/plug-in/naiveupload/Model/RawFile.js'
                                 }
                             },
                             {
                                 Tag: "script",
                                 Attributes: {
                                     type: 'text/javascript',
-                                    src: ApiUri.BaseUrl + '/Model/ChunkFile.js'
+                                    src: ApiUri.BaseUrl + '/plug-in/naiveupload/Model/ChunkFile.js'
                                 }
                             },
                             {
                                 Tag: "script",
                                 Attributes: {
                                     type: 'text/javascript',
-                                    src: ApiUri.BaseUrl + '/Model/ApiUri.js'
+                                    src: ApiUri.BaseUrl + '/plug-in/naiveupload/Helper/HashHelper.js'
                                 }
                             },
                             {
                                 Tag: "script",
                                 Attributes: {
                                     type: 'text/javascript',
-                                    src: ApiUri.BaseUrl + '/Helper/HashHelper.js'
-                                }
-                            },
-                            {
-                                Tag: "script",
-                                Attributes: {
-                                    type: 'text/javascript',
-                                    src: ApiUri.BaseUrl + '/Helper/UploadHelper.js'
+                                    src: ApiUri.BaseUrl + '/plug-in/naiveupload/Helper/UploadHelper.js'
                                 }
                             }
                         ];

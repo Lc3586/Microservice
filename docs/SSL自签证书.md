@@ -1,4 +1,4 @@
-### #创建CA证书配置文件
+### #创建CA证书配置文件（*.cnf）
 
 > [ req ]
 >
@@ -47,7 +47,7 @@
 
 
 
-### #创建SSL证书拓展配置文件
+### #创建SSL证书拓展配置文件(*.ext)
 
 > subjectAltName = @alt_names
 > extendedKeyUsage = serverAuth

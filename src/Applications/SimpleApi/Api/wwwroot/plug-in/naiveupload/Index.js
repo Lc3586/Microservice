@@ -112,56 +112,56 @@ window.onload = function () {
             Tag: "script",
             Attributes: {
                 type: 'text/javascript',
-                src: ApiUri.BaseUrl + '/NaiveUpload.js'
+                src: ApiUri.BaseUrl + '/plug-in/naiveupload/Model/ApiUri.js'
             }
         },
         {
             Tag: "script",
             Attributes: {
                 type: 'text/javascript',
-                src: ApiUri.BaseUrl + '/Model/MultipleUploadSetting.js'
+                src: ApiUri.BaseUrl + '/plug-in/naiveupload/NaiveUpload.js'
             }
         },
         {
             Tag: "script",
             Attributes: {
                 type: 'text/javascript',
-                src: ApiUri.BaseUrl + '/Model/ApiUri.js'
+                src: ApiUri.BaseUrl + '/plug-in/naiveupload/Model/MultipleUploadSetting.js'
             }
         },
         {
             Tag: "script",
             Attributes: {
                 type: 'text/javascript',
-                src: ApiUri.BaseUrl + '/Helper/ChunkFileMergeTaskHelper.js'
+                src: ApiUri.BaseUrl + '/plug-in/naiveupload/Helper/ChunkFileMergeTaskHelper.js'
             }
         },
         {
             Tag: "script",
             Attributes: {
                 type: 'text/javascript',
-                src: ApiUri.BaseUrl + '/Model/UploadConfigDetail.js'
+                src: ApiUri.BaseUrl + '/plug-in/naiveupload/Model/UploadConfigDetail.js'
             }
         },
         {
             Tag: "script",
             Attributes: {
                 type: 'text/javascript',
-                src: ApiUri.BaseUrl + '/Model/Pagination.js'
+                src: ApiUri.BaseUrl + '/plug-in/naiveupload/Model/Pagination.js'
             }
         },
         {
             Tag: "script",
             Attributes: {
                 type: 'text/javascript',
-                src: ApiUri.BaseUrl + '/Model/LibraryInfo.js'
+                src: ApiUri.BaseUrl + '/plug-in/naiveupload/Model/LibraryInfo.js'
             }
         },
         {
             Tag: "script",
             Attributes: {
                 type: 'text/javascript',
-                src: ApiUri.BaseUrl + '/Model/VideoInfo.js'
+                src: ApiUri.BaseUrl + '/plug-in/naiveupload/Model/VideoInfo.js'
             }
         }
     ], function () {
@@ -321,7 +321,7 @@ window.onload = function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4, Upload.UpdateConfig('6D9A0000-F269-0025-F631-08D98FA532D4')];
+                        return [4, Upload.UpdateConfig('default')];
                     case 1:
                         _a.sent();
                         return [3, 3];
@@ -493,7 +493,7 @@ window.onload = function () {
                 Main.sa.loading = false;
                 if (response.data.Success) {
                     MultipleUploadSettings.Headers['Authorization'] = response.data.Data.AccessToken;
-                    setTimeout(RefreshToken, new Date(response.data.Data.Expires).getTime() - new Date().getTime() - 60 * 1000);
+                    setTimeout(RefreshToken, new Date(response.data.Data.Expires).getTime() - new Date(response.data.Data.Created).getTime() - 60 * 1000);
                     Main.sa.show = false;
                 }
                 else

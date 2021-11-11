@@ -13,7 +13,6 @@ using Microservice.Library.FreeSql.Extention;
 using Microservice.Library.FreeSql.Gen;
 using Microservice.Library.OpenApi.Extention;
 using Microservice.Library.SelectOption;
-using Microsoft.IdentityModel.Tokens;
 using Model.Common;
 using Model.System;
 using Model.System.UserDTO;
@@ -21,10 +20,8 @@ using Model.Utils.Pagination;
 using Model.Utils.SampleAuthentication.SampleAuthenticationDTO;
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using System.Text;
 
 namespace Business.Implementation.System
 {
@@ -499,9 +496,9 @@ namespace Business.Implementation.System
 
         public AuthenticationInfo Login(string account, string password)
         {
-            var again = false;
-            again:
-            if (again)
+            bool? again = null;
+        again:
+            if (again == false)
                 throw new MessageException("登录失败.");
 
             var user = Repository.Where(o => o.Account == account)
@@ -509,6 +506,12 @@ namespace Business.Implementation.System
 
             if (user == default)
             {
+                if (again != null)
+                {
+                    again = false;
+                    goto again;
+                }
+
                 if (account.Equals(Config.AdminAccount) && password.Equals(Config.AdminInitPassword) && Repository.Select.Count() == 0)
                 {
                     InitAdmin();

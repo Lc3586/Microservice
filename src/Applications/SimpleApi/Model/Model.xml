@@ -2756,6 +2756,11 @@
             访问令牌
             </summary>
         </member>
+        <member name="P:Model.Utils.JWT.JWTDTO.TokenInfo.Created">
+            <summary>
+            创建时间
+            </summary>
+        </member>
         <member name="P:Model.Utils.JWT.JWTDTO.TokenInfo.Expires">
             <summary>
             过期时间

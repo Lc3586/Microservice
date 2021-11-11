@@ -3,10 +3,10 @@
 
     //接口地址
     const apiUrls = {
-        saLogin: '/sa/login',
-        state: '/system-console/state',
-        shutdown: '/system-console/shutdown',
-        reboot: '/system-console/reboot'
+        saLogin: window.BaseUrl + '/sa/login',
+        state: window.BaseUrl + '/system-console/state',
+        shutdown: window.BaseUrl + '/system-console/shutdown',
+        reboot: window.BaseUrl + '/system-console/reboot'
     };
 
     //vue实例

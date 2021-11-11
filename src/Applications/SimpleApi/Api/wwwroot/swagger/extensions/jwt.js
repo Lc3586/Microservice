@@ -166,7 +166,7 @@ window.onInformationLoaded(() => {
 
                 if (data) {
                     //定时更新令牌
-                    window.delayedEvent(refreshToken, null, new Date(tokenInfo.Expires) - new Date() - 60 * 1000, 'refresh-Token');
+                    window.delayedEvent(refreshToken, null, new Date(tokenInfo.Expires) - new Date(tokenInfo.Created).getTime() - 60 * 1000, 'refresh-Token');
                 } else
                     window.localStorage.removeItem('jwt-token');
             };

@@ -998,6 +998,9 @@ new
             if (!Operator.IsSuperAdmin && !AuthoritiesBusiness.CurrentAccountHasCFUC(id))
                 throw new MessageException("无权限.");
 
+            if (string.Equals(id, "default", StringComparison.OrdinalIgnoreCase))
+                id = Repository.Where(o => o.Level == 1 && o.Enable == true && o.Public == true).OrderByDescending(o => o.Sort).ToOne(o => o.Id);
+
             var entity = Repository
                 .Where(o => o.Id == id)
                 .ToOne(o => new

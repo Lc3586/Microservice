@@ -60,7 +60,7 @@ class ChunkFileMergeTaskHelper {
                         Tag: ImportFileTag.JS,
                         Attributes: {
                             type: 'text/javascript',
-                            src: ApiUri.BaseUrl + '/../utils/signalr.min.js'
+                            src: ApiUri.BaseUrl + '/utils/signalr.min.js'
                         }
                     }],
                 () => {

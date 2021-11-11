@@ -50,7 +50,7 @@ window.onInformationLoaded(() => {
                         '确认': {
                             'click': () => {
                                 close();
-                                let url = '/plug-in/wechat/qrcode.html?method=bind&userId=' + $('#key_0').val() + '&asyncUserInfo=' + $('#key_1').val() + '&size=' + $('#key_2').val();
+                                let url = window.baseUri + '/plug-in/wechat/qrcode.html?method=bind&userId=' + $('#key_0').val() + '&asyncUserInfo=' + $('#key_1').val() + '&size=' + $('#key_2').val();
                                 window.showDialog(
                                     '系统用户绑定微信',
                                     [

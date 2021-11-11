@@ -74,13 +74,15 @@ namespace Business.Utils.JWT
         {
             claims.RemoveAll(o => o.Type == "iss" || o.Type == "aud");
 
-            var expires = DateTime.Now.AddTicks(Config.JWT.Validity.Ticks);
+            var now = DateTime.Now;
+
+            var expires = now.AddTicks(Config.JWT.Validity.Ticks);
 
             var token = new JwtSecurityToken(
                                 Config.JWT.Issuer,
                                 Config.JWT.Audience,
                                 claims,
-                                DateTime.Now.AddMinutes(1),
+                                now.AddMinutes(1),
                                 expires,
                                 Credentials
                         );
@@ -88,6 +90,7 @@ namespace Business.Utils.JWT
             var result = new TokenInfo
             {
                 AccessToken = Handler.WriteToken(token),
+                Created = now,
                 Expires = expires
             };
 
