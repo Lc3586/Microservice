@@ -1,5 +1,8 @@
-﻿using DataMigration.Application.Log;
+﻿using DataMigration.Application.Extension;
+using DataMigration.Application.Log;
 using DataMigration.Application.Model;
+using Microservice.Library.Extension;
+using Microservice.Library.FreeSql.Extention;
 using Microservice.Library.FreeSql.Gen;
 using System;
 using System.Linq;
@@ -56,6 +59,10 @@ namespace DataMigration.Application.Handler
             Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "同步外键.");
 
             SyncForeigns();
+
+            Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "同步注释.");
+
+            SyncComment();
         }
 
         /// <summary>
@@ -80,11 +87,9 @@ namespace DataMigration.Application.Handler
         {
             try
             {
-                var orm_source = FreeSqlMultipleProvider.GetFreeSql(0);
-                var orm_target = FreeSqlMultipleProvider.GetFreeSql(1);
+                var tables_source = FreeSqlMultipleProvider.GetTablesByDatabase(0);
+                var tables_target = FreeSqlMultipleProvider.GetTablesByDatabase(1);
 
-                var tables_source = orm_source.DbFirst.GetTablesByDatabase();
-                var tables_target = orm_target.DbFirst.GetTablesByDatabase();
                 foreach (var table_source in tables_source)
                 {
                     Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"已获取源数据库数据表: {table_source.Name}.");
@@ -118,57 +123,32 @@ namespace DataMigration.Application.Handler
                             continue;
                         }
 
+                        var character = FreeSqlMultipleProvider.GetOrm(1).Ado.GetCharacter();
+                        var fk_table = FreeSqlMultipleProvider.GetOrm(1).Ado.GetDatabaseTableName(foreign.Value.Table);
+                        var fk_referencedTable = FreeSqlMultipleProvider.GetOrm(1).Ado.GetDatabaseTableName(foreign.Value.ReferencedTable);
+                        var fk_name = foreign.Key;
+                        //var fk_name = $"{character}fk_{foreign.Value.Table.Name}_{foreign.Value.Columns[0].Name}_{foreign.Value.ReferencedTable.Name}_{foreign.ReferencedColumns[0].Name}{character}";
+
+                        //var fk_drop_sql = Config.TargetDataType == FreeSql.DataType.MySql || Config.TargetDataType == FreeSql.DataType.OdbcMySql
+                        //    ? $"ALTER TABLE {fk_table} DROP FOREIGN KEY {fk_name}"
+                        //    : $"ALTER TABLE {fk_table} DROP CONSTRAINT {fk_name}";
+
                         try
                         {
-                            switch (Config.TargetDataType)
-                            {
-                                case FreeSql.DataType.Odbc:
-                                case FreeSql.DataType.MySql:
-                                case FreeSql.DataType.OdbcMySql:
-                                case FreeSql.DataType.SqlServer:
-                                case FreeSql.DataType.OdbcSqlServer:
-                                case FreeSql.DataType.Oracle:
-                                case FreeSql.DataType.OdbcOracle:
-                                case FreeSql.DataType.PostgreSQL:
-                                case FreeSql.DataType.OdbcPostgreSQL:
-                                case FreeSql.DataType.MsAccess:
-                                case FreeSql.DataType.Dameng:
-                                case FreeSql.DataType.OdbcDameng:
-                                case FreeSql.DataType.KingbaseES:
-                                case FreeSql.DataType.OdbcKingbaseES:
-                                case FreeSql.DataType.ShenTong:
-                                case FreeSql.DataType.Firebird:
-                                default:
-                                    var character = Config.TargetDataType == FreeSql.DataType.MySql || Config.TargetDataType == FreeSql.DataType.OdbcMySql
-                                        ? '`'
-                                        : '"';
-                                    var fk_table = $"{character}{(new[] { "public", "dbo" }.Contains(foreign.Value.Table.Schema) ? "" : foreign.Value.Table.Schema)}{character}.{character}{foreign.Value.Table.Name}{character}".Replace($"{character}{character}.", "");
-                                    var fk_referencedTable = $"{character}{(new[] { "public", "dbo" }.Contains(foreign.Value.ReferencedTable.Schema) ? "" : foreign.Value.ReferencedTable.Schema)}{character}.{character}{foreign.Value.ReferencedTable.Name}{character}".Replace($"{character}{character}.", "");
-                                    var fk_name = foreign.Key;
-                                    //var fk_name = $"{character}fk_{foreign.Value.Table.Name}_{foreign.Value.Columns[0].Name}_{foreign.Value.ReferencedTable.Name}_{foreign.ReferencedColumns[0].Name}{character}";
+                            ////移除旧有外键
+                            //if (orm_target.Ado.ExecuteNonQuery(fk_drop_sql) < 0)
+                            //    throw new ApplicationException($"移除已有外键失败: {fk_drop_sql}.");
 
-                                    ////移除旧有外键
-                                    //var fk_drop_sql = Config.TargetDataType == FreeSql.DataType.MySql || Config.TargetDataType == FreeSql.DataType.OdbcMySql
-                                    //    ? $"ALTER TABLE {fk_table} DROP FOREIGN KEY {fk_name}"
-                                    //    : $"ALTER TABLE {fk_table} DROP CONSTRAINT {fk_name}";
+                            //添加外键
+                            var fk_add_sql = $"ALTER TABLE {fk_table} ADD CONSTRAINT {fk_name} FOREIGN KEY ({character}{foreign.Value.Columns[0].Name}{character}) REFERENCES {fk_referencedTable} ({character}{foreign.Value.ReferencedColumns[0].Name}{character})";
+                            if (FreeSqlMultipleProvider.GetOrm(1).Ado.ExecuteNonQuery(fk_add_sql) < 0)
+                                throw new ApplicationException($"执行sql失败: {fk_add_sql}, 请检查数据库版本是否支持SQL-92中移除&添加外键的语法.");
 
-                                    //if (orm_target.Ado.ExecuteNonQuery(fk_drop_sql) < 0)
-                                    //    throw new ApplicationException($"移除已有外键失败: {fk_drop_sql}.");
-
-                                    //添加外键
-                                    var fk_add_sql = $"ALTER TABLE {fk_table} ADD CONSTRAINT {fk_name} FOREIGN KEY ({character}{foreign.Value.Columns[0].Name}{character}) REFERENCES {fk_referencedTable} ({character}{foreign.Value.ReferencedColumns[0].Name}{character})";
-                                    if (orm_target.Ado.ExecuteNonQuery(fk_add_sql) < 0)
-                                        throw new ApplicationException($"添加外键失败: {fk_add_sql}.");
-
-                                    Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "已添加.");
-                                    break;
-                                case FreeSql.DataType.Sqlite:
-                                    throw new ApplicationException("Sqlite不支持SQL-92中移除&添加外键的语法.");
-                            }
+                            Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "已添加.");
                         }
                         catch (Exception ex)
                         {
-                            Logger.Log(NLog.LogLevel.Warn, LogType.警告信息, $"添加外键失败: {table_source.Name}.", null, ex);
+                            Logger.Log(NLog.LogLevel.Warn, LogType.警告信息, $"添加外键失败: {table_target.Name}.", null, ex);
                         }
                     }
                 }
@@ -176,6 +156,77 @@ namespace DataMigration.Application.Handler
             catch (Exception ex)
             {
                 throw new ApplicationException("同步外键失败.", ex);
+            }
+        }
+
+        /// <summary>
+        /// 同步注释
+        /// </summary>
+        void SyncComment()
+        {
+            try
+            {
+                var tables_source = FreeSqlMultipleProvider.GetTablesByDatabase(0);
+                var tables_target = FreeSqlMultipleProvider.GetTablesByDatabase(1);
+
+                foreach (var table_source in tables_source)
+                {
+                    Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"已获取源数据库数据表: {table_source.Name}.");
+
+                    var table_target = tables_target.FirstOrDefault(o => o.Name.ToLower() == table_source.Name.ToLower());
+
+                    if (table_target == null)
+                    {
+                        Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "已忽略: 目标数据库数据表不存在.");
+                        continue;
+                    }
+
+                    var character = FreeSqlMultipleProvider.GetOrm(1).Ado.GetCharacter();
+
+                    var comment_add_sql = string.Empty;
+
+                    var columns_comment = string.Join(",", table_source.Columns
+                        .Where(c => !c.Coment.IsNullOrWhiteSpace())
+                        .Select(c =>
+                        {
+                            Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到列注释: {c.Coment}.");
+                            return $"MODIFY COLUMN {character}{c.Name}{character} {c.DbTypeTextFull} {(c.IsNullable ? "NULL" : "NOT NULL")} {(c.DefaultValue == null ? c.IsNullable ? "DEFAULT NULL" : "" : $"DEFAULT {c.DefaultValue}")} COMMENT '{c.Coment}'";
+                        }));
+
+                    if (table_target.Comment.IsNullOrWhiteSpace() && columns_comment.IsNullOrWhiteSpace())
+                    {
+                        Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "已忽略: 源数据库数据表未检测到任何注释.");
+                        continue;
+                    }
+
+                    comment_add_sql = $"ALTER TABLE {FreeSqlMultipleProvider.GetOrm(1).Ado.GetDatabaseTableName(table_source)} " + columns_comment;
+
+                    if (columns_comment.IsNullOrWhiteSpace())
+                        comment_add_sql += "Add";
+
+                    if (!table_target.Comment.IsNullOrWhiteSpace())
+                    {
+                        Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到表注释: {table_target.Comment}.");
+
+                        comment_add_sql += $"COMMENT = '{table_target.Comment}'";
+                    }
+
+                    try
+                    {
+                        if (FreeSqlMultipleProvider.GetOrm(1).Ado.ExecuteNonQuery(comment_add_sql) < 0)
+                            throw new ApplicationException($"执行sql失败: {comment_add_sql}, 请检查数据库版本是否支持SQL-92中添加注释的语法.");
+
+                        Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "已添加.");
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Log(NLog.LogLevel.Warn, LogType.警告信息, $"添加注释失败: {table_target.Name}.", null, ex);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("同步注释失败.", ex);
             }
         }
     }
