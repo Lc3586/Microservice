@@ -77,6 +77,7 @@ namespace DataMigration.Application.Handler
 
             var types = Config.EntityAssemblyFiles.SelectMany(o => Assembly.LoadFile(o).GetTypes()).ToList();
             types.ForEach(o => Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"已获取实体类: {o.FullName}."));
+            Extension.Extension.SetEntitys(types);
         }
 
         /// <summary>

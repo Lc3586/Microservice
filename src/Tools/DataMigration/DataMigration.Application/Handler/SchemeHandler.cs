@@ -94,7 +94,7 @@ namespace DataMigration.Application.Handler
                 {
                     Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"已获取源数据库数据表: {table_source.Name}.");
 
-                    var table_target = tables_target.FirstOrDefault(o => o.Name.ToLower() == table_source.Name.ToLower());
+                    var table_target = tables_target.FirstOrDefault(o => string.Equals(o.Name, table_source.Name, StringComparison.OrdinalIgnoreCase));
 
                     if (table_target == null)
                     {
@@ -114,10 +114,10 @@ namespace DataMigration.Application.Handler
 
                         if (table_target.ForeignsDict.ContainsKey(foreign.Key)
                             || table_target.ForeignsDict.Values.Any(o =>
-                            o.Table.Name.ToLower() == foreign.Value.Table.Name.ToLower()
-                            && o.ReferencedTable.Name.ToLower() == foreign.Value.ReferencedTable.Name.ToLower()
-                            && o.Table.Columns.Count == o.Table.Columns.Count(p => foreign.Value.Table.Columns.Any(q => q.Name == p.Name))
-                            && o.ReferencedTable.Columns.Count == o.ReferencedTable.Columns.Count(p => foreign.Value.ReferencedTable.Columns.Any(q => q.Name == p.Name))))
+                                string.Equals(o.Table.Name, foreign.Value.Table.Name, StringComparison.OrdinalIgnoreCase)
+                                && string.Equals(o.ReferencedTable.Name, foreign.Value.ReferencedTable.Name, StringComparison.OrdinalIgnoreCase)
+                                && o.Table.Columns.Count == o.Table.Columns.Count(p => foreign.Value.Table.Columns.Any(q => q.Name == p.Name))
+                                && o.ReferencedTable.Columns.Count == o.ReferencedTable.Columns.Count(p => foreign.Value.ReferencedTable.Columns.Any(q => q.Name == p.Name))))
                         {
                             Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "已忽略: 目标数据库数据表已存在该外键.");
                             continue;
@@ -173,7 +173,7 @@ namespace DataMigration.Application.Handler
                 {
                     Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"已获取源数据库数据表: {table_source.Name}.");
 
-                    var table_target = tables_target.FirstOrDefault(o => o.Name.ToLower() == table_source.Name.ToLower());
+                    var table_target = tables_target.FirstOrDefault(o => string.Equals(o.Name, table_source.Name, StringComparison.OrdinalIgnoreCase));
 
                     if (table_target == null)
                     {

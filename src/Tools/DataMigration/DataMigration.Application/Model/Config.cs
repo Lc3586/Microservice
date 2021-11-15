@@ -82,6 +82,21 @@ namespace DataMigration.Application.Model
         public OperationType OperationType { get; set; }
 
         /// <summary>
+        /// 数据检查
+        /// </summary>
+        public bool DataCheck { get; set; }
+
+        /// <summary>
+        /// 数据分页大小
+        /// </summary>
+        public int DataPageSize { get; set; }
+
+        /// <summary>
+        /// 使用批量插入功能（如果数据库支持的话）
+        /// </summary>
+        public bool UseBulkCopy { get; set; }
+
+        /// <summary>
         /// 实体类名 -> 数据库表名&列名，命名转换规则（类名、属性名都生效）
         /// </summary>
         public NameConvertType? SyncStructureNameConvert { get; set; }

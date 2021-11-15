@@ -74,6 +74,15 @@ namespace DataMigration.Application
         [Option("-o|--OperationType", Description = "操作类型（默认All）.")]
         public OperationType OperationType { get; } = OperationType.All;
 
+        [Option("-dc|--DataCheck", Description = "数据检查（默认false）.")]
+        public bool DataCheck { get; } = false;
+
+        [Option("-dps|--DataPageSize", Description = "数据分页大小（默认10000）.")]
+        public int DataPageSize { get; } = 10000;
+
+        [Option("-bc|--UseBulkCopy", Description = "使用批量插入功能（如果数据库支持的话）（默认true）.")]
+        public bool UseBulkCopy { get; } = true;
+
         #endregion
 
 #pragma warning disable CS1998 // 异步方法缺少 "await" 运算符，将以同步方式运行
@@ -164,8 +173,8 @@ namespace DataMigration.Application
                 }
 
 #if DEBUG
-                //TargetConnectingString = $"Server=127.0.0.1;Port=3306;Database=data_migration_test;User ID=root;Password=root666;Charset=utf8;SslMode=none;Max pool size=500;";
-                TargetConnectingString = $"Server=192.168.1.116;Port=3306;Database=211106;User ID=211106;Password=211106TuruiMYSQL;Charset=utf8;SslMode=none;Max pool size=500;";
+                //TargetConnectingString = $"Server=127.0.0.1;Port=3306;Database=data_migration_test;User ID=root;Password=root666;Charset=utf8;SslMode=none;Max pool size=500;AllowLoadLocalInfile=true;";
+                TargetConnectingString = $"Server=192.168.1.116;Port=3306;Database=211106;User ID=211106;Password=211106TuruiMYSQL;Charset=utf8;SslMode=none;Max pool size=500;AllowLoadLocalInfile=true;";
 #endif
                 config.TargetConnectingString = TargetConnectingString;
 #if DEBUG
@@ -194,6 +203,12 @@ namespace DataMigration.Application
 
                 config.OperationType = OperationType;
                 $"操作类型: {OperationType}.\r\n".ConsoleWrite();
+                config.DataCheck = DataCheck;
+                $"数据检查: {(DataCheck ? '是' : '否')}.\r\n".ConsoleWrite();
+                config.DataPageSize = DataPageSize;
+                $"数据分页大小: {DataPageSize}.\r\n".ConsoleWrite();
+                config.UseBulkCopy = UseBulkCopy;
+                $"使用批量插入功能: {(UseBulkCopy ? '是' : '否')}.\r\n".ConsoleWrite();
                 config.SyncStructureNameConvert = SyncStructureNameConvert;
                 $"实体类名 -> 数据库表名&列名，命名转换规则: {SyncStructureNameConvert}.\r\n".ConsoleWrite();
                 config.EntityRazorTemplateFile = Path.IsPathRooted(EntityRazorTemplateFile) ? EntityRazorTemplateFile : Path.GetFullPath(EntityRazorTemplateFile, AppContext.BaseDirectory);

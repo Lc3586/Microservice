@@ -1,5 +1,6 @@
 ﻿using FreeSql.DatabaseModel;
 using Microservice.Library.FreeSql.Gen;
+using System;
 using System.Collections.Generic;
 
 namespace DataMigration.Application.Extension
@@ -13,6 +14,11 @@ namespace DataMigration.Application.Extension
         /// 数据库表集合
         /// </summary>
         static readonly Dictionary<int, List<DbTableInfo>> Tables = new Dictionary<int, List<DbTableInfo>>();
+
+        /// <summary>
+        /// 数据库实体集合
+        /// </summary>
+        static List<Type> Entitys;
 
         /// <summary>
         /// 获取Orm
@@ -40,6 +46,23 @@ namespace DataMigration.Application.Extension
             var tables = orm.DbFirst.GetTablesByDatabase();
             Tables.Add(key, tables);
             return tables;
+        }
+
+        /// <summary>
+        /// 设置数据库实体集合
+        /// </summary>
+        public static void SetEntitys(List<Type> types)
+        {
+            Entitys = types;
+        }
+
+        /// <summary>
+        /// 获取数据库实体集合
+        /// </summary>
+        /// <returns></returns>
+        public static List<Type> GetEntitys()
+        {
+            return Entitys;
         }
     }
 }
