@@ -83,6 +83,9 @@ namespace DataMigration.Application
         [Option("-bc|--UseBulkCopy", Description = "使用批量插入功能（如果数据库支持的话）（默认true）.")]
         public bool UseBulkCopy { get; } = true;
 
+        [Option("-sql|--UseSql", CommandOptionType.MultipleValue, Description = "自定义SQL查询语句.")]
+        public List<string> UseSql { get; }
+
         #endregion
 
 #pragma warning disable CS1998 // 异步方法缺少 "await" 运算符，将以同步方式运行
