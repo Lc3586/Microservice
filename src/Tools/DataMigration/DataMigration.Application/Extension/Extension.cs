@@ -2,6 +2,7 @@
 using Microservice.Library.FreeSql.Gen;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace DataMigration.Application.Extension
 {
@@ -18,7 +19,7 @@ namespace DataMigration.Application.Extension
         /// <summary>
         /// 数据库实体集合
         /// </summary>
-        static List<Type> Entitys;
+        static List<Type> EntityTypes;
 
         /// <summary>
         /// 获取Orm
@@ -51,18 +52,40 @@ namespace DataMigration.Application.Extension
         /// <summary>
         /// 设置数据库实体集合
         /// </summary>
-        public static void SetEntitys(List<Type> types)
+        public static void SetEntityTypes(List<Type> types)
         {
-            Entitys = types;
+            EntityTypes = types;
         }
 
         /// <summary>
         /// 获取数据库实体集合
         /// </summary>
         /// <returns></returns>
-        public static List<Type> GetEntitys()
+        public static List<Type> GetEntityTypes()
         {
-            return Entitys;
+            return EntityTypes;
+        }
+
+        /// <summary>
+        /// 获取正则表达式在字符串中匹配到的值
+        /// </summary>
+        /// <param name="input">输入字符串</param>
+        /// <param name="pattern">正则表达式</param>
+        /// <returns>值集合, 未匹配成功时返回null</returns>
+        public static List<string> Match(this string input, string pattern)
+        {
+            var match = Regex.Match(input, pattern);
+            if (!match.Success)
+                return null;
+
+            var values = new List<string>();
+
+            for (int i = 1; i < match.Groups.Count; i++)
+            {
+                values.Add(match.Groups[i].Value);
+            }
+
+            return values;
         }
     }
 }

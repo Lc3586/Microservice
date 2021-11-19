@@ -2,7 +2,7 @@
   "profiles": {
     "DataMigration.Application": {
       "commandName": "Project",
-      "commandLineArgs": "-sc \"user id=SAFETYEDU2;password=sedu#2019;data source=//122.112.150.191:1521/ORCL;Pooling=true;Max Pool Size=500;\" -st Oracle -tc \"Server=mysql.turuitech.com;Port=3306;Database=safetyedu2;User ID=edu;Password=turui123456;Charset=utf8;SslMode=none;Max pool size=500;AllowLoadLocalInfile=true;\" -tt MySql -o Schema"
+      "commandLineArgs": "-sc \"user id=SAFETYEDU2;password=sedu#2019;data source=//122.112.150.191:1521/ORCL;Pooling=true;Max Pool Size=500;\" -st Oracle -tc \"Server=mysql.turuitech.com;Port=3306;Database=safetyedu2;User ID=edu;Password=turui123456;Charset=utf8;SslMode=none;Max pool size=500;AllowLoadLocalInfile=true;\" -tt MySql -o Data -sql \"$[bizbatch]{select * from \\\"BizBatch\\\" where \\\"Status\\\"='已完成'}\""
     }
   }
 }

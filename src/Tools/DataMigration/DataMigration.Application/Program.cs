@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using DataMigration.Application.Configures;
+using DataMigration.Application.Extension;
 using DataMigration.Application.Handler;
 using DataMigration.Application.Log;
 using DataMigration.Application.Model;
@@ -62,14 +63,14 @@ namespace DataMigration.Application
         [Option("-tt|--TargetDataType", Description = "目标数据库类型.")]
         public DataType TargetDataType { get; set; }
 
-        [Option("-e|--EntityAssemblys", Description = "实体类命名空间（存在多个时使用半角逗号[,]分隔，未设置此值时，将会自动生成实体类）.")]
-        string EntityAssemblys { get; set; } = null;
+        [Option("-e|--EntityAssembly", CommandOptionType.MultipleValue, Description = "实体类命名空间（存在多个时使用半角逗号[,]分隔，未设置此值时，将会自动生成实体类）.")]
+        public List<string> EntityAssemblys { get; set; } = null;
 
         [Option("-nc|--SyncStructureNameConvert", Description = "实体类名 -> 数据库表名&列名，命名转换规则（类名、属性名都生效）（默认None）.")]
-        NameConvertType? SyncStructureNameConvert { get; } = null;
+        public NameConvertType? SyncStructureNameConvert { get; } = null;
 
         [Option("-rt|--EntityRazorTemplateFile", Description = "实体类Razor模板文件.")]
-        string EntityRazorTemplateFile { get; } = "RazorTemplates/实体类+特性+导航属性（支持子父级结构）.cshtml";
+        public string EntityRazorTemplateFile { get; } = "RazorTemplates/实体类+特性+导航属性（支持子父级结构）.cshtml";
 
         [Option("-o|--OperationType", Description = "操作类型（默认All）.")]
         public OperationType OperationType { get; } = OperationType.All;
@@ -83,7 +84,7 @@ namespace DataMigration.Application
         [Option("-bc|--UseBulkCopy", Description = "使用批量插入功能（如果数据库支持的话）（默认true）.")]
         public bool UseBulkCopy { get; } = true;
 
-        [Option("-sql|--UseSql", CommandOptionType.MultipleValue, Description = "自定义SQL查询语句.")]
+        [Option("-sql|--UseSql", CommandOptionType.MultipleValue, Description = "使用自定义SQL查询语句（格式：$[表名(不区分大小写)]{SQL查询语句}, 示例: $[TableA]{select * from TableA where Enable=1}）.")]
         public List<string> UseSql { get; }
 
         #endregion
@@ -188,10 +189,10 @@ namespace DataMigration.Application
                 $"目标数据库类型: {TargetDataType}.\r\n".ConsoleWrite();
 
 #if DEBUG
-                EntityAssemblys = "Entitys.Project/Entity_132808334922190308/Build/Debug/Entity_132808334922190308.dll";
+                EntityAssemblys = new List<string> { "Entitys.Project/Entity_132808334922190308/Build/Debug/Entity_132808334922190308.dll" };
 #endif
 
-                if (EntityAssemblys.IsNullOrWhiteSpace())
+                if (!EntityAssemblys.Any_Ex())
                 {
                     $"未设置实体类dll文件，将使用工具自动生成实体类.".ConsoleWrite();
                     config.EntityAssemblyFiles = new List<string> { EntityHandler.BuildFileAbsolutePath };
@@ -200,8 +201,8 @@ namespace DataMigration.Application
                 }
                 else
                 {
-                    config.EntityAssemblyFiles = EntityAssemblys.Split(',').Select(o => Path.IsPathRooted(o) ? o : Path.GetFullPath(o, AppContext.BaseDirectory)).ToList();
-                    $"实体类dll文件: {EntityAssemblys}.\r\n".ConsoleWrite();
+                    config.EntityAssemblyFiles = EntityAssemblys.Select(o => Path.IsPathRooted(o) ? o : Path.GetFullPath(o, AppContext.BaseDirectory)).ToList();
+                    $"实体类dll文件: { string.Join(";", EntityAssemblys) }.\r\n".ConsoleWrite();
                 }
 
                 config.OperationType = OperationType;
@@ -212,6 +213,9 @@ namespace DataMigration.Application
                 $"数据分页大小: {DataPageSize}.\r\n".ConsoleWrite();
                 config.UseBulkCopy = UseBulkCopy;
                 $"使用批量插入功能: {(UseBulkCopy ? '是' : '否')}.\r\n".ConsoleWrite();
+                config.UseSql = UseSql?.Select(o => o.Match(@$"[$][[](.*?)[]]{{(.*?)}}"))
+                    .Where(o => o != null)
+                    .ToDictionary(k => k[0].ToLower(), v => v[1]);
                 config.SyncStructureNameConvert = SyncStructureNameConvert;
                 $"实体类名 -> 数据库表名&列名，命名转换规则: {SyncStructureNameConvert}.\r\n".ConsoleWrite();
                 config.EntityRazorTemplateFile = Path.IsPathRooted(EntityRazorTemplateFile) ? EntityRazorTemplateFile : Path.GetFullPath(EntityRazorTemplateFile, AppContext.BaseDirectory);

@@ -97,6 +97,11 @@ namespace DataMigration.Application.Model
         public bool UseBulkCopy { get; set; }
 
         /// <summary>
+        /// 使用自定义SQL查询语句
+        /// </summary>
+        public Dictionary<string, string> UseSql { get; set; }
+
+        /// <summary>
         /// 实体类名 -> 数据库表名&列名，命名转换规则（类名、属性名都生效）
         /// </summary>
         public NameConvertType? SyncStructureNameConvert { get; set; }
