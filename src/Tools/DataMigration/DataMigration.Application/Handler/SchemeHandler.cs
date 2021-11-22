@@ -1,10 +1,12 @@
 ﻿using DataMigration.Application.Extension;
 using DataMigration.Application.Log;
 using DataMigration.Application.Model;
+using FreeSql.DatabaseModel;
 using Microservice.Library.Extension;
 using Microservice.Library.FreeSql.Extention;
 using Microservice.Library.FreeSql.Gen;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace DataMigration.Application.Handler
@@ -29,6 +31,11 @@ namespace DataMigration.Application.Handler
         /// 
         /// </summary>
         readonly IFreeSqlMultipleProvider<int> FreeSqlMultipleProvider;
+
+        /// <summary>
+        /// 数据库表信息
+        /// </summary>
+        Dictionary<int, List<DbTableInfo>> Tables;
 
         /// <summary>
         /// 处理
@@ -72,12 +79,41 @@ namespace DataMigration.Application.Handler
         {
             try
             {
-                FreeSqlMultipleProvider.SyncStructure(1);
+                var entityTypes = FreeSqlMultipleProvider.GetEntityTypes(
+                    0,
+                    Config.TableMatch?.ContainsKey(OperationType.Schema) == true ? Config.TableMatch[OperationType.Schema] : null,
+                    Config.Tables?.ContainsKey(OperationType.Schema) == true ? Config.Tables[OperationType.Schema] : null,
+                    Config.ExclusionTables?.ContainsKey(OperationType.Schema) == true ? Config.ExclusionTables[OperationType.Schema] : null);
+
+                if (entityTypes.Any_Ex())
+                    FreeSqlMultipleProvider.GetOrm(1).CodeFirst.SyncStructure(entityTypes.ToArray());
+
+                //FreeSqlMultipleProvider.SyncStructure(1);
             }
             catch (Exception ex)
             {
                 throw new ApplicationException("同步结构失败.", ex);
             }
+        }
+
+        /// <summary>
+        /// 获取数据库表
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        List<DbTableInfo> GetTables(int key)
+        {
+            if (Tables == null)
+                Tables = new Dictionary<int, List<DbTableInfo>>();
+
+            if (!Tables.ContainsKey(key))
+                Tables.Add(key, FreeSqlMultipleProvider.GetTablesByDatabase(
+                         0,
+                         Config.TableMatch?.ContainsKey(OperationType.Schema) == true ? Config.TableMatch[OperationType.Schema] : null,
+                         Config.Tables?.ContainsKey(OperationType.Schema) == true ? Config.Tables[OperationType.Schema] : null,
+                         Config.ExclusionTables?.ContainsKey(OperationType.Schema) == true ? Config.ExclusionTables[OperationType.Schema] : null));
+
+            return Tables[key];
         }
 
         /// <summary>
@@ -87,8 +123,8 @@ namespace DataMigration.Application.Handler
         {
             try
             {
-                var tables_source = FreeSqlMultipleProvider.GetTablesByDatabase(0);
-                var tables_target = FreeSqlMultipleProvider.GetTablesByDatabase(1);
+                var tables_source = GetTables(0);
+                var tables_target = GetTables(1);
 
                 foreach (var table_source in tables_source)
                 {
@@ -166,8 +202,8 @@ namespace DataMigration.Application.Handler
         {
             try
             {
-                var tables_source = FreeSqlMultipleProvider.GetTablesByDatabase(0);
-                var tables_target = FreeSqlMultipleProvider.GetTablesByDatabase(1);
+                var tables_source = GetTables(0);
+                var tables_target = GetTables(1);
 
                 foreach (var table_source in tables_source)
                 {

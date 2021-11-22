@@ -203,6 +203,8 @@ namespace DataMigration.Application.Handler
             try
             {
                 var cmd = $"FreeSql.Generator -Razor \"{Config.EntityRazorTemplateFile}\" -NameSpace \"DataMigration.Entitys\" -DB \"{Config.SourceDataType},{Config.SourceConnectingString}\" -Output \"{TempDirectoryAbsolutePath}\"";
+                if (Config.TableMatch?.ContainsKey(OperationType.All) == true)
+                    cmd += $" -Match {Config.TableMatch[OperationType.All]}";
                 await CallCmd(cmd, null, AppContext.BaseDirectory);
             }
             catch (Exception ex)
@@ -241,6 +243,17 @@ namespace DataMigration.Application.Handler
         /// <returns></returns>
         async Task BuildCSProject()
         {
+            if (Config.Tables.Any_Ex() || Config.ExclusionTables.Any_Ex())
+                //清除不需要的表
+                foreach (var file in new DirectoryInfo(TempDirectoryAbsolutePath).GetFiles("*.cs", SearchOption.TopDirectoryOnly))
+                {
+                    if (!Config.Tables.Any_Ex(o => file.Name.IndexOf($"{o}.cs", StringComparison.OrdinalIgnoreCase) == 0))
+                        file.Delete();
+
+                    if (Config.ExclusionTables.Any_Ex(o => file.Name.IndexOf($"{o}.cs", StringComparison.OrdinalIgnoreCase) == 0))
+                        file.Delete();
+                }
+
             var configuration = "Release";
 #if DEBUG
             configuration = "Debug";

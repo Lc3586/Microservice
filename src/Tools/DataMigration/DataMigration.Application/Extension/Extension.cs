@@ -1,7 +1,9 @@
 ﻿using FreeSql.DatabaseModel;
+using Microservice.Library.Extension;
 using Microservice.Library.FreeSql.Gen;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace DataMigration.Application.Extension
@@ -11,11 +13,6 @@ namespace DataMigration.Application.Extension
     /// </summary>
     public static class Extension
     {
-        /// <summary>
-        /// 数据库表集合
-        /// </summary>
-        static readonly Dictionary<int, List<DbTableInfo>> Tables = new Dictionary<int, List<DbTableInfo>>();
-
         /// <summary>
         /// 数据库实体集合
         /// </summary>
@@ -37,16 +34,28 @@ namespace DataMigration.Application.Extension
         /// </summary>
         /// <param name="freeSqlMultipleProvider">构造器</param>
         /// <param name="key">数据库标识</param>
+        /// <param name="tableMatch">表名正则表达式</param>
+        /// <param name="tables">指定数据库表名</param>
+        /// <param name="exclusionTables">排除数据库表名</param>
         /// <returns></returns>
-        public static List<DbTableInfo> GetTablesByDatabase(this IFreeSqlMultipleProvider<int> freeSqlMultipleProvider, int key)
+        public static List<DbTableInfo> GetTablesByDatabase(this IFreeSqlMultipleProvider<int> freeSqlMultipleProvider, int key, string tableMatch = null, List<string> tables = null, List<string> exclusionTables = null)
         {
-            if (Tables.ContainsKey(key))
-                return Tables[key];
-
             var orm = freeSqlMultipleProvider.GetOrm(key);
-            var tables = orm.DbFirst.GetTablesByDatabase();
-            Tables.Add(key, tables);
-            return tables;
+            var dbTables = new List<DbTableInfo>();
+
+            if (tables.Any_Ex())
+                tables.ForEach(o => dbTables.Add(orm.DbFirst.GetTableByName(o, true)));
+
+            if (!dbTables.Any())
+                dbTables = orm.DbFirst.GetTablesByDatabase();
+
+            if (!tableMatch.IsNullOrWhiteSpace())
+                dbTables.RemoveAll(o => Regex.IsMatch(o.Name, tableMatch) == false);
+
+            if (exclusionTables.Any_Ex())
+                dbTables.RemoveAll(o => exclusionTables.Any(p => string.Equals(o.Name, p, StringComparison.OrdinalIgnoreCase)));
+
+            return dbTables;
         }
 
         /// <summary>
@@ -64,6 +73,44 @@ namespace DataMigration.Application.Extension
         public static List<Type> GetEntityTypes()
         {
             return EntityTypes;
+        }
+
+        /// <summary>
+        /// 获取数据库表集合
+        /// </summary>
+        /// <param name="freeSqlMultipleProvider">构造器</param>
+        /// <param name="key">数据库标识</param>
+        /// <param name="tableMatch">表名正则表达式</param>
+        /// <param name="tables">指定数据库表名</param>
+        /// <param name="exclusionTables">排除数据库表名</param>
+        /// <returns></returns>
+        public static List<Type> GetEntityTypes(this IFreeSqlMultipleProvider<int> freeSqlMultipleProvider, int key, string tableMatch = null, List<string> tables = null, List<string> exclusionTables = null)
+        {
+            if (!tableMatch.IsNullOrWhiteSpace() || tables.Any_Ex() || exclusionTables.Any_Ex())
+            {
+                var orm = freeSqlMultipleProvider.GetOrm(key);
+                var result = new List<Type>();
+
+                EntityTypes.ForEach(o =>
+                {
+                    var dbTable = orm.CodeFirst.GetTableByEntity(o);
+
+                    if (!tableMatch.IsNullOrWhiteSpace() && Regex.IsMatch(dbTable.DbName, tableMatch) == false)
+                        return;
+
+                    if (!tables.Any_Ex(o => string.Equals(dbTable.DbName, o, StringComparison.OrdinalIgnoreCase)))
+                        return;
+
+                    if (exclusionTables.Any_Ex(o => string.Equals(dbTable.DbName, o, StringComparison.OrdinalIgnoreCase)))
+                        return;
+
+                    result.Add(o);
+                });
+
+                return result;
+            }
+            else
+                return EntityTypes;
         }
 
         /// <summary>
@@ -86,6 +133,38 @@ namespace DataMigration.Application.Extension
             }
 
             return values;
+        }
+
+        /// <summary>
+        /// 新增或更新
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="dic"></param>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        public static void AddOrUpdate<TKey, TValue>(this Dictionary<TKey, TValue> dic, TKey key, TValue value)
+        {
+            if (!dic.ContainsKey(key))
+                dic.Add(key, value);
+            else
+                dic[key] = value;
+        }
+
+        /// <summary>
+        /// 新增或追加
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="dic"></param>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        public static void AddOrAppend<TKey, TValue>(this Dictionary<TKey, List<TValue>> dic, TKey key, TValue value)
+        {
+            if (!dic.ContainsKey(key))
+                dic.Add(key, new List<TValue> { value });
+            else
+                dic[key].Add(value);
         }
     }
 }

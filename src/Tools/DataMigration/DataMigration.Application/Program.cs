@@ -84,8 +84,17 @@ namespace DataMigration.Application
         [Option("-bc|--UseBulkCopy", Description = "使用批量插入功能（如果数据库支持的话）（默认true）.")]
         public bool UseBulkCopy { get; } = true;
 
-        [Option("-sql|--UseSql", CommandOptionType.MultipleValue, Description = "使用自定义SQL查询语句（格式：$[表名(不区分大小写)]{SQL查询语句}, 示例: $[TableA]{select * from TableA where Enable=1}）.")]
+        [Option("-sql|--UseSql", CommandOptionType.MultipleValue, Description = "使用自定义SQL查询语句（格式：$[表名(不区分大小写)]{SQL查询语句}, 示例: --UseSql \"$[TableA]{select * from TableA where Enable=1}\"）.")]
         public List<string> UseSql { get; }
+
+        [Option("-tm|--TableMatch", CommandOptionType.MultipleValue, Description = "表名正则表达式，只生成匹配的表，如：dbo\\.TB_.+.（此值可以只针对指定的操作类型，如： --TableMatch \"$[Schema]{dbo\\.TB_.+}\" --TableMatch \"$[Data]{dbo\\.TB_A_.+}\"）")]
+        public List<string> TableMatch { get; set; }
+
+        [Option("-t|--Table", CommandOptionType.MultipleValue, Description = "指定数据库表（此值可以只针对指定的操作类型，如： --Table \"$[Data]{dbo.TB_A}\" --Table \"$[Data]{dbo.TB_B}\" --Table \"$[Data]{dbo.TB_B}\"）.")]
+        public List<string> Tables { get; set; }
+
+        [Option("-et|--ExclusionTable", CommandOptionType.MultipleValue, Description = "排除数据库表（此值可以只针对指定的操作类型，如： --ExclusionTable \"$[Data]{dbo.TB_A}\" --ExclusionTable \"$[Data]{dbo.TB_B}\"）.")]
+        public List<string> ExclusionTables { get; set; }
 
         #endregion
 
@@ -178,7 +187,11 @@ namespace DataMigration.Application
 
 #if DEBUG
                 //TargetConnectingString = $"Server=127.0.0.1;Port=3306;Database=data_migration_test;User ID=root;Password=root666;Charset=utf8;SslMode=none;Max pool size=500;AllowLoadLocalInfile=true;";
-                TargetConnectingString = $"Server=192.168.1.116;Port=3306;Database=211106;User ID=211106;Password=211106TuruiMYSQL;Charset=utf8;SslMode=none;Max pool size=500;AllowLoadLocalInfile=true;";
+                //TargetConnectingString = $"Server=192.168.1.116;Port=3306;Database=211106;User ID=211106;Password=211106TuruiMYSQL;Charset=utf8;SslMode=none;Max pool size=500;AllowLoadLocalInfile=true;";
+                //MySQL 8.0
+                TargetConnectingString = $"Server=121.5.146.9;Port=3306;Database=data_migration_test;User ID=root;Password=-3068-4411-8b9E-;Charset=utf8;SslMode=none;Max pool size=500;AllowLoadLocalInfile=true;";
+                //MariaDB 10.6
+                //TargetConnectingString = $"Server=121.5.146.9;Port=3307;Database=data_migration_test;User ID=root;Password=-3068-4411-8b9E-;Charset=utf8;SslMode=none;Max pool size=500;AllowLoadLocalInfile=true;";
 #endif
                 config.TargetConnectingString = TargetConnectingString;
 #if DEBUG
@@ -216,6 +229,37 @@ namespace DataMigration.Application
                 config.UseSql = UseSql?.Select(o => o.Match(@$"[$][[](.*?)[]]{{(.*?)}}"))
                     .Where(o => o != null)
                     .ToDictionary(k => k[0].ToLower(), v => v[1]);
+
+                TableMatch?.Select(o => o.Match(@$"[$][[](.*?)[]]{{(.*?)}}") ?? new List<string> { o })
+                    .ForEach(o =>
+                    {
+                        if (o.Count == 1)
+                            config.TableMatch.AddOrUpdate(OperationType.All, o[0]);
+                        else
+                            config.TableMatch.AddOrUpdate(o[0].ToEnum<OperationType>(), o[1]);
+                    });
+                $"表名正则表达式: { string.Join(";", config.TableMatch.Select(o => $"{o.Key} => {o.Value}")) }.\r\n".ConsoleWrite();
+
+                Tables?.Select(o => o.Match(@$"[$][[](.*?)[]]{{(.*?)}}") ?? new List<string> { o })
+                    .ForEach(o =>
+                    {
+                        if (o.Count == 1)
+                            config.Tables.AddOrAppend(OperationType.All, o[0]);
+                        else
+                            config.Tables.AddOrAppend(o[0].ToEnum<OperationType>(), o[1]);
+                    });
+                $"指定数据库表: { string.Join(";", config.Tables.Select(o => $"{o.Key} => {string.Join(",", o.Value)}")) }.\r\n".ConsoleWrite();
+
+                ExclusionTables?.Select(o => o.Match(@$"[$][[](.*?)[]]{{(.*?)}}") ?? new List<string> { o })
+                    .ForEach(o =>
+                    {
+                        if (o.Count == 1)
+                            config.ExclusionTables.AddOrAppend(OperationType.All, o[0]);
+                        else
+                            config.ExclusionTables.AddOrAppend(o[0].ToEnum<OperationType>(), o[1]);
+                    });
+                $"排除数据库表: { string.Join(";", config.ExclusionTables.Select(o => $"{o.Key} => {string.Join(",", o.Value)}")) }.\r\n".ConsoleWrite();
+
                 config.SyncStructureNameConvert = SyncStructureNameConvert;
                 $"实体类名 -> 数据库表名&列名，命名转换规则: {SyncStructureNameConvert}.\r\n".ConsoleWrite();
                 config.EntityRazorTemplateFile = Path.IsPathRooted(EntityRazorTemplateFile) ? EntityRazorTemplateFile : Path.GetFullPath(EntityRazorTemplateFile, AppContext.BaseDirectory);

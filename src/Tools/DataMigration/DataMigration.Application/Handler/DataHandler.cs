@@ -3,6 +3,7 @@ using DataMigration.Application.Log;
 using DataMigration.Application.Model;
 using Dm;
 using FreeSql;
+using FreeSql.DatabaseModel;
 using Microservice.Library.Extension;
 using Microservice.Library.FreeSql.Extention;
 using Microservice.Library.FreeSql.Gen;
@@ -12,7 +13,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -27,6 +27,14 @@ namespace DataMigration.Application.Handler
         {
             Config = config;
             FreeSqlMultipleProvider = freeSqlMultipleProvider;
+
+            var (insertMethodName, useBulkInsertMethod) = GetInsertMethodInfo();
+            InsertMethodName = insertMethodName;
+            UseBulkInsertMethod = useBulkInsertMethod;
+            InsertAsyncMethod = new Dictionary<Type, Func<object, object[], Task<int>>>();
+            InsertBulkAsyncMethod = new Dictionary<Type, Func<object[], Task>>();
+            InsertBulkMethod = new Dictionary<Type, Action<object[]>>();
+            InsertMethodParams = new Dictionary<Type, object[]>();
         }
 
         /// <summary>
@@ -38,6 +46,45 @@ namespace DataMigration.Application.Handler
         /// 
         /// </summary>
         readonly IFreeSqlMultipleProvider<int> FreeSqlMultipleProvider;
+
+        /// <summary>
+        /// 数据库表信息
+        /// </summary>
+        Dictionary<int, List<DbTableInfo>> Tables;
+
+        /// <summary>
+        /// 插入方法名称
+        /// </summary>
+        readonly string InsertMethodName;
+
+        /// <summary>
+        /// 使用批量插入方法
+        /// </summary>
+        readonly bool UseBulkInsertMethod;
+
+        /// <summary>
+        /// 插入异步方法
+        /// </summary>
+        /// <remarks>Key: 实体类型, Func<IInsert<>, 参数, Task<受影响行数>></remarks>
+        readonly Dictionary<Type, Func<object, object[], Task<int>>> InsertAsyncMethod;
+
+        /// <summary>
+        /// 批量插入异步方法
+        /// </summary>
+        /// <remarks>Key: 实体类型, Func<参数, Task></remarks>
+        readonly Dictionary<Type, Func<object[], Task>> InsertBulkAsyncMethod;
+
+        /// <summary>
+        /// 批量插入方法
+        /// </summary>
+        /// <remarks>Key: 实体类型, Action<参数></remarks>
+        readonly Dictionary<Type, Action<object[]>> InsertBulkMethod;
+
+        /// <summary>
+        /// 批量插入方法参数
+        /// </summary>
+        /// <remarks>Key: 实体类型, 参数</remarks>
+        readonly Dictionary<Type, object[]> InsertMethodParams;
 
         /// <summary>
         /// 处理
@@ -88,6 +135,26 @@ namespace DataMigration.Application.Handler
         }
 
         /// <summary>
+        /// 获取数据库表
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        List<DbTableInfo> GetTables(int key)
+        {
+            if (Tables == null)
+                Tables = new Dictionary<int, List<DbTableInfo>>();
+
+            if (!Tables.ContainsKey(key))
+                Tables.Add(key, FreeSqlMultipleProvider.GetTablesByDatabase(
+                         0,
+                         Config.TableMatch?.ContainsKey(OperationType.Data) == true ? Config.TableMatch[OperationType.Data] : null,
+                         Config.Tables?.ContainsKey(OperationType.Data) == true ? Config.Tables[OperationType.Data] : null,
+                         Config.ExclusionTables?.ContainsKey(OperationType.Data) == true ? Config.ExclusionTables[OperationType.Data] : null));
+
+            return Tables[key];
+        }
+
+        /// <summary>
         /// 同步数据库数据
         /// </summary>
         void SyncDataByDatabase()
@@ -95,10 +162,14 @@ namespace DataMigration.Application.Handler
             var orm_source = FreeSqlMultipleProvider.GetOrm(0);
             var orm_target = FreeSqlMultipleProvider.GetOrm(1);
 
-            var tables_source = FreeSqlMultipleProvider.GetTablesByDatabase(0);
-            var tables_target = FreeSqlMultipleProvider.GetTablesByDatabase(1);
+            var tables_source = GetTables(0);
+            var tables_target = GetTables(1);
 
-            var entityTypes = Extension.Extension.GetEntityTypes();
+            var entityTypes = FreeSqlMultipleProvider.GetEntityTypes(
+                0,
+                Config.TableMatch?.ContainsKey(OperationType.Data) == true ? Config.TableMatch[OperationType.Data] : null,
+                Config.Tables?.ContainsKey(OperationType.Data) == true ? Config.Tables[OperationType.Data] : null,
+                Config.ExclusionTables?.ContainsKey(OperationType.Data) == true ? Config.ExclusionTables[OperationType.Data] : null);
 
             foreach (var table_source in tables_source)
             {
@@ -143,10 +214,9 @@ namespace DataMigration.Application.Handler
                     .MakeGenericType(entityType)
                     .GetMethod(nameof(IInsert<object>.AppendData), new Type[] { typeof(IEnumerable<>).MakeGenericType(entityType) });
 
-
             retry:
 
-                var (insertData_method, insertData_async, insertData_returnRows) = GetInsert(entityType);
+                //var (insertData_method, insertData_async, insertData_returnRows) = GetInsert(entityType);
 
                 var currentPage = 1;
 
@@ -174,27 +244,32 @@ namespace DataMigration.Application.Handler
                         currentPage++;
 
                         appendData_method.Invoke(iInsert, new object[] { data });
-                        var result = insertData_method.Invoke(iInsert, null);
+                        //insertData_method.Invoke(iInsert, null);
+                        var result = Insert(iInsert, entityType).GetAwaiter().GetResult();
+                        rows = result.HasValue ? rows : result.Value;
 
-                        if (insertData_async)
-                        {
-                            if (insertData_returnRows)
-                            {
-                                rows = (result as Task<int>).GetAwaiter().GetResult();
-                            }
-                            else
-                                (result as Task).GetAwaiter().GetResult();
-                        }
-                        else if (insertData_returnRows)
-                        {
-                            rows = (int)result;
-                        }
+                        //if (insertData_async)
+                        //{
+                        //    if (insertData_returnRows)
+                        //    {
+                        //        rows = (result as Task<int>).GetAwaiter().GetResult();
+                        //    }
+                        //    else
+                        //        (result as Task).GetAwaiter().GetResult();
+                        //}
+                        //else if (insertData_returnRows)
+                        //{
+                        //    rows = (int)result;
+                        //}
 
                         Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"已导入{rows}条数据.");
                     }
                     catch (Exception ex)
                     {
                         Logger.Log(NLog.LogLevel.Warn, LogType.警告信息, $"导入数据失败: {table_target.Name}.", null, ex);
+
+                        var type = ex.GetType();
+                        var types = ex.InnerException.GetType();
 
                         if (ex as NotSupportedException != null && Config.UseBulkCopy)
                         {
@@ -206,83 +281,178 @@ namespace DataMigration.Application.Handler
                         break;
                     }
                 }
-
-                //orm_source.Select<object>().Page(currentPage, Config.DataPageSize).ToList();
-                //orm_source.Insert<object>().AppendData(new List<object>()).ExecutePgCopy();                                
             }
+        }
+
+        /// <summary>
+        /// 获取数据插入方法信息
+        /// </summary>
+        /// <returns>(方法名, 是否批量插入方法)</returns>
+        (string insertMethodName, bool useBulkInsertMethod) GetInsertMethodInfo()
+        {
+            var insertMethodName = Config.UseBulkCopy ? Config.TargetDataType switch
+            {
+                DataType.MySql or DataType.OdbcMySql => nameof(FreeSqlMySqlConnectorGlobalExtensions.ExecuteMySqlBulkCopyAsync),
+                DataType.SqlServer or DataType.OdbcSqlServer => nameof(FreeSqlSqlServerGlobalExtensions.ExecuteSqlBulkCopyAsync),
+                DataType.PostgreSQL or DataType.OdbcPostgreSQL => nameof(FreeSqlPostgreSQLGlobalExtensions.ExecutePgCopyAsync),
+                DataType.Oracle or DataType.OdbcOracle => nameof(FreeSqlOracleGlobalExtensions.ExecuteOracleBulkCopy),
+                DataType.Dameng or DataType.OdbcDameng => nameof(FreeSqlDamengGlobalExtensions.ExecuteDmBulkCopy),
+                _ => null
+            } : null;
+
+            if (insertMethodName == null)
+                return (nameof(IInsert<object>.ExecuteAffrowsAsync), false);
+            else
+                return (insertMethodName, true);
         }
 
         /// <summary>
         /// 获取数据插入方法
         /// </summary>
         /// <returns>(方法, 是否异步, 是否返回行数)</returns>
-        (MethodInfo method, bool async, bool returnRows) GetInsert(Type entityType)
+        async Task<int?> Insert(object iInsert, Type entityType)
         {
-            (MethodInfo method, bool async, bool returnRows) insertData = default;
-
-            if (Config.UseBulkCopy)
-                switch (Config.TargetDataType)
+            if (UseBulkInsertMethod ? !InsertBulkMethod.ContainsKey(entityType) && !InsertBulkAsyncMethod.ContainsKey(entityType) : !InsertAsyncMethod.ContainsKey(entityType))
+            {
+                switch (InsertMethodName)
                 {
-                    case DataType.MySql:
-                    case DataType.OdbcMySql:
-                        insertData.method = typeof(FreeSqlMySqlConnectorGlobalExtensions)
-                            .GetMethod(nameof(FreeSqlMySqlConnectorGlobalExtensions.ExecuteMySqlBulkCopyAsync))
-                            //?.GetMethod(nameof(FreeSqlMySqlConnectorGlobalExtensions.ExecuteMySqlBulkCopyAsync), 1, new Type[] { typeof(IInsert<>).MakeGenericType(entityType), typeof(int?), typeof(CancellationToken) })
-                            .MakeGenericMethod(entityType);
-                        insertData.async = true;
-                        insertData.returnRows = false;
+                    case nameof(FreeSqlMySqlConnectorGlobalExtensions.ExecuteMySqlBulkCopyAsync):
+                        InsertMethodParams.Add(entityType, new object[] { iInsert, null, (CancellationToken)default });
+                        InsertBulkAsyncMethod.Add(entityType, @params => typeof(FreeSqlMySqlConnectorGlobalExtensions)
+                             .GetMethod(nameof(FreeSqlMySqlConnectorGlobalExtensions.ExecuteMySqlBulkCopyAsync))
+                             //?.GetMethod(nameof(FreeSqlMySqlConnectorGlobalExtensions.ExecuteMySqlBulkCopyAsync), 1, new Type[] { typeof(IInsert<>).MakeGenericType(entityType), typeof(int?), typeof(CancellationToken) })
+                             .MakeGenericMethod(entityType)
+                             .Invoke(null, @params) as Task);
                         break;
-                    case DataType.SqlServer:
-                    case DataType.OdbcSqlServer:
-                        insertData.method = typeof(FreeSqlSqlServerGlobalExtensions)
-                            .GetMethod(nameof(FreeSqlSqlServerGlobalExtensions.ExecuteSqlBulkCopyAsync))
-                            //.GetMethod(nameof(FreeSqlSqlServerGlobalExtensions.ExecuteSqlBulkCopyAsync), 1, new Type[] { typeof(IInsert<>).MakeGenericType(entityType), typeof(SqlBulkCopyOptions), typeof(int?), typeof(int?), typeof(CancellationToken) })
-                            .MakeGenericMethod(entityType);
-                        insertData.async = true;
-                        insertData.returnRows = false;
+                    case nameof(FreeSqlSqlServerGlobalExtensions.ExecuteSqlBulkCopyAsync):
+                        InsertMethodParams.Add(entityType, new object[] { iInsert, SqlBulkCopyOptions.Default, null, null, (CancellationToken)default });
+                        InsertBulkAsyncMethod.Add(entityType, @params => typeof(FreeSqlSqlServerGlobalExtensions)
+                             .GetMethod(nameof(FreeSqlSqlServerGlobalExtensions.ExecuteSqlBulkCopyAsync))
+                             //.GetMethod(nameof(FreeSqlSqlServerGlobalExtensions.ExecuteSqlBulkCopyAsync), 1, new Type[] { typeof(IInsert<>).MakeGenericType(entityType), typeof(SqlBulkCopyOptions), typeof(int?), typeof(int?), typeof(CancellationToken) })
+                             .MakeGenericMethod(entityType)
+                             .Invoke(null, @params) as Task);
                         break;
-                    case DataType.PostgreSQL:
-                    case DataType.OdbcPostgreSQL:
-                        insertData.method = typeof(FreeSqlPostgreSQLGlobalExtensions)
-                            .GetMethod(nameof(FreeSqlPostgreSQLGlobalExtensions.ExecutePgCopyAsync))
-                            //.GetMethod(nameof(FreeSqlPostgreSQLGlobalExtensions.ExecutePgCopyAsync), 1, new Type[] { typeof(IInsert<>).MakeGenericType(entityType), typeof(CancellationToken) })
-                            .MakeGenericMethod(entityType);
-                        insertData.async = true;
-                        insertData.returnRows = false;
+                    case nameof(FreeSqlPostgreSQLGlobalExtensions.ExecutePgCopyAsync):
+                        InsertMethodParams.Add(entityType, new object[] { iInsert, (CancellationToken)default });
+                        InsertBulkAsyncMethod.Add(entityType, @params => typeof(FreeSqlPostgreSQLGlobalExtensions)
+                             .GetMethod(nameof(FreeSqlPostgreSQLGlobalExtensions.ExecutePgCopyAsync))
+                             //.GetMethod(nameof(FreeSqlPostgreSQLGlobalExtensions.ExecutePgCopyAsync), 1, new Type[] { typeof(IInsert<>).MakeGenericType(entityType), typeof(CancellationToken) })
+                             .MakeGenericMethod(entityType)
+                             .Invoke(null, @params) as Task);
                         break;
-                    case DataType.Oracle:
-                    case DataType.OdbcOracle:
-                        insertData.method = typeof(FreeSqlOracleGlobalExtensions)
-                            .GetMethod(nameof(FreeSqlOracleGlobalExtensions.ExecuteOracleBulkCopy))
-                            //.GetMethod(nameof(FreeSqlOracleGlobalExtensions.ExecuteOracleBulkCopy), 1, new Type[] { typeof(IInsert<>).MakeGenericType(entityType), typeof(OracleBulkCopyOptions), typeof(int?), typeof(int?) })
-                            .MakeGenericMethod(entityType);
-                        insertData.async = false;
-                        insertData.returnRows = false;
+                    case nameof(FreeSqlOracleGlobalExtensions.ExecuteOracleBulkCopy):
+                        InsertMethodParams.Add(entityType, new object[] { iInsert, OracleBulkCopyOptions.Default, null, null }); ;
+                        InsertBulkMethod.Add(entityType, @params => typeof(FreeSqlOracleGlobalExtensions)
+                             .GetMethod(nameof(FreeSqlOracleGlobalExtensions.ExecuteOracleBulkCopy))
+                             //.GetMethod(nameof(FreeSqlOracleGlobalExtensions.ExecuteOracleBulkCopy), 1, new Type[] { typeof(IInsert<>).MakeGenericType(entityType), typeof(OracleBulkCopyOptions), typeof(int?), typeof(int?) })
+                             .MakeGenericMethod(entityType)
+                             .Invoke(null, @params));
                         break;
-                    case DataType.Dameng:
-                    case DataType.OdbcDameng:
-                        insertData.method = typeof(FreeSqlDamengGlobalExtensions)
-                            .GetMethod(nameof(FreeSqlDamengGlobalExtensions.ExecuteDmBulkCopy))
-                            //.GetMethod(nameof(FreeSqlDamengGlobalExtensions.ExecuteDmBulkCopy), 1, new Type[] { typeof(IInsert<>).MakeGenericType(entityType), typeof(DmBulkCopyOptions), typeof(int?), typeof(int?) })
-                            .MakeGenericMethod(entityType);
-                        insertData.async = false;
-                        insertData.returnRows = false;
+                    case nameof(FreeSqlDamengGlobalExtensions.ExecuteDmBulkCopy):
+                        InsertMethodParams.Add(entityType, new object[] { iInsert, DmBulkCopyOptions.Default, null, null });
+                        InsertBulkMethod.Add(entityType, @params => typeof(FreeSqlDamengGlobalExtensions)
+                             .GetMethod(nameof(FreeSqlDamengGlobalExtensions.ExecuteDmBulkCopy))
+                             //.GetMethod(nameof(FreeSqlDamengGlobalExtensions.ExecuteDmBulkCopy), 1, new Type[] { typeof(IInsert<>).MakeGenericType(entityType), typeof(DmBulkCopyOptions), typeof(int?), typeof(int?) })
+                             .MakeGenericMethod(entityType)
+                             .Invoke(null, @params));
                         break;
+                    case nameof(IInsert<object>.ExecuteAffrowsAsync):
                     default:
+                        InsertMethodParams.Add(entityType, new object[] { iInsert, DmBulkCopyOptions.Default, null, null });
+                        InsertAsyncMethod.Add(entityType, (@object, @params) => typeof(IInsert<>)
+                              .MakeGenericType(entityType)
+                              .GetMethod(nameof(IInsert<object>.ExecuteAffrowsAsync))
+                              .Invoke(@object, @params) as Task<int>);
                         break;
                 }
-
-            if (insertData == default)
-            {
-                insertData.method = typeof(IInsert<>)
-                            .MakeGenericType(entityType)
-                            .GetMethod(nameof(IInsert<object>.ExecuteAffrowsAsync));
-                //.GetMethod(nameof(IInsert<object>.ExecuteAffrowsAsync), new Type[] { typeof(CancellationToken) });
-                insertData.async = true;
-                insertData.returnRows = true;
             }
 
-            return insertData;
+            if (UseBulkInsertMethod)
+            {
+                if (InsertBulkMethod.ContainsKey(entityType))
+                {
+                    var method = InsertBulkMethod[entityType];
+                    method.Invoke(InsertMethodParams[entityType]);
+                    return null;
+                }
+                else
+                {
+                    var method = InsertBulkAsyncMethod[entityType];
+                    await method.Invoke(InsertMethodParams[entityType]);
+                    return null;
+                }
+            }
+            else
+            {
+                var method = InsertAsyncMethod[entityType];
+                return await method.Invoke(iInsert, InsertMethodParams[entityType]);
+            }
+
+            //(MethodInfo method, bool async, bool returnRows) insertData = default;
+
+            //if (Config.UseBulkCopy)
+            //    switch (Config.TargetDataType)
+            //    {
+            //        case DataType.MySql:
+            //        case DataType.OdbcMySql:
+            //            insertData.method = typeof(FreeSqlMySqlConnectorGlobalExtensions)
+            //                .GetMethod(nameof(FreeSqlMySqlConnectorGlobalExtensions.ExecuteMySqlBulkCopyAsync))
+            //                //?.GetMethod(nameof(FreeSqlMySqlConnectorGlobalExtensions.ExecuteMySqlBulkCopyAsync), 1, new Type[] { typeof(IInsert<>).MakeGenericType(entityType), typeof(int?), typeof(CancellationToken) })
+            //                .MakeGenericMethod(entityType);
+            //            insertData.async = true;
+            //            insertData.returnRows = false;
+            //            break;
+            //        case DataType.SqlServer:
+            //        case DataType.OdbcSqlServer:
+            //            insertData.method = typeof(FreeSqlSqlServerGlobalExtensions)
+            //                .GetMethod(nameof(FreeSqlSqlServerGlobalExtensions.ExecuteSqlBulkCopyAsync))
+            //                //.GetMethod(nameof(FreeSqlSqlServerGlobalExtensions.ExecuteSqlBulkCopyAsync), 1, new Type[] { typeof(IInsert<>).MakeGenericType(entityType), typeof(SqlBulkCopyOptions), typeof(int?), typeof(int?), typeof(CancellationToken) })
+            //                .MakeGenericMethod(entityType);
+            //            insertData.async = true;
+            //            insertData.returnRows = false;
+            //            break;
+            //        case DataType.PostgreSQL:
+            //        case DataType.OdbcPostgreSQL:
+            //            insertData.method = typeof(FreeSqlPostgreSQLGlobalExtensions)
+            //                .GetMethod(nameof(FreeSqlPostgreSQLGlobalExtensions.ExecutePgCopyAsync))
+            //                //.GetMethod(nameof(FreeSqlPostgreSQLGlobalExtensions.ExecutePgCopyAsync), 1, new Type[] { typeof(IInsert<>).MakeGenericType(entityType), typeof(CancellationToken) })
+            //                .MakeGenericMethod(entityType);
+            //            insertData.async = true;
+            //            insertData.returnRows = false;
+            //            break;
+            //        case DataType.Oracle:
+            //        case DataType.OdbcOracle:
+            //            insertData.method = typeof(FreeSqlOracleGlobalExtensions)
+            //                .GetMethod(nameof(FreeSqlOracleGlobalExtensions.ExecuteOracleBulkCopy))
+            //                //.GetMethod(nameof(FreeSqlOracleGlobalExtensions.ExecuteOracleBulkCopy), 1, new Type[] { typeof(IInsert<>).MakeGenericType(entityType), typeof(OracleBulkCopyOptions), typeof(int?), typeof(int?) })
+            //                .MakeGenericMethod(entityType);
+            //            insertData.async = false;
+            //            insertData.returnRows = false;
+            //            break;
+            //        case DataType.Dameng:
+            //        case DataType.OdbcDameng:
+            //            insertData.method = typeof(FreeSqlDamengGlobalExtensions)
+            //                .GetMethod(nameof(FreeSqlDamengGlobalExtensions.ExecuteDmBulkCopy))
+            //                //.GetMethod(nameof(FreeSqlDamengGlobalExtensions.ExecuteDmBulkCopy), 1, new Type[] { typeof(IInsert<>).MakeGenericType(entityType), typeof(DmBulkCopyOptions), typeof(int?), typeof(int?) })
+            //                .MakeGenericMethod(entityType);
+            //            insertData.async = false;
+            //            insertData.returnRows = false;
+            //            break;
+            //        default:
+            //            break;
+            //    }
+
+            //if (insertData == default)
+            //{
+            //    insertData.method = typeof(IInsert<>)
+            //                .MakeGenericType(entityType)
+            //                .GetMethod(nameof(IInsert<object>.ExecuteAffrowsAsync));
+            //    //.GetMethod(nameof(IInsert<object>.ExecuteAffrowsAsync), new Type[] { typeof(CancellationToken) });
+            //    insertData.async = true;
+            //    insertData.returnRows = true;
+            //}
+
+            //return insertData;
         }
 
         /// <summary>

@@ -102,6 +102,21 @@ namespace DataMigration.Application.Model
         public Dictionary<string, string> UseSql { get; set; }
 
         /// <summary>
+        /// 表名正则表达式，只生成匹配的表，如：dbo\.TB_.+
+        /// </summary>
+        public Dictionary<OperationType, string> TableMatch { get; set; }
+
+        /// <summary>
+        /// 指定数据库表
+        /// </summary>
+        public Dictionary<OperationType, List<string>> Tables { get; set; }
+
+        /// <summary>
+        /// 排除数据库表
+        /// </summary>
+        public Dictionary<OperationType, List<string>> ExclusionTables { get; set; }
+
+        /// <summary>
         /// 实体类名 -> 数据库表名&列名，命名转换规则（类名、属性名都生效）
         /// </summary>
         public NameConvertType? SyncStructureNameConvert { get; set; }

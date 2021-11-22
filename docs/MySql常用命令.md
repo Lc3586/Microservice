@@ -16,6 +16,10 @@
 
 > show databases;
 
+###### #查询命名规则
+
+> show variables like 'lower_case_table_names';
+
 ###### #查询字符集
 
 > #mysql数据库服务器字符集
