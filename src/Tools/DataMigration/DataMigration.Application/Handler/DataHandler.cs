@@ -147,9 +147,15 @@ namespace DataMigration.Application.Handler
             if (!Tables.ContainsKey(key))
                 Tables.Add(key, FreeSqlMultipleProvider.GetTablesByDatabase(
                          0,
-                         Config.TableMatch?.ContainsKey(OperationType.Data) == true ? Config.TableMatch[OperationType.Data] : null,
-                         Config.Tables?.ContainsKey(OperationType.Data) == true ? Config.Tables[OperationType.Data] : null,
-                         Config.ExclusionTables?.ContainsKey(OperationType.Data) == true ? Config.ExclusionTables[OperationType.Data] : null));
+                         (Config.TableMatch?.ContainsKey(OperationType.All) == true ? new List<string> { Config.TableMatch[OperationType.All] } : new List<string>())
+                         .Concat(Config.TableMatch?.ContainsKey(OperationType.Data) == true ? new List<string> { Config.TableMatch[OperationType.Data] } : new List<string>())
+                         .ToList(),
+                         (Config.Tables?.ContainsKey(OperationType.All) == true ? Config.Tables[OperationType.All] : new List<string>())
+                         .Concat(Config.Tables?.ContainsKey(OperationType.Data) == true ? Config.Tables[OperationType.Data] : new List<string>())
+                         .ToList(),
+                         (Config.ExclusionTables?.ContainsKey(OperationType.All) == true ? Config.ExclusionTables[OperationType.All] : new List<string>())
+                         .Concat(Config.ExclusionTables?.ContainsKey(OperationType.Data) == true ? Config.ExclusionTables[OperationType.Data] : new List<string>())
+                         .ToList()));
 
             return Tables[key];
         }
@@ -167,9 +173,15 @@ namespace DataMigration.Application.Handler
 
             var entityTypes = FreeSqlMultipleProvider.GetEntityTypes(
                 0,
-                Config.TableMatch?.ContainsKey(OperationType.Data) == true ? Config.TableMatch[OperationType.Data] : null,
-                Config.Tables?.ContainsKey(OperationType.Data) == true ? Config.Tables[OperationType.Data] : null,
-                Config.ExclusionTables?.ContainsKey(OperationType.Data) == true ? Config.ExclusionTables[OperationType.Data] : null);
+                (Config.TableMatch?.ContainsKey(OperationType.All) == true ? new List<string> { Config.TableMatch[OperationType.All] } : new List<string>())
+                    .Concat(Config.TableMatch?.ContainsKey(OperationType.Data) == true ? new List<string> { Config.TableMatch[OperationType.Data] } : new List<string>())
+                    .ToList(),
+                    (Config.Tables?.ContainsKey(OperationType.All) == true ? Config.Tables[OperationType.All] : new List<string>())
+                    .Concat(Config.Tables?.ContainsKey(OperationType.Data) == true ? Config.Tables[OperationType.Data] : new List<string>())
+                    .ToList(),
+                    (Config.ExclusionTables?.ContainsKey(OperationType.All) == true ? Config.ExclusionTables[OperationType.All] : new List<string>())
+                    .Concat(Config.ExclusionTables?.ContainsKey(OperationType.Data) == true ? Config.ExclusionTables[OperationType.Data] : new List<string>())
+                    .ToList());
 
             foreach (var table_source in tables_source)
             {
@@ -182,9 +194,6 @@ namespace DataMigration.Application.Handler
                     Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "已忽略: 目标数据库数据表不存在.");
                     continue;
                 }
-
-                if (table_source.Name.ToLower() != "bizbatch")
-                    continue;
 
                 var entityType = entityTypes.FirstOrDefault(o => string.Equals(o.Name, table_source.Name, StringComparison.OrdinalIgnoreCase));
 
@@ -246,7 +255,7 @@ namespace DataMigration.Application.Handler
                         appendData_method.Invoke(iInsert, new object[] { data });
                         //insertData_method.Invoke(iInsert, null);
                         var result = Insert(iInsert, entityType).GetAwaiter().GetResult();
-                        rows = result.HasValue ? rows : result.Value;
+                        rows = result.HasValue ? result.Value : rows;
 
                         //if (insertData_async)
                         //{

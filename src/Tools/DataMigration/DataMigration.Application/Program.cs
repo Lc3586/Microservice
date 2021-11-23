@@ -73,7 +73,7 @@ namespace DataMigration.Application
         public string EntityRazorTemplateFile { get; } = "RazorTemplates/实体类+特性+导航属性（支持子父级结构）.cshtml";
 
         [Option("-o|--OperationType", Description = "操作类型（默认All）.")]
-        public OperationType OperationType { get; } = OperationType.All;
+        public OperationType OperationType { get; set; } = OperationType.All;
 
         [Option("-dc|--DataCheck", Description = "数据检查（默认false）.")]
         public bool DataCheck { get; } = false;
@@ -202,7 +202,7 @@ namespace DataMigration.Application
                 $"目标数据库类型: {TargetDataType}.\r\n".ConsoleWrite();
 
 #if DEBUG
-                EntityAssemblys = new List<string> { "Entitys.Project/Entity_132808334922190308/Build/Debug/Entity_132808334922190308.dll" };
+                //EntityAssemblys = new List<string> { "Entitys.Project/Entity_132808334922190308/Build/Debug/Entity_132808334922190308.dll" };
 #endif
 
                 if (!EntityAssemblys.Any_Ex())
@@ -218,6 +218,9 @@ namespace DataMigration.Application
                     $"实体类dll文件: { string.Join(";", EntityAssemblys) }.\r\n".ConsoleWrite();
                 }
 
+#if DEBUG
+                OperationType = OperationType.All;
+#endif
                 config.OperationType = OperationType;
                 $"操作类型: {OperationType}.\r\n".ConsoleWrite();
                 config.DataCheck = DataCheck;
@@ -230,6 +233,7 @@ namespace DataMigration.Application
                     .Where(o => o != null)
                     .ToDictionary(k => k[0].ToLower(), v => v[1]);
 
+                config.TableMatch = new Dictionary<OperationType, string>();
                 TableMatch?.Select(o => o.Match(@$"[$][[](.*?)[]]{{(.*?)}}") ?? new List<string> { o })
                     .ForEach(o =>
                     {
@@ -240,6 +244,7 @@ namespace DataMigration.Application
                     });
                 $"表名正则表达式: { string.Join(";", config.TableMatch.Select(o => $"{o.Key} => {o.Value}")) }.\r\n".ConsoleWrite();
 
+                config.Tables = new Dictionary<OperationType, List<string>>();
                 Tables?.Select(o => o.Match(@$"[$][[](.*?)[]]{{(.*?)}}") ?? new List<string> { o })
                     .ForEach(o =>
                     {
@@ -250,6 +255,7 @@ namespace DataMigration.Application
                     });
                 $"指定数据库表: { string.Join(";", config.Tables.Select(o => $"{o.Key} => {string.Join(",", o.Value)}")) }.\r\n".ConsoleWrite();
 
+                config.ExclusionTables = new Dictionary<OperationType, List<string>>();
                 ExclusionTables?.Select(o => o.Match(@$"[$][[](.*?)[]]{{(.*?)}}") ?? new List<string> { o })
                     .ForEach(o =>
                     {

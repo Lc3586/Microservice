@@ -72,10 +72,11 @@ namespace DataMigration.Application.Handler
             if (Config.GenerateEntitys)
                 Generate().GetAwaiter().GetResult();
 
-            if (!Config.EntityAssemblyFiles.SelectMany(o => Assembly.LoadFile(o).GetTypes()).Any())
+            var types = Config.EntityAssemblyFiles.SelectMany(o => Assembly.LoadFile(o).GetTypes()).ToList();
+
+            if (!types.Any_Ex())
                 throw new ApplicationException($"未找到指定实体类dll文件[{string.Join(',', Config.EntityAssemblyFiles)}].");
 
-            var types = Config.EntityAssemblyFiles.SelectMany(o => Assembly.LoadFile(o).GetTypes()).ToList();
             types.ForEach(o => Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"已获取实体类: {o.FullName}."));
             Extension.Extension.SetEntityTypes(types);
         }
@@ -202,9 +203,7 @@ namespace DataMigration.Application.Handler
         {
             try
             {
-                var cmd = $"FreeSql.Generator -Razor \"{Config.EntityRazorTemplateFile}\" -NameSpace \"DataMigration.Entitys\" -DB \"{Config.SourceDataType},{Config.SourceConnectingString}\" -Output \"{TempDirectoryAbsolutePath}\"";
-                if (Config.TableMatch?.ContainsKey(OperationType.All) == true)
-                    cmd += $" -Match {Config.TableMatch[OperationType.All]}";
+                var cmd = $"FreeSql.Generator -Razor \"{Config.EntityRazorTemplateFile}\" -NameSpace \"DataMigration.Entitys\" -DB \"{Config.SourceDataType},{Config.SourceConnectingString}\" -FileName \"{{name}}.cs\" -Output \"{TempDirectoryAbsolutePath}\"";
                 await CallCmd(cmd, null, AppContext.BaseDirectory);
             }
             catch (Exception ex)
@@ -243,16 +242,18 @@ namespace DataMigration.Application.Handler
         /// <returns></returns>
         async Task BuildCSProject()
         {
-            if (Config.Tables.Any_Ex() || Config.ExclusionTables.Any_Ex())
-                //清除不需要的表
-                foreach (var file in new DirectoryInfo(TempDirectoryAbsolutePath).GetFiles("*.cs", SearchOption.TopDirectoryOnly))
-                {
-                    if (!Config.Tables.Any_Ex(o => file.Name.IndexOf($"{o}.cs", StringComparison.OrdinalIgnoreCase) == 0))
-                        file.Delete();
+            //进行此操作会导致找不到导航属性中的类型，进行无法生成项目
+            //if ((Config.Tables.ContainsKey(OperationType.All) && Config.Tables[OperationType.All].Any_Ex())
+            //    || (Config.ExclusionTables.ContainsKey(OperationType.All) && Config.ExclusionTables[OperationType.All].Any_Ex()))
+            //    //清除不需要的表
+            //    foreach (var file in new DirectoryInfo(TempDirectoryAbsolutePath).GetFiles("*.cs", SearchOption.TopDirectoryOnly))
+            //    {
+            //        if (Config.Tables.ContainsKey(OperationType.All) && !Config.Tables[OperationType.All].Any_Ex(o => file.Name.IndexOf($"{o}.cs", StringComparison.OrdinalIgnoreCase) >= 0))
+            //            file.Delete();
 
-                    if (Config.ExclusionTables.Any_Ex(o => file.Name.IndexOf($"{o}.cs", StringComparison.OrdinalIgnoreCase) == 0))
-                        file.Delete();
-                }
+            //        if (Config.ExclusionTables.ContainsKey(OperationType.All) && Config.ExclusionTables[OperationType.All].Any_Ex(o => file.Name.IndexOf($"{o}.cs", StringComparison.OrdinalIgnoreCase) >= 0))
+            //            file.Delete();
+            //    }
 
             var configuration = "Release";
 #if DEBUG
@@ -278,18 +279,43 @@ namespace DataMigration.Application.Handler
             process.StandardInput.WriteLine($"{cmd.TrimEnd('&')}&exit");
             process.StandardInput.AutoFlush = true;
 
-            var output = process.StandardOutput.ReadToEnd();
-            var error = process.StandardError.ReadToEnd();
+            //var output = process.StandardOutput.ReadToEnd();
+            //var error = process.StandardError.ReadToEnd();
 
-#if DEBUG
-            Console.Write(output);
-            Console.Write(error);
-#endif
+            var output = string.Empty;
+            var error = string.Empty;
+
+            var readOutputTask = new Task(reader =>
+            {
+                output = (reader as StreamReader).ReadToEnd();
+            }, process.StandardOutput);
+
+            var readErrorTask = new Task(reader =>
+            {
+                error = (reader as StreamReader).ReadToEnd();
+            }, process.StandardError);
+
+            readOutputTask.Start();
+            readErrorTask.Start();
 
             process.WaitForExit();
 
+            Logger.Log(
+                NLog.LogLevel.Trace,
+                LogType.系统跟踪,
+                $"{workingDirectory}: {cmd} {arguments}",
+                output);
+
             if (!error.IsNullOrWhiteSpace())
+            {
+                Logger.Log(
+                    NLog.LogLevel.Warn,
+                    LogType.警告信息,
+                    $"{workingDirectory}: {cmd} {arguments}",
+                    error);
+
                 throw new ApplicationException(error);
+            }
 
             return output;
         }

@@ -34,26 +34,27 @@ namespace DataMigration.Application.Extension
         /// </summary>
         /// <param name="freeSqlMultipleProvider">构造器</param>
         /// <param name="key">数据库标识</param>
-        /// <param name="tableMatch">表名正则表达式</param>
+        /// <param name="tableMatchs">表名正则表达式</param>
         /// <param name="tables">指定数据库表名</param>
         /// <param name="exclusionTables">排除数据库表名</param>
         /// <returns></returns>
-        public static List<DbTableInfo> GetTablesByDatabase(this IFreeSqlMultipleProvider<int> freeSqlMultipleProvider, int key, string tableMatch = null, List<string> tables = null, List<string> exclusionTables = null)
+        public static List<DbTableInfo> GetTablesByDatabase(this IFreeSqlMultipleProvider<int> freeSqlMultipleProvider, int key, List<string> tableMatchs = null, List<string> tables = null, List<string> exclusionTables = null)
         {
             var orm = freeSqlMultipleProvider.GetOrm(key);
             var dbTables = new List<DbTableInfo>();
 
-            if (tables.Any_Ex())
+            if (tableMatchs.Any_Ex())
+                dbTables = orm.DbFirst.GetTablesByDatabase();
+            else if (tables.Any_Ex())
                 tables.ForEach(o => dbTables.Add(orm.DbFirst.GetTableByName(o, true)));
-
-            if (!dbTables.Any())
+            else
                 dbTables = orm.DbFirst.GetTablesByDatabase();
 
-            if (!tableMatch.IsNullOrWhiteSpace())
-                dbTables.RemoveAll(o => Regex.IsMatch(o.Name, tableMatch) == false);
-
-            if (exclusionTables.Any_Ex())
-                dbTables.RemoveAll(o => exclusionTables.Any(p => string.Equals(o.Name, p, StringComparison.OrdinalIgnoreCase)));
+            if (tableMatchs.Any_Ex() || tables.Any_Ex() || exclusionTables.Any_Ex())
+                dbTables.RemoveAll(o =>
+                (tableMatchs.Any_Ex(p => Regex.IsMatch(o.Name, p, RegexOptions.IgnoreCase) == false)
+                    && (!tables.Any_Ex() || !tables.Any(p => string.Equals(o.Name, p, StringComparison.OrdinalIgnoreCase))))
+                || (exclusionTables.Any_Ex() && exclusionTables.Any(p => string.Equals(o.Name, p, StringComparison.OrdinalIgnoreCase))));
 
             return dbTables;
         }
@@ -80,13 +81,13 @@ namespace DataMigration.Application.Extension
         /// </summary>
         /// <param name="freeSqlMultipleProvider">构造器</param>
         /// <param name="key">数据库标识</param>
-        /// <param name="tableMatch">表名正则表达式</param>
+        /// <param name="tableMatchs">表名正则表达式</param>
         /// <param name="tables">指定数据库表名</param>
         /// <param name="exclusionTables">排除数据库表名</param>
         /// <returns></returns>
-        public static List<Type> GetEntityTypes(this IFreeSqlMultipleProvider<int> freeSqlMultipleProvider, int key, string tableMatch = null, List<string> tables = null, List<string> exclusionTables = null)
+        public static List<Type> GetEntityTypes(this IFreeSqlMultipleProvider<int> freeSqlMultipleProvider, int key, List<string> tableMatchs = null, List<string> tables = null, List<string> exclusionTables = null)
         {
-            if (!tableMatch.IsNullOrWhiteSpace() || tables.Any_Ex() || exclusionTables.Any_Ex())
+            if (tableMatchs.Any_Ex() || tables.Any_Ex() || exclusionTables.Any_Ex())
             {
                 var orm = freeSqlMultipleProvider.GetOrm(key);
                 var result = new List<Type>();
@@ -95,13 +96,9 @@ namespace DataMigration.Application.Extension
                 {
                     var dbTable = orm.CodeFirst.GetTableByEntity(o);
 
-                    if (!tableMatch.IsNullOrWhiteSpace() && Regex.IsMatch(dbTable.DbName, tableMatch) == false)
-                        return;
-
-                    if (!tables.Any_Ex(o => string.Equals(dbTable.DbName, o, StringComparison.OrdinalIgnoreCase)))
-                        return;
-
-                    if (exclusionTables.Any_Ex(o => string.Equals(dbTable.DbName, o, StringComparison.OrdinalIgnoreCase)))
+                    if ((tableMatchs.Any_Ex(p => Regex.IsMatch(dbTable.DbName, p, RegexOptions.IgnoreCase) == false)
+                            && (!tables.Any_Ex() || !tables.Any(p => string.Equals(dbTable.DbName, p, StringComparison.OrdinalIgnoreCase))))
+                        || (!exclusionTables.Any_Ex() && exclusionTables.Any(p => string.Equals(dbTable.DbName, p, StringComparison.OrdinalIgnoreCase))))
                         return;
 
                     result.Add(o);

@@ -81,9 +81,15 @@ namespace DataMigration.Application.Handler
             {
                 var entityTypes = FreeSqlMultipleProvider.GetEntityTypes(
                     0,
-                    Config.TableMatch?.ContainsKey(OperationType.Schema) == true ? Config.TableMatch[OperationType.Schema] : null,
-                    Config.Tables?.ContainsKey(OperationType.Schema) == true ? Config.Tables[OperationType.Schema] : null,
-                    Config.ExclusionTables?.ContainsKey(OperationType.Schema) == true ? Config.ExclusionTables[OperationType.Schema] : null);
+                    (Config.TableMatch?.ContainsKey(OperationType.All) == true ? new List<string> { Config.TableMatch[OperationType.All] } : new List<string>())
+                    .Concat(Config.TableMatch?.ContainsKey(OperationType.Schema) == true ? new List<string> { Config.TableMatch[OperationType.Schema] } : new List<string>())
+                    .ToList(),
+                    (Config.Tables?.ContainsKey(OperationType.All) == true ? Config.Tables[OperationType.All] : new List<string>())
+                    .Concat(Config.Tables?.ContainsKey(OperationType.Schema) == true ? Config.Tables[OperationType.Schema] : new List<string>())
+                    .ToList(),
+                    (Config.ExclusionTables?.ContainsKey(OperationType.All) == true ? Config.ExclusionTables[OperationType.All] : new List<string>())
+                    .Concat(Config.ExclusionTables?.ContainsKey(OperationType.Schema) == true ? Config.ExclusionTables[OperationType.Schema] : new List<string>())
+                    .ToList());
 
                 if (entityTypes.Any_Ex())
                     FreeSqlMultipleProvider.GetOrm(1).CodeFirst.SyncStructure(entityTypes.ToArray());
@@ -109,9 +115,15 @@ namespace DataMigration.Application.Handler
             if (!Tables.ContainsKey(key))
                 Tables.Add(key, FreeSqlMultipleProvider.GetTablesByDatabase(
                          0,
-                         Config.TableMatch?.ContainsKey(OperationType.Schema) == true ? Config.TableMatch[OperationType.Schema] : null,
-                         Config.Tables?.ContainsKey(OperationType.Schema) == true ? Config.Tables[OperationType.Schema] : null,
-                         Config.ExclusionTables?.ContainsKey(OperationType.Schema) == true ? Config.ExclusionTables[OperationType.Schema] : null));
+                         (Config.TableMatch?.ContainsKey(OperationType.All) == true ? new List<string> { Config.TableMatch[OperationType.All] } : new List<string>())
+                         .Concat(Config.TableMatch?.ContainsKey(OperationType.Schema) == true ? new List<string> { Config.TableMatch[OperationType.Schema] } : new List<string>())
+                         .ToList(),
+                         (Config.Tables?.ContainsKey(OperationType.All) == true ? Config.Tables[OperationType.All] : new List<string>())
+                         .Concat(Config.Tables?.ContainsKey(OperationType.Schema) == true ? Config.Tables[OperationType.Schema] : new List<string>())
+                         .ToList(),
+                         (Config.ExclusionTables?.ContainsKey(OperationType.All) == true ? Config.ExclusionTables[OperationType.All] : new List<string>())
+                         .Concat(Config.ExclusionTables?.ContainsKey(OperationType.Schema) == true ? Config.ExclusionTables[OperationType.Schema] : new List<string>())
+                         .ToList()));
 
             return Tables[key];
         }
@@ -130,17 +142,17 @@ namespace DataMigration.Application.Handler
                 {
                     Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"已获取源数据库数据表: {table_source.Name}.");
 
+                    if (!table_source.ForeignsDict.Any())
+                    {
+                        Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "已忽略: 源数据库数据表未检测到任何外键.");
+                        continue;
+                    }
+
                     var table_target = tables_target.FirstOrDefault(o => string.Equals(o.Name, table_source.Name, StringComparison.OrdinalIgnoreCase));
 
                     if (table_target == null)
                     {
                         Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "已忽略: 目标数据库数据表不存在.");
-                        continue;
-                    }
-
-                    if (!table_source.ForeignsDict.Any())
-                    {
-                        Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "已忽略: 源数据库数据表未检测到任何外键.");
                         continue;
                     }
 
@@ -168,6 +180,14 @@ namespace DataMigration.Application.Handler
                         //var fk_drop_sql = Config.TargetDataType == FreeSql.DataType.MySql || Config.TargetDataType == FreeSql.DataType.OdbcMySql
                         //    ? $"ALTER TABLE {fk_table} DROP FOREIGN KEY {fk_name}"
                         //    : $"ALTER TABLE {fk_table} DROP CONSTRAINT {fk_name}";
+
+                        var table_fk_referenced = tables_target.FirstOrDefault(o => string.Equals(o.Name, fk_referencedTable, StringComparison.OrdinalIgnoreCase));
+
+                        if (table_fk_referenced == null)
+                        {
+                            Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "已忽略: 未找到目标数据库指定的外键关联表，可能已配置为不处理.");
+                            continue;
+                        }
 
                         try
                         {
@@ -221,7 +241,7 @@ namespace DataMigration.Application.Handler
 
                     var comment_add_sql = string.Empty;
 
-                    var columns_comment = string.Join(",", table_source.Columns
+                    var columns_comment = string.Join(",", table_target.Columns
                         .Where(c => !c.Coment.IsNullOrWhiteSpace())
                         .Select(c =>
                         {
@@ -235,7 +255,7 @@ namespace DataMigration.Application.Handler
                         continue;
                     }
 
-                    comment_add_sql = $"ALTER TABLE {FreeSqlMultipleProvider.GetOrm(1).Ado.GetDatabaseTableName(table_source)} " + columns_comment;
+                    comment_add_sql = $"ALTER TABLE {FreeSqlMultipleProvider.GetOrm(1).Ado.GetDatabaseTableName(table_target)} " + columns_comment;
 
                     if (columns_comment.IsNullOrWhiteSpace())
                         comment_add_sql += "Add";
