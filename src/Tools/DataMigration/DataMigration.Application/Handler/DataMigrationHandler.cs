@@ -1,11 +1,6 @@
 ﻿using DataMigration.Application.Log;
 using DataMigration.Application.Model;
-using Microservice.Library.Container;
-using Microservice.Library.FreeSql.Gen;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DataMigration.Application.Handler
@@ -50,21 +45,21 @@ namespace DataMigration.Application.Handler
         /// <summary>
         /// 处理
         /// </summary>
-        public void Handler()
+        public async Task Handler()
         {
-            EntityHandler.Handler();
+            await Task.Run(EntityHandler.Handler);
 
             switch (Config.OperationType)
             {
                 case OperationType.All:
-                    SchemeHandler.Handler();
-                    DataHandler.Handler();
+                    await Task.Run(SchemeHandler.Handler);
+                    await Task.Run(DataHandler.Handler);
                     break;
                 case OperationType.Schema:
-                    SchemeHandler.Handler();
+                    await Task.Run(SchemeHandler.Handler);
                     break;
                 case OperationType.Data:
-                    DataHandler.Handler();
+                    await Task.Run(DataHandler.Handler);
                     break;
                 default:
                     throw new ApplicationException($"不支持的操作类型 {Config.OperationType}");

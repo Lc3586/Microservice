@@ -8,10 +8,12 @@ using Microservice.Library.Extension;
 using Microservice.Library.FreeSql.Extention;
 using Microservice.Library.FreeSql.Gen;
 using Microsoft.Data.SqlClient;
+using MySqlConnector;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -161,139 +163,6 @@ namespace DataMigration.Application.Handler
         }
 
         /// <summary>
-        /// 同步数据库数据
-        /// </summary>
-        void SyncDataByDatabase()
-        {
-            var orm_source = FreeSqlMultipleProvider.GetOrm(0);
-            var orm_target = FreeSqlMultipleProvider.GetOrm(1);
-
-            var tables_source = GetTables(0);
-            var tables_target = GetTables(1);
-
-            var entityTypes = FreeSqlMultipleProvider.GetEntityTypes(
-                0,
-                (Config.TableMatch?.ContainsKey(OperationType.All) == true ? new List<string> { Config.TableMatch[OperationType.All] } : new List<string>())
-                    .Concat(Config.TableMatch?.ContainsKey(OperationType.Data) == true ? new List<string> { Config.TableMatch[OperationType.Data] } : new List<string>())
-                    .ToList(),
-                    (Config.Tables?.ContainsKey(OperationType.All) == true ? Config.Tables[OperationType.All] : new List<string>())
-                    .Concat(Config.Tables?.ContainsKey(OperationType.Data) == true ? Config.Tables[OperationType.Data] : new List<string>())
-                    .ToList(),
-                    (Config.ExclusionTables?.ContainsKey(OperationType.All) == true ? Config.ExclusionTables[OperationType.All] : new List<string>())
-                    .Concat(Config.ExclusionTables?.ContainsKey(OperationType.Data) == true ? Config.ExclusionTables[OperationType.Data] : new List<string>())
-                    .ToList());
-
-            foreach (var table_source in tables_source)
-            {
-                Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"已获取源数据库数据表: {table_source.Name}.");
-
-                var table_target = tables_target.FirstOrDefault(o => string.Equals(o.Name, table_source.Name, StringComparison.OrdinalIgnoreCase));
-
-                if (table_target == null)
-                {
-                    Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "已忽略: 目标数据库数据表不存在.");
-                    continue;
-                }
-
-                var entityType = entityTypes.FirstOrDefault(o => string.Equals(o.Name, table_source.Name, StringComparison.OrdinalIgnoreCase));
-
-                var iSelect = typeof(IFreeSql)
-                    .GetMethod(nameof(IFreeSql.Select), 1, Array.Empty<Type>())
-                    .MakeGenericMethod(entityType)
-                    .Invoke(orm_source, null);
-
-                var sql_method = typeof(ISelect<>)
-                    .MakeGenericType(entityType)
-                    .GetMethod(nameof(ISelect<object>.WithSql), new Type[] { typeof(string), typeof(object) });
-
-                var page_method = typeof(ISelect0<,>)
-                    .MakeGenericType(typeof(ISelect<>).MakeGenericType(entityType), entityType)
-                    .GetMethod(nameof(ISelect<object>.Page), new Type[] { typeof(int), typeof(int) });
-
-                var toList_method = typeof(ISelect0<,>)
-                    .MakeGenericType(typeof(ISelect<>).MakeGenericType(entityType), entityType)
-                    .GetMethod(nameof(ISelect<object>.ToList), new Type[] { typeof(bool) });
-
-                var iInsert = typeof(IFreeSql)
-                    .GetMethod(nameof(IFreeSql.Insert), 1, Array.Empty<Type>())
-                    .MakeGenericMethod(entityType)
-                    .Invoke(orm_target, null);
-
-                var appendData_method = typeof(IInsert<>)
-                    .MakeGenericType(entityType)
-                    .GetMethod(nameof(IInsert<object>.AppendData), new Type[] { typeof(IEnumerable<>).MakeGenericType(entityType) });
-
-            retry:
-
-                //var (insertData_method, insertData_async, insertData_returnRows) = GetInsert(entityType);
-
-                var currentPage = 1;
-
-                while (true)
-                {
-                    try
-                    {
-
-                        if (Config.UseSql.TryGetValue(table_source.Name.ToLower(), out string sql))
-                        {
-                            sql_method.Invoke(iSelect, new object[] { sql, null });
-                            Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"使用自定义SQL查询语句: {sql}.");
-                        }
-
-                        page_method.Invoke(iSelect, new object[] { currentPage, Config.DataPageSize });
-
-                        var data = toList_method.Invoke(iSelect, new object[] { false });
-                        var rows = (data as ICollection).Count;
-
-                        Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"在第{currentPage}页（每页数据量{Config.DataPageSize}）获取到{rows}条数据.");
-
-                        if (rows == 0)
-                            break;
-
-                        currentPage++;
-
-                        appendData_method.Invoke(iInsert, new object[] { data });
-                        //insertData_method.Invoke(iInsert, null);
-                        var result = Insert(iInsert, entityType).GetAwaiter().GetResult();
-                        rows = result.HasValue ? result.Value : rows;
-
-                        //if (insertData_async)
-                        //{
-                        //    if (insertData_returnRows)
-                        //    {
-                        //        rows = (result as Task<int>).GetAwaiter().GetResult();
-                        //    }
-                        //    else
-                        //        (result as Task).GetAwaiter().GetResult();
-                        //}
-                        //else if (insertData_returnRows)
-                        //{
-                        //    rows = (int)result;
-                        //}
-
-                        Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"已导入{rows}条数据.");
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Log(NLog.LogLevel.Warn, LogType.警告信息, $"导入数据失败: {table_target.Name}.", null, ex);
-
-                        var type = ex.GetType();
-                        var types = ex.InnerException.GetType();
-
-                        if (ex as NotSupportedException != null && Config.UseBulkCopy)
-                        {
-                            Logger.Log(NLog.LogLevel.Warn, LogType.警告信息, $"当前环境可能不支持批量插入功能, 将尝试关闭此功能后再导入数据.");
-
-                            Config.UseBulkCopy = false;
-                            goto retry;
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
         /// 获取数据插入方法信息
         /// </summary>
         /// <returns>(方法名, 是否批量插入方法)</returns>
@@ -396,72 +265,137 @@ namespace DataMigration.Application.Handler
                 var method = InsertAsyncMethod[entityType];
                 return await method.Invoke(iInsert, InsertMethodParams[entityType]);
             }
+        }
 
-            //(MethodInfo method, bool async, bool returnRows) insertData = default;
+        /// <summary>
+        /// 同步数据库数据
+        /// </summary>
+        void SyncDataByDatabase()
+        {
+            var orm_source = FreeSqlMultipleProvider.GetOrm(0);
+            var orm_target = FreeSqlMultipleProvider.GetOrm(1);
 
-            //if (Config.UseBulkCopy)
-            //    switch (Config.TargetDataType)
-            //    {
-            //        case DataType.MySql:
-            //        case DataType.OdbcMySql:
-            //            insertData.method = typeof(FreeSqlMySqlConnectorGlobalExtensions)
-            //                .GetMethod(nameof(FreeSqlMySqlConnectorGlobalExtensions.ExecuteMySqlBulkCopyAsync))
-            //                //?.GetMethod(nameof(FreeSqlMySqlConnectorGlobalExtensions.ExecuteMySqlBulkCopyAsync), 1, new Type[] { typeof(IInsert<>).MakeGenericType(entityType), typeof(int?), typeof(CancellationToken) })
-            //                .MakeGenericMethod(entityType);
-            //            insertData.async = true;
-            //            insertData.returnRows = false;
-            //            break;
-            //        case DataType.SqlServer:
-            //        case DataType.OdbcSqlServer:
-            //            insertData.method = typeof(FreeSqlSqlServerGlobalExtensions)
-            //                .GetMethod(nameof(FreeSqlSqlServerGlobalExtensions.ExecuteSqlBulkCopyAsync))
-            //                //.GetMethod(nameof(FreeSqlSqlServerGlobalExtensions.ExecuteSqlBulkCopyAsync), 1, new Type[] { typeof(IInsert<>).MakeGenericType(entityType), typeof(SqlBulkCopyOptions), typeof(int?), typeof(int?), typeof(CancellationToken) })
-            //                .MakeGenericMethod(entityType);
-            //            insertData.async = true;
-            //            insertData.returnRows = false;
-            //            break;
-            //        case DataType.PostgreSQL:
-            //        case DataType.OdbcPostgreSQL:
-            //            insertData.method = typeof(FreeSqlPostgreSQLGlobalExtensions)
-            //                .GetMethod(nameof(FreeSqlPostgreSQLGlobalExtensions.ExecutePgCopyAsync))
-            //                //.GetMethod(nameof(FreeSqlPostgreSQLGlobalExtensions.ExecutePgCopyAsync), 1, new Type[] { typeof(IInsert<>).MakeGenericType(entityType), typeof(CancellationToken) })
-            //                .MakeGenericMethod(entityType);
-            //            insertData.async = true;
-            //            insertData.returnRows = false;
-            //            break;
-            //        case DataType.Oracle:
-            //        case DataType.OdbcOracle:
-            //            insertData.method = typeof(FreeSqlOracleGlobalExtensions)
-            //                .GetMethod(nameof(FreeSqlOracleGlobalExtensions.ExecuteOracleBulkCopy))
-            //                //.GetMethod(nameof(FreeSqlOracleGlobalExtensions.ExecuteOracleBulkCopy), 1, new Type[] { typeof(IInsert<>).MakeGenericType(entityType), typeof(OracleBulkCopyOptions), typeof(int?), typeof(int?) })
-            //                .MakeGenericMethod(entityType);
-            //            insertData.async = false;
-            //            insertData.returnRows = false;
-            //            break;
-            //        case DataType.Dameng:
-            //        case DataType.OdbcDameng:
-            //            insertData.method = typeof(FreeSqlDamengGlobalExtensions)
-            //                .GetMethod(nameof(FreeSqlDamengGlobalExtensions.ExecuteDmBulkCopy))
-            //                //.GetMethod(nameof(FreeSqlDamengGlobalExtensions.ExecuteDmBulkCopy), 1, new Type[] { typeof(IInsert<>).MakeGenericType(entityType), typeof(DmBulkCopyOptions), typeof(int?), typeof(int?) })
-            //                .MakeGenericMethod(entityType);
-            //            insertData.async = false;
-            //            insertData.returnRows = false;
-            //            break;
-            //        default:
-            //            break;
-            //    }
+            var tables_source = GetTables(0);
+            var tables_target = GetTables(1);
 
-            //if (insertData == default)
-            //{
-            //    insertData.method = typeof(IInsert<>)
-            //                .MakeGenericType(entityType)
-            //                .GetMethod(nameof(IInsert<object>.ExecuteAffrowsAsync));
-            //    //.GetMethod(nameof(IInsert<object>.ExecuteAffrowsAsync), new Type[] { typeof(CancellationToken) });
-            //    insertData.async = true;
-            //    insertData.returnRows = true;
-            //}
+            var entityTypes = FreeSqlMultipleProvider.GetEntityTypes(
+                0,
+                (Config.TableMatch?.ContainsKey(OperationType.All) == true ? new List<string> { Config.TableMatch[OperationType.All] } : new List<string>())
+                    .Concat(Config.TableMatch?.ContainsKey(OperationType.Data) == true ? new List<string> { Config.TableMatch[OperationType.Data] } : new List<string>())
+                    .ToList(),
+                    (Config.Tables?.ContainsKey(OperationType.All) == true ? Config.Tables[OperationType.All] : new List<string>())
+                    .Concat(Config.Tables?.ContainsKey(OperationType.Data) == true ? Config.Tables[OperationType.Data] : new List<string>())
+                    .ToList(),
+                    (Config.ExclusionTables?.ContainsKey(OperationType.All) == true ? Config.ExclusionTables[OperationType.All] : new List<string>())
+                    .Concat(Config.ExclusionTables?.ContainsKey(OperationType.Data) == true ? Config.ExclusionTables[OperationType.Data] : new List<string>())
+                    .ToList());
 
-            //return insertData;
+            foreach (var table_source in tables_source)
+            {
+                Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"已获取源数据库数据表: {table_source.Name}.");
+
+                var table_target = tables_target.FirstOrDefault(o => string.Equals(o.Name, table_source.Name, StringComparison.OrdinalIgnoreCase));
+
+                if (table_target == null)
+                {
+                    Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "已忽略: 目标数据库数据表不存在.");
+                    continue;
+                }
+
+                var entityType = entityTypes.FirstOrDefault(o => string.Equals(o.Name, table_source.Name, StringComparison.OrdinalIgnoreCase));
+
+                var iSelect = typeof(IFreeSql)
+                    .GetMethod(nameof(IFreeSql.Select), 1, Array.Empty<Type>())
+                    .MakeGenericMethod(entityType)
+                    .Invoke(orm_source, null);
+
+                var sql_method = typeof(ISelect<>)
+                    .MakeGenericType(entityType)
+                    .GetMethod(nameof(ISelect<object>.WithSql), new Type[] { typeof(string), typeof(object) });
+
+                var page_method = typeof(ISelect0<,>)
+                    .MakeGenericType(typeof(ISelect<>).MakeGenericType(entityType), entityType)
+                    .GetMethod(nameof(ISelect<object>.Page), new Type[] { typeof(int), typeof(int) });
+
+                var toList_method = typeof(ISelect0<,>)
+                    .MakeGenericType(typeof(ISelect<>).MakeGenericType(entityType), entityType)
+                    .GetMethod(nameof(ISelect<object>.ToList), new Type[] { typeof(bool) });
+
+                var iInsert = typeof(IFreeSql)
+                    .GetMethod(nameof(IFreeSql.Insert), 1, Array.Empty<Type>())
+                    .MakeGenericMethod(entityType)
+                    .Invoke(orm_target, null);
+
+                var appendData_method = typeof(IInsert<>)
+                    .MakeGenericType(entityType)
+                    .GetMethod(nameof(IInsert<object>.AppendData), new Type[] { typeof(IEnumerable<>).MakeGenericType(entityType) });
+
+                var currentPage = 1;
+
+            retry:
+
+                while (true)
+                {
+                    try
+                    {
+
+                        if (Config.UseSql.TryGetValue(table_source.Name.ToLower(), out string sql))
+                        {
+                            sql_method.Invoke(iSelect, new object[] { sql, null });
+                            Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"使用自定义SQL查询语句: {sql}.");
+                        }
+
+                        page_method.Invoke(iSelect, new object[] { currentPage, Config.DataPageSize });
+
+                        var data = toList_method.Invoke(iSelect, new object[] { false });
+                        var rows = (data as ICollection).Count;
+
+                        Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"在第{currentPage}页获取到{rows}条数据.");
+
+                        if (rows == 0)
+                            break;
+
+                        appendData_method.Invoke(iInsert, new object[] { data });
+                        var result = Insert(iInsert, entityType).GetAwaiter().GetResult();
+                        rows = result ?? rows;
+
+                        Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"已导入{rows}条数据.");
+
+                        currentPage++;
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Log(NLog.LogLevel.Warn, LogType.警告信息, $"导入数据时发生异常: {table_target.Name}.", null, ex);
+
+                        if (ex as MySqlException != null)
+                        {
+                            var result = ex.Message.Match(@$"(.*?) rows were copied to (.*?) but only (.*?) were inserted.");
+                            if (result.Any_Ex())
+                            {
+                                Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"获取到的{result[0]}条数据只成功导入了{result[2]}条.");
+
+                                currentPage++;
+                                continue;
+                            }
+                        }
+
+#if DEBUG
+                        var type = ex.GetType();
+                        Trace.WriteLine(type.FullName);
+#endif
+
+                        if (ex as NotSupportedException != null && Config.UseBulkCopy)
+                        {
+                            Logger.Log(NLog.LogLevel.Warn, LogType.警告信息, $"当前环境可能不支持批量插入功能, 将尝试关闭此功能后导入数据.");
+
+                            Config.UseBulkCopy = false;
+                            goto retry;
+                        }
+
+                        break;
+                    }
+                }
+            }
         }
 
         /// <summary>

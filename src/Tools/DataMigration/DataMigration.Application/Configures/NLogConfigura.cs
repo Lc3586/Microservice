@@ -38,7 +38,8 @@ namespace DataMigration.Application.Configures
                         _ => new ColoredConsoleTarget
                         {
                             Name = LoggerConfig.LogName,
-                            Layout = LoggerConfig.Layout
+                            Layout = LoggerConfig.Layout,
+                            ErrorStream = true
                         },
                     }
                 });

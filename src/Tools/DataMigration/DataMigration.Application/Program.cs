@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Logger = DataMigration.Application.Log.Logger;
@@ -43,7 +44,7 @@ namespace DataMigration.Application
         #region 配置
 
         [Option("-c|--ConfigPath", Description = "配置文件路径: 不指定时使用默认配置.")]
-        public string ConfigPath { get; } = "jsonconfig/config.json";
+        public string ConfigPath { get; } = "config/config.json";
 
         [Option("-l|--LoggerType", Description = "日志类型（默认Console）.")]
         public LoggerType LoggerType { get; } = LoggerType.Console;
@@ -98,57 +99,25 @@ namespace DataMigration.Application
 
         #endregion
 
-#pragma warning disable CS1998 // 异步方法缺少 "await" 运算符，将以同步方式运行
 #pragma warning disable IDE0051 // 删除未使用的私有成员
-#pragma warning disable IDE0060 // 删除未使用的参数
         async Task<int> OnExecuteAsync(CommandLineApplication app, CancellationToken cancellationToken = default)
-#pragma warning restore IDE0060 // 删除未使用的参数
 #pragma warning restore IDE0051 // 删除未使用的私有成员
-#pragma warning restore CS1998 // 异步方法缺少 "await" 运算符，将以同步方式运行
         {
             try
             {
-                //if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                //    Console.SetBufferSize(150, Console.BufferHeight);
+                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+                Console.OutputEncoding = Encoding.GetEncoding(936); //new UTF8Encoding(true);
 
                 #region 欢迎语
 
-                "@@@@@@@@@@@@                       @".ConsoleWrite(ConsoleColor.Magenta);
-                "@@@        @@@                   ,@@".ConsoleWrite(ConsoleColor.Green);
-                "@@@         f@@     1@@@@@@    @@@@@@@@    ;@@@@@@".ConsoleWrite(ConsoleColor.Yellow);
-                "@@@          @@f   Cf     @@;    ,@@      1C     @@L".ConsoleWrite(ConsoleColor.Cyan);
-                "@@@          @@C          1@@    ,@@             .@@".ConsoleWrite(ConsoleColor.Cyan);
-                "@@@          @@.    @@@@@@@@@    ,@@       @@@@@@@@@".ConsoleWrite(ConsoleColor.Cyan);
-                "@@@         @@C   @@0     i@@    ,@@     G@@     .@@".ConsoleWrite(ConsoleColor.Yellow);
-                "@@@       @@@     @@i     @@@    .@@     @@G     @@@".ConsoleWrite(ConsoleColor.Green);
-                "@@@@@@@@@@f        @@@@@@0;@@     @@@@@   @@@@@@@.@@".ConsoleWrite(ConsoleColor.Magenta, null, true, 3);
-
-                "\t\t                        @@                                                     @@L".ConsoleWrite(ConsoleColor.Magenta);
-                "\t\t@@@@           0@@@     @@                                             .@      L@".ConsoleWrite(ConsoleColor.Green);
-                "\t\t@@@@G         f@G@@                                                   ;@@".ConsoleWrite(ConsoleColor.Green);
-                "\t\t@@ @@;       :@@ @@     @@       @@@@@. @@    1@@ i@@@   t@@@@@@    @@@@@@@@   @@;      1@@@@@@      .@@  @@@@@".ConsoleWrite(ConsoleColor.Yellow);
-                "\t\t@@  @@       @@  @@     @@     @@0    C@@@    1@@@f     @t     @@,    ;@@      @@;    @@@     @@@    .@@@i   .@@L".ConsoleWrite(ConsoleColor.Yellow);
-                "\t\t@@   @@     @@   @@     @@    @@,       @@    1@@              t@@    ;@@      @@;   @@8       ;@@   .@@      ,@@".ConsoleWrite(ConsoleColor.Cyan);
-                "\t\t@@    @@   @@    @@     @@   ,@@        @@    1@@        @@@@@@@@@    ;@@      @@;   @@         @@   .@@       @@".ConsoleWrite(ConsoleColor.Cyan);
-                "\t\t@@    ;@@ @@     @@     @@   .@@        @@    1@@      @@8     t@@    ;@@      @@;   @@:        @@   .@@       @@".ConsoleWrite(ConsoleColor.Cyan);
-                "\t\t@@     L@@@:     @@     @@    @@@      @@@    1@@      @@:     @@@    :@@      @@;   .@@.      @@;   .@@       @@".ConsoleWrite(ConsoleColor.Yellow);
-                "\t\t@@      0@L      @@     @@     1@@@@@@@ @@    1@@       @@@@@@C1@@     @@@@@   @@;     @@@@@@@@@     .@@       @@".ConsoleWrite(ConsoleColor.Yellow);
-                "\t\t                                        @@".ConsoleWrite(ConsoleColor.Green);
-                "\t\t                                       @@,".ConsoleWrite(ConsoleColor.Green);
-                "\t\t                              :@@@@@@@@@".ConsoleWrite(ConsoleColor.Magenta, null, true, 7);
-
-                "\t\t\t]]]]]]]]]]]`      ]]]]            ,]]]`\t\t,]]`                  ]/@@@@@@]`      ]]]]]]]]]]]]]]]]]]   ]]]]]]]]]]]]]`".ConsoleWrite(ConsoleColor.Cyan);
-                "\t\t\t@@@@@@@@@@@@@@`    \\@@@`         =@@@^\t\t=@@^               ,@@@@@@[[@@@@@@`   @@@@@@@@@@@@@@@@@@   @@@@@@@@@@@@@@@@`".ConsoleWrite(ConsoleColor.Cyan);
-                "\t\t\t@@@        ,@@@^    =@@@^       /@@@`  \t\t=@@^              @@@@`        ,@@@^         =@@^          @@@          ,@@@^".ConsoleWrite(ConsoleColor.Cyan);
-                "\t\t\t@@@         =@@^      @@@\\     @@@/   \t\t=@@^             @@@/           ,@@@         =@@^          @@@           =@@^".ConsoleWrite(ConsoleColor.Cyan);
-                "\t\t\t@@@        /@@@        \\@@@` ,@@@`    \t\t=@@^            =@@@                         =@@^          @@@           @@@^".ConsoleWrite(ConsoleColor.Cyan);
-                "\t\t\t@@@@@@@@@@@@@^          ,@@@@@@@       \t\t=@@^            =@@^                         =@@^          @@@]]]]]]]/@@@@@`".ConsoleWrite(ConsoleColor.Cyan);
-                "\t\t\t@@@      ,[\\@@@\\          \\@@@/     \t\t=@@^            =@@^                         =@@^          @@@@@@@@@@@@@@".ConsoleWrite(ConsoleColor.Cyan);
-                "\t\t\t@@@          @@@^          @@@         \t\t=@@^            =@@@                         =@@^          @@@        ,@@@^".ConsoleWrite(ConsoleColor.Cyan);
-                "\t\t\t@@@          =@@^          @@@         \t\t=@@^             @@@\\           =@@@         =@@^          @@@          @@@^".ConsoleWrite(ConsoleColor.Cyan);
-                "\t\t\t@@@         /@@@`          @@@         \t\t=@@^              @@@@`        ,@@@^         =@@^          @@@          ,@@@`".ConsoleWrite(ConsoleColor.Cyan);
-                "\t\t\t@@@@@@@@@@@@@@@`           @@@         \t\t=@@@@@@@@@@@@@     ,@@@@@@]]@@@@@@`          =@@^          @@@           =@@@ ".ConsoleWrite(ConsoleColor.Cyan);
-                "\t\t\t[[[[[[[[[[[[               [[[         \t\t,[[[[[[[[[[[[[        [\\@@@@@@/`             ,[[`          [[[            [[[`".ConsoleWrite(ConsoleColor.Cyan, null, true, 7);
+                using (var welcomeReader = new StreamReader(new FileStream(Path.GetFullPath("config/welcome", AppContext.BaseDirectory), FileMode.Open, FileAccess.Read)))
+                {
+                    var random = new Random();
+                    while (!welcomeReader.EndOfStream)
+                    {
+                        welcomeReader.ReadLine().ConsoleWrite((ConsoleColor)random.Next(1, 15));
+                    }
+                }
 
                 #endregion
 
@@ -164,6 +133,19 @@ namespace DataMigration.Application
                 }
 
                 $"版本: {config.Version}.\r\n".ConsoleWrite();
+
+                config.LoggerType = LoggerType;
+                $"日志组件类型: {LoggerType}.\r\n".ConsoleWrite();
+
+                config.MinLogLevel = MinLogLevel.IsNullOrWhiteSpace() ?
+#if DEBUG
+                    //LogLevel.Trace.Ordinal :
+                    LogLevel.Info.Ordinal :
+#else
+                    LogLevel.Info.Ordinal :
+#endif
+                    LogLevel.FromString(MinLogLevel).Ordinal;
+                $"日志等级: {LogLevel.FromOrdinal(config.MinLogLevel).Name}.\r\n".ConsoleWrite();
 
                 if (SourceConnectingString.IsNullOrWhiteSpace())
                 {
@@ -189,9 +171,13 @@ namespace DataMigration.Application
                 //TargetConnectingString = $"Server=127.0.0.1;Port=3306;Database=data_migration_test;User ID=root;Password=root666;Charset=utf8;SslMode=none;Max pool size=500;AllowLoadLocalInfile=true;";
                 //TargetConnectingString = $"Server=192.168.1.116;Port=3306;Database=211106;User ID=211106;Password=211106TuruiMYSQL;Charset=utf8;SslMode=none;Max pool size=500;AllowLoadLocalInfile=true;";
                 //MySQL 8.0
-                TargetConnectingString = $"Server=121.5.146.9;Port=3306;Database=data_migration_test;User ID=root;Password=-3068-4411-8b9E-;Charset=utf8;SslMode=none;Max pool size=500;AllowLoadLocalInfile=true;";
+                //TargetConnectingString = $"Server=121.5.146.9;Port=3306;Database=data_migration_test;User ID=root;Password=-3068-4411-8b9E-;Charset=utf8;SslMode=none;Max pool size=500;AllowLoadLocalInfile=true;";
                 //MariaDB 10.6
-                //TargetConnectingString = $"Server=121.5.146.9;Port=3307;Database=data_migration_test;User ID=root;Password=-3068-4411-8b9E-;Charset=utf8;SslMode=none;Max pool size=500;AllowLoadLocalInfile=true;";
+                TargetConnectingString = $"Server=121.5.146.9;Port=3307;Database=data_migration_test;User ID=root;Password=-3068-4411-8b9E-;Charset=utf8;SslMode=none;Max pool size=500;AllowLoadLocalInfile=true;";
+
+                EntityAssemblys = new List<string> { "Entitys.Project/Entity_132821956164487127/Build/Debug/Entity_132821956164487127.dll" };
+
+                OperationType = OperationType.All;
 #endif
                 config.TargetConnectingString = TargetConnectingString;
 #if DEBUG
@@ -200,10 +186,6 @@ namespace DataMigration.Application
 
                 config.TargetDataType = TargetDataType;
                 $"目标数据库类型: {TargetDataType}.\r\n".ConsoleWrite();
-
-#if DEBUG
-                //EntityAssemblys = new List<string> { "Entitys.Project/Entity_132808334922190308/Build/Debug/Entity_132808334922190308.dll" };
-#endif
 
                 if (!EntityAssemblys.Any_Ex())
                 {
@@ -218,9 +200,6 @@ namespace DataMigration.Application
                     $"实体类dll文件: { string.Join(";", EntityAssemblys) }.\r\n".ConsoleWrite();
                 }
 
-#if DEBUG
-                OperationType = OperationType.All;
-#endif
                 config.OperationType = OperationType;
                 $"操作类型: {OperationType}.\r\n".ConsoleWrite();
                 config.DataCheck = DataCheck;
@@ -271,18 +250,6 @@ namespace DataMigration.Application
                 config.EntityRazorTemplateFile = Path.IsPathRooted(EntityRazorTemplateFile) ? EntityRazorTemplateFile : Path.GetFullPath(EntityRazorTemplateFile, AppContext.BaseDirectory);
                 $"实体类Razor模板文件: {EntityRazorTemplateFile}.\r\n".ConsoleWrite();
 
-                config.LoggerType = LoggerType;
-                $"日志组件类型: {LoggerType}.\r\n".ConsoleWrite();
-
-                config.MinLogLevel = MinLogLevel.IsNullOrWhiteSpace() ?
-#if DEBUG
-                    LogLevel.Trace.Ordinal :
-#else
-                    LogLevel.Info.Ordinal :
-#endif
-                    LogLevel.FromString(MinLogLevel).Ordinal;
-                $"日志等级: {LogLevel.FromOrdinal(config.MinLogLevel).Name}.\r\n".ConsoleWrite();
-
                 var services = new ServiceCollection();
 
                 services.AddSingleton(config)
@@ -307,11 +274,20 @@ namespace DataMigration.Application
 
                 try
                 {
-                    AutofacHelper.GetService<DataMigrationHandler>().Handler();
+                    //Logger.Log(LogLevel.Info, LogType.系统信息, $"测试信息");
+                    //Logger.Log(LogLevel.Warn, LogType.警告信息, $"测试警告");
+                    //Logger.Log(LogLevel.Error, LogType.系统异常, $"测试异常");
+                    //Console.Error.WriteLine("测试异常");
+
+                    //"press Y/y to continue.".ConsoleWrite();
+                    //Console.ReadLine().ConsoleWrite();
+                    //return 1;
+
+                    await AutofacHelper.GetService<DataMigrationHandler>().Handler();
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log(NLog.LogLevel.Error, LogType.系统异常, $"处理失败, {GetExceptionAllMsg(ex)}", null, ex);
+                    Logger.Log(LogLevel.Error, LogType.系统异常, $"处理失败, {GetExceptionAllMsg(ex)}", null, ex);
                     return 1;
                 }
                 finally

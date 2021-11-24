@@ -7,6 +7,7 @@ using Microservice.Library.Extension;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using T4CAGC.Configures;
@@ -56,6 +57,9 @@ namespace T4CAGC
         {
             try
             {
+                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+                Console.OutputEncoding = Encoding.GetEncoding(936); //new UTF8Encoding(true);
+
                 //if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 //    Console.SetBufferSize(150, Console.BufferHeight);
 

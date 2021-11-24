@@ -7,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 
 namespace DataMigration.Application.Handler
 {
@@ -57,7 +56,7 @@ namespace DataMigration.Application.Handler
         /// <summary>
         /// 项目生成文件存放路径
         /// </summary>
-        public static string BuildFileAbsolutePath = Path.Combine(BuildDirectoryAbsolutePath, $"{TempProjectName}.dll");
+        public static readonly string BuildFileAbsolutePath = Path.Combine(BuildDirectoryAbsolutePath, $"{TempProjectName}.dll");
 
         /// <summary>
         /// 脚本文件存放路径
@@ -70,7 +69,7 @@ namespace DataMigration.Application.Handler
         public void Handler()
         {
             if (Config.GenerateEntitys)
-                Generate().GetAwaiter().GetResult();
+                Generate();
 
             var types = Config.EntityAssemblyFiles.SelectMany(o => Assembly.LoadFile(o).GetTypes()).ToList();
 
@@ -84,36 +83,36 @@ namespace DataMigration.Application.Handler
         /// <summary>
         /// 生成
         /// </summary>
-        async Task Generate()
+        void Generate()
         {
             Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "安装.NET SDK.");
 
-            await InstallDotnetSDK();
+            InstallDotnetSDK();
 
             Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "安装FreeSql.Generator.");
 
-            await InstallFreeSqlTool();
+            InstallFreeSqlTool();
 
             Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "创建实体类项目.");
 
-            await CreateCSProject();
+            CreateCSProject();
 
             Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "生成实体类.");
 
-            await CallFreeSqlTool();
+            CallFreeSqlTool();
 
             Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "生成项目.");
 
-            await BuildCSProject();
+            BuildCSProject();
         }
 
         /// <summary>
         /// 安装.NET SDK
         /// </summary>
         /// <returns></returns>
-        async Task InstallDotnetSDK()
+        void InstallDotnetSDK()
         {
-            if (await CheckDotnetSDK())
+            if (CheckDotnetSDK())
                 return;
 
             try
@@ -126,14 +125,14 @@ namespace DataMigration.Application.Handler
                 else
                     throw new ApplicationException("不支持在当前操作系统执行此操作.");
 
-                await CallCmd(cmd, null, ShellDirectoryAbsolutePath);
+                CallCmd(cmd, null, ShellDirectoryAbsolutePath);
             }
             catch (Exception ex)
             {
                 throw new ApplicationException(".NET SDK安装失败.", ex);
             }
 
-            if (!await CheckDotnetSDK())
+            if (!CheckDotnetSDK())
                 throw new ApplicationException(".NET SDK安装失败.");
         }
 
@@ -141,11 +140,11 @@ namespace DataMigration.Application.Handler
         /// 检查.NET SDK
         /// </summary>
         /// <returns></returns>
-        async Task<bool> CheckDotnetSDK()
+        bool CheckDotnetSDK()
         {
             try
             {
-                var result = await CallCmd("dotnet --info");
+                var result = CallCmd("dotnet --info");
                 return result.Contains(".NET SDK");
             }
             catch (Exception ex)
@@ -159,21 +158,21 @@ namespace DataMigration.Application.Handler
         /// 安装FreeSql工具
         /// </summary>
         /// <returns></returns>
-        async Task InstallFreeSqlTool()
+        void InstallFreeSqlTool()
         {
-            if (await CheckFreeSqlTool())
+            if (CheckFreeSqlTool())
                 return;
 
             try
             {
-                await CallCmd("dotnet tool install -g FreeSql.Generator");
+                CallCmd("dotnet tool install -g FreeSql.Generator");
             }
             catch (Exception ex)
             {
                 throw new ApplicationException("FreeSql.Generator安装失败.", ex);
             }
 
-            if (!await CheckFreeSqlTool())
+            if (!CheckFreeSqlTool())
                 throw new ApplicationException("FreeSql.Generator安装失败.");
         }
 
@@ -181,11 +180,11 @@ namespace DataMigration.Application.Handler
         /// 检查FreeSql工具是否可用
         /// </summary>
         /// <returns></returns>
-        async Task<bool> CheckFreeSqlTool()
+        bool CheckFreeSqlTool()
         {
             try
             {
-                var result = await CallCmd("FreeSql.Generator --help");
+                var result = CallCmd("FreeSql.Generator --help");
                 return result.Contains("FreeSql 快速生成数据库的实体类");
             }
             catch (Exception ex)
@@ -199,12 +198,12 @@ namespace DataMigration.Application.Handler
         /// 调用FreeSql工具
         /// </summary>
         /// <returns></returns>
-        async Task CallFreeSqlTool()
+        void CallFreeSqlTool()
         {
             try
             {
                 var cmd = $"FreeSql.Generator -Razor \"{Config.EntityRazorTemplateFile}\" -NameSpace \"DataMigration.Entitys\" -DB \"{Config.SourceDataType},{Config.SourceConnectingString}\" -FileName \"{{name}}.cs\" -Output \"{TempDirectoryAbsolutePath}\"";
-                await CallCmd(cmd, null, AppContext.BaseDirectory);
+                CallCmd(cmd, null, AppContext.BaseDirectory);
             }
             catch (Exception ex)
             {
@@ -216,10 +215,10 @@ namespace DataMigration.Application.Handler
         /// 创建实体类项目
         /// </summary>
         /// <returns></returns>
-        async Task CreateCSProject()
+        void CreateCSProject()
         {
             var cmd = $"dotnet new classlib --language \"C#\" --framework \"netstandard2.0\" --force -n \"{TempProjectName}\" -o \"{TempDirectoryAbsolutePath}\"";
-            await CallCmd(cmd, null, AppContext.BaseDirectory);
+            CallCmd(cmd, null, AppContext.BaseDirectory);
 
             //清除自动生成的cs文件
             foreach (var file in Directory.GetFiles(TempDirectoryAbsolutePath, "*.cs", SearchOption.TopDirectoryOnly))
@@ -232,7 +231,7 @@ namespace DataMigration.Application.Handler
             foreach (var package in packages)
             {
                 var cmd_nuget = $"dotnet add \"{TempProjectName}.csproj\" package \"{package}\"";
-                await CallCmd(cmd_nuget, null, TempDirectoryAbsolutePath);
+                CallCmd(cmd_nuget, null, TempDirectoryAbsolutePath);
             }
         }
 
@@ -240,9 +239,9 @@ namespace DataMigration.Application.Handler
         /// 生成实体类项目
         /// </summary>
         /// <returns></returns>
-        async Task BuildCSProject()
+        void BuildCSProject()
         {
-            //进行此操作会导致找不到导航属性中的类型，进行无法生成项目
+            //进行此操作会导致找不到导航属性中的类型，进而无法生成项目
             //if ((Config.Tables.ContainsKey(OperationType.All) && Config.Tables[OperationType.All].Any_Ex())
             //    || (Config.ExclusionTables.ContainsKey(OperationType.All) && Config.ExclusionTables[OperationType.All].Any_Ex()))
             //    //清除不需要的表
@@ -261,7 +260,7 @@ namespace DataMigration.Application.Handler
 #endif
 
             var cmd = $"dotnet build --configuration {configuration} -o \"{BuildDirectoryAbsolutePath}\"";
-            await CallCmd(cmd, null, TempDirectoryAbsolutePath);
+            CallCmd(cmd, null, TempDirectoryAbsolutePath);
         }
 
         /// <summary>
@@ -271,7 +270,7 @@ namespace DataMigration.Application.Handler
         /// <param name="arguments">参数</param>
         /// <param name="workingDirectory">工作目录</param>
         /// <returns></returns>
-        async Task<string> CallCmd(string cmd, string arguments = null, string workingDirectory = null)
+        string CallCmd(string cmd, string arguments = null, string workingDirectory = null)
         {
             using var process = GetCmdProcess(arguments, workingDirectory);
             process.Start();
@@ -279,24 +278,13 @@ namespace DataMigration.Application.Handler
             process.StandardInput.WriteLine($"{cmd.TrimEnd('&')}&exit");
             process.StandardInput.AutoFlush = true;
 
-            //var output = process.StandardOutput.ReadToEnd();
-            //var error = process.StandardError.ReadToEnd();
-
             var output = string.Empty;
             var error = string.Empty;
 
-            var readOutputTask = new Task(reader =>
-            {
-                output = (reader as StreamReader).ReadToEnd();
-            }, process.StandardOutput);
-
-            var readErrorTask = new Task(reader =>
-            {
-                error = (reader as StreamReader).ReadToEnd();
-            }, process.StandardError);
-
-            readOutputTask.Start();
-            readErrorTask.Start();
+            var outputTaskAwaiter = process.StandardOutput.ReadToEndAsync().GetAwaiter();
+            outputTaskAwaiter.OnCompleted(() => { output = outputTaskAwaiter.GetResult(); });
+            var errorTaskAwaiter = process.StandardError.ReadToEndAsync().GetAwaiter();
+            errorTaskAwaiter.OnCompleted(() => { error = errorTaskAwaiter.GetResult(); });
 
             process.WaitForExit();
 
