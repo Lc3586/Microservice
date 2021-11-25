@@ -139,8 +139,8 @@ namespace DataMigration.Application
 
                 config.MinLogLevel = MinLogLevel.IsNullOrWhiteSpace() ?
 #if DEBUG
-                    //LogLevel.Trace.Ordinal :
-                    LogLevel.Info.Ordinal :
+                    LogLevel.Trace.Ordinal :
+                    //LogLevel.Info.Ordinal :
 #else
                     LogLevel.Info.Ordinal :
 #endif
@@ -175,7 +175,7 @@ namespace DataMigration.Application
                 //MariaDB 10.6
                 TargetConnectingString = $"Server=121.5.146.9;Port=3307;Database=data_migration_test;User ID=root;Password=-3068-4411-8b9E-;Charset=utf8;SslMode=none;Max pool size=500;AllowLoadLocalInfile=true;";
 
-                EntityAssemblys = new List<string> { "Entitys.Project/Entity_132821956164487127/Build/Debug/Entity_132821956164487127.dll" };
+                //EntityAssemblys = new List<string> { "Entitys.Project/Entity_132821956164487127/Build/Debug/Entity_132821956164487127.dll" };
 
                 OperationType = OperationType.All;
 #endif
@@ -274,15 +274,6 @@ namespace DataMigration.Application
 
                 try
                 {
-                    //Logger.Log(LogLevel.Info, LogType.系统信息, $"测试信息");
-                    //Logger.Log(LogLevel.Warn, LogType.警告信息, $"测试警告");
-                    //Logger.Log(LogLevel.Error, LogType.系统异常, $"测试异常");
-                    //Console.Error.WriteLine("测试异常");
-
-                    //"press Y/y to continue.".ConsoleWrite();
-                    //Console.ReadLine().ConsoleWrite();
-                    //return 1;
-
                     await AutofacHelper.GetService<DataMigrationHandler>().Handler();
                 }
                 catch (Exception ex)

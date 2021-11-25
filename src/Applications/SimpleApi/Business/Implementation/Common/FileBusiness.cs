@@ -288,7 +288,7 @@ namespace Business.Implementation.Common
                     {
                         var ffmpegPath = Config.GetFileAbsolutePath("ffmpeg");
 
-                        await file.Path.Screenshot(ffmpegPath, imagePath, time.Value, 31, width, height);
+                        file.Path.Screenshot(ffmpegPath, imagePath, time.Value, 31, width, height);
                     }
                     catch (Exception ex)
                     {
@@ -404,7 +404,7 @@ namespace Business.Implementation.Common
             return value.GetFileSize();
         }
 
-        public async Task<VideoInfo> GetVideoInfo(string id, bool format = true, bool streams = false, bool chapters = false, bool programs = false, bool version = false)
+        public VideoInfo GetVideoInfo(string id, bool format = true, bool streams = false, bool chapters = false, bool programs = false, bool version = false)
         {
             var file = Repository.GetAndCheckNull(id, "文件不存在或已被删除.");
 
@@ -418,7 +418,7 @@ namespace Business.Implementation.Common
             {
                 var ffprobePath = Config.GetFileAbsolutePath("ffprobe");
 
-                return await file.Path.GetVideoInfo(ffprobePath, format, streams, chapters, programs, version);
+                return file.Path.GetVideoInfo(ffprobePath, format, streams, chapters, programs, version);
             }
             catch (Exception ex)
             {

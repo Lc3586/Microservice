@@ -10,7 +10,7 @@ namespace T4CAGC.Model
     /// <summary>
     /// 生成配置
     /// </summary>
-    public class GenerateConfig
+    public class Config
     {
         /// <summary>
         /// 版本
@@ -91,12 +91,12 @@ namespace T4CAGC.Model
         /// <summary>
         /// 指定表
         /// </summary>
-        public List<string> SpecifyTable { get; set; }
+        public List<string> SpecifyTables { get; set; }
 
         /// <summary>
         /// 忽略表
         /// </summary>
-        public List<string> IgnoreTable { get; set; }
+        public List<string> IgnoreTables { get; set; }
 
         /// <summary>
         /// 表设置

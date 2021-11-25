@@ -154,7 +154,7 @@ namespace Business.Implementation.System
                 {
                     var parent = Repository.GetAndCheckNull(newData.ParentId);
                     newData.Level = parent.Level + 1;
-                    newData.RootId = parent.RootId == null ? parent.Id : parent.RootId;
+                    newData.RootId = parent.RootId ?? parent.Id;
                 }
 
                 newData.Sort = Repository.Where(o => o.ParentId == newData.ParentId).Max(o => o.Sort) + 1;
@@ -216,7 +216,7 @@ namespace Business.Implementation.System
                     {
                         var parent = Repository.GetAndCheckNull(editData.ParentId);
                         editData.Level = parent.Level + 1;
-                        editData.RootId = parent.RootId == null ? parent.Id : parent.RootId;
+                        editData.RootId = parent.RootId ?? parent.Id;
                     }
 
                     if (Repository.UpdateDiy

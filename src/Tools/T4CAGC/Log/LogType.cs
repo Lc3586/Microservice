@@ -18,6 +18,7 @@
                 调试日志 => "调试日志",
                 警告信息 => "警告信息",
                 系统异常 => "系统异常",
+                系统信息 => "系统信息",
                 _ => null,
             };
         }
@@ -35,6 +36,7 @@
                 "调试日志" => 调试日志,
                 "警告信息" => 警告信息,
                 "系统异常" => 系统异常,
+                "系统信息" => 系统信息,
                 _ => null,
             };
         }
@@ -46,6 +48,8 @@
         public const byte 警告信息 = 0x02;
 
         public const byte 系统异常 = 0x03;
+
+        public const byte 系统信息 = 0x04;
 
         public override bool Equals(object obj)
         {

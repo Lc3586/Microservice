@@ -113,7 +113,7 @@ namespace Business.Interface.Common
         /// <param name="programs">获取有关程序及其输入多媒体流中包含的流的信息</param>
         /// <param name="version">获取与程序版本有关的信息、获取与库版本有关的信息、获取与程序和库版本有关的信息</param>
         /// <returns></returns>
-        Task<VideoInfo> GetVideoInfo(string id, bool format = true, bool streams = false, bool chapters = false, bool programs = false, bool version = false);
+        VideoInfo GetVideoInfo(string id, bool format = true, bool streams = false, bool chapters = false, bool programs = false, bool version = false);
 
         /// <summary>
         /// 获取文件库信息

@@ -1,8 +1,8 @@
 ﻿using DataMigration.Application.Log;
 using DataMigration.Application.Model;
 using Microservice.Library.Extension;
+using Microservice.Library.File;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -140,7 +140,7 @@ namespace DataMigration.Application.Handler
         /// 检查.NET SDK
         /// </summary>
         /// <returns></returns>
-        bool CheckDotnetSDK()
+        static bool CheckDotnetSDK()
         {
             try
             {
@@ -158,7 +158,7 @@ namespace DataMigration.Application.Handler
         /// 安装FreeSql工具
         /// </summary>
         /// <returns></returns>
-        void InstallFreeSqlTool()
+        static void InstallFreeSqlTool()
         {
             if (CheckFreeSqlTool())
                 return;
@@ -180,7 +180,7 @@ namespace DataMigration.Application.Handler
         /// 检查FreeSql工具是否可用
         /// </summary>
         /// <returns></returns>
-        bool CheckFreeSqlTool()
+        static bool CheckFreeSqlTool()
         {
             try
             {
@@ -202,7 +202,7 @@ namespace DataMigration.Application.Handler
         {
             try
             {
-                var cmd = $"FreeSql.Generator -Razor \"{Config.EntityRazorTemplateFile}\" -NameSpace \"DataMigration.Entitys\" -DB \"{Config.SourceDataType},{Config.SourceConnectingString}\" -FileName \"{{name}}.cs\" -Output \"{TempDirectoryAbsolutePath}\"";
+                var cmd = $"FreeSql.Generator -readkey 0 -Razor \"{Config.EntityRazorTemplateFile}\" -NameSpace \"DataMigration.Entitys\" -DB \"{Config.SourceDataType},{Config.SourceConnectingString}\" -FileName \"{{name}}.cs\" -Output \"{TempDirectoryAbsolutePath}\"";
                 CallCmd(cmd, null, AppContext.BaseDirectory);
             }
             catch (Exception ex)
@@ -215,7 +215,7 @@ namespace DataMigration.Application.Handler
         /// 创建实体类项目
         /// </summary>
         /// <returns></returns>
-        void CreateCSProject()
+        static void CreateCSProject()
         {
             var cmd = $"dotnet new classlib --language \"C#\" --framework \"netstandard2.0\" --force -n \"{TempProjectName}\" -o \"{TempDirectoryAbsolutePath}\"";
             CallCmd(cmd, null, AppContext.BaseDirectory);
@@ -239,7 +239,7 @@ namespace DataMigration.Application.Handler
         /// 生成实体类项目
         /// </summary>
         /// <returns></returns>
-        void BuildCSProject()
+        static void BuildCSProject()
         {
             //进行此操作会导致找不到导航属性中的类型，进而无法生成项目
             //if ((Config.Tables.ContainsKey(OperationType.All) && Config.Tables[OperationType.All].Any_Ex())
@@ -270,23 +270,9 @@ namespace DataMigration.Application.Handler
         /// <param name="arguments">参数</param>
         /// <param name="workingDirectory">工作目录</param>
         /// <returns></returns>
-        string CallCmd(string cmd, string arguments = null, string workingDirectory = null)
+        static string CallCmd(string cmd, string arguments = null, string workingDirectory = null)
         {
-            using var process = GetCmdProcess(arguments, workingDirectory);
-            process.Start();
-
-            process.StandardInput.WriteLine($"{cmd.TrimEnd('&')}&exit");
-            process.StandardInput.AutoFlush = true;
-
-            var output = string.Empty;
-            var error = string.Empty;
-
-            var outputTaskAwaiter = process.StandardOutput.ReadToEndAsync().GetAwaiter();
-            outputTaskAwaiter.OnCompleted(() => { output = outputTaskAwaiter.GetResult(); });
-            var errorTaskAwaiter = process.StandardError.ReadToEndAsync().GetAwaiter();
-            errorTaskAwaiter.OnCompleted(() => { error = errorTaskAwaiter.GetResult(); });
-
-            process.WaitForExit();
+            var (output, error, _) = ExecutableHelper.CallCmd(cmd, arguments, workingDirectory);
 
             Logger.Log(
                 NLog.LogLevel.Trace,
@@ -306,40 +292,6 @@ namespace DataMigration.Application.Handler
             }
 
             return output;
-        }
-
-        /// <summary>
-        /// 获取进程
-        /// </summary>
-        /// <param name="arguments">参数</param>
-        /// <param name="workingDirectory">工作目录</param>
-        /// <returns></returns>
-        Process GetCmdProcess(string arguments, string workingDirectory = null)
-        {
-            var process = new Process();
-            process.StartInfo.CreateNoWindow = true;
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-
-            process.StartInfo.RedirectStandardInput = true;
-            //process.StartInfo.StandardInputEncoding = new UTF8Encoding(true);
-            process.StartInfo.RedirectStandardOutput = true;
-            //process.StartInfo.StandardOutputEncoding = new UTF8Encoding(true);
-            process.StartInfo.RedirectStandardError = true;
-            //process.StartInfo.StandardErrorEncoding = new UTF8Encoding(true);
-
-            if (Config.CurrentOS == OSPlatform.Windows)
-                process.StartInfo.FileName = "cmd.exe";
-            else if (Config.CurrentOS == OSPlatform.Linux || Config.CurrentOS == OSPlatform.OSX)
-                process.StartInfo.FileName = Environment.GetEnvironmentVariable("SHELL");
-            else
-                throw new ApplicationException("不支持在当前操作系统执行此操作.");
-
-            process.StartInfo.Arguments = arguments;
-            if (!workingDirectory.IsNullOrWhiteSpace())
-                process.StartInfo.WorkingDirectory = workingDirectory;
-
-            return process;
         }
     }
 }

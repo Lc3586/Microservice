@@ -2,6 +2,7 @@
 using Microservice.Library.NLogger.Application;
 using Microsoft.Extensions.DependencyInjection;
 using NLog.Targets;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -22,27 +23,52 @@ namespace DataMigration.Application.Configures
         {
             services.AddNLogger(s =>
             {
-                s.TargetGeneratorOptions
-                .Add(new TargetGeneratorOptions
+                switch (type)
                 {
-                    MinLevel = NLog.LogLevel.FromOrdinal(minLogLevel),
-                    Target = type switch
-                    {
-                        LoggerType.File => new FileTarget
+                    case LoggerType.File:
+                        s.TargetGeneratorOptions
+                            .Add(new TargetGeneratorOptions
+                            {
+                                MinLevel = NLog.LogLevel.FromOrdinal(minLogLevel),
+                                Target = new FileTarget
+                                {
+                                    Name = LoggerConfig.LogName,
+                                    Layout = LoggerConfig.Layout,
+                                    FileName = Path.Combine(Directory.GetCurrentDirectory(), LoggerConfig.FileDic, LoggerConfig.FileName),
+                                    Encoding = Encoding.UTF8
+                                }
+                            });
+                        break;
+                    case LoggerType.Console:
+                    default:
+                        if (minLogLevel < NLog.LogLevel.Error.Ordinal)
                         {
-                            Name = LoggerConfig.LogName,
-                            Layout = LoggerConfig.Layout,
-                            FileName = Path.Combine(Directory.GetCurrentDirectory(), LoggerConfig.FileDic, LoggerConfig.FileName),
-                            Encoding = Encoding.UTF8
-                        },
-                        _ => new ColoredConsoleTarget
-                        {
-                            Name = LoggerConfig.LogName,
-                            Layout = LoggerConfig.Layout,
-                            ErrorStream = true
-                        },
-                    }
-                });
+                            s.TargetGeneratorOptions
+                                .Add(new TargetGeneratorOptions
+                                {
+                                    MinLevel = NLog.LogLevel.FromOrdinal(minLogLevel),
+                                    MaxLevel = NLog.LogLevel.Warn,
+                                    Target = new ColoredConsoleTarget
+                                    {
+                                        Name = LoggerConfig.LogName,
+                                        Layout = LoggerConfig.Layout
+                                    }
+                                });
+                        }
+
+                        s.TargetGeneratorOptions
+                            .Add(new TargetGeneratorOptions
+                            {
+                                MinLevel = NLog.LogLevel.Error,
+                                Target = new ColoredConsoleTarget
+                                {
+                                    Name = LoggerConfig.LogName,
+                                    Layout = LoggerConfig.Layout,
+                                    ErrorStream = true
+                                }
+                            });
+                        break;
+                }
             })
             .AddMSLogger();
 

@@ -141,7 +141,7 @@ namespace Business.Utils.Pagination
 
             return source;
 
-            void Check(List<PaginationFilter> filters)
+            static void Check(List<PaginationFilter> filters)
             {
                 if (!filters.Any_Ex())
                     return;
@@ -187,50 +187,50 @@ namespace Business.Utils.Pagination
             }
         }
 
-        /// <summary>
-        /// 过滤
-        /// </summary>
-        /// <typeparam name="TKey"></typeparam>
-        /// <typeparam name="TReturn"></typeparam>
-        /// <param name="source"></param>
-        /// <param name="pagination">分页参数</param>
-        /// <param name="alias">指定别名</param>
-        /// <returns></returns>
-        public static ISelectGrouping<TKey, TReturn> Filter<TKey, TReturn>(this ISelectGrouping<TKey, TReturn> source, PaginationDTO pagination, string alias = "a")
-        {
-            //if (DynamicFilterInfo != null && DynamicFilterInfo.Any())
-            //    throw new MessageException("分组查询时不支持DynamicFilterInfo条件.");
+        ///// <summary>
+        ///// 过滤
+        ///// </summary>
+        ///// <typeparam name="TKey"></typeparam>
+        ///// <typeparam name="TReturn"></typeparam>
+        ///// <param name="source"></param>
+        ///// <param name="pagination">分页参数</param>
+        ///// <param name="alias">指定别名</param>
+        ///// <returns></returns>
+        //public static ISelectGrouping<TKey, TReturn> Filter<TKey, TReturn>(this ISelectGrouping<TKey, TReturn> source, PaginationDTO pagination, string alias = "a")
+        //{
+        //    //if (DynamicFilterInfo != null && DynamicFilterInfo.Any())
+        //    //    throw new MessageException("分组查询时不支持DynamicFilterInfo条件.");
 
-            //string where = string.Empty;
-            //if (!FilterToSql(ref where, "a"))
-            //    throw new MessageException("搜索条件不支持");
+        //    //string where = string.Empty;
+        //    //if (!FilterToSql(ref where, "a"))
+        //    //    throw new MessageException("搜索条件不支持");
 
-            //if (!string.IsNullOrWhiteSpace(where))
-            //    throw new MessageException("分组查询时不支持Filter条件.");
+        //    //if (!string.IsNullOrWhiteSpace(where))
+        //    //    throw new MessageException("分组查询时不支持Filter条件.");
 
-            return source;
-        }
+        //    return source;
+        //}
 
-        /// <summary>
-        /// 排序
-        /// </summary>
-        /// <typeparam name="TKey"></typeparam>
-        /// <typeparam name="TReturn"></typeparam>
-        /// <param name="source"></param>
-        /// <param name="pagination">分页参数</param>
-        /// <param name="alias">指定别名</param>
-        /// <returns></returns>
-        public static ISelectGrouping<TKey, TReturn> OrderBy<TKey, TReturn>(this ISelectGrouping<TKey, TReturn> source, PaginationDTO pagination, string alias = "a")
-        {
-            //string orderby = string.Empty;
-            //if (!OrderByToSql(ref orderby, "a"))
-            //    throw new MessageException("排序条件不支持");
+        ///// <summary>
+        ///// 排序
+        ///// </summary>
+        ///// <typeparam name="TKey"></typeparam>
+        ///// <typeparam name="TReturn"></typeparam>
+        ///// <param name="source"></param>
+        ///// <param name="pagination">分页参数</param>
+        ///// <param name="alias">指定别名</param>
+        ///// <returns></returns>
+        //public static ISelectGrouping<TKey, TReturn> OrderBy<TKey, TReturn>(this ISelectGrouping<TKey, TReturn> source, PaginationDTO pagination, string alias = "a")
+        //{
+        //    string orderby = string.Empty;
+        //    if (!OrderByToSql(ref orderby, "a"))
+        //        throw new MessageException("排序条件不支持");
 
-            //if (!string.IsNullOrWhiteSpace(orderby))
-            //    throw new MessageException("分组查询时不支持AdvancedSort条件.");
+        //    if (!string.IsNullOrWhiteSpace(orderby))
+        //        throw new MessageException("分组查询时不支持AdvancedSort条件.");
 
-            return source;
-        }
+        //    return source;
+        //}
 
         /// <summary>
         /// 获取分页后的数据
@@ -252,25 +252,25 @@ namespace Business.Utils.Pagination
                 return source.Page(pagination.PageIndex, pagination.PageRows);
         }
 
-        /// <summary>
-        /// 获取分页后的数据
-        /// </summary>
-        /// <typeparam name="TKey"></typeparam>
-        /// <typeparam name="TReturn">实体类型</typeparam>
-        /// <param name="source"></param>
-        /// <param name="pagination">分页参数</param>
-        /// <param name="alias">指定别名</param>
-        /// <returns></returns>
-        public static ISelectGrouping<TKey, TReturn> GetPagination<TKey, TReturn>(this ISelectGrouping<TKey, TReturn> source, PaginationDTO pagination, string alias = "a") where TReturn : class
-        {
-            source.Filter(pagination, alias);
-            pagination.RecordCount = source.Count();
-            source.OrderBy(pagination, alias);
+        ///// <summary>
+        ///// 获取分页后的数据
+        ///// </summary>
+        ///// <typeparam name="TKey"></typeparam>
+        ///// <typeparam name="TReturn">实体类型</typeparam>
+        ///// <param name="source"></param>
+        ///// <param name="pagination">分页参数</param>
+        ///// <param name="alias">指定别名</param>
+        ///// <returns></returns>
+        //public static ISelectGrouping<TKey, TReturn> GetPagination<TKey, TReturn>(this ISelectGrouping<TKey, TReturn> source, PaginationDTO pagination, string alias = "a") where TReturn : class
+        //{
+        //    source.Filter(pagination, alias);
+        //    pagination.RecordCount = source.Count();
+        //    source.OrderBy(pagination, alias);
 
-            if (pagination.PageIndex == -1)
-                return source;
-            else
-                return source.Page(pagination.PageIndex, pagination.PageRows);
-        }
+        //    if (pagination.PageIndex == -1)
+        //        return source;
+        //    else
+        //        return source.Page(pagination.PageIndex, pagination.PageRows);
+        //}
     }
 }

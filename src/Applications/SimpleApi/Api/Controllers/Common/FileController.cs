@@ -215,7 +215,7 @@ namespace Api.Controllers
         [AllowAnonymous]
         public async Task<object> GetVideoInfo(string id, bool format = true, bool streams = false, bool chapters = false, bool programs = false, bool version = false)
         {
-            return ResponseDataFactory.Success(await FileBusiness.GetVideoInfo(id, format, streams, chapters, programs, version));
+            return await Task.FromResult(ResponseDataFactory.Success(FileBusiness.GetVideoInfo(id, format, streams, chapters, programs, version)));
         }
 
         /// <summary>

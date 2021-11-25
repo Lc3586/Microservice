@@ -1,11 +1,11 @@
-﻿using Microservice.Library.Container;
-using Microservice.Library.Extension;
+﻿using Microservice.Library.Extension;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using T4CAGC.Log;
 using T4CAGC.Model;
 using T4CAGC.Template;
@@ -15,28 +15,103 @@ namespace T4CAGC.Handler
     /// <summary>
     /// 生成类
     /// </summary>
-    public static class GenerateHandler
+    public class GenerateHandler : IHandler
     {
+        public GenerateHandler(
+            Config config,
+            DataSourceHandler dataSourceHandler)
+        {
+            Config = config;
+            DataSourceHandler = dataSourceHandler;
+            Encoding = GetEncoding();
+        }
+
         /// <summary>
         /// 配置
         /// </summary>
-        readonly static GenerateConfig Config = AutofacHelper.GetService<GenerateConfig>();
+        readonly Config Config;
+
+        /// <summary>
+        /// 数据源处理器
+        /// </summary>
+        readonly DataSourceHandler DataSourceHandler;
 
         /// <summary>
         /// 编码
         /// </summary>
-        readonly static Encoding Encoding = GetEncoding();
+        readonly Encoding Encoding;
 
         /// <summary>
         /// 表信息
         /// </summary>
-        readonly static List<TableInfo> Tables = GetTables();
+        List<TableInfo> Tables;
+
+        /// <summary>
+        /// 处理
+        /// </summary>
+        /// <returns></returns>
+        public async Task Handler()
+        {
+            Tables = await Task.Run(DataSourceHandler.Handler);
+
+            Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"生成类型为: {Config.GenType}.");
+
+            if (Config.GenType == GenType.CompleteProject)
+                GenerateCompleteProject(Config.OutputPath);
+            else if (Config.GenType == GenType.SmallProject)
+                GenerateSmallProject(Config.OutputPath);
+
+            foreach (var table in Tables)
+            {
+                Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"正在处理: {table.Remark} {table.Name}.");
+
+                switch (Config.GenType)
+                {
+                    case GenType.CompleteProject:
+                    case GenType.SmallProject:
+                    case GenType.EnrichmentProject:
+                        GenerateEnrichmentProject(table, Config.OutputPath);
+                        break;
+                    case GenType.Controller:
+                        GenerateController(table, Config.OutputPath);
+                        break;
+                    case GenType.Implementation:
+                        GenerateImplementation(table, Config.OutputPath);
+                        break;
+                    case GenType.Interface:
+                        GenerateInterface(table, Config.OutputPath);
+                        break;
+                    case GenType.Business:
+                        GenerateBusiness(table, Config.OutputPath);
+                        break;
+                    case GenType.DTO:
+                        GenerateDTO(table, Config.OutputPath);
+                        break;
+                    case GenType.Const:
+                        GenerateConst(table, Config.OutputPath);
+                        break;
+                    case GenType.Enum:
+                        GenerateEnum(table, Config.OutputPath);
+                        break;
+                    case GenType.Model:
+                        GenerateModel(table, Config.OutputPath);
+                        break;
+                    case GenType.Entity:
+                        GenerateEntity(table, Config.OutputPath);
+                        break;
+                    default:
+                        throw new ApplicationException($"不支持的生成类型 {Config.GenType}");
+                }
+            }
+
+            Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "生成结束.");
+        }
 
         /// <summary>
         /// 获取编码
         /// </summary>
         /// <returns></returns>
-        static Encoding GetEncoding()
+        Encoding GetEncoding()
         {
             if (Config.EncodingName == Encoding.UTF8.EncodingName)
                 return new UTF8Encoding(true);
@@ -50,40 +125,28 @@ namespace T4CAGC.Handler
         }
 
         /// <summary>
-        /// 获取数据表信息
-        /// </summary>
-        /// <returns></returns>
-        static List<TableInfo> GetTables()
-        {
-            var tables = Config.DataSourceType switch
-            {
-                DataSourceType.CSV => Config.DataSource.GetCSVData(Config.SpecifyTable, Config.IgnoreTable),
-                DataSourceType.CSV_Simple => Config.DataSource.GetCSVData_Simple(Config.SpecifyTable, Config.IgnoreTable),
-                _ => Config.TableType.GetDataBaseData(Config.SpecifyTable, Config.IgnoreTable)
-            };
-
-            return tables;
-        }
-
-        /// <summary>
         /// 生成完整项目
         /// </summary>
         /// <param name="outputPath">输出路径</param>
-        static void GenerateCompleteProject(string outputPath)
+        void GenerateCompleteProject(string outputPath)
         {
             var projectCodeZipFile = new FileInfo(Path.GetFullPath(Config.CompleteProjectCodeZipFile, AppContext.BaseDirectory));
             if (!projectCodeZipFile.Exists)
             {
-                Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"项目代码文件不存在: {projectCodeZipFile.FullName}.");
+                Logger.Log(NLog.LogLevel.Warn, LogType.警告信息, $"项目代码文件不存在: {projectCodeZipFile.FullName}.");
 
                 if (Config.CompleteProjectCodeZipDownloadUri.IsNullOrWhiteSpace())
                     throw new ApplicationException("未设置项目代码下载地址.");
 
+                Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"尝试从此地址下载项目代码文件: {Config.CompleteProjectCodeZipDownloadUri}.");
+
                 using var client = new WebClient();
                 client.DownloadFile(Config.CompleteProjectCodeZipDownloadUri, projectCodeZipFile.FullName);
+
+                Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"项目代码文件下载完毕.");
             }
 
-            Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"正在解压缩项目代码: {projectCodeZipFile.FullName}.");
+            Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"正在解压缩项目代码: {projectCodeZipFile.FullName}.");
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
@@ -94,7 +157,11 @@ namespace T4CAGC.Handler
         /// 生成小型项目
         /// </summary>
         /// <param name="outputPath">输出路径</param>
-        static void GenerateSmallProject(string outputPath)
+#pragma warning disable CA1822 // 将成员标记为 static
+#pragma warning disable IDE0060 // 删除未使用的参数
+        void GenerateSmallProject(string outputPath)
+#pragma warning restore IDE0060 // 删除未使用的参数
+#pragma warning restore CA1822 // 将成员标记为 static
         {
             throw new ApplicationException("暂不支持生成小型项目.");
         }
@@ -104,7 +171,7 @@ namespace T4CAGC.Handler
         /// </summary>
         /// <param name="table">表数据</param>
         /// <param name="outputPath">输出路径</param>
-        static void GenerateEnrichmentProject(TableInfo table, string outputPath)
+        void GenerateEnrichmentProject(TableInfo table, string outputPath)
         {
             var entityPath = Path.Combine(outputPath, "Entity");
             GenerateEntity(table, entityPath);
@@ -124,7 +191,13 @@ namespace T4CAGC.Handler
         /// </summary>
         /// <param name="table">表数据</param>
         /// <param name="outputPath">输出路径</param>
-        static void GenerateConfigures(TableInfo table, string outputPath)
+#pragma warning disable CA1822 // 将成员标记为 static
+#pragma warning disable IDE0060 // 删除未使用的参数
+#pragma warning disable IDE0051 // 删除未使用的私有成员
+        void GenerateConfigures(TableInfo table, string outputPath)
+#pragma warning restore IDE0051 // 删除未使用的私有成员
+#pragma warning restore IDE0060 // 删除未使用的参数
+#pragma warning restore CA1822 // 将成员标记为 static
         {
             throw new ApplicationException("暂不支持生成配置类.");
         }
@@ -134,9 +207,9 @@ namespace T4CAGC.Handler
         /// </summary>
         /// <param name="table">表数据</param>
         /// <param name="outputPath">输出路径</param>
-        static void GenerateController(TableInfo table, string outputPath)
+        void GenerateController(TableInfo table, string outputPath)
         {
-            Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"正在生成控制器类: {table.Remark} {table.Name}.");
+            Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"正在生成控制器类: {table.Remark} {table.Name}.");
 
             var filename = Path.Combine(outputPath, table.ModuleName, $"{table.ReducedName}Controller.cs");
             var tt = new Controller(new ControllerOptions
@@ -156,9 +229,9 @@ namespace T4CAGC.Handler
         /// </summary>
         /// <param name="table">表数据</param>
         /// <param name="outputPath">输出路径</param>
-        static void GenerateImplementation(TableInfo table, string outputPath)
+        void GenerateImplementation(TableInfo table, string outputPath)
         {
-            Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"正在生成业务实现类: {table.Remark} {table.Name}.");
+            Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"正在生成业务实现类: {table.Remark} {table.Name}.");
 
             var filename = Path.Combine(outputPath, table.ModuleName, $"{table.ReducedName}Business.cs");
             var tt = new Implementation(new ImplementationOptions
@@ -178,9 +251,9 @@ namespace T4CAGC.Handler
         /// </summary>
         /// <param name="table">表数据</param>
         /// <param name="outputPath">输出路径</param>
-        static void GenerateInterface(TableInfo table, string outputPath)
+        void GenerateInterface(TableInfo table, string outputPath)
         {
-            Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"正在生成业务接口类: {table.Remark} {table.Name}.");
+            Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"正在生成业务接口类: {table.Remark} {table.Name}.");
 
             var filename = Path.Combine(outputPath, table.ModuleName, $"I{table.ReducedName}Business.cs");
             var tt = new Interface(new InterfaceOptions
@@ -200,7 +273,7 @@ namespace T4CAGC.Handler
         /// </summary>
         /// <param name="table">表数据</param>
         /// <param name="outputPath">输出路径</param>
-        static void GenerateBusiness(TableInfo table, string outputPath)
+        void GenerateBusiness(TableInfo table, string outputPath)
         {
             var interfacePath = Path.Combine(outputPath, "Interface");
             GenerateInterface(table, interfacePath);
@@ -214,9 +287,9 @@ namespace T4CAGC.Handler
         /// </summary>
         /// <param name="table">表数据</param>
         /// <param name="outputPath">输出路径</param>
-        static void GenerateDTO(TableInfo table, string outputPath)
+        void GenerateDTO(TableInfo table, string outputPath)
         {
-            Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"正在生成业务模型类: {table.Remark} {table.Name}.");
+            Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"正在生成业务模型类: {table.Remark} {table.Name}.");
 
             var filename = Path.Combine(outputPath, table.ModuleName, $"{table.ReducedName}DTO.cs");
             var tt = new DTO(new DTOOptions
@@ -236,18 +309,18 @@ namespace T4CAGC.Handler
         /// </summary>
         /// <param name="table">表数据</param>
         /// <param name="outputPath">输出路径</param>
-        static void GenerateConst(TableInfo table, string outputPath)
+        void GenerateConst(TableInfo table, string outputPath)
         {
-            Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"正在生成常量定义类: {table.Remark} {table.Name}.");
+            Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"正在生成常量定义类: {table.Remark} {table.Name}.");
 
             if (table.RelationshipTable)
             {
-                Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"表信息中存在联合主键, 且没有其他字段, 可能为关系表, 已跳过.", table.Name);
+                Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"表信息中存在联合主键, 且没有其他字段, 可能为关系表, 已跳过.", table.Name);
                 return;
             }
             else if (!table.Fields.Any_Ex(o => o.Primary))
             {
-                Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"表信息中未找到主键, 已跳过.", table.Name);
+                Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"表信息中未找到主键, 已跳过.", table.Name);
                 return;
             }
 
@@ -275,18 +348,18 @@ namespace T4CAGC.Handler
         /// </summary>
         /// <param name="table">表数据</param>
         /// <param name="outputPath">输出路径</param>
-        static void GenerateEnum(TableInfo table, string outputPath)
+        void GenerateEnum(TableInfo table, string outputPath)
         {
-            Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"正在生成枚举定义类: {table.Remark} {table.Name}.");
+            Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"正在生成枚举定义类: {table.Remark} {table.Name}.");
 
             if (table.RelationshipTable)
             {
-                Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"表信息中存在联合主键, 且没有其他字段, 可能为关系表, 已跳过.", table.Name);
+                Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"表信息中存在联合主键, 且没有其他字段, 可能为关系表, 已跳过.", table.Name);
                 return;
             }
             else if (!table.Fields.Any_Ex(o => o.Primary))
             {
-                Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"表信息中未找到主键, 已跳过.", table.Name);
+                Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"表信息中未找到主键, 已跳过.", table.Name);
                 return;
             }
 
@@ -314,7 +387,7 @@ namespace T4CAGC.Handler
         /// </summary>
         /// <param name="table">表数据</param>
         /// <param name="outputPath">输出路径</param>
-        static void GenerateModel(TableInfo table, string outputPath)
+        void GenerateModel(TableInfo table, string outputPath)
         {
             GenerateDTO(table, outputPath);
             GenerateConst(table, outputPath);
@@ -326,9 +399,9 @@ namespace T4CAGC.Handler
         /// </summary>
         /// <param name="table">表数据</param>
         /// <param name="outputPath">输出路径</param>
-        static void GenerateEntity(TableInfo table, string outputPath)
+        void GenerateEntity(TableInfo table, string outputPath)
         {
-            Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"正在生成实体模型类: {table.Remark} {table.Name}.");
+            Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"正在生成实体模型类: {table.Remark} {table.Name}.");
 
             var filename = Path.Combine(outputPath, table.ModuleName, $"{table.Name}.cs");
             var tt = new Entity(new EntityOptions
@@ -345,13 +418,13 @@ namespace T4CAGC.Handler
         /// <typeparam name="T"></typeparam>
         /// <param name="tt">模板对象</param>
         /// <param name="filename">文件路径以及文件名（包括拓展名）</param>
-        static void OutputToFile<T>(T tt, string filename)
+        void OutputToFile<T>(T tt, string filename)
         {
             var file = new FileInfo(filename);
 
             if (file.Exists && !Config.OverlayFile)
             {
-                Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"文件已存在, 当前禁止覆盖文件, 已跳过.", filename);
+                Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"文件已存在, 当前禁止覆盖文件, 已跳过.", filename);
                 return;
             }
 
@@ -367,71 +440,9 @@ namespace T4CAGC.Handler
             File.WriteAllText(filename, content, Encoding);
 
             if (file.Exists)
-                Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"重写文件.", filename);
+                Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"重写文件.", filename);
             else
-                Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"生成文件.", filename);
-        }
-
-        /// <summary>
-        /// 生成
-        /// </summary>
-        /// <returns></returns>
-        public static void Generate()
-        {
-            Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"共获取到了{Tables.Count}张表数据.");
-
-            Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"生成类型为: {Config.GenType}.");
-
-            if (Config.GenType == GenType.CompleteProject)
-                GenerateCompleteProject(Config.OutputPath);
-            else if (Config.GenType == GenType.SmallProject)
-                GenerateSmallProject(Config.OutputPath);
-
-            foreach (var table in Tables)
-            {
-                Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, $"正在处理: {table.Remark} {table.Name}.");
-
-                switch (Config.GenType)
-                {
-                    case GenType.CompleteProject:
-                    case GenType.SmallProject:
-                    case GenType.EnrichmentProject:
-                        GenerateEnrichmentProject(table, Config.OutputPath);
-                        break;
-                    case GenType.Controller:
-                        GenerateController(table, Config.OutputPath);
-                        break;
-                    case GenType.Implementation:
-                        GenerateImplementation(table, Config.OutputPath);
-                        break;
-                    case GenType.Interface:
-                        GenerateInterface(table, Config.OutputPath);
-                        break;
-                        break;
-                    case GenType.Business:
-                        GenerateBusiness(table, Config.OutputPath);
-                        break;
-                    case GenType.DTO:
-                        GenerateDTO(table, Config.OutputPath);
-                        break;
-                    case GenType.Const:
-                        GenerateConst(table, Config.OutputPath);
-                        break;
-                    case GenType.Enum:
-                        GenerateEnum(table, Config.OutputPath);
-                        break;
-                    case GenType.Model:
-                        GenerateModel(table, Config.OutputPath);
-                        break;
-                    case GenType.Entity:
-                        GenerateEntity(table, Config.OutputPath);
-                        break;
-                    default:
-                        throw new ApplicationException($"不支持的生成类型 {Config.GenType}");
-                }
-            }
-
-            Logger.Log(NLog.LogLevel.Info, LogType.系统跟踪, "生成结束.");
+                Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"生成文件.", filename);
         }
     }
 }

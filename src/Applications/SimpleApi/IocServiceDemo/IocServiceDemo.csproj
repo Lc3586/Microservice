@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microservice.Library.Extension" Version="0.0.0.11-alpha-g33dce03d08" />
+    <PackageReference Include="Microservice.Library.Extension" Version="0.0.0.13-alpha-gc29efdf990" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
   </ItemGroup>

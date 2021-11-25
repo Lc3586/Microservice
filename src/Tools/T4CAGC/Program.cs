@@ -1,4 +1,5 @@
-﻿using Autofac.Extensions.DependencyInjection;
+﻿using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using McMaster.Extensions.CommandLineUtils;
 using Microservice.Library.Configuration;
 using Microservice.Library.ConsoleTool;
@@ -6,7 +7,9 @@ using Microservice.Library.Container;
 using Microservice.Library.Extension;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Runtime.InteropServices;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,10 +27,17 @@ namespace T4CAGC
     {
         static Task<int> Main(string[] args) => CommandLineApplication.ExecuteAsync<Program>(args);
 
+        #region 参数
+
+        //[Argument(1, Description = "覆盖已有文件（默认不覆盖）.")]
+        //bool OverlayFile { get; } = false;
+
+        #endregion
+
         #region 配置
 
         [Option("-c|--ConfigPath", Description = "配置文件路径: 不指定时使用默认配置.")]
-        public string ConfigPath { get; } = "jsonconfig/generateconfig.json";
+        public string ConfigPath { get; } = "config/generateconfig.json";
 
         [Option("-l|--LoggerType", Description = "日志类型（默认Console）.")]
         public LoggerType LoggerType { get; } = LoggerType.Console;
@@ -44,59 +54,39 @@ namespace T4CAGC
         [Option("-p|--OutputPath", Description = "输出路径")]
         public string OutputPath { get; }
 
-        #endregion
-
-        #region 参数
-
-        [Argument(1, Description = "覆盖已有文件（默认不覆盖）.")]
-        bool OverlayFile { get; } = false;
+        [Option("-o|--OverlayFile", Description = "覆盖已有文件（默认不覆盖）.")]
+        public bool OverlayFile { get; } = false;
 
         #endregion
 
+#pragma warning disable IDE0051 // 删除未使用的私有成员
+#pragma warning disable IDE0060 // 删除未使用的参数
         async Task<int> OnExecuteAsync(CommandLineApplication app, CancellationToken cancellationToken = default)
+#pragma warning restore IDE0060 // 删除未使用的参数
+#pragma warning restore IDE0051 // 删除未使用的私有成员
         {
             try
             {
                 Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
                 Console.OutputEncoding = Encoding.GetEncoding(936); //new UTF8Encoding(true);
 
-                //if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                //    Console.SetBufferSize(150, Console.BufferHeight);
-
                 #region 欢迎语
 
-                ",]]]]]]]]]]]]]]]]]`       ,@@^           ]/@@@@@@]`             ,]]]`               ,/@@@@@@\\]              ]/@@@@@@]`".ConsoleWrite(ConsoleColor.Magenta);
-                "  =@@@@@@@@@@@@@^        /@@@^        ,@@@@@@[[@@@@@@`          @@@@@            ,@@@@@@[[@@@@@@\\        ,@@@@@@[[@@@@@@`".ConsoleWrite(ConsoleColor.Green);
-                "      @@@              *@@@@@^       @@@@`        ,@@@^        /@@[@@@          /@@@`         \\@@@      @@@@`        ,@@@^".ConsoleWrite(ConsoleColor.Green);
-                "      @@@             ,@@`=@@^      @@@/           ,@@@       =@@^ =@@\\        @@@/            \\@@^    @@@/           ,@@@".ConsoleWrite(ConsoleColor.Yellow);
-                "      @@@            /@@  =@@^     =@@@                      =@@@   \\@@^      =@@@                    =@@@".ConsoleWrite(ConsoleColor.Yellow);
-                "      @@@          *@@/   =@@^     =@@^                      @@@`    @@@`     =@@^                    =@@^".ConsoleWrite(ConsoleColor.Cyan);
-                "      @@@         ,@@`    =@@^     =@@^                     @@@^     ,@@@     =@@^        =@@@@@@@@   =@@^".ConsoleWrite(ConsoleColor.Cyan);
-                "      @@@        =@@]]]]]]/@@\\]]`  =@@@                    =@@@@@@@@@@@@@@    =@@@              @@@   =@@@".ConsoleWrite(ConsoleColor.Yellow);
-                "      @@@        =@@@@@@@@@@@@@@^   @@@\\           =@@@   =@@@         \\@@\\    @@@\\             @@@    @@@\\           =@@@".ConsoleWrite(ConsoleColor.Yellow);
-                "      @@@                 =@@^       @@@@`        ,@@@^  ,@@@`          @@@^    \\@@@`         ,@@@@     @@@@`        ,@@@^".ConsoleWrite(ConsoleColor.Green);
-                "      @@@                 =@@^        ,@@@@@@]]@@@@@@`   @@@^           ,@@@^    ,@@@@@@]]@@@@@@@@@      ,@@@@@@]]@@@@@@`".ConsoleWrite(ConsoleColor.Green);
-                "      [[[                 ,[[`           [\\@@@@@@/`     ,[[[             ,[[[       ,\\@@@@@@/`  ,[[         [\\@@@@@@/`\r\n\r\n\r\n\r\n\r\n\r\n\r\n".ConsoleWrite(ConsoleColor.Magenta);
-
-                "\t\t\t]]]]]]]]]]]`      ]]]]            ,]]]`\t\t,]]`                  ]/@@@@@@]`      ]]]]]]]]]]]]]]]]]]   ]]]]]]]]]]]]]`".ConsoleWrite(ConsoleColor.Cyan);
-                "\t\t\t@@@@@@@@@@@@@@`    \\@@@`         =@@@^\t\t=@@^               ,@@@@@@[[@@@@@@`   @@@@@@@@@@@@@@@@@@   @@@@@@@@@@@@@@@@`".ConsoleWrite(ConsoleColor.Cyan);
-                "\t\t\t@@@        ,@@@^    =@@@^       /@@@`  \t\t=@@^              @@@@`        ,@@@^         =@@^          @@@          ,@@@^".ConsoleWrite(ConsoleColor.Cyan);
-                "\t\t\t@@@         =@@^      @@@\\     @@@/   \t\t=@@^             @@@/           ,@@@         =@@^          @@@           =@@^".ConsoleWrite(ConsoleColor.Cyan);
-                "\t\t\t@@@        /@@@        \\@@@` ,@@@`    \t\t=@@^            =@@@                         =@@^          @@@           @@@^".ConsoleWrite(ConsoleColor.Cyan);
-                "\t\t\t@@@@@@@@@@@@@^          ,@@@@@@@       \t\t=@@^            =@@^                         =@@^          @@@]]]]]]]/@@@@@`".ConsoleWrite(ConsoleColor.Cyan);
-                "\t\t\t@@@      ,[\\@@@\\          \\@@@/     \t\t=@@^            =@@^                         =@@^          @@@@@@@@@@@@@@".ConsoleWrite(ConsoleColor.Cyan);
-                "\t\t\t@@@          @@@^          @@@         \t\t=@@^            =@@@                         =@@^          @@@        ,@@@^".ConsoleWrite(ConsoleColor.Cyan);
-                "\t\t\t@@@          =@@^          @@@         \t\t=@@^             @@@\\           =@@@         =@@^          @@@          @@@^".ConsoleWrite(ConsoleColor.Cyan);
-                "\t\t\t@@@         /@@@`          @@@         \t\t=@@^              @@@@`        ,@@@^         =@@^          @@@          ,@@@`".ConsoleWrite(ConsoleColor.Cyan);
-                "\t\t\t@@@@@@@@@@@@@@@`           @@@         \t\t=@@@@@@@@@@@@@     ,@@@@@@]]@@@@@@`          =@@^          @@@           =@@@ ".ConsoleWrite(ConsoleColor.Cyan);
-                "\t\t\t[[[[[[[[[[[[               [[[         \t\t,[[[[[[[[[[[[[        [\\@@@@@@/`             ,[[`          [[[            [[[`\r\n\r\n\r\n\r\n\r\n\r\n\r\n".ConsoleWrite(ConsoleColor.Cyan);
+                using (var welcomeReader = new StreamReader(new FileStream(Path.GetFullPath("config/welcome", AppContext.BaseDirectory), FileMode.Open, FileAccess.Read)))
+                {
+                    var random = new Random();
+                    while (!welcomeReader.EndOfStream)
+                    {
+                        welcomeReader.ReadLine().ConsoleWrite((ConsoleColor)random.Next(1, 15));
+                    }
+                }
 
                 #endregion
 
                 "程序启动中.".ConsoleWrite();
                 "正在读取配置.".ConsoleWrite();
 
-                var config = new ConfigHelper(ConfigPath).GetModel<GenerateConfig>("Config");
+                var config = new ConfigHelper(ConfigPath).GetModel<Config>("Config");
 
                 if (config == null)
                 {
@@ -142,15 +132,24 @@ namespace T4CAGC
                 if (config.DataSourceType == DataSourceType.DataBase)
                     services.RegisterFreeSql(config.DataSource, config.DataBaseType);
 
-                AutofacHelper.Container = new AutofacServiceProviderFactory()
-                    .CreateBuilder(services)
-                    .Build();
+                var builder = new AutofacServiceProviderFactory().CreateBuilder(services);
+
+                var handlerType = typeof(IHandler);
+                var handlers = typeof(Program)
+                    .GetTypeInfo()
+                    .Assembly
+                    .GetTypes()
+                    .Where(o => handlerType.IsAssignableFrom(o) && o != handlerType)
+                    .ToArray();
+                builder.RegisterTypes(handlers);
+
+                AutofacHelper.Container = builder.Build();
 
                 "已应用Autofac容器.\r\n".ConsoleWrite();
 
                 try
                 {
-                    GenerateHandler.Generate();
+                    await AutofacHelper.GetService<GenerateHandler>().Handler();
                 }
                 catch (Exception ex)
                 {

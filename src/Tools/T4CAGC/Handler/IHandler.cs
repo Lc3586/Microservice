@@ -1,4 +1,4 @@
-﻿namespace DataMigration.Application.Handler
+﻿namespace T4CAGC.Handler
 {
     public interface IHandler
     {
