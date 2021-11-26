@@ -19,34 +19,6 @@ namespace DataMigration.Application.Model
         public string Version { get; set; }
 
         /// <summary>
-        /// 当前操作系统平台
-        /// </summary>
-        public OSPlatform CurrentOS
-        {
-            get
-            {
-                if (_CurrentOS != null)
-                    return _CurrentOS.Value;
-
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                    _CurrentOS = OSPlatform.Windows;
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                    _CurrentOS = OSPlatform.Linux;
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                    _CurrentOS = OSPlatform.OSX;
-                else
-                    throw new ApplicationException("无法获取当前的操作系统平台.");
-
-                return _CurrentOS.Value;
-            }
-        }
-
-        /// <summary>
-        /// 当前操作系统平台
-        /// </summary>
-        private OSPlatform? _CurrentOS { get; set; }
-
-        /// <summary>
         /// 源数据库连接字符串
         /// </summary>
         public string SourceConnectingString { get; set; }
@@ -137,7 +109,9 @@ namespace DataMigration.Application.Model
             }
         }
 
+#pragma warning disable IDE1006 // 命名样式
         List<string> _EntityAssemblyFiles { get; set; }
+#pragma warning restore IDE1006 // 命名样式
 
         /// <summary>
         /// 实体类命名空间

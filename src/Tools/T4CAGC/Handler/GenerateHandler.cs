@@ -42,17 +42,12 @@ namespace T4CAGC.Handler
         readonly Encoding Encoding;
 
         /// <summary>
-        /// 表信息
-        /// </summary>
-        List<TableInfo> Tables;
-
-        /// <summary>
         /// 处理
         /// </summary>
         /// <returns></returns>
         public async Task Handler()
         {
-            Tables = await Task.Run(DataSourceHandler.Handler);
+            await Task.Run(DataSourceHandler.Handler);
 
             Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"生成类型为: {Config.GenType}.");
 
@@ -61,7 +56,7 @@ namespace T4CAGC.Handler
             else if (Config.GenType == GenType.SmallProject)
                 GenerateSmallProject(Config.OutputPath);
 
-            foreach (var table in Tables)
+            foreach (var table in Extension.Extension.GetTableInfos())
             {
                 Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"正在处理: {table.Remark} {table.Name}.");
 

@@ -1,6 +1,7 @@
 ﻿using DataMigration.Application.Log;
 using DataMigration.Application.Model;
 using Microservice.Library.Extension;
+using Microservice.Library.Extension.Helper;
 using Microservice.Library.File;
 using System;
 using System.IO;
@@ -110,7 +111,7 @@ namespace DataMigration.Application.Handler
         /// 安装.NET SDK
         /// </summary>
         /// <returns></returns>
-        void InstallDotnetSDK()
+        static void InstallDotnetSDK()
         {
             if (CheckDotnetSDK())
                 return;
@@ -118,9 +119,9 @@ namespace DataMigration.Application.Handler
             try
             {
                 string cmd;
-                if (Config.CurrentOS == OSPlatform.Windows)
+                if (SystemInfoHelper.CurrentOS == OSPlatform.Windows)
                     cmd = "./dotnet-install.ps1 -Channel LTS";
-                else if (Config.CurrentOS == OSPlatform.Linux || Config.CurrentOS == OSPlatform.OSX)
+                else if (SystemInfoHelper.CurrentOS == OSPlatform.Linux || SystemInfoHelper.CurrentOS == OSPlatform.OSX)
                     cmd = "./dotnet-install.sh --channel LTS";
                 else
                     throw new ApplicationException("不支持在当前操作系统执行此操作.");

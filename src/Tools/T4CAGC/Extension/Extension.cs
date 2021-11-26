@@ -11,6 +11,28 @@ namespace T4CAGC.Extension
     public static class Extension
     {
         /// <summary>
+        /// 数据表信息集合
+        /// </summary>
+        static List<TableInfo> TableInfos;
+
+        /// <summary>
+        /// 设置数据表信息集合
+        /// </summary>
+        public static void SetTableInfos(List<TableInfo> types)
+        {
+            TableInfos = types;
+        }
+
+        /// <summary>
+        /// 获取数据库实体集合
+        /// </summary>
+        /// <returns></returns>
+        public static List<TableInfo> GetTableInfos()
+        {
+            return TableInfos;
+        }
+
+        /// <summary>
         /// 如果集合中不包含这个值则添加
         /// </summary>
         /// <typeparam name="T">元素类型</typeparam>
