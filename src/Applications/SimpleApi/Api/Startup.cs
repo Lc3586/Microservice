@@ -26,7 +26,6 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Runtime.InteropServices;
 
 namespace Api
 {
@@ -270,7 +269,7 @@ namespace Api
             builder.RegisterType<Interceptor>();
 
             Bar?.Normal(62);
-            "注册DisposableContainer(请求结束自动释放).".ConsoleWrite();
+            "注册DisposableContainer(请求结束自动释放).\r\n".ConsoleWrite();
             //请求结束自动释放
             builder.RegisterType<DisposableContainer>()
                 .As<IDisposableContainer>()

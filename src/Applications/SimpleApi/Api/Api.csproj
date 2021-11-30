@@ -220,7 +220,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="appsettings.Development.json" />
+    <None Include="appsettings.Development.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
     <None Include="appsettings.Production.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
@@ -775,6 +777,9 @@
     </None>
     <None Update="certificate\simple-api.crt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="certificate\simple-api.key">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Update="certificate\simple-api.pfx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

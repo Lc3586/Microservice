@@ -95,7 +95,7 @@ var UploadWorker = (function () {
 }());
 if ('undefined' === typeof window
     && 'function' === typeof self.importScripts) {
-    self.importScripts("../../../utils/axios.min.js", "../Model/ApiUri.js");
+    self.importScripts("../../../utils/axios.min.js", "../../../utils/baseUrl.js", "../Model/ApiUri.js");
     self.addEventListener('message', this.onMessage);
     var worker_1 = new UploadWorker(self);
     self.addEventListener('message', function (event) { worker_1.OnMessage(event); });

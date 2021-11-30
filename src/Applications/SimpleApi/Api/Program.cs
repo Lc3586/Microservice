@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Text;
+using System.Linq;
 
 namespace Api
 {
@@ -11,14 +12,15 @@ namespace Api
     {
         public static void Main(string[] args)
         {
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            Console.OutputEncoding = Encoding.GetEncoding(936); //new UTF8Encoding(true);
-            Console.WriteLine("正在启动应用程序.");
+            var chartset = args?.FirstOrDefault(o => o.IndexOf("-Chartset") == 0);
+            if (chartset != default)
+            {
+                chartset = chartset.Replace("-Chartset", "").Trim();
+                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+                Console.OutputEncoding = Encoding.GetEncoding(chartset);
+            }
+            Console.WriteLine("\r\n正在启动应用程序.");
             Console.WriteLine($"{TimeZoneInfo.Local.DisplayName} {DateTime.Now}");
-            //while (true)
-            //{
-            //    Task.Delay(100000).GetAwaiter().GetResult();
-            //}
             CreateHostBuilder(args).Build().Run();
         }
 

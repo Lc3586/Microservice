@@ -94,17 +94,20 @@ CMD /run.sh
 #RUN sed -i 's/MinProtocol = TLSv1.2/MinProtocol = TLSv1/g' /etc/ssl/openssl.cnf
 #RUN sed -i 's/MinProtocol = TLSv1.2/MinProtocol = TLSv1/g' /usr/lib/ssl/openssl.cnf
 
-#构建镜像
-#docker build -t lctr/simple-api .
 #创建卷
-#docker volume create app_data_storage
-#创建容器并运行
-#docker run -v app_data_storage:/app-data --network bridge --name simple-api -p 5001:443 -p 5000:80 --name simple-api --restart always lctr/simple-api
-#进入容器
-#docker exec -it [id] /bin/sh
+#docker volume create --name app_storage_area --label "备注"="应用程序公共存储目录。"
 
-#目前程序会自动转移wwwroot文件,无需手动复制
-#复制数据到共享卷中(simple-apin指的是ftp的用户根目录)
+#构建镜像
+#docker build -f Dockerfile.published -t lctr/simple-api
+
+#创建容器并运行
+#docker run -v app_storage_area:/app-data --name simple-api -p 5001:443 -p 5000:80 --name simple-api --restart always lctr/simple-api
+
+#进入容器
+#docker exec -it [id/name] bash
+
+#目前程序会自动转移wwwroot中的文件,无需手动复制
+#复制数据到共享卷中
 #cp -r /app/wwwroot /app-data/simple-api
 #清理目录
 #rm -rf /app/wwwroot

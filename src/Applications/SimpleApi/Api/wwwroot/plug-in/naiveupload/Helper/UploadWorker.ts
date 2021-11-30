@@ -162,6 +162,7 @@ if ('undefined' === typeof window
     && 'function' === typeof (<any>self).importScripts) {
     (<any>self).importScripts(
         "../../../utils/axios.min.js",
+        "../../../utils/baseUrl.js",
         "../Model/ApiUri.js");
     (<any>self).addEventListener('message', this.onMessage);
 
