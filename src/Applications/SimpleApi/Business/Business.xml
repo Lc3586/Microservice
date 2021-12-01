@@ -2922,6 +2922,12 @@
             缓存目录绝对路径
             </summary>
         </member>
+        <member name="M:Business.Utils.CAGC.CAGCBusiness.Call(System.String)">
+            <summary>
+            调用程序
+            </summary>
+            <param name="arguments">参数</param>
+        </member>
         <member name="M:Business.Utils.CAGC.CAGCBusiness.GetProcess(System.String)">
             <summary>
             获取进程

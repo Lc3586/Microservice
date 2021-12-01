@@ -65,6 +65,27 @@ namespace Business.Utils.CAGC
         readonly string TempDir;
 
         /// <summary>
+        /// 调用程序
+        /// </summary>
+        /// <param name="arguments">参数</param>
+        void Call(string arguments)
+        {
+            var filePath = Config.GetFileAbsolutePath("CAGC");
+
+            void outputReadLine(string value)
+            {
+                SendSignalrInfo($"{value}\r\n", CAGCHubMethod.Info).GetAwaiter().GetResult();
+            }
+
+            void errorReadLine(string value)
+            {
+                SendSignalrInfo($"{value}\r\n", CAGCHubMethod.Error).GetAwaiter().GetResult();
+            }
+
+            ExecutableHelper.Call(filePath, arguments, null, outputReadLine, errorReadLine);
+        }
+
+        /// <summary>
         /// 获取进程
         /// </summary>
         /// <param name="arguments">参数</param>
@@ -280,7 +301,7 @@ namespace Business.Utils.CAGC
                          + $"-s \"{dataSourceFile}\" "
                          + $"-p \"{outputPath}\" true";
 
-            await CallEXE(arguments);
+            Call(arguments);
 
             if (!outputDir.GetDirectories().Any() && !outputDir.GetFiles().Any())
                 throw new MessageException($"未生成任何文件.");

@@ -80,7 +80,7 @@ CMD /run.sh
 #docker volume create --name app_storage_area --label "备注"="应用程序公共存储目录。"
 
 #构建镜像
-#docker build -f Dockerfile.published -t lctr/simple-api
+#docker build -f Dockerfile.published -t lctr/simple-api .
 
 #创建容器并运行
 #docker run -v app_storage_area:/app-data --name simple-api -p 5001:443 -p 5000:80 --name simple-api --restart always lctr/simple-api
