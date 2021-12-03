@@ -66,7 +66,7 @@ var ApiUri = (function () {
         if (section === void 0) { section = false; }
         return _a.BaseUrl + "/file-upload/pre-file/" + configId + "/" + md5 + "?filename=" + filename + "&section=" + section + "&type=" + (type || '') + "&extension=" + (extension || '') + "&specs=" + (specs || '') + "&total=" + (total || '');
     };
-    ApiUri.Delete = _a.BaseUrl + '/file/list';
+    ApiUri.Delete = _a.BaseUrl + '/file/delete';
     ApiUri.CFMTHub = _a.BaseUrl + '/cfmthub';
     return ApiUri;
 }());

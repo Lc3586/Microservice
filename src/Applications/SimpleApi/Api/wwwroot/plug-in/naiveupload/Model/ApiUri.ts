@@ -239,7 +239,7 @@ class ApiUri {
     /**
      * 删除文件
      * */
-    static Delete: string = this.BaseUrl + '/file/list';
+    static Delete: string = this.BaseUrl + '/file/delete';
 
     /**
      * 分片文件合并任务中心

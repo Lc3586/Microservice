@@ -11,8 +11,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Annotations\**" />
     <Compile Remove="DataAccess\**" />
+    <EmbeddedResource Remove="Annotations\**" />
     <EmbeddedResource Remove="DataAccess\**" />
+    <None Remove="Annotations\**" />
     <None Remove="DataAccess\**" />
   </ItemGroup>
 
@@ -27,7 +30,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Annotations\" />
     <Folder Include="Template\Referenced\" />
   </ItemGroup>
 

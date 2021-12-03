@@ -42,7 +42,7 @@ namespace T4CAGC.Handler
         }
 
         /// <summary>
-        /// 解析CSV文件
+        /// 解析数据库
         /// </summary>
         /// <returns></returns>
         public List<TableInfo> AnalysisDatabase()
@@ -61,13 +61,22 @@ namespace T4CAGC.Handler
                 (Config.TableType.Any_Ex() && !Config.TableType.Contains(o.Type))
                 || (Config.IgnoreTables.Any_Ex() && Config.IgnoreTables.Any(p => string.Equals(o.Name, p, StringComparison.OrdinalIgnoreCase))));
 
-            return tables.Select(dbTable =>
+            return tables.Select(GetTableInfo).ToList();
+        }
+
+        /// <summary>
+        /// 获取表信息
+        /// </summary>
+        /// <param name="dbTable">数据库表</param>
+        /// <returns></returns>
+        TableInfo GetTableInfo(DbTableInfo dbTable)
+        {
+            var tableInfo = new TableInfo
             {
-                var tableInfo = new TableInfo
-                {
-                    Name = dbTable.Name,
-                    Remark = dbTable.Comment,
-                    Fields = dbTable.Columns
+                Name = dbTable.Name,
+                FreeSql = true,
+                Remark = dbTable.Comment,
+                Fields = dbTable.Columns
                         .OrderBy(column => column.Position)
                         .Select(column =>
                         {
@@ -86,12 +95,23 @@ namespace T4CAGC.Handler
                             return fieldInfo;
                         })
                         .ToList()
-                };
+            };
 
-                tableInfo.AnalysisName();
+            tableInfo.AnalysisName();
 
-                return tableInfo;
-            }).ToList();
+            RelationshipAnalyse(dbTable, tableInfo);
+
+            return tableInfo;
+        }
+
+        /// <summary>
+        /// 分析关联信息
+        /// </summary>
+        /// <param name="dbTable">数据库表</param>
+        /// <param name="tableInfo">表信息</param>
+        void RelationshipAnalyse(DbTableInfo dbTable, TableInfo tableInfo)
+        {
+
         }
     }
 }
