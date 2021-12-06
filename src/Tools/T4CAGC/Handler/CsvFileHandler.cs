@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using T4CAGC.Extension;
-using T4CAGC.Log;
 using T4CAGC.Model;
 
 namespace T4CAGC.Handler

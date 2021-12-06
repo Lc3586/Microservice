@@ -520,7 +520,7 @@ namespace Model.Utils.Config
                 if (!FileList[filename].ContainsKey(CurrentOS))
                     throw new ApplicationException($"未找到符合当前系统【{CurrentOS}】版本的{filename}文件");
 
-                result = Path.GetFullPath(FileList[filename][CurrentOS], AppContext.BaseDirectory);
+                result = Path.GetFullPath(FileList[filename][CurrentOS], AbsoluteStorageDirectory);
 
                 if (!FileAbsolutePathList.ContainsKey(filename))
                     FileAbsolutePathList.Add(filename, new Dictionary<string, string>());

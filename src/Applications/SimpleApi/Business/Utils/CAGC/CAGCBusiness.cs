@@ -296,10 +296,11 @@ namespace Business.Utils.CAGC
                 await rs.CopyToAsync(fs);
             }
 
-            var arguments = "-c \"jsonconfig/generateconfig.json\" "
-                         + $"-g \"{genType}\" "
-                         + $"-s \"{dataSourceFile}\" "
-                         + $"-p \"{outputPath}\" true";
+            var arguments = //"-c \"config/generateconfig.json\" " +
+                            $"-g \"{genType}\" " +
+                            $"-s \"{dataSourceFile}\" " +
+                            $"-p \"{outputPath}\" " +
+                            $"-o";
 
             Call(arguments);
 

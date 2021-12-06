@@ -294,7 +294,7 @@
 
             main.output.list.push({
                 content: data,
-                icon: 'el-icon-info',
+                type: 'info',
                 size: 'large',
                 timestamp: dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss.SSS')
             });
@@ -306,7 +306,7 @@
 
             main.output.list.push({
                 content: data,
-                icon: 'el-icon-error',
+                type: 'error',
                 size: 'large',
                 timestamp: dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss.SSS')
             });

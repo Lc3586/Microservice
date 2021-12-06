@@ -43,6 +43,9 @@ namespace DataMigration.Application
 
         #region 配置
 
+        [Option("-oc|--OutputChartset", Description = "控制台输出信息字符集.")]
+        public string Chartset { get; }
+
         [Option("-c|--ConfigPath", Description = "配置文件路径: 不指定时使用默认配置.")]
         public string ConfigPath { get; } = "config/config.json";
 
@@ -82,8 +85,8 @@ namespace DataMigration.Application
         [Option("-dps|--DataPageSize", Description = "数据分页大小（默认10000）.")]
         public int DataPageSize { get; } = 10000;
 
-        [Option("-bc|--UseBulkCopy", Description = "使用批量插入功能（如果数据库支持的话）（默认true）.")]
-        public bool UseBulkCopy { get; } = true;
+        [Option("-dbc|--DisableBulkCopy", Description = "禁用批量插入功能（即使数据库支持也不使用此功能）（默认false）.")]
+        public bool DisableBulkCopy { get; } = false;
 
         [Option("-sql|--UseSql", CommandOptionType.MultipleValue, Description = "使用自定义SQL查询语句（格式：$[表名(不区分大小写)]{SQL查询语句}, 示例: --UseSql \"$[TableA]{select * from TableA where Enable=1}\"）.")]
         public List<string> UseSql { get; }
@@ -105,8 +108,12 @@ namespace DataMigration.Application
         {
             try
             {
-                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-                Console.OutputEncoding = Encoding.GetEncoding(936); //new UTF8Encoding(true);
+                if (!Chartset.IsNullOrWhiteSpace())
+                {
+                    Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+                    var encoding = Encoding.GetEncoding(Chartset);
+                    Console.OutputEncoding = encoding;
+                }
 
                 #region 欢迎语
 
@@ -206,8 +213,8 @@ namespace DataMigration.Application
                 $"数据检查: {(DataCheck ? '是' : '否')}.\r\n".ConsoleWrite();
                 config.DataPageSize = DataPageSize;
                 $"数据分页大小: {DataPageSize}.\r\n".ConsoleWrite();
-                config.UseBulkCopy = UseBulkCopy;
-                $"使用批量插入功能: {(UseBulkCopy ? '是' : '否')}.\r\n".ConsoleWrite();
+                config.UseBulkCopy = !DisableBulkCopy;
+                $"禁用批量插入功能: {(DisableBulkCopy ? '是' : '否')}.\r\n".ConsoleWrite();
                 config.UseSql = UseSql?.Select(o => o.Match(@$"[$][[](.*?)[]]{{(.*?)}}"))
                     .Where(o => o != null)
                     .ToDictionary(k => k[0].ToLower(), v => v[1]);

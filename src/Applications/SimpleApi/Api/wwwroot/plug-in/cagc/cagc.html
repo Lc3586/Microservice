@@ -100,6 +100,7 @@
                         <div class="block" ref="output" @mouseenter="mouseenterOutput" @mouseleave="mouseleaveOutput" v-show="output.show">
                             <p v-for="(info, index) in output.list.filter(data =>
                                     !output.search || data.content.includes(output.search))"
+                               :class="info.type"
                                v-html="!output.search ? info.content : info.content.replace(new RegExp(output.search, 'g'), `<span class='keyword'>${output.search}</span>`)">
                             </p>
                         </div>

@@ -94,6 +94,7 @@ namespace T4CAGC.Template
 
             NameSpaces.AddWhenNotContains($"Entity.{Options.Table.ModuleName}");
             NameSpaces.AddWhenNotContains($"Model.{Options.Table.ModuleName}.{Options.Table.ReducedName}DTO");
+            NameSpaces.AddWhenNotContains("Model.Utils.Log");
             NameSpaces.AddWhenNotContains($"Business.Interface.{Options.Table.ModuleName}");
             NameSpaces.AddWhenNotContains("Business.Interface.Common");
             NameSpaces.AddWhenNotContains("Entity.Common");

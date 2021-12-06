@@ -36,6 +36,9 @@ namespace T4CAGC
 
         #region 配置
 
+        [Option("-oc|--OutputChartset", Description = "控制台输出信息字符集.")]
+        public string Chartset { get; }
+
         [Option("-c|--ConfigPath", Description = "配置文件路径: 不指定时使用默认配置.")]
         public string ConfigPath { get; } = "config/generateconfig.json";
 
@@ -67,8 +70,12 @@ namespace T4CAGC
         {
             try
             {
-                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-                Console.OutputEncoding = Encoding.GetEncoding(936); //new UTF8Encoding(true);
+                if (!Chartset.IsNullOrWhiteSpace())
+                {
+                    Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+                    var encoding = Encoding.GetEncoding(Chartset);
+                    Console.OutputEncoding = encoding;
+                }
 
                 #region 欢迎语
 
@@ -90,7 +97,7 @@ namespace T4CAGC
 
                 if (config == null)
                 {
-                    $"配置读取失败, {ConfigPath} Section: Config.".ConsoleWrite();
+                    Console.Error.WriteLine($"配置读取失败, {ConfigPath} Section: Config.");
                     return 1;
                 }
 
@@ -98,7 +105,7 @@ namespace T4CAGC
 
                 if (DataSource.IsNullOrWhiteSpace())
                 {
-                    $"未设置数据源.".ConsoleWrite();
+                    Console.Error.WriteLine("未设置数据源.");
                     return 1;
                 }
 
@@ -110,12 +117,12 @@ namespace T4CAGC
 
                 if (OutputPath.IsNullOrWhiteSpace())
                 {
-                    $"未设置输出路径.".ConsoleWrite();
+                    Console.Error.WriteLine("未设置输出路径.");
                     return 1;
                 }
 
-                config.OutputPath = OutputPath;
-                $"输出路径: {OutputPath}.\r\n".ConsoleWrite();
+                config.OutputPath = Path.GetFullPath(OutputPath);
+                $"输出路径: {config.OutputPath}.\r\n".ConsoleWrite();
                 config.GenType = GenType;
                 $"生成类型: {GenType}.\r\n".ConsoleWrite();
                 config.OverlayFile = OverlayFile;
@@ -159,8 +166,9 @@ namespace T4CAGC
 
                 return 0;
             }
-            catch
+            catch (Exception ex)
             {
+                Console.Error.Write(ex.ExceptionToString());
                 return 1;
             }
         }

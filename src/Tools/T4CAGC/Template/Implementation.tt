@@ -604,7 +604,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
 <#
         }
 #>
-                                        o.Sort
+                                        o.<#=FunctionsWithField[Function.Sort].Name#>
                                     });
 
             if (current == default)
@@ -619,80 +619,80 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
         {
 #>
                     SortMethod.top => Repository.Where(o => o.ParentId == current.ParentId)
-                                                .OrderBy(o => o.Sort)
+                                                .OrderBy(o => o.<#=FunctionsWithField[Function.Sort].Name#>)
 <#
         }
         else
         {
 #>
-                    SortMethod.top => Repository.Select.OrderBy(o => o.Sort)
+                    SortMethod.top => Repository.Select.OrderBy(o => o.<#=FunctionsWithField[Function.Sort].Name#>)
 <#
         }
 #>
                                                 .First(o => new
                                                 {
                                                     o.Id,
-                                                    o.Sort
+                                                    o.<#=FunctionsWithField[Function.Sort].Name#>
                                                 }),
 <#
         if(Options.Table.Tree)
         {
 #>
-                    SortMethod.up => Repository.Select.Where(o => o.ParentId == current.ParentId && o.Sort < current.Sort)
-                                                .OrderByDescending(o => o.Sort)
+                    SortMethod.up => Repository.Select.Where(o => o.ParentId == current.ParentId && o.<#=FunctionsWithField[Function.Sort].Name#> < current.<#=FunctionsWithField[Function.Sort].Name#>)
+                                                .OrderByDescending(o => o.<#=FunctionsWithField[Function.Sort].Name#>)
 <#
         }
         else
         {
 #>
-                    SortMethod.up => Repository.Select.OrderByDescending(o => o.Sort)
+                    SortMethod.up => Repository.Select.OrderByDescending(o => o.<#=FunctionsWithField[Function.Sort].Name#>)
 <#
         }
 #>
                                                .First(o => new
                                                {
                                                    o.Id,
-                                                   o.Sort
+                                                   o.<#=FunctionsWithField[Function.Sort].Name#>
                                                }),
 <#
         if(Options.Table.Tree)
         {
 #>
-                    SortMethod.down => Repository.Select.Where(o => o.ParentId == current.ParentId && o.Sort > current.Sort)
-                                                .OrderBy(o => o.Sort)
+                    SortMethod.down => Repository.Select.Where(o => o.ParentId == current.ParentId && o.<#=FunctionsWithField[Function.Sort].Name#> > current.<#=FunctionsWithField[Function.Sort].Name#>)
+                                                .OrderBy(o => o.<#=FunctionsWithField[Function.Sort].Name#>)
 <#
         }
         else
         {
 #>
-                    SortMethod.down => Repository.Select.OrderBy(o => o.Sort)
+                    SortMethod.down => Repository.Select.OrderBy(o => o.<#=FunctionsWithField[Function.Sort].Name#>)
 <#
         }
 #>
                                                  .First(o => new
                                                  {
                                                      o.Id,
-                                                     o.Sort
+                                                     o.<#=FunctionsWithField[Function.Sort].Name#>
                                                  }),
 <#
         if(Options.Table.Tree)
         {
 #>
                     SortMethod.low => Repository.Select.Where(o => o.ParentId == current.ParentId)
-                                                .OrderByDescending(o => o.Sort)
+                                                .OrderByDescending(o => o.<#=FunctionsWithField[Function.Sort].Name#>)
 <#
         }
         else
         {
 #>
-                    SortMethod.low => Repository.Select.OrderByDescending(o => o.Sort)
+                    SortMethod.low => Repository.Select.OrderByDescending(o => o.<#=FunctionsWithField[Function.Sort].Name#>)
 <#
         }
 #>
                                                 .First(o => new
                                                 {
                                                     o.Id,
-                                                    o.Sort
+                                                    o.<#=FunctionsWithField[Function.Sort].Name#>
                                                 }),
                     _ => throw new MessageException($"不支持的排序方法 {data.Method}."),
                 };
@@ -702,11 +702,11 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
 
                 if (Repository.UpdateDiy
                          .Where(o => o.Id == target.Id)
-                         .Set(o => o.Sort, current.Sort)
+                         .Set(o => o.<#=FunctionsWithField[Function.Sort].Name#>, current.<#=FunctionsWithField[Function.Sort].Name#>)
                          .ExecuteAffrows() < 0
                     || Repository.UpdateDiy
                          .Where(o => o.Id == current.Id)
-                         .Set(o => o.Sort, target.Sort)
+                         .Set(o => o.<#=FunctionsWithField[Function.Sort].Name#>, target.<#=FunctionsWithField[Function.Sort].Name#>)
                          .ExecuteAffrows() < 0)
                     throw new MessageException("<#=Options.Table.Remark#>排序失败.");
 
@@ -739,7 +739,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
 <#
         }
 #>
-                                        o.Sort
+                                        o.<#=FunctionsWithField[Function.Sort].Name#>
                                     });
 
             if (current == default)
@@ -759,7 +759,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
 <#
         }
 #>
-                                        o.Sort
+                                        o.<#=FunctionsWithField[Function.Sort].Name#>
                                     });
 
             if (target == default)
@@ -779,33 +779,33 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
 
                     if (data.Append)
                     {
-                        target_new = Repository.Where(o => o.ParentId == target.ParentId && o.Sort == target.Sort + 1)
+                        target_new = Repository.Where(o => o.ParentId == target.ParentId && o.<#=FunctionsWithField[Function.Sort].Name#> == target.<#=FunctionsWithField[Function.Sort].Name#> + 1)
                                              .First(o => new
                                              {
                                                  o.Id,
-                                                 o.Sort
+                                                 o.<#=FunctionsWithField[Function.Sort].Name#>
                                              });
                     }
                     else
                     {
-                        target_new = Repository.Where(o => o.ParentId == target.ParentId && o.Sort == current.Sort - 1)
+                        target_new = Repository.Where(o => o.ParentId == target.ParentId && o.<#=FunctionsWithField[Function.Sort].Name#> == current.<#=FunctionsWithField[Function.Sort].Name#> - 1)
                                              .First(o => new
                                              {
                                                  o.Id,
-                                                 o.Sort
+                                                 o.<#=FunctionsWithField[Function.Sort].Name#>
                                              });
                     }
 
                     string target_newId = target_new.Id;
-                    int target_newSort = target_new.Sort;
+                    int target_newSort = target_new.<#=FunctionsWithField[Function.Sort].Name#>;
 
                     if (Repository.UpdateDiy
                              .Where(o => o.Id == target_newId)
-                             .Set(o => o.Sort, current.Sort)
+                             .Set(o => o.<#=FunctionsWithField[Function.Sort].Name#>, current.<#=FunctionsWithField[Function.Sort].Name#>)
                              .ExecuteAffrows() < 0
                         || Repository.UpdateDiy
                              .Where(o => o.Id == current.Id)
-                             .Set(o => o.Sort, target_newSort)
+                             .Set(o => o.<#=FunctionsWithField[Function.Sort].Name#>, target_newSort)
                              .ExecuteAffrows() < 0)
                         throw new MessageException("<#=Options.Table.Remark#>排序失败.");
 
@@ -816,16 +816,16 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
                     #region 异层级排序
 
                     if (Repository.UpdateDiy
-                             .Where(o => o.ParentId == current.ParentId && o.Sort > current.Sort)
-                             .Set(o => o.Sort - 1)
+                             .Where(o => o.ParentId == current.ParentId && o.<#=FunctionsWithField[Function.Sort].Name#> > current.<#=FunctionsWithField[Function.Sort].Name#>)
+                             .Set(o => o.<#=FunctionsWithField[Function.Sort].Name#> - 1)
                              .ExecuteAffrows() < 0
                         || Repository.UpdateDiy
-                             .Where(o => o.ParentId == target.ParentId && o.Sort > (data.Append == true ? target.Sort : (target.Sort - 1)))
-                             .Set(o => o.Sort + 1)
+                             .Where(o => o.ParentId == target.ParentId && o.<#=FunctionsWithField[Function.Sort].Name#> > (data.Append == true ? target.<#=FunctionsWithField[Function.Sort].Name#> : (target.<#=FunctionsWithField[Function.Sort].Name#> - 1)))
+                             .Set(o => o.<#=FunctionsWithField[Function.Sort].Name#> + 1)
                              .ExecuteAffrows() < 0
                         || Repository.UpdateDiy
                                 .Where(o => o.Id == current.Id)
-                                .Set(o => o.Sort, data.Inside == true ? 0 : (data.Append == true ? (target.Sort + 1) : target.Sort))
+                                .Set(o => o.<#=FunctionsWithField[Function.Sort].Name#>, data.Inside == true ? 0 : (data.Append == true ? (target.<#=FunctionsWithField[Function.Sort].Name#> + 1) : target.<#=FunctionsWithField[Function.Sort].Name#>))
                                 .Set(o => o.ParentId, data.Inside == true ? target.Id : target.ParentId)
                                 .Set(o => o.Level, data.Inside == true ? (target.Level + 1) : target.Level)
                                 .Set(o => o.RootId, target.RootId)
@@ -843,33 +843,33 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
 
                     if (data.Append)
                     {
-                        target_new = Repository.Where(o => o.Sort == target.Sort + 1)
+                        target_new = Repository.Where(o => o.<#=FunctionsWithField[Function.Sort].Name#> == target.<#=FunctionsWithField[Function.Sort].Name#> + 1)
                                              .First(o => new
                                              {
                                                  o.Id,
-                                                 o.Sort
+                                                 o.<#=FunctionsWithField[Function.Sort].Name#>
                                              });
                     }
                     else
                     {
-                        target_new = Repository.Where(o => o.Sort == current.Sort - 1)
+                        target_new = Repository.Where(o => o.<#=FunctionsWithField[Function.Sort].Name#> == current.<#=FunctionsWithField[Function.Sort].Name#> - 1)
                                              .First(o => new
                                              {
                                                  o.Id,
-                                                 o.Sort
+                                                 o.<#=FunctionsWithField[Function.Sort].Name#>
                                              });
                     }
 
                     string target_newId = target_new.Id;
-                    int target_newSort = target_new.Sort;
+                    int target_newSort = target_new.<#=FunctionsWithField[Function.Sort].Name#>;
 
                     if (Repository.UpdateDiy
                              .Where(o => o.Id == target_newId)
-                             .Set(o => o.Sort, current.Sort)
+                             .Set(o => o.<#=FunctionsWithField[Function.Sort].Name#>, current.<#=FunctionsWithField[Function.Sort].Name#>)
                              .ExecuteAffrows() < 0
                         || Repository.UpdateDiy
                              .Where(o => o.Id == current.Id)
-                             .Set(o => o.Sort, target_newSort)
+                             .Set(o => o.<#=FunctionsWithField[Function.Sort].Name#>, target_newSort)
                              .ExecuteAffrows() < 0)
                         throw new MessageException("<#=Options.Table.Remark#>排序失败.");
 <#

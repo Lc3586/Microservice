@@ -1,4 +1,5 @@
 ﻿using FreeSql.DatabaseModel;
+using Microservice.Library.Container;
 using Microservice.Library.Extension;
 using Microservice.Library.FreeSql.Gen;
 using System;
@@ -15,11 +16,10 @@ namespace T4CAGC.Handler
     public class DatabaseHandler : IHandler
     {
         public DatabaseHandler(
-            Config config,
-            IFreeSqlProvider freeSqlProvider)
+            Config config)
         {
             Config = config;
-            IFreeSqlProvider = freeSqlProvider;
+            IFreeSqlProvider = AutofacHelper.GetService<IFreeSqlProvider>();
         }
 
         /// <summary>
