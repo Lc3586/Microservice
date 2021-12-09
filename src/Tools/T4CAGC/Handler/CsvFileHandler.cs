@@ -349,7 +349,7 @@ namespace T4CAGC.Handler
                             }
                             else if (value.Exist(SettingKeyword.常量))
                             {
-                                if (!value.TryMatch(SettingKeyword.常量, out string @const, out string constValue))
+                                if (!value.TryMatch(SettingKeyword.常量, out string @const, out string constKey))
                                 {
                                     if (!value.TryMatch(SettingKeyword.常量, out @const))
                                         SettingKeyword.常量.SettingException();
@@ -357,7 +357,7 @@ namespace T4CAGC.Handler
                                     @const.Split(',').ForEach(o => fieldInfo.Consts.Add(o, o));
                                 }
                                 else
-                                    fieldInfo.Consts.Add(@const, constValue);
+                                    fieldInfo.Consts.Add(constKey, @const);
                             }
                             else if (value.Exist(SettingKeyword.枚举))
                             {

@@ -107,6 +107,8 @@ namespace T4CAGC.Template
             NameSpaces.AddWhenNotContains("Microservice.Library.OpenApi.Extention");
             NameSpaces.AddWhenNotContains("Business.Utils");
 
+            DIServices.GetAndAddWhenNotContains("IOperationRecordBusiness", "OperationRecordBusiness");
+
             Functions.GetAndAddWhenNotContains(Function.Delete);
 
             if (Options.Table.FreeSql)
@@ -183,6 +185,8 @@ namespace T4CAGC.Template
                         NameSpaces.AddWhenNotContains("System.Reflection");
                         NameSpaces.AddWhenNotContains("System.IO");
 
+                        DIServices.GetAndAddWhenNotContains("IHttpContextAccessor", "HttpContextAccessor");
+
                         Functions.GetAndAddWhenNotContains(Function.Import, tag);
                     }
                     else if (tag_lower.Contains("export"))
@@ -196,6 +200,8 @@ namespace T4CAGC.Template
                         NameSpaces.AddWhenNotContains("System.Reflection");
                         NameSpaces.AddWhenNotContains("System.Text.Encodings.Web");
                         NameSpaces.AddWhenNotContains("System.IO");
+
+                        DIServices.GetAndAddWhenNotContains("IHttpContextAccessor", "HttpContextAccessor");
 
                         Functions.GetAndAddWhenNotContains(Function.Export, tag);
                     }

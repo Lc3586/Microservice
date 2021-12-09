@@ -50,7 +50,7 @@ namespace Api.Controllers.<#=Options.Table.ModuleName#>
         /// </summary>
         /// <returns></returns>
         [HttpPost("all-<#=field.Name.ToLower()#>")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "<#=field.Remark#>", typeof(List<string>))]
+        [SwaggerResponse((int)HttpStatusCode.OK, "<#=field.Remark#> {名称: 值}", typeof(Dictionary<string, string>))]
         public async Task<object> GetAll<#=field.Name#>()
         {
             return await Task.FromResult(Success(<#=Options.Table.ReducedName#>Business.GetAll<#=field.Name#>()));
@@ -67,7 +67,7 @@ namespace Api.Controllers.<#=Options.Table.ModuleName#>
         /// </summary>
         /// <returns></returns>
         [HttpPost("all-<#=field.Name.ToLower()#>")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "{名称: 值}", typeof(Dictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.OK, "<#=field.Remark#> {名称: 值}", typeof(Dictionary<string, string>))]
         public async Task<object> GetAll<#=field.Name#>()
         {
             return await Task.FromResult(Success(<#=Options.Table.ReducedName#>Business.GetAll<#=field.Name#>()));

@@ -14,31 +14,31 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
         #region DI
 
         public <#=Options.Table.ReducedName#>Business(
+            IAutoMapperProvider autoMapperProvider
 <#
         if (Options.Table.FreeSql)
         {
 #>
-            IFreeSqlProvider freeSqlProvider,
+            ,IFreeSqlProvider freeSqlProvider
 <#
         }
 
         if (Options.Table.Elasticsearch)
         {
 #>
-            IElasticsearchProvider elasticsearchProvider,
+            ,IElasticsearchProvider elasticsearchProvider
 <#
         }
 
-        if (Functions.ContainsKey(Function.Import) || Functions.ContainsKey(Function.Export))
+        foreach(var service in DIServices)
         {
 #>
-            IHttpContextAccessor httpContextAccessor,
+            ,<#=service.Key#> <#=char.ToLower(service.Value[0]) + service.Value[1..]#>
 <#
         }
-#>
-            IAutoMapperProvider autoMapperProvider,
-            IOperationRecordBusiness operationRecordBusiness)
+#>)
         {
+            Mapper = autoMapperProvider.GetMapper();
 <#
 
         if (Options.Table.FreeSql)
@@ -56,20 +56,20 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
 <#
         }
 
-        if (Functions.ContainsKey(Function.Import) || Functions.ContainsKey(Function.Export))
+        foreach(var service in DIServices.Values)
         {
 #>
-            HttpContextAccessor = httpContextAccessor;
+            <#=service#> = <#=char.ToLower(service[0]) + service[1..]#>;
 <#
         }
 #>
-            Mapper = autoMapperProvider.GetMapper();
-            OperationRecordBusiness = operationRecordBusiness;
         }
 
         #endregion
 
         #region 私有成员
+
+        readonly IMapper Mapper;
 <#
         if (Options.Table.FreeSql)
         {
@@ -88,19 +88,15 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
         readonly ElasticsearchClient ESClient;
 <#
         }
-        
-        if (Functions.ContainsKey(Function.Import) || Functions.ContainsKey(Function.Export))
+
+        foreach(var service in DIServices)
         {
 #>
 
-        readonly IHttpContextAccessor HttpContextAccessor;
+        readonly <#=service.Key#> <#=service.Value#>;
 <#
         }
 #>
-
-        readonly IMapper Mapper;
-
-        readonly IOperationRecordBusiness OperationRecordBusiness;
 
         #endregion
 
@@ -112,9 +108,9 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
         {
 #>
 
-        public List<string> GetAll<#=field.Name#>()
+        public Dictionary<string, string> GetAll<#=field.Name#>()
         {
-            return typeof(<#=Options.Table.ReducedName#>_<#=field.Name#>).GetFields().Select(o => (string)o.GetValue(null)).ToList();
+            return typeof(<#=Options.Table.ReducedName#>_<#=field.Name#>).GetFields().ToDictionary(k => k.Name, v => (string)v.GetValue(null));
         }
 <#
         }
