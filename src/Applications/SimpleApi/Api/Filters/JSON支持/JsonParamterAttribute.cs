@@ -3,7 +3,7 @@ using Microservice.Library.Http;
 using Microservice.Library.OpenApi.Extention;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Newtonsoft.Json.Linq;
-using System.Linq;
+using System.Collections;
 
 namespace Api
 {
@@ -41,6 +41,8 @@ namespace Api
             {
                 var actionParameters = context.ActionDescriptor.Parameters;
                 if (actionParameters.Count == 0)
+                    return;
+                else if (actionParameters.Count == 1 && actionParameters[0].ParameterType.IsAssignableTo(typeof(IEnumerable)))
                     return;
 
                 var allParamters = HttpHelper.GetAllRequestParams(context.HttpContext);
