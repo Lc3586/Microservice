@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using FreeSql;
 using McMaster.Extensions.CommandLineUtils;
 using Microservice.Library.Configuration;
 using Microservice.Library.ConsoleTool;
@@ -51,8 +52,17 @@ namespace T4CAGC
         [Option("-t|--DataSourceType", Description = "数据源类型（默认CSV文件）.")]
         public DataSourceType DataSourceType { get; } = DataSourceType.CSV;
 
+        [Option("-dt|--DataType", Description = "数据库类型.")]
+        public DataType DataBaseType { get; set; }
+
         [Option("-g|--GenType", Description = "生成类型（默认EnrichmentProject）.")]
         public GenType GenType { get; } = GenType.EnrichmentProject;
+
+        [Option("-cpczf|--CompleteProjectCodeZipFile", Description = "完整项目代码压缩包相对路径")]
+        public string CompleteProjectCodeZipFile { get; }
+
+        [Option("-cpczdu|--CompleteProjectCodeZipDownloadUri", Description = "完整项目代码压缩包相对路径")]
+        public string CompleteProjectCodeZipDownloadUri { get; }
 
         [Option("-p|--OutputPath", Description = "输出路径")]
         public string OutputPath { get; }
@@ -115,6 +125,12 @@ namespace T4CAGC
                 config.DataSourceType = DataSourceType;
                 $"数据源类型: {DataSourceType}.\r\n".ConsoleWrite();
 
+                if (config.DataSourceType == DataSourceType.DataBase)
+                {
+                    config.DataBaseType = DataBaseType;
+                    $"数据库类型: {DataBaseType}.\r\n".ConsoleWrite();
+                }
+
                 if (OutputPath.IsNullOrWhiteSpace())
                 {
                     Console.Error.WriteLine("未设置输出路径.");
@@ -125,6 +141,15 @@ namespace T4CAGC
                 $"输出路径: {config.OutputPath}.\r\n".ConsoleWrite();
                 config.GenType = GenType;
                 $"生成类型: {GenType}.\r\n".ConsoleWrite();
+
+                config.CompleteProjectCodeZipFile = CompleteProjectCodeZipFile;
+                if (!config.CompleteProjectCodeZipFile.IsNullOrWhiteSpace())
+                    $"完整项目代码压缩包相对路径: {CompleteProjectCodeZipFile}.\r\n".ConsoleWrite();
+
+                config.CompleteProjectCodeZipDownloadUri = CompleteProjectCodeZipDownloadUri;
+                if (!config.CompleteProjectCodeZipDownloadUri.IsNullOrWhiteSpace())
+                    $"完整项目代码下载地址: {CompleteProjectCodeZipDownloadUri}.\r\n".ConsoleWrite();
+
                 config.OverlayFile = OverlayFile;
                 $"{(OverlayFile ? "允许" : "禁止")}覆盖已有文件.\r\n".ConsoleWrite();
                 config.LoggerType = LoggerType;

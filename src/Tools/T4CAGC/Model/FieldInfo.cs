@@ -59,6 +59,11 @@ namespace T4CAGC.Model
         public string Remark { get; set; } = string.Empty;
 
         /// <summary>
+        /// 索引名称
+        /// </summary>
+        public string IndexName { get; set; }
+
+        /// <summary>
         /// 索引类型
         /// </summary>
         public IndexType Index { get; set; } = IndexType.None;

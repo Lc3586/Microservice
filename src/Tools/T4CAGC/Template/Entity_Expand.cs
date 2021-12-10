@@ -163,7 +163,8 @@ namespace T4CAGC.Template
                 Attributes.AddWhenNotContains("Table");
 
                 var pks = new List<string>();
-                var idxs = new List<string>();
+                var idxs = new Dictionary<string, List<string>>();
+                var defaultIndexName = $"{Options.Table.Name}_idx_01".GetAbbreviation(30);
 
                 Options.Table.Fields.ForEach(o =>
                 {
@@ -171,7 +172,7 @@ namespace T4CAGC.Template
                         pks.Add($"pk_{Options.Table.Name}_{o.Name}".GetAbbreviation(30));
 
                     if (o.Index != Model.IndexType.None)
-                        idxs.Add($"nameof({o.Name}) + \" {o.Index}");
+                        idxs.GetAndAddWhenNotContains(o.IndexName.IsNullOrWhiteSpace() ? defaultIndexName : o.IndexName, new List<string>()).Add($"nameof({o.Name}) + \" {o.Index}");
 
                     var attributes = new List<string>();
 
@@ -207,7 +208,7 @@ namespace T4CAGC.Template
                     Attributes.AddWhenNotContains($"OraclePrimaryKeyName(\"{string.Join(",", pks)}\")");
 
                 if (idxs.Any())
-                    Attributes.AddWhenNotContains($"Index(\"{$"{Options.Table.Name}_idx_01".GetAbbreviation(30)}\", {string.Join(",\" + ", idxs)}\")");
+                    idxs.ForEach(o => Attributes.AddWhenNotContains($"Index(\"{o.Key}\", {string.Join(",\" + ", o.Value)}\")"));
             }
 
             //ES特性

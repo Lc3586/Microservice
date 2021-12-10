@@ -2,7 +2,7 @@
   "profiles": {
     "T4CAGC": {
       "commandName": "Project",
-      "commandLineArgs": "-c \"config/generateconfig.json\" -s \"数据结构(2021年6月29日 162252).csv\" -p \"T4CAGC\\output_1\" -g EnrichmentProject -o"
+      "commandLineArgs": "-c \"config/generateconfig.json\" -s \"Server=127.0.0.1;Port=3306;Database=data_migration_test;User ID=root;Password=root666;Charset=utf8;SslMode=none;Max pool size=500;AllowLoadLocalInfile=true;\" -t DataBase -p \"T4CAGC\\output\" -cpczf \"T4CAGC\\CompleteProjectCode.zip\" -g CompleteProject -o"
     }
   }
 }
