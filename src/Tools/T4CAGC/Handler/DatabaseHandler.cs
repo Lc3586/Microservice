@@ -76,6 +76,12 @@ namespace T4CAGC.Handler
         /// <returns></returns>
         static TableInfo GetTableInfo(DbTableInfo dbTable)
         {
+            var enableField = new[] { "Enable" };
+            var sortField = new[] { "Sort" };
+            var createIgnoreField = new[] { "Id", "CreatorId", "CreatorName", "CreateTime", "ModifiedById", "ModifiedByName", "ModifyTime" };
+            var _editField = new[] { "ModifiedById", "ModifiedByName", "ModifyTime" };
+            var editIgnoreField = new[] { "CreatorId", "CreatorName", "CreateTime", "ModifiedById", "ModifiedByName", "ModifyTime" };
+
             var tableInfo = new TableInfo
             {
                 Name = dbTable.Name,
@@ -96,8 +102,33 @@ namespace T4CAGC.Handler
                                 Primary = column.IsPrimary,
                                 Nullable = column.IsNullable,
                                 Length = column.MaxLength,
-                                //Scale = 
+                                Tags = new List<string>
+                                {
+                                    "List",
+                                    "Detail"
+                                }
                             };
+
+                            if (column.DbTypeText.IsNumerical(out int precision, out int scale))
+                            {
+                                fieldInfo.Precision = precision;
+                                fieldInfo.Scale = scale;
+                            }
+
+                            if (enableField.Any(o => string.Equals(o, fieldInfo.Name, StringComparison.OrdinalIgnoreCase)))
+                                fieldInfo.Tags.Add("Enable");
+
+                            if (sortField.Any(o => string.Equals(o, fieldInfo.Name, StringComparison.OrdinalIgnoreCase)))
+                                fieldInfo.Tags.Add("Sort");
+
+                            if (!createIgnoreField.Any(o => string.Equals(o, fieldInfo.Name, StringComparison.OrdinalIgnoreCase)))
+                                fieldInfo.Tags.Add("Create");
+
+                            if (_editField.Any(o => string.Equals(o, fieldInfo.Name, StringComparison.OrdinalIgnoreCase)))
+                                fieldInfo.Tags.Add("_Edit");
+
+                            if (!editIgnoreField.Any(o => string.Equals(o, fieldInfo.Name, StringComparison.OrdinalIgnoreCase)))
+                                fieldInfo.Tags.Add("Edit");
 
                             return fieldInfo;
                         })
@@ -149,8 +180,7 @@ namespace T4CAGC.Handler
                 if (!dbTable.Foreigns.Any_Ex())
                     return;
 
-                //此处判断存在问题
-                if (!dbTable.Columns.Any_Ex(o => !o.IsPrimary && !dbTable.Foreigns.Any_Ex(p => p.Columns.Any_Ex(q => q.Name == o.Name))))
+                if (dbTable.Columns.Count > 1 && !dbTable.Columns.Any_Ex(o => !o.IsPrimary))//&& !dbTable.Foreigns.Any_Ex(p => p.Columns.Any_Ex(q => q.Name == o.Name))
                     tableInfo.RelationshipTable = true;
 
                 dbTable.Foreigns.ForEach(o =>
@@ -160,8 +190,8 @@ namespace T4CAGC.Handler
                         //一对一关联
                         tableInfo.Fields.Add(new FieldInfo
                         {
-                            Name = o.ReferencedTable.Name == o.Table.Name ? p.Name.Replace("id", "", StringComparison.OrdinalIgnoreCase) : o.ReferencedTable.Name,
-                            Remark = o.ReferencedTable.Comment,
+                            Name = $"V_{(o.ReferencedTable.Name == o.Table.Name ? p.Name.Replace("id", "", StringComparison.OrdinalIgnoreCase) : o.ReferencedTable.Name)}",
+                            Remark = o.ReferencedTable.Comment.IsNullOrWhiteSpace() ? o.ReferencedTable.Name : o.ReferencedTable.Comment,
                             Virtual = true,
                             FK = true,
                             KValue = p.Name,
@@ -173,8 +203,8 @@ namespace T4CAGC.Handler
                             //树形结构
                             tableInfo.Fields.Add(new FieldInfo
                             {
-                                Name = $"{p.Name.Replace("id", "", StringComparison.OrdinalIgnoreCase)}_{o.ReferencedTable.Name}s",
-                                Remark = $"子级{o.ReferencedTable.Comment}",
+                                Name = $"V_{p.Name.Replace("id", "", StringComparison.OrdinalIgnoreCase)}_Childs",
+                                Remark = $"子级{(o.ReferencedTable.Comment.IsNullOrWhiteSpace() ? o.ReferencedTable.Name : o.ReferencedTable.Comment)}",
                                 Virtual = true,
                                 FRK = true,
                                 KValue = p.Name,
@@ -187,7 +217,7 @@ namespace T4CAGC.Handler
                         {
                             //多对多关联
                             dbTable.Foreigns
-                                .Where(ox => ox.Table.Name != o.Table.Name && ox.ReferencedTable.Name != o.ReferencedTable.Name)
+                                .Where(ox => ox.Table.Name == o.Table.Name && ox.ReferencedTable.Name != o.ReferencedTable.Name)
                                 .ForEach(ox =>
                                 {
                                     var rk_DbTable = tableInfoDic.Values.FirstOrDefault(q => q.Name == ox.ReferencedTable.Name);
@@ -196,8 +226,8 @@ namespace T4CAGC.Handler
 
                                     rk_DbTable.Fields.Add(new FieldInfo
                                     {
-                                        Name = $"{o.ReferencedTable.Name}s",
-                                        Remark = $"相关的{o.ReferencedTable.Comment}",
+                                        Name = $"V_M_{o.ReferencedTable.Name}s",
+                                        Remark = $"关联的{(o.ReferencedTable.Comment.IsNullOrWhiteSpace() ? o.ReferencedTable.Name : o.ReferencedTable.Comment)}",
                                         Virtual = true,
                                         RK = true,
                                         KValue = dbTable.Name,
@@ -214,8 +244,8 @@ namespace T4CAGC.Handler
 
                             frk_DbTable.Fields.Add(new FieldInfo
                             {
-                                Name = $"{o.Table.Name}s",
-                                Remark = $"{o.ReferencedTable.Comment}相关的{o.Table.Comment}",
+                                Name = $"V_{o.Table.Name}s",
+                                Remark = $"相关的{(o.Table.Comment.IsNullOrWhiteSpace() ? o.Table.Name : o.Table.Comment)}",
                                 Virtual = true,
                                 FRK = true,
                                 KValue = $"{o.Table.Name}.{p.Name}",

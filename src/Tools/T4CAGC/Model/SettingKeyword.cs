@@ -35,6 +35,8 @@
 
         public const string 长度 = "Length";
 
+        public const string 精度 = "Precision";
+
         public const string 小数位 = "Scale";
 
         public const string 可为空 = "Nullable";

@@ -51,9 +51,11 @@ namespace Business.Utils.CAGC
 
         #region 私有成员
 
+#pragma warning disable IDE0052 // 删除未读的私有成员
         readonly IFreeSql Orm;
 
         readonly IMapper Mapper;
+#pragma warning restore IDE0052 // 删除未读的私有成员
 
         readonly IHttpContextAccessor HttpContextAccessor;
 
@@ -115,7 +117,9 @@ namespace Business.Utils.CAGC
         /// </summary>
         /// <param name="arguments">命令参数</param>
         /// <returns></returns>
+#pragma warning disable IDE0051 // 删除未使用的私有成员
         async Task CallEXE(string arguments)
+#pragma warning restore IDE0051 // 删除未使用的私有成员
         {
             using var process = GetProcess(arguments);
             process.Start();

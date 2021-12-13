@@ -136,18 +136,6 @@ namespace T4CAGC.Template
                     attributes.AddWhenNotContains("XmlIgnore");
 
                     NameSpaces.AddWhenNotContains($"Entity.{o.Bind.Split('_')[0]}");
-
-                    if (!o.FK)
-                    {
-                        if (o.Bind != Options.Table.Name)
-                            NameSpaces.AddWhenNotContains($"Entity.{o.KValue.Split('.')[0].Split('_')[0]}");
-                        NameSpaces.AddWhenNotContains("System.Collections.Generic");
-                    }
-
-                    if (o.RK)
-                        attributes.AddWhenNotContains($"Navigate(ManyToMany = typeof({o.KValue}))");
-                    else
-                        attributes.AddWhenNotContains($"Navigate(nameof({o.KValue}))");
                 }
 
                 #endregion
@@ -182,13 +170,11 @@ namespace T4CAGC.Template
                     if (!o.DbType.IsNullOrWhiteSpace())
                         columnAttributes.Add($"DbType = \"{o.DbType}\"");
 
-                    if (o.Length != 0)
-                    {
-                        if (o.CsType == typeof(string))
-                            columnAttributes.Add($"StringLength = {o.Length}");
-                        else
-                            columnAttributes.Add($"Precision = {o.Length}");
-                    }
+                    if (o.Length != 0 && o.CsType == typeof(string))
+                        columnAttributes.Add($"StringLength = {o.Length}");
+
+                    if (o.Precision != 0)
+                        columnAttributes.Add($"Precision = {o.Precision}");
 
                     if (o.Scale != 0)
                         columnAttributes.Add($"Scale = {o.Scale}");
@@ -198,6 +184,25 @@ namespace T4CAGC.Template
 
                     if (columnAttributes.Any())
                         attributes.AddWhenNotContains($"Column({string.Join(", ", columnAttributes)})");
+
+                    #endregion
+
+                    #region 关联数据
+
+                    if (o.Virtual)
+                    {
+                        if (!o.FK)
+                        {
+                            if (o.Bind != Options.Table.Name)
+                                NameSpaces.AddWhenNotContains($"Entity.{o.KValue.Split('.')[0].Split('_')[0]}");
+                            NameSpaces.AddWhenNotContains("System.Collections.Generic");
+                        }
+
+                        if (o.RK)
+                            attributes.AddWhenNotContains($"Navigate(ManyToMany = typeof({o.KValue}))");
+                        else
+                            attributes.AddWhenNotContains($"Navigate(nameof({o.KValue}))");
+                    }
 
                     #endregion
 

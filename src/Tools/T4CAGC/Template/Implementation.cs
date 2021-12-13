@@ -982,7 +982,7 @@ WritePrimaryField("newData", " + ");
             
             #line default
             #line hidden
-            this.Write(",\r\n                    Explain = $\"创建");
+            this.Write(".ToString(),\r\n                    Explain = $\"创建");
             
             #line 388 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
@@ -1248,7 +1248,7 @@ WritePrimaryField("editData", " + ");
             
             #line default
             #line hidden
-            this.Write(",\r\n                    Explain = $\"修改");
+            this.Write(".ToString(),\r\n                    Explain = $\"修改");
             
             #line 488 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
@@ -1277,7 +1277,7 @@ WritePrimaryField("c", " + ");
             
             #line default
             #line hidden
-            this.Write(")).ToList(c => new { ");
+            this.Write(".ToString())).ToList(c => new { ");
             
             #line 505 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 WritePrimaryField("c", ", ");
@@ -1308,7 +1308,7 @@ WritePrimaryField("entity", " + ");
             
             #line default
             #line hidden
-            this.Write(",\r\n                    Explain = $\"删除");
+            this.Write(".ToString(),\r\n                    Explain = $\"删除");
             
             #line 517 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
@@ -1324,9 +1324,10 @@ WritePrimaryField("o", " + ");
             
             #line default
             #line hidden
-            this.Write(")) <= 0)\r\n                    throw new MessageException(\"未删除任何数据\");\r\n\r\n         " +
-                    "       var orIds = OperationRecordBusiness.Create(orList);\r\n            });\r\n\r\n " +
-                    "           if (!success)\r\n                throw new MessageException(\"删除");
+            this.Write(".ToString())) <= 0)\r\n                    throw new MessageException(\"未删除任何数据\");\r\n" +
+                    "\r\n                var orIds = OperationRecordBusiness.Create(orList);\r\n         " +
+                    "   });\r\n\r\n            if (!success)\r\n                throw new MessageException(" +
+                    "\"删除");
             
             #line 530 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
@@ -1434,7 +1435,7 @@ WritePrimaryField("entity", " + ");
             
             #line default
             #line hidden
-            this.Write(",\r\n                    Explain = $\"{(enable ? \"启用\" : \"禁用\")}");
+            this.Write(".ToString(),\r\n                    Explain = $\"{(enable ? \"启用\" : \"禁用\")}");
             
             #line 572 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
@@ -1809,7 +1810,7 @@ WritePrimaryField("target", " + ");
             
             #line default
             #line hidden
-            this.Write(",\r\n                    Explain = $\"");
+            this.Write(".ToString(),\r\n                    Explain = $\"");
             
             #line 713 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
@@ -2227,7 +2228,7 @@ WritePrimaryField("target", " + ");
             
             #line default
             #line hidden
-            this.Write(",\r\n                    Explain = $\"");
+            this.Write(".ToString(),\r\n                    Explain = $\"");
             
             #line 879 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
@@ -2514,7 +2515,7 @@ WritePrimaryField("entity", " + ");
             
             #line default
             #line hidden
-            this.Write(",\r\n                    //        Explain = $\"导入数据（更新）");
+            this.Write(".ToString(),\r\n                    //        Explain = $\"导入数据（更新）");
             
             #line 1087 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));
@@ -2544,7 +2545,7 @@ WritePrimaryField("entity", " + ");
             
             #line default
             #line hidden
-            this.Write(",\r\n                    //        Explain = $\"导入数据（新增）");
+            this.Write(".ToString(),\r\n                    //        Explain = $\"导入数据（新增）");
             
             #line 1098 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Remark));

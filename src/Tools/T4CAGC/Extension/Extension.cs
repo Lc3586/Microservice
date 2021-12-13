@@ -289,21 +289,33 @@ namespace T4CAGC.Extension
                 "byte" or
                 "sbyte" or
                 "char" or
-                "decimal" or
-                "double" or
-                "float" or
+                "short" or
+                "ushort" or
                 "int" or
                 "uint" or
                 "long" or
                 "ulong" or
+                "decimal" or
+                "double" or
+                "float" or
                 "object" or
-                 "short" or
-                "ushort" or
-               "string" => type_lower,
+                "string" => type_lower,
+
+                "boolean" => "bool",
+                "int16" => "short",
+                "uint16" => "ushort",
+                "int32" => "int",
+                "uint32" => "uint",
+                "int64" => "long",
+                "uint64" => "ulong",
+                "single" => "float",
+
                 "date" or
                 "datetime" => "DateTime",
-                "time" => "TimeSpan",
+                "time" or
+                "timespan" => "TimeSpan",
                 "guid" => "Guid",
+
                 _ => type_lower
             };
 
@@ -311,6 +323,40 @@ namespace T4CAGC.Extension
                 throw new ApplicationException($"无效的类型名称{typeName}.");
 
             return type;
+        }
+
+        /// <summary>
+        /// 是否为数值类型
+        /// </summary>
+        /// <param name="dbType">数据库类型</param>
+        /// <param name="precision">精度</param>
+        /// <param name="scale">小数位</param>
+        /// <returns></returns>
+        public static bool IsNumerical(this string dbType, out int precision, out int scale)
+        {
+            precision = 0;
+            scale = 0;
+
+            var match = Regex.Match(dbType.ToLower(), @"(\w+)\((\d+)(\D*?)(\d+)\)");
+
+            if (!match.Success)
+                return false;
+
+            var type = match.Groups[1].Value;
+
+            switch (type)
+            {
+                case "numeric":
+                case "decimal":
+                    break;
+                default:
+                    return false;
+            }
+
+            precision = int.Parse(match.Groups[2].Value);
+            scale = int.Parse(match.Groups[4].Value);
+
+            return true;
         }
     }
 }

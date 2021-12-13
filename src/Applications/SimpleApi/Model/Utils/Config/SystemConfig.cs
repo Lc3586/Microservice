@@ -1,5 +1,6 @@
 ﻿using Microservice.Library.Cache.Model;
 using Microservice.Library.Configuration.Annotations;
+using Microservice.Library.Extension.Helper;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Runtime.InteropServices;
 
 namespace Model.Utils.Config
 {
+#pragma warning disable IDE1006 // 命名样式
     /// <summary>
     /// 系统配置
     /// </summary>
@@ -18,30 +20,7 @@ namespace Model.Utils.Config
         /// <summary>
         /// 当前操作系统平台
         /// </summary>
-        public string CurrentOS
-        {
-            get
-            {
-                if (_CurrentOS != null)
-                    return _CurrentOS;
-
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                    _CurrentOS = OSPlatform.Windows.ToString();
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                    _CurrentOS = OSPlatform.Linux.ToString();
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                    _CurrentOS = OSPlatform.OSX.ToString();
-                else
-                    throw new ApplicationException("无法获取当前的操作系统平台.");
-
-                return _CurrentOS;
-            }
-        }
-
-        /// <summary>
-        /// 当前操作系统平台
-        /// </summary>
-        private string _CurrentOS { get; set; }
+        public string CurrentOS = SystemInfoHelper.CurrentOS.ToString();
 
         /// <summary>
         /// 数据存储根目录
@@ -575,4 +554,5 @@ namespace Model.Utils.Config
 
         #endregion
     }
+#pragma warning restore IDE1006 // 命名样式
 }

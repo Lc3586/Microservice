@@ -384,7 +384,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
                 var orId = OperationRecordBusiness.Create(new Common_OperationRecord
                 {
                     DataType = nameof(<#=Options.Table.Name#>),
-                    DataId = <#WritePrimaryField("newData", " + ");#>,
+                    DataId = <#WritePrimaryField("newData", " + ");#>.ToString(),
                     Explain = $"创建<#=Options.Table.Remark#>[@字段说明#待完善@]."
                 });
             });
@@ -484,7 +484,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
                 var orId = OperationRecordBusiness.Create(new Common_OperationRecord
                 {
                     DataType = nameof(<#=Options.Table.Name#>),
-                    DataId = <#WritePrimaryField("editData", " + ");#>,
+                    DataId = <#WritePrimaryField("editData", " + ");#>.ToString(),
                     Explain = $"修改<#=Options.Table.Remark#>[@字段说明#待完善@].",
                     Remark = $"变更详情: \r\n\t{changed_}"
                 });
@@ -502,7 +502,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
 
         public void Delete(List<string> keys)
         {
-            var entityList = Repository.Select.Where(c => keys.Contains(<#WritePrimaryField("c", " + ");#>)).ToList(c => new { <#WritePrimaryField("c", ", ");#> });
+            var entityList = Repository.Select.Where(c => keys.Contains(<#WritePrimaryField("c", " + ");#>.ToString())).ToList(c => new { <#WritePrimaryField("c", ", ");#> });
 
             var orList = new List<Common_OperationRecord>();
 
@@ -513,14 +513,14 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
                 orList.Add(new Common_OperationRecord
                 {
                     DataType = nameof(<#=Options.Table.Name#>),
-                    DataId = <#WritePrimaryField("entity", " + ");#>,
+                    DataId = <#WritePrimaryField("entity", " + ");#>.ToString(),
                     Explain = $"删除<#=Options.Table.Remark#>[@字段说明#待完善@]."
                 });
             }
 
             (bool success, Exception ex) = Orm.RunTransaction(() =>
             {
-                if (Repository.Delete(o => keys.Contains(<#WritePrimaryField("o", " + ");#>)) <= 0)
+                if (Repository.Delete(o => keys.Contains(<#WritePrimaryField("o", " + ");#>.ToString())) <= 0)
                     throw new MessageException("未删除任何数据");
 
                 var orIds = OperationRecordBusiness.Create(orList);
@@ -568,7 +568,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
                 var orId = OperationRecordBusiness.Create(new Common_OperationRecord
                 {
                     DataType = nameof(<#=Options.Table.Name#>),
-                    DataId = <#WritePrimaryField("entity", " + ");#>,
+                    DataId = <#WritePrimaryField("entity", " + ");#>.ToString(),
                     Explain = $"{(enable ? "启用" : "禁用")}<#=Options.Table.Remark#>[@字段说明#待完善@]."
                 });
             });
@@ -709,7 +709,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
                 var orId = OperationRecordBusiness.Create(new Common_OperationRecord
                 {
                     DataType = nameof(<#=Options.Table.Name#>),
-                    DataId = <#WritePrimaryField("target", " + ");#>,
+                    DataId = <#WritePrimaryField("target", " + ");#>.ToString(),
                     Explain = $"<#=Options.Table.Remark#>排序[排序方法: {data.Method}@字段说明#待完善@]."
                 });
             });
@@ -875,7 +875,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
                 _ = OperationRecordBusiness.Create(new Common_OperationRecord
                 {
                     DataType = nameof(<#=Options.Table.Name#>),
-                    DataId = <#WritePrimaryField("target", " + ");#>,
+                    DataId = <#WritePrimaryField("target", " + ");#>.ToString(),
                     Explain = $"<#=Options.Table.Remark#>拖动排序[@字段说明#待完善@]."
                 });
             });
@@ -1083,7 +1083,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
                     //    orList.Add(new Common_OperationRecord
                     //    {
                     //        DataType = nameof(<#=Options.Table.Name#>),
-                    //        DataId = <#WritePrimaryField("entity", " + ");#>,
+                    //        DataId = <#WritePrimaryField("entity", " + ");#>.ToString(),
                     //        Explain = $"导入数据（更新）<#=Options.Table.Remark#>[@字段说明#待完善@]."
                     //    });
                     //}
@@ -1094,7 +1094,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
                     //    orList.Add(new Common_OperationRecord
                     //    {
                     //        DataType = nameof(<#=Options.Table.Name#>),
-                    //        DataId = <#WritePrimaryField("entity", " + ");#>,
+                    //        DataId = <#WritePrimaryField("entity", " + ");#>.ToString(),
                     //        Explain = $"导入数据（新增）<#=Options.Table.Remark#>[@字段说明#待完善@]."
                     //    });
                     //}

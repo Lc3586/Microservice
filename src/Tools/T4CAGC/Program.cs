@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using T4CAGC.Configures;
+using T4CAGC.Extension;
 using T4CAGC.Handler;
 using T4CAGC.Log;
 using T4CAGC.Model;

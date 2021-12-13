@@ -94,6 +94,11 @@ namespace T4CAGC.Model
         public int Length { get; set; }
 
         /// <summary>
+        /// 精度
+        /// </summary>
+        public int Precision { get; set; }
+
+        /// <summary>
         /// 小数位
         /// </summary>
         public int Scale { get; set; }

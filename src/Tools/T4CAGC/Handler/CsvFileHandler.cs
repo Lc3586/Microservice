@@ -291,6 +291,13 @@ namespace T4CAGC.Handler
 
                                 fieldInfo.Length = Convert.ToInt32(length);
                             }
+                            else if (value.Exist(SettingKeyword.精度))
+                            {
+                                if (!value.TryMatch(SettingKeyword.精度, out string length))
+                                    SettingKeyword.精度.SettingException();
+
+                                fieldInfo.Precision = Convert.ToInt32(length);
+                            }
                             else if (value.Exist(SettingKeyword.小数位))
                             {
                                 if (!value.TryMatch(SettingKeyword.小数位, out string scale))

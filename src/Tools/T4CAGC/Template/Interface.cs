@@ -550,7 +550,7 @@ this.Write(this.ToStringHelper.ToStringWithCulture(i > 0 ? ", " : ""));
         #line hidden
         
         #line 264 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Interface.tt"
-this.Write(this.ToStringHelper.ToStringWithCulture(field.Type));
+this.Write(this.ToStringHelper.ToStringWithCulture(field.CsTypeKeyword));
 
         
         #line default

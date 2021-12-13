@@ -113,10 +113,10 @@ namespace T4CAGC.Template
             #line default
             #line hidden
             this.Write("Controller : BaseApiController\r\n    {\r\n        #region DI\r\n\r\n        /// <summary" +
-                    ">\r\n        /// \r\n        /// </summary>\r\n        /// <param name=\"");
+                    ">\r\n        /// \r\n        /// </summary>\r\n        /// <param name=\"_");
             
             #line 26 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName.ToLower()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName));
             
             #line default
             #line hidden
@@ -134,10 +134,10 @@ namespace T4CAGC.Template
             
             #line default
             #line hidden
-            this.Write("Business ");
+            this.Write("Business _");
             
             #line 27 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName.ToLower()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName));
             
             #line default
             #line hidden
@@ -148,10 +148,10 @@ namespace T4CAGC.Template
             
             #line default
             #line hidden
-            this.Write("Business = ");
+            this.Write("Business = _");
             
             #line 29 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName.ToLower()));
+            this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.ReducedName));
             
             #line default
             #line hidden
@@ -861,7 +861,7 @@ this.Write(this.ToStringHelper.ToStringWithCulture(i > 0 ? ", " : ""));
         #line hidden
         
         #line 370 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Controller.tt"
-this.Write(this.ToStringHelper.ToStringWithCulture(field.Type));
+this.Write(this.ToStringHelper.ToStringWithCulture(field.CsTypeKeyword));
 
         
         #line default
