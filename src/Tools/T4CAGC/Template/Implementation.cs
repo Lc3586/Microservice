@@ -1277,7 +1277,7 @@ WritePrimaryField("c", " + ");
             
             #line default
             #line hidden
-            this.Write(".ToString())).ToList(c => new { ");
+            this.Write(")).ToList(c => new { ");
             
             #line 505 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 WritePrimaryField("c", ", ");
@@ -2746,7 +2746,7 @@ this.Write(this.ToStringHelper.ToStringWithCulture(i > 0 ? ", " : ""));
         #line hidden
         
         #line 1234 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
-this.Write(this.ToStringHelper.ToStringWithCulture(field.Type));
+this.Write(this.ToStringHelper.ToStringWithCulture(field.CsTypeKeyword));
 
         
         #line default
@@ -2888,6 +2888,13 @@ this.Write(this.ToStringHelper.ToStringWithCulture(field.Name));
         #line hidden
         
         #line 1276 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+this.Write(".ToString()");
+
+        
+        #line default
+        #line hidden
+        
+        #line 1276 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
             i++;
         }
@@ -2914,7 +2921,7 @@ this.Write(this.ToStringHelper.ToStringWithCulture(i > 0 ? ", " : ""));
         #line hidden
         
         #line 1289 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
-this.Write(this.ToStringHelper.ToStringWithCulture(field.Type));
+this.Write(this.ToStringHelper.ToStringWithCulture(field.CsTypeKeyword));
 
         
         #line default

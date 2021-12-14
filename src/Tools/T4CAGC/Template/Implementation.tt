@@ -502,7 +502,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
 
         public void Delete(List<string> keys)
         {
-            var entityList = Repository.Select.Where(c => keys.Contains(<#WritePrimaryField("c", " + ");#>.ToString())).ToList(c => new { <#WritePrimaryField("c", ", ");#> });
+            var entityList = Repository.Select.Where(c => keys.Contains(<#WritePrimaryField("c", " + ");#>)).ToList(c => new { <#WritePrimaryField("c", ", ");#> });
 
             var orList = new List<Common_OperationRecord>();
 
@@ -1231,7 +1231,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
 
         foreach (var field in PrimaryKeys)
         {
-#><#=i > 0 ? ", " : ""#><#=field.Type#><#+
+#><#=i > 0 ? ", " : ""#><#=field.CsTypeKeyword#><#+
             i++;
         }
 
@@ -1273,7 +1273,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
         var i = 0;
         foreach (var field in PrimaryKeys)
         {
-#><#=i > 0 ? symbol : ""#><#=obj#>.<#=field.Name#><#+
+#><#=i > 0 ? symbol : ""#><#=obj#>.<#=field.Name#>.ToString()<#+
             i++;
         }
     }
@@ -1286,7 +1286,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
         var i = 0;
         foreach (var field in PrimaryKeys)
         {
-#><#=i > 0 ? ", " : ""#><#=field.Type#> <#=field.Name.ToLower()#><#+
+#><#=i > 0 ? ", " : ""#><#=field.CsTypeKeyword#> <#=field.Name.ToLower()#><#+
             i++;
         }
     }
