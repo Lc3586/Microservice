@@ -1,12 +1,14 @@
 ﻿using DataMigration.Application.Extension;
 using DataMigration.Application.Log;
 using DataMigration.Application.Model;
+using FreeSql;
 using FreeSql.DatabaseModel;
 using Microservice.Library.Extension;
 using Microservice.Library.FreeSql.Extention;
 using Microservice.Library.FreeSql.Gen;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 
 namespace DataMigration.Application.Handler
@@ -237,42 +239,41 @@ namespace DataMigration.Application.Handler
                         continue;
                     }
 
-                    var character = FreeSqlMultipleProvider.GetOrm(1).Ado.GetCharacter();
+                    //var character = FreeSqlMultipleProvider.GetOrm(1).Ado.GetCharacter();
 
-                    var comment_add_sql = string.Empty;
+                    //var comment_add_sql = string.Empty;
 
-                    var columns_comment = string.Join(",", table_target.Columns
-                        .Where(c => !c.Coment.IsNullOrWhiteSpace())
-                        .Select(c =>
-                        {
-                            Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到列注释: {c.Coment}.");
-                            return $"MODIFY COLUMN {character}{c.Name}{character} {c.DbTypeTextFull} {(c.IsNullable ? "NULL" : "NOT NULL")} {(c.DefaultValue == null ? c.IsNullable ? "DEFAULT NULL" : "" : $"DEFAULT {c.DefaultValue}")} COMMENT '{c.Coment}'";
-                        }));
+                    //var columns_comment = string.Join(",", table_target.Columns
+                    //    .Where(c => !c.Coment.IsNullOrWhiteSpace())
+                    //    .Select(c =>
+                    //    {
+                    //        Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到列注释: {c.Coment}.");
+                    //        return $"MODIFY COLUMN {character}{c.Name}{character} {c.DbTypeTextFull} {(c.IsNullable ? "NULL" : "NOT NULL")} {(c.DefaultValue == null ? c.IsNullable ? "DEFAULT NULL" : "" : $"DEFAULT {c.DefaultValue}")} COMMENT '{c.Coment}'";
+                    //    }));
 
-                    if (table_target.Comment.IsNullOrWhiteSpace() && columns_comment.IsNullOrWhiteSpace())
-                    {
-                        Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "已忽略: 源数据库数据表未检测到任何注释.");
-                        continue;
-                    }
+                    //if (table_target.Comment.IsNullOrWhiteSpace() && columns_comment.IsNullOrWhiteSpace())
+                    //{
+                    //    Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "已忽略: 源数据库数据表未检测到任何注释.");
+                    //    continue;
+                    //}
 
-                    comment_add_sql = $"ALTER TABLE {FreeSqlMultipleProvider.GetOrm(1).Ado.GetDatabaseTableName(table_target)} " + columns_comment;
+                    //comment_add_sql = $"ALTER TABLE {FreeSqlMultipleProvider.GetOrm(1).Ado.GetDatabaseTableName(table_target)} " + columns_comment;
 
-                    if (columns_comment.IsNullOrWhiteSpace())
-                        comment_add_sql += "Add";
+                    //if (columns_comment.IsNullOrWhiteSpace())
+                    //    comment_add_sql += "Add";
+                    //else
+                    //    comment_add_sql += ",";
 
-                    if (!table_target.Comment.IsNullOrWhiteSpace())
-                    {
-                        Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到表注释: {table_target.Comment}.");
+                    //if (!table_target.Comment.IsNullOrWhiteSpace())
+                    //{
+                    //    Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到表注释: {table_target.Comment}.");
 
-                        comment_add_sql += $"COMMENT = '{table_target.Comment}'";
-                    }
+                    //    comment_add_sql += $"COMMENT = '{table_target.Comment}'";
+                    //}
 
                     try
                     {
-                        if (FreeSqlMultipleProvider.GetOrm(1).Ado.ExecuteNonQuery(comment_add_sql) < 0)
-                            throw new ApplicationException($"执行sql失败: {comment_add_sql}, 请检查数据库版本是否支持SQL-92中添加注释的语法.");
-
-                        Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "已添加.");
+                        ModifyComment(table_target);
                     }
                     catch (Exception ex)
                     {
@@ -283,6 +284,197 @@ namespace DataMigration.Application.Handler
             catch (Exception ex)
             {
                 throw new ApplicationException("同步注释失败.", ex);
+            }
+        }
+
+        /// <summary>
+        /// 编辑表注释
+        /// </summary>
+        /// <param name="dbTable">表信息</param>
+        /// <returns></returns>
+        /// <exception cref="ApplicationException"></exception>
+        void ModifyComment(DbTableInfo dbTable)
+        {
+            try
+            {
+                switch (Config.TargetDataType)
+                {
+                    case DataType.MySql:
+                    case DataType.OdbcMySql:
+                        ModifyComment_MySql(dbTable);
+                        break;
+                    case DataType.SqlServer:
+                    case DataType.OdbcSqlServer:
+                        ModifyComment_SqlServer(dbTable);
+                        break;
+                    case DataType.Oracle:
+                    case DataType.OdbcOracle:
+                        ModifyComment_Oracle(dbTable);
+                        break;
+                    case DataType.Dameng:
+                    case DataType.OdbcDameng:
+                        ModifyComment_Dameng(dbTable);
+                        break;
+                    case DataType.PostgreSQL:
+                    case DataType.OdbcPostgreSQL:
+                        ModifyComment_PostgreSQL(dbTable);
+                        break;
+                    case DataType.Sqlite:
+                    case DataType.Odbc:
+                    case DataType.MsAccess:
+                    case DataType.OdbcKingbaseES:
+                    case DataType.ShenTong:
+                    case DataType.KingbaseES:
+                    case DataType.Firebird:
+                    case DataType.Custom:
+                    default:
+                        throw new ApplicationException($"不支持此数据库类型: {Config.TargetDataType}.");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("获取编辑表注释SQL语句失败.", ex);
+            }
+        }
+
+        /// <summary>
+        /// 编辑注释（MySql）
+        /// </summary>
+        /// <param name="dbTable">表信息</param>
+        /// <returns></returns>
+        void ModifyComment_MySql(DbTableInfo dbTable)
+        {
+            var character = FreeSqlMultipleProvider.GetOrm(1).Ado.GetCharacter();
+
+            var sql = $"ALTER TABLE {FreeSqlMultipleProvider.GetOrm(1).Ado.GetDatabaseTableName(dbTable)} ";
+
+            var columns_comment = string.Join(
+                ",",
+                dbTable.Columns
+                .Where(c => !c.Coment.IsNullOrWhiteSpace())
+                .Select(c =>
+                {
+                    Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到列注释: {c.Coment}.");
+                    return $"MODIFY COLUMN {character}{c.Name}{character} {c.DbTypeTextFull} {(c.IsNullable ? "NULL" : "NOT NULL")} {(c.DefaultValue == null ? c.IsNullable ? "DEFAULT NULL" : "" : $"DEFAULT {c.DefaultValue}")} COMMENT '{c.Coment}'";
+                }));
+
+            if (columns_comment.IsNullOrWhiteSpace() && dbTable.Comment.IsNullOrWhiteSpace())
+                return;
+
+            if (!dbTable.Comment.IsNullOrWhiteSpace())
+            {
+                Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到表注释: {dbTable.Comment}.");
+                sql += $"{(columns_comment.IsNullOrWhiteSpace() ? "Add" : ",")} COMMENT = '{dbTable.Comment}'";
+
+            }
+
+            ExecModifyCommentSQL(sql);
+        }
+
+        /// <summary>
+        /// 编辑注释（SqlServer）
+        /// </summary>
+        /// <param name="dbTable">表信息</param>
+        /// <returns></returns>
+        void ModifyComment_SqlServer(DbTableInfo dbTable)
+        {
+            var result = string.Empty;
+
+            var schema = FreeSqlMultipleProvider.GetOrm(1).Ado.QuerySingle<string>($"SELECT table_schema FROM information_schema.tables WHERE table_name = '{dbTable.Name}'");
+
+            if (!dbTable.Comment.IsNullOrWhiteSpace())
+            {
+                Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到表注释: {dbTable.Comment}.");
+
+                var sql = @$"
+IF ((SELECT COUNT(*) FROM ::fn_listextendedproperty('MS_Description',
+'SCHEMA', N'{schema}',
+'TABLE', N'{dbTable.Name}', NULL, NULL)) > 0)
+    EXEC sp_updateextendedproperty
+'MS_Description', N'{dbTable.Comment}',
+'SCHEMA', N'{schema}',
+'TABLE', N'{dbTable.Name}'
+ELSE EXEC sp_addextendedproperty
+'MS_Description', N'{dbTable.Comment}',
+'SCHEMA', N'{schema}',
+'TABLE', N'{dbTable.Name}'";
+
+                ExecModifyCommentSQL(sql);
+            }
+
+            dbTable.Columns
+                .Where(c => !c.Coment.IsNullOrWhiteSpace())
+                .ForEach(c =>
+                {
+                    Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到列注释: {c.Coment}.");
+
+                    var sql = $@"
+IF ((SELECT COUNT(*) FROM ::fn_listextendedproperty('MS_Description',
+'SCHEMA', N'{schema}',
+'TABLE', N'{dbTable.Name}',
+'COLUMN', N'{c.Name}')) > 0)
+    EXEC sp_updateextendedproperty
+'MS_Description', N'{c.Coment}',
+'SCHEMA', N'{schema}',
+'TABLE', N'{dbTable.Name}',
+'COLUMN', N'{c.Name}'
+ELSE
+    EXEC sp_addextendedproperty
+'MS_Description', N'{c.Coment}',
+'SCHEMA', N'{schema}',
+'TABLE', N'{dbTable.Name}',
+'COLUMN', N'{c.Name}'";
+
+                    ExecModifyCommentSQL(sql);
+                });
+        }
+
+        /// <summary>
+        /// 编辑注释（Oracle）
+        /// </summary>
+        /// <param name="dbTable">表信息</param>
+        /// <returns></returns>
+        void ModifyComment_Oracle(DbTableInfo dbTable)
+        {
+
+        }
+
+        /// <summary>
+        /// 编辑注释（Dameng）
+        /// </summary>
+        /// <param name="dbTable">表信息</param>
+        /// <returns></returns>
+        void ModifyComment_Dameng(DbTableInfo dbTable)
+        {
+
+        }
+
+        /// <summary>
+        /// 编辑注释（PostgreSQL）
+        /// </summary>
+        /// <param name="dbTable">表信息</param>
+        /// <returns></returns>
+        void ModifyComment_PostgreSQL(DbTableInfo dbTable)
+        {
+
+        }
+
+        /// <summary>
+        /// 执行编辑注释的SQL语句
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <exception cref="ApplicationException"></exception>
+        void ExecModifyCommentSQL(string sql)
+        {
+            try
+            {
+                FreeSqlMultipleProvider.GetOrm(1).Ado.QuerySingle<object>(sql);
+
+                Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "已更新注释.");
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException($"执行sql失败: {sql}.", ex);
             }
         }
     }

@@ -174,18 +174,18 @@ namespace DataMigration.Application
                     return 1;
                 }
 
-#if DEBUG
-                //TargetConnectingString = $"Server=127.0.0.1;Port=3306;Database=data_migration_test;User ID=root;Password=root666;Charset=utf8;SslMode=none;Max pool size=500;AllowLoadLocalInfile=true;";
-                //TargetConnectingString = $"Server=192.168.1.116;Port=3306;Database=211106;User ID=211106;Password=211106TuruiMYSQL;Charset=utf8;SslMode=none;Max pool size=500;AllowLoadLocalInfile=true;";
-                //MySQL 8.0
-                //TargetConnectingString = $"Server=121.5.146.9;Port=3306;Database=data_migration_test;User ID=root;Password=-3068-4411-8b9E-;Charset=utf8;SslMode=none;Max pool size=500;AllowLoadLocalInfile=true;";
-                //MariaDB 10.6
-                TargetConnectingString = $"Server=121.5.146.9;Port=3307;Database=data_migration_test;User ID=root;Password=-3068-4411-8b9E-;Charset=utf8;SslMode=none;Max pool size=500;AllowLoadLocalInfile=true;";
+//#if DEBUG
+//                //TargetConnectingString = $"Server=127.0.0.1;Port=3306;Database=data_migration_test;User ID=root;Password=root666;Charset=utf8;SslMode=none;Max pool size=500;AllowLoadLocalInfile=true;";
+//                //TargetConnectingString = $"Server=192.168.1.116;Port=3306;Database=211106;User ID=211106;Password=211106TuruiMYSQL;Charset=utf8;SslMode=none;Max pool size=500;AllowLoadLocalInfile=true;";
+//                //MySQL 8.0
+//                //TargetConnectingString = $"Server=121.5.146.9;Port=3306;Database=data_migration_test;User ID=root;Password=-3068-4411-8b9E-;Charset=utf8;SslMode=none;Max pool size=500;AllowLoadLocalInfile=true;";
+//                //MariaDB 10.6
+//                TargetConnectingString = $"Server=121.5.146.9;Port=3307;Database=data_migration_test;User ID=root;Password=-3068-4411-8b9E-;Charset=utf8;SslMode=none;Max pool size=500;AllowLoadLocalInfile=true;";
 
-                //EntityAssemblys = new List<string> { "Entitys.Project/Entity_132821956164487127/Build/Debug/Entity_132821956164487127.dll" };
+//                //EntityAssemblys = new List<string> { "Entitys.Project/Entity_132821956164487127/Build/Debug/Entity_132821956164487127.dll" };
 
-                OperationType = OperationType.All;
-#endif
+//                OperationType = OperationType.All;
+//#endif
                 config.TargetConnectingString = TargetConnectingString;
 #if DEBUG
                 $"目标数据库: {TargetConnectingString}.\r\n".ConsoleWrite();
