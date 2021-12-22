@@ -239,38 +239,6 @@ namespace DataMigration.Application.Handler
                         continue;
                     }
 
-                    //var character = FreeSqlMultipleProvider.GetOrm(1).Ado.GetCharacter();
-
-                    //var comment_add_sql = string.Empty;
-
-                    //var columns_comment = string.Join(",", table_target.Columns
-                    //    .Where(c => !c.Coment.IsNullOrWhiteSpace())
-                    //    .Select(c =>
-                    //    {
-                    //        Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到列注释: {c.Coment}.");
-                    //        return $"MODIFY COLUMN {character}{c.Name}{character} {c.DbTypeTextFull} {(c.IsNullable ? "NULL" : "NOT NULL")} {(c.DefaultValue == null ? c.IsNullable ? "DEFAULT NULL" : "" : $"DEFAULT {c.DefaultValue}")} COMMENT '{c.Coment}'";
-                    //    }));
-
-                    //if (table_target.Comment.IsNullOrWhiteSpace() && columns_comment.IsNullOrWhiteSpace())
-                    //{
-                    //    Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "已忽略: 源数据库数据表未检测到任何注释.");
-                    //    continue;
-                    //}
-
-                    //comment_add_sql = $"ALTER TABLE {FreeSqlMultipleProvider.GetOrm(1).Ado.GetDatabaseTableName(table_target)} " + columns_comment;
-
-                    //if (columns_comment.IsNullOrWhiteSpace())
-                    //    comment_add_sql += "Add";
-                    //else
-                    //    comment_add_sql += ",";
-
-                    //if (!table_target.Comment.IsNullOrWhiteSpace())
-                    //{
-                    //    Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到表注释: {table_target.Comment}.");
-
-                    //    comment_add_sql += $"COMMENT = '{table_target.Comment}'";
-                    //}
-
                     try
                     {
                         ModifyComment(table_target);
@@ -365,7 +333,6 @@ namespace DataMigration.Application.Handler
             {
                 Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到表注释: {dbTable.Comment}.");
                 sql += $"{(columns_comment.IsNullOrWhiteSpace() ? "Add" : ",")} COMMENT = '{dbTable.Comment}'";
-
             }
 
             ExecModifyCommentSQL(sql);
@@ -378,9 +345,7 @@ namespace DataMigration.Application.Handler
         /// <returns></returns>
         void ModifyComment_SqlServer(DbTableInfo dbTable)
         {
-            var result = string.Empty;
-
-            var schema = FreeSqlMultipleProvider.GetOrm(1).Ado.QuerySingle<string>($"SELECT table_schema FROM information_schema.tables WHERE table_name = '{dbTable.Name}'");
+            var schema = dbTable.Schema.IsNullOrWhiteSpace() ? FreeSqlMultipleProvider.GetOrm(1).Ado.QuerySingle<string>($"SELECT table_schema FROM information_schema.tables WHERE table_name = '{dbTable.Name}'") : dbTable.Schema;
 
             if (!dbTable.Comment.IsNullOrWhiteSpace())
             {
@@ -436,7 +401,27 @@ ELSE
         /// <returns></returns>
         void ModifyComment_Oracle(DbTableInfo dbTable)
         {
+            var schema = dbTable.Schema.IsNullOrWhiteSpace() ? FreeSqlMultipleProvider.GetOrm(1).Ado.QuerySingle<string>($"SELECT OWNER FROM sys.dba_tables WHERE table_name = '{dbTable.Name}'") : dbTable.Schema;
 
+            if (!dbTable.Comment.IsNullOrWhiteSpace())
+            {
+                Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到表注释: {dbTable.Comment}.");
+
+                var sql = $"COMMENT ON TABLE \"{schema}\".\"{dbTable.Name}\" IS '{dbTable.Comment}'";
+
+                ExecModifyCommentSQL(sql);
+            }
+
+            dbTable.Columns
+                .Where(c => !c.Coment.IsNullOrWhiteSpace())
+                .ForEach(c =>
+                {
+                    Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到列注释: {c.Coment}.");
+
+                    var sql = $"COMMENT ON COLUMN \"{schema}\".\"{dbTable.Name}\".\"{c.Name}\" IS '{c.Coment}'";
+
+                    ExecModifyCommentSQL(sql);
+                });
         }
 
         /// <summary>
@@ -446,7 +431,8 @@ ELSE
         /// <returns></returns>
         void ModifyComment_Dameng(DbTableInfo dbTable)
         {
-
+            //SQL语句和Orcale一样
+            ModifyComment_Oracle(dbTable);
         }
 
         /// <summary>
@@ -456,7 +442,10 @@ ELSE
         /// <returns></returns>
         void ModifyComment_PostgreSQL(DbTableInfo dbTable)
         {
+            dbTable.Schema = dbTable.Schema.IsNullOrWhiteSpace() ? FreeSqlMultipleProvider.GetOrm(1).Ado.QuerySingle<string>($"SELECT table_schema FROM information_schema.tables WHERE table_name = '{dbTable.Name}'") : dbTable.Schema;
 
+            //SQL语句和Orcale一样
+            ModifyComment_Oracle(dbTable);
         }
 
         /// <summary>

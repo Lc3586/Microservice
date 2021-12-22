@@ -2289,12 +2289,7 @@
             系统配置
             </summary>
         </member>
-        <member name="P:Model.Utils.Config.SystemConfig.CurrentOS">
-            <summary>
-            当前操作系统平台
-            </summary>
-        </member>
-        <member name="P:Model.Utils.Config.SystemConfig._CurrentOS">
+        <member name="F:Model.Utils.Config.SystemConfig.CurrentOS">
             <summary>
             当前操作系统平台
             </summary>

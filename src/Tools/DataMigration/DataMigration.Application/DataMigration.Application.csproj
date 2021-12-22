@@ -18,16 +18,16 @@
 
   <ItemGroup>
     <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="3.1.0" />
-    <PackageReference Include="Microservice.Library.Cache" Version="0.0.0.13-alpha-gc29efdf990" />
-    <PackageReference Include="Microservice.Library.Configuration" Version="0.0.0.13-alpha-gc29efdf990" />
-    <PackageReference Include="Microservice.Library.ConsoleTool" Version="0.0.0.13-alpha-gc29efdf990" />
-    <PackageReference Include="Microservice.Library.DataMapping" Version="0.0.0.13-alpha-gc29efdf990" />
-    <PackageReference Include="Microservice.Library.Elasticsearch" Version="0.0.0.13-alpha-gc29efdf990" />
-    <PackageReference Include="Microservice.Library.File" Version="0.0.0.13-alpha-gc29efdf990" />
-    <PackageReference Include="Microservice.Library.FreeSql" Version="0.0.0.13-alpha-gc29efdf990" />
-    <PackageReference Include="Microservice.Library.Http" Version="0.0.0.13-alpha-gc29efdf990" />
-    <PackageReference Include="Microservice.Library.NLogger" Version="0.0.0.13-alpha-gc29efdf990" />
-    <PackageReference Include="Microservice.Library.OpenApi" Version="0.0.0.13-alpha-gc29efdf990" />
+    <PackageReference Include="Microservice.Library.Cache" Version="0.0.0.15-alpha-ga4501b4f30" />
+    <PackageReference Include="Microservice.Library.Configuration" Version="0.0.0.15-alpha-ga4501b4f30" />
+    <PackageReference Include="Microservice.Library.ConsoleTool" Version="0.0.0.15-alpha-ga4501b4f30" />
+    <PackageReference Include="Microservice.Library.DataMapping" Version="0.0.0.15-alpha-ga4501b4f30" />
+    <PackageReference Include="Microservice.Library.Elasticsearch" Version="0.0.0.15-alpha-ga4501b4f30" />
+    <PackageReference Include="Microservice.Library.File" Version="0.0.0.15-alpha-ga4501b4f30" />
+    <PackageReference Include="Microservice.Library.FreeSql" Version="0.0.0.15-alpha-ga4501b4f30" />
+    <PackageReference Include="Microservice.Library.Http" Version="0.0.0.15-alpha-ga4501b4f30" />
+    <PackageReference Include="Microservice.Library.NLogger" Version="0.0.0.15-alpha-ga4501b4f30" />
+    <PackageReference Include="Microservice.Library.OpenApi" Version="0.0.0.15-alpha-ga4501b4f30" />
   </ItemGroup>
 
   <ItemGroup>
