@@ -1,8 +1,7 @@
 {
   "profiles": {
     "DataMigration.Application": {
-      "commandName": "Project",
-      "commandLineArgs": "-sc \"Server=121.5.146.9;Port=3307;Database=2021wset;User ID=root;Password=-3068-4411-8b9E-;Charset=utf8;SslMode=none;Max pool size=500;AllowLoadLocalInfile=true;\" -st MySql -tc \"Server=west.turuitech.com,49232;Database=20211203WSET葡萄酒与烈酒教育基金会;User Id=20211203WSET;Password=20211203WSET@turui;Encrypt=True;TrustServerCertificate=True;\" -tt SqlServer -e \"D:\\TuRui\\Project\\2021\\20211203WSET葡萄酒与烈酒教育基金会\\04项目代码\\Api\\bin\\Debug\\net5.0\\Entity.dll\""
+      "commandName": "Project"
     }
   }
 }
