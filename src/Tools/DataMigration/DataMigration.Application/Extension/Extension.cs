@@ -3,6 +3,7 @@ using Microservice.Library.Extension;
 using Microservice.Library.FreeSql.Gen;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
 

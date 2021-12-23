@@ -167,12 +167,15 @@ namespace Api.Configures
                         new OpenApiServer {
                             Url =config.WebRootUrlMatchScheme(httpReq.Scheme),
                             Description = "当前地址"
-                        },
-                        new OpenApiServer {
-                            Url = config.WebRootUrlMatchScheme(httpReq.Scheme,true),
-                            Description = "其他地址"
                         }
                     };
+
+                    if (config.WebRootUrl.Count > 1)
+                        swagger.Servers.Add(new OpenApiServer
+                        {
+                            Url = config.WebRootUrlMatchScheme(httpReq.Scheme, true),
+                            Description = "其他地址"
+                        });
                 });
             });
             app.UseSwaggerUI(s =>

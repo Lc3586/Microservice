@@ -155,7 +155,7 @@ namespace DataMigration.Application.Handler
 
             if (!Tables.ContainsKey(key))
                 Tables.Add(key, FreeSqlMultipleProvider.GetTablesByDatabase(
-                         0,
+                         key,
                          (Config.TableMatch?.ContainsKey(OperationType.All) == true ? new List<string> { Config.TableMatch[OperationType.All] } : new List<string>())
                          .Concat(Config.TableMatch?.ContainsKey(OperationType.Data) == true ? new List<string> { Config.TableMatch[OperationType.Data] } : new List<string>())
                          .ToList(),
@@ -201,27 +201,45 @@ namespace DataMigration.Application.Handler
             {
                 switch (InsertMethodName)
                 {
+                    case nameof(FreeSqlMySqlConnectorGlobalExtensions.ExecuteMySqlBulkCopyAsync):
+                        InsertMethodParams.Add(entityType, new object[] { iInsert, null, default(CancellationToken) });
+                        InsertBulkAsyncMethod.Add(entityType, @params => typeof(FreeSqlMySqlConnectorGlobalExtensions)
+                             .GetMethod(nameof(FreeSqlMySqlConnectorGlobalExtensions.ExecuteMySqlBulkCopyAsync))
+                             .MakeGenericMethod(entityType)
+                             .Invoke(null, @params) as Task);
+                        break;
                     case nameof(FreeSqlMySqlConnectorGlobalExtensions.ExecuteMySqlBulkCopy):
                         InsertMethodParams.Add(entityType, new object[] { iInsert, null });
                         InsertBulkMethod.Add(entityType, @params => typeof(FreeSqlMySqlConnectorGlobalExtensions)
                              .GetMethod(nameof(FreeSqlMySqlConnectorGlobalExtensions.ExecuteMySqlBulkCopy))
-                             //?.GetMethod(nameof(FreeSqlMySqlConnectorGlobalExtensions.ExecuteMySqlBulkCopyAsync), 1, new Type[] { typeof(IInsert<>).MakeGenericType(entityType), typeof(int?), typeof(CancellationToken) })
                              .MakeGenericMethod(entityType)
                              .Invoke(null, @params));
+                        break;
+                    case nameof(FreeSqlSqlServerGlobalExtensions.ExecuteSqlBulkCopyAsync):
+                        InsertMethodParams.Add(entityType, new object[] { iInsert, SqlBulkCopyOptions.Default, null, null, default(CancellationToken) });
+                        InsertBulkAsyncMethod.Add(entityType, @params => typeof(FreeSqlSqlServerGlobalExtensions)
+                             .GetMethod(nameof(FreeSqlSqlServerGlobalExtensions.ExecuteSqlBulkCopyAsync))
+                             .MakeGenericMethod(entityType)
+                             .Invoke(null, @params) as Task);
                         break;
                     case nameof(FreeSqlSqlServerGlobalExtensions.ExecuteSqlBulkCopy):
                         InsertMethodParams.Add(entityType, new object[] { iInsert, SqlBulkCopyOptions.Default, null, null });
                         InsertBulkMethod.Add(entityType, @params => typeof(FreeSqlSqlServerGlobalExtensions)
                              .GetMethod(nameof(FreeSqlSqlServerGlobalExtensions.ExecuteSqlBulkCopy))
-                             //.GetMethod(nameof(FreeSqlSqlServerGlobalExtensions.ExecuteSqlBulkCopyAsync), 1, new Type[] { typeof(IInsert<>).MakeGenericType(entityType), typeof(SqlBulkCopyOptions), typeof(int?), typeof(int?), typeof(CancellationToken) })
                              .MakeGenericMethod(entityType)
                              .Invoke(null, @params));
+                        break;
+                    case nameof(FreeSqlPostgreSQLGlobalExtensions.ExecutePgCopyAsync):
+                        InsertMethodParams.Add(entityType, new object[] { iInsert, default(CancellationToken) });
+                        InsertBulkAsyncMethod.Add(entityType, @params => typeof(FreeSqlPostgreSQLGlobalExtensions)
+                             .GetMethod(nameof(FreeSqlPostgreSQLGlobalExtensions.ExecutePgCopyAsync))
+                             .MakeGenericMethod(entityType)
+                             .Invoke(null, @params) as Task);
                         break;
                     case nameof(FreeSqlPostgreSQLGlobalExtensions.ExecutePgCopy):
                         InsertMethodParams.Add(entityType, new object[] { iInsert });
                         InsertBulkMethod.Add(entityType, @params => typeof(FreeSqlPostgreSQLGlobalExtensions)
                              .GetMethod(nameof(FreeSqlPostgreSQLGlobalExtensions.ExecutePgCopy))
-                             //.GetMethod(nameof(FreeSqlPostgreSQLGlobalExtensions.ExecutePgCopyAsync), 1, new Type[] { typeof(IInsert<>).MakeGenericType(entityType), typeof(CancellationToken) })
                              .MakeGenericMethod(entityType)
                              .Invoke(null, @params));
                         break;
@@ -229,7 +247,6 @@ namespace DataMigration.Application.Handler
                         InsertMethodParams.Add(entityType, new object[] { iInsert, OracleBulkCopyOptions.Default, null, null }); ;
                         InsertBulkMethod.Add(entityType, @params => typeof(FreeSqlOracleGlobalExtensions)
                              .GetMethod(nameof(FreeSqlOracleGlobalExtensions.ExecuteOracleBulkCopy))
-                             //.GetMethod(nameof(FreeSqlOracleGlobalExtensions.ExecuteOracleBulkCopy), 1, new Type[] { typeof(IInsert<>).MakeGenericType(entityType), typeof(OracleBulkCopyOptions), typeof(int?), typeof(int?) })
                              .MakeGenericMethod(entityType)
                              .Invoke(null, @params));
                         break;
@@ -237,7 +254,6 @@ namespace DataMigration.Application.Handler
                         InsertMethodParams.Add(entityType, new object[] { iInsert, DmBulkCopyOptions.Default, null, null });
                         InsertBulkMethod.Add(entityType, @params => typeof(FreeSqlDamengGlobalExtensions)
                              .GetMethod(nameof(FreeSqlDamengGlobalExtensions.ExecuteDmBulkCopy))
-                             //.GetMethod(nameof(FreeSqlDamengGlobalExtensions.ExecuteDmBulkCopy), 1, new Type[] { typeof(IInsert<>).MakeGenericType(entityType), typeof(DmBulkCopyOptions), typeof(int?), typeof(int?) })
                              .MakeGenericMethod(entityType)
                              .Invoke(null, @params));
                         break;

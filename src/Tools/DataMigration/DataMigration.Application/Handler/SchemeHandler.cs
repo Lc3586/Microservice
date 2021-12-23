@@ -116,7 +116,7 @@ namespace DataMigration.Application.Handler
 
             if (!Tables.ContainsKey(key))
                 Tables.Add(key, FreeSqlMultipleProvider.GetTablesByDatabase(
-                         0,
+                         key,
                          (Config.TableMatch?.ContainsKey(OperationType.All) == true ? new List<string> { Config.TableMatch[OperationType.All] } : new List<string>())
                          .Concat(Config.TableMatch?.ContainsKey(OperationType.Schema) == true ? new List<string> { Config.TableMatch[OperationType.Schema] } : new List<string>())
                          .ToList(),
@@ -319,11 +319,11 @@ namespace DataMigration.Application.Handler
             var columns_comment = string.Join(
                 ",",
                 dbTable.Columns
-                .Where(c => !c.Coment.IsNullOrWhiteSpace())
+                .Where(c => !c.Comment.IsNullOrWhiteSpace())
                 .Select(c =>
                 {
-                    Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到列注释: {c.Coment}.");
-                    return $"MODIFY COLUMN {character}{c.Name}{character} {c.DbTypeTextFull} {(c.IsNullable ? "NULL" : "NOT NULL")} {(c.DefaultValue == null ? c.IsNullable ? "DEFAULT NULL" : "" : $"DEFAULT {c.DefaultValue}")} COMMENT '{c.Coment}'";
+                    Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到列注释: {c.Comment}.");
+                    return $"MODIFY COLUMN {character}{c.Name}{character} {c.DbTypeTextFull} {(c.IsNullable ? "NULL" : "NOT NULL")} {(c.DefaultValue == null ? c.IsNullable ? "DEFAULT NULL" : "" : $"DEFAULT {c.DefaultValue}")} COMMENT '{c.Comment}'";
                 }));
 
             if (columns_comment.IsNullOrWhiteSpace() && dbTable.Comment.IsNullOrWhiteSpace())
@@ -345,7 +345,8 @@ namespace DataMigration.Application.Handler
         /// <returns></returns>
         void ModifyComment_SqlServer(DbTableInfo dbTable)
         {
-            var schema = dbTable.Schema.IsNullOrWhiteSpace() ? FreeSqlMultipleProvider.GetOrm(1).Ado.QuerySingle<string>($"SELECT table_schema FROM information_schema.tables WHERE table_name = '{dbTable.Name}'") : dbTable.Schema;
+            //var schema = dbTable.Schema.IsNullOrWhiteSpace() ? FreeSqlMultipleProvider.GetOrm(1).Ado.QuerySingle<string>($"SELECT table_schema FROM information_schema.tables WHERE table_name = '{dbTable.Name}'") : dbTable.Schema;
+            var schema = dbTable.Schema;
 
             if (!dbTable.Comment.IsNullOrWhiteSpace())
             {
@@ -368,10 +369,10 @@ ELSE EXEC sp_addextendedproperty
             }
 
             dbTable.Columns
-                .Where(c => !c.Coment.IsNullOrWhiteSpace())
+                .Where(c => !c.Comment.IsNullOrWhiteSpace())
                 .ForEach(c =>
                 {
-                    Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到列注释: {c.Coment}.");
+                    Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到列注释: {c.Comment}.");
 
                     var sql = $@"
 IF ((SELECT COUNT(*) FROM ::fn_listextendedproperty('MS_Description',
@@ -379,13 +380,13 @@ IF ((SELECT COUNT(*) FROM ::fn_listextendedproperty('MS_Description',
 'TABLE', N'{dbTable.Name}',
 'COLUMN', N'{c.Name}')) > 0)
     EXEC sp_updateextendedproperty
-'MS_Description', N'{c.Coment}',
+'MS_Description', N'{c.Comment}',
 'SCHEMA', N'{schema}',
 'TABLE', N'{dbTable.Name}',
 'COLUMN', N'{c.Name}'
 ELSE
     EXEC sp_addextendedproperty
-'MS_Description', N'{c.Coment}',
+'MS_Description', N'{c.Comment}',
 'SCHEMA', N'{schema}',
 'TABLE', N'{dbTable.Name}',
 'COLUMN', N'{c.Name}'";
@@ -401,7 +402,8 @@ ELSE
         /// <returns></returns>
         void ModifyComment_Oracle(DbTableInfo dbTable)
         {
-            var schema = dbTable.Schema.IsNullOrWhiteSpace() ? FreeSqlMultipleProvider.GetOrm(1).Ado.QuerySingle<string>($"SELECT OWNER FROM sys.dba_tables WHERE table_name = '{dbTable.Name}'") : dbTable.Schema;
+            //var schema = dbTable.Schema.IsNullOrWhiteSpace() ? FreeSqlMultipleProvider.GetOrm(1).Ado.QuerySingle<string>($"SELECT OWNER FROM sys.dba_tables WHERE table_name = '{dbTable.Name}'") : dbTable.Schema;
+            var schema = dbTable.Schema;
 
             if (!dbTable.Comment.IsNullOrWhiteSpace())
             {
@@ -413,12 +415,12 @@ ELSE
             }
 
             dbTable.Columns
-                .Where(c => !c.Coment.IsNullOrWhiteSpace())
+                .Where(c => !c.Comment.IsNullOrWhiteSpace())
                 .ForEach(c =>
                 {
-                    Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到列注释: {c.Coment}.");
+                    Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到列注释: {c.Comment}.");
 
-                    var sql = $"COMMENT ON COLUMN \"{schema}\".\"{dbTable.Name}\".\"{c.Name}\" IS '{c.Coment}'";
+                    var sql = $"COMMENT ON COLUMN \"{schema}\".\"{dbTable.Name}\".\"{c.Name}\" IS '{c.Comment}'";
 
                     ExecModifyCommentSQL(sql);
                 });
@@ -442,7 +444,7 @@ ELSE
         /// <returns></returns>
         void ModifyComment_PostgreSQL(DbTableInfo dbTable)
         {
-            dbTable.Schema = dbTable.Schema.IsNullOrWhiteSpace() ? FreeSqlMultipleProvider.GetOrm(1).Ado.QuerySingle<string>($"SELECT table_schema FROM information_schema.tables WHERE table_name = '{dbTable.Name}'") : dbTable.Schema;
+            //dbTable.Schema = dbTable.Schema.IsNullOrWhiteSpace() ? FreeSqlMultipleProvider.GetOrm(1).Ado.QuerySingle<string>($"SELECT table_schema FROM information_schema.tables WHERE table_name = '{dbTable.Name}'") : dbTable.Schema;
 
             //SQL语句和Orcale一样
             ModifyComment_Oracle(dbTable);
