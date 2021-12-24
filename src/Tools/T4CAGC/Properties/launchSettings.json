@@ -1,8 +1,7 @@
 {
   "profiles": {
     "T4CAGC": {
-      "commandName": "Project",
-      "commandLineArgs": "-c \"config/generateconfig.json\" -s \"Server=127.0.0.1;Port=3306;Database=data_migration_test;User ID=root;Password=root666;Charset=utf8;SslMode=none;Max pool size=500;AllowLoadLocalInfile=true;\" -t DataBase -p \"T4CAGC\\output\" -cpczf \"T4CAGC\\CompleteProjectCode.zip\" -g CompleteProject -o"
+      "commandName": "Project"
     }
   }
 }
