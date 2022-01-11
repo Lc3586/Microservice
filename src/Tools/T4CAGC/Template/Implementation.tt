@@ -641,7 +641,8 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
         else
         {
 #>
-                    SortMethod.up => Repository.Select.OrderByDescending(o => o.<#=FunctionsWithField[Function.Sort].Name#>)
+                    SortMethod.up => Repository.Where(o => o.<#=FunctionsWithField[Function.Sort].Name#> < current.<#=FunctionsWithField[Function.Sort].Name#>)
+                                               .OrderByDescending(o => o.<#=FunctionsWithField[Function.Sort].Name#>)
 <#
         }
 #>
@@ -661,7 +662,8 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
         else
         {
 #>
-                    SortMethod.down => Repository.Select.OrderBy(o => o.<#=FunctionsWithField[Function.Sort].Name#>)
+                    SortMethod.down => Repository.Where(o => o.<#=FunctionsWithField[Function.Sort].Name#> > current.<#=FunctionsWithField[Function.Sort].Name#>)
+                                                 .OrderBy(o => o.<#=FunctionsWithField[Function.Sort].Name#>)
 <#
         }
 #>
