@@ -159,7 +159,7 @@ namespace Business.Implementation.Common
                 return;
             }
 
-            await FileBusiness.Download(file_extension.FileId);
+            await FileBusiness.Download(file_extension.FileId, file_extension.Name);
         }
 
         public void Delete(List<string> ids)
