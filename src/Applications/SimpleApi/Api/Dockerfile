@@ -1,6 +1,6 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 
 #安装ffmpeg
 RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list \
@@ -43,7 +43,7 @@ EXPOSE 80
 EXPOSE 443
 
 #生成
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["Applications/SimpleApi/Api/Api.csproj", "Applications/SimpleApi/Api/"]
 COPY ["Applications/SimpleApi/IocServiceDemo/IocServiceDemo.csproj", "Applications/SimpleApi/IocServiceDemo/"]

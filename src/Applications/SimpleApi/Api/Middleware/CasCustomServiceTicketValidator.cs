@@ -16,12 +16,12 @@ namespace Api.Middleware
     /// <remarks>如果不是标准的cas协议，就需要在此类中自定义解析逻辑</remarks>
     public class CasCustomServiceTicketValidator : CasServiceTicketValidator
     {
-        protected static XNamespace Namespace = "http://www.yale.edu/tp/cas";
-        protected static XNamespace NNamespace = "cas";
-        protected static XName Attributes = Namespace + "attributes";
-        protected static XName AuthenticationSuccess = Namespace + "authenticationSuccess";
-        protected static XName AuthenticationFailure = Namespace + "authenticationFailure";
-        protected static XName User = Namespace + "user";
+        protected static readonly XNamespace Namespace = "http://www.yale.edu/tp/cas";
+        protected static readonly XNamespace NNamespace = "cas";
+        protected static readonly XName Attributes = Namespace + "attributes";
+        protected static readonly XName AuthenticationSuccess = Namespace + "authenticationSuccess";
+        protected static readonly XName AuthenticationFailure = Namespace + "authenticationFailure";
+        protected static readonly XName User = Namespace + "user";
         protected const string Code = "code";
 
         public CasCustomServiceTicketValidator(

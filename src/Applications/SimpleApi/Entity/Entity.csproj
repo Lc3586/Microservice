@@ -2,15 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <DocumentationFile>Entity.xml</DocumentationFile>
+    <DocumentationFile></DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>Entity.xml</DocumentationFile>
+    <DocumentationFile></DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,12 +23,6 @@
     <PackageReference Include="Microservice.Library.FreeSql" Version="0.0.0.15-alpha-ga4501b4f30" />
     <PackageReference Include="Microservice.Library.OpenApi" Version="0.0.0.15-alpha-ga4501b4f30" />
     <PackageReference Include="Microservice.Library.Soap" Version="0.0.0.15-alpha-ga4501b4f30" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Entity.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

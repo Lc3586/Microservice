@@ -46,7 +46,7 @@ namespace Entity.System
         /// <summary>
         /// 密码
         /// </summary>
-        [OpenApiSubTag("Create", "UpdatePassword", "Login")]
+        [OpenApiSubTag("Create", "_Edit", "Login")]
         [Required(ErrorMessage = "密码不可为空")]
         [Description("密码")]
         [Column(StringLength = 50)]

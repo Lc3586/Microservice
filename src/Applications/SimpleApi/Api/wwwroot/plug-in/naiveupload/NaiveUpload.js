@@ -462,7 +462,7 @@ var NaiveUpload = (function () {
                     case 4:
                         e_3 = _a.sent();
                         console.error('error', e_3.message);
-                        this.UploadError(selectedFileIndex, "\u6587\u4EF6\u4E0A\u4F20\u5931\u8D25\uFF0C" + e_3.message + ".", true, e_3);
+                        this.UploadError(selectedFileIndex, "\u6587\u4EF6\u4E0A\u4F20\u5931\u8D25\uFF0C".concat(e_3.message, "."), true, e_3);
                         return [3, 5];
                     case 5:
                         close();

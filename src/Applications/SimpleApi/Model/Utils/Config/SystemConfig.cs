@@ -241,6 +241,11 @@ namespace Model.Utils.Config
         /// </summary>
         public List<string> EnableSite { get; set; }
 
+        /// <summary>
+        /// 登录失败次数限制
+        /// </summary>
+        public int LoginFailedTimesLimit { get; set; } = 5;
+
         #endregion
 
         #region 日志

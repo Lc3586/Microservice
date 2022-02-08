@@ -123,17 +123,17 @@ namespace Business.Handler
 
         IHubContext<ChunkFileMergeTaskHub> _CFMTHub;
 
-        IMapper Mapper
-        {
-            get
-            {
-                if (_Mapper == null)
-                    _Mapper = AutofacHelper.GetService<IAutoMapperProvider>().GetMapper();
-                return _Mapper;
-            }
-        }
+        //IMapper Mapper
+        //{
+        //    get
+        //    {
+        //        if (_Mapper == null)
+        //            _Mapper = AutofacHelper.GetService<IAutoMapperProvider>().GetMapper();
+        //        return _Mapper;
+        //    }
+        //}
 
-        IMapper _Mapper;
+        //IMapper _Mapper;
 
         TaskCompletionSource<bool> TCS;
 

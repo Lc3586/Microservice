@@ -7,6 +7,9 @@ using Business.Utils.Pagination;
 using Entity.Common;
 using Entity.System;
 using FreeSql;
+using Microservice.Library.Cache.Gen;
+using Microservice.Library.Cache.Model;
+using Microservice.Library.Cache.Services;
 using Microservice.Library.DataMapping.Gen;
 using Microservice.Library.Extension;
 using Microservice.Library.FreeSql.Extention;
@@ -38,7 +41,8 @@ namespace Business.Implementation.System
             IOperationRecordBusiness operationRecordBusiness,
             IAuthoritiesBusiness authoritiesBusiness,
             IEntryLogBusiness entryLogBusiness,
-            IRoleBusiness roleBusiness)
+            IRoleBusiness roleBusiness,
+            ICacheProvider cacheProvider)
         {
             Orm = freeSqlProvider.GetFreeSql();
             Repository = Orm.GetRepository<System_User, string>();
@@ -51,33 +55,36 @@ namespace Business.Implementation.System
             AuthoritiesBusiness = authoritiesBusiness;
             EntryLogBusiness = entryLogBusiness;
             RoleBusiness = roleBusiness;
+            Cache = cacheProvider.GetCache();
         }
 
         #endregion
 
         #region 私有成员
 
-        IFreeSql Orm { get; set; }
+        readonly IFreeSql Orm;
 
-        IBaseRepository<System_User, string> Repository { get; set; }
+        readonly IBaseRepository<System_User, string> Repository;
 
-        IBaseRepository<System_Role, string> Repository_Role { get; set; }
+        readonly IBaseRepository<System_Role, string> Repository_Role;
 
-        IBaseRepository<System_UserRole, string> Repository_UserRole { get; set; }
+        readonly IBaseRepository<System_UserRole, string> Repository_UserRole;
 
-        IBaseRepository<System_UserMenu, string> Repository_UserMenu { get; set; }
+        readonly IBaseRepository<System_UserMenu, string> Repository_UserMenu;
 
-        IBaseRepository<System_UserResources, string> Repository_UserResources { get; set; }
+        readonly IBaseRepository<System_UserResources, string> Repository_UserResources;
 
-        IMapper Mapper { get; set; }
+        readonly IMapper Mapper;
 
-        IOperationRecordBusiness OperationRecordBusiness { get; set; }
+        readonly IOperationRecordBusiness OperationRecordBusiness;
 
-        IAuthoritiesBusiness AuthoritiesBusiness { get; set; }
+        readonly IAuthoritiesBusiness AuthoritiesBusiness;
 
-        IEntryLogBusiness EntryLogBusiness { get; set; }
+        readonly IEntryLogBusiness EntryLogBusiness;
 
-        IRoleBusiness RoleBusiness { get; set; }
+        readonly IRoleBusiness RoleBusiness;
+
+        readonly ICache Cache;
 
         /// <summary>
         /// 初始化超级管理员账号
@@ -552,6 +559,39 @@ namespace Business.Implementation.System
                 Sex = user.Sex,
                 Face = user.Face
             };
+        }
+
+        public AuthenticationInfo LoginWithLimitTimes(string account, string password)
+        {
+            var cacheKey = $"User-LoginWithLimitTimes-{account}";
+
+            try
+            {
+                var result = Login(account, password);
+                if (Cache.ContainsKey(cacheKey))
+                    Cache.RemoveCache(cacheKey);
+                return result;
+            }
+            catch (MessageException ex)
+            {
+                int times = 1;
+                if (Cache.ContainsKey(cacheKey))
+                {
+                    times = (int)Cache.GetCache(cacheKey);
+                    if (times >= Config.LoginFailedTimesLimit)
+                    {
+                        if (Repository.UpdateDiy.Where(o => o.Account == account).Set(o => o.Enable, false).ExecuteAffrows() < 0)
+                            throw new MessageException("系统繁忙.", ex);
+
+                        throw new MessageException("登录失败, 账号已禁用, 请联系管理员.", ex);
+                    }
+                    times++;
+                }
+
+                Cache.SetCache(cacheKey, times, TimeSpan.FromMinutes(30), ExpireType.Relative);
+
+                throw new MessageException($"登录失败, 您还有{Config.LoginFailedTimesLimit - times}次尝试的机会, 全部失败后账号将被禁用.", ex);
+            }
         }
 
         public AuthenticationInfo WeChatLogin(string appId, string openId)

@@ -115,6 +115,13 @@ namespace Business.Interface.System
         AuthenticationInfo Login(string account, string password);
 
         /// <summary>
+        /// 登录（失败多次将会锁定账号）
+        /// </summary>
+        /// <param name="account"></param>
+        /// <param name="password"></param>
+        AuthenticationInfo LoginWithLimitTimes(string account, string password);
+
+        /// <summary>
         /// 登录
         /// </summary>
         /// <param name="appId"></param>

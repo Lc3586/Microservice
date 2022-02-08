@@ -98,7 +98,7 @@ namespace Api.Controllers.Utils
         [AllowAnonymous]
         public async Task<object> Login([FromBody] LoginRequest data)
         {
-            var authenticationInfo = UserBusiness.Login(data.Account, data.Password);
+            var authenticationInfo = UserBusiness.LoginWithLimitTimes(data.Account, data.Password);
 
             var claims = UserBusiness.CreateClaims(authenticationInfo, "SA");
 

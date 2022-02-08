@@ -94,7 +94,7 @@ namespace T4CAGC.Handler
                             var fieldInfo = new FieldInfo
                             {
                                 Name = column.Name,
-                                Remark = column.Coment,
+                                Remark = column.Comment,
                                 //DbType = column.DbTypeText,
                                 Type = column.CsType.Name,
                                 CsType = column.CsType,

@@ -72,7 +72,7 @@ namespace Api.Controllers.Utils
             if (Operator.IsAuthenticated)
                 authenticationInfo = Operator.AuthenticationInfo;
             else
-                authenticationInfo = UserBusiness.Login(data.Account, data.Password);
+                authenticationInfo = UserBusiness.LoginWithLimitTimes(data.Account, data.Password);
 
             var claims = UserBusiness.CreateClaims(authenticationInfo, "JWT");
 

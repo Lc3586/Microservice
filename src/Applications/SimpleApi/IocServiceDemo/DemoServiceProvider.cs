@@ -29,7 +29,9 @@ namespace IocServiceDemo
         /// </summary>
         /// <param name="serviceProvider"></param>
         /// <returns></returns>
+#pragma warning disable IDE0060 // 删除未使用的参数
         public static object GetService(IServiceProvider serviceProvider)
+#pragma warning restore IDE0060 // 删除未使用的参数
         {
             return Activator.CreateInstance(GetDefaultType().Use());
         }

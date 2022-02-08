@@ -324,7 +324,7 @@ var UploadHelper = (function () {
                                 reject();
                                 break;
                             default:
-                                reject("\u672A\u77E5\u7684UploadWorkerNoticeMessage.Type: " + event.data.Type + ".");
+                                reject("\u672A\u77E5\u7684UploadWorkerNoticeMessage.Type: ".concat(event.data.Type, "."));
                         }
                         unit.used = false;
                     };

@@ -144,10 +144,11 @@ namespace Business.Implementation.Common
                  .Where(o => o.AppId == appId && o.OpenId == userinfo.openid)
                  .Set(o => o.Nickname, userinfo.nickname)
                  .Set(o => o.HeadimgUrl, userinfo.headimgurl)
-                 .Set(o => o.Sex, userinfo.sex)
-                 .Set(o => o.Country, userinfo.country)
-                 .Set(o => o.Province, userinfo.province)
-                 .Set(o => o.City, userinfo.city)
+                 //相关的微信接口不再返回用户的性别和地区等信息
+                 //.Set(o => o.Sex, userinfo.sex)
+                 //.Set(o => o.Country, userinfo.country)
+                 //.Set(o => o.Province, userinfo.province)
+                 //.Set(o => o.City, userinfo.city)
                  .Set(o => o.Enable, true)
                  .Set(o => o.ModifyTime, DateTime.Now)
                  .ExecuteAffrows() <= 0)
@@ -219,7 +220,7 @@ namespace Business.Implementation.Common
         /// <returns>文件Id</returns>
         async Task<string> SaveFile(string uri)
         {
-            var file = await FileUploadBusiness.SingleFileFromUrl($"{uri.Substring(0, uri.LastIndexOf('/'))}/0", Guid.NewGuid().ToString(), true);
+            var file = await FileUploadBusiness.SingleFileFromUrl($"{uri[..uri.LastIndexOf('/')]}/0", Guid.NewGuid().ToString(), true);
 
             return file.Id;
         }
@@ -553,7 +554,7 @@ namespace Business.Implementation.Common
                 }
             }
 
-            next:
+        next:
             context.Response.Redirect($"{Config.WeChatService.OAuthUserInfoUrl}?state={state}");
             await Task.FromResult(true);
         }
@@ -613,8 +614,9 @@ namespace Business.Implementation.Common
                             new WeChatUserInfo
                             {
                                 OpenId = userinfo.openid,
-                                Nickname = userinfo.nickname,
-                                Sex = (byte)userinfo.sex,
+                                Nickname = userinfo.nickname,                                
+                                //相关的微信接口不再返回用户的性别和地区等信息
+                                //Sex = (byte)userinfo.sex,
                                 HeadimgUrl = userinfo.headimgurl
                             }
                          });

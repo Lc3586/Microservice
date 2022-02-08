@@ -629,7 +629,7 @@ window.onload = function () {
             })
                 .catch(function (error) {
                 console.error(error);
-                ElementPlus.ElMessage("\u5E94\u7528\u6587\u4EF6\u4E0A\u4F20\u914D\u7F6E\u5931\u8D25, " + error.message);
+                ElementPlus.ElMessage("\u5E94\u7528\u6587\u4EF6\u4E0A\u4F20\u914D\u7F6E\u5931\u8D25, ".concat(error.message));
             });
         }
         function TabsChanged(tab) {
@@ -656,15 +656,15 @@ window.onload = function () {
             }
         }
         function GetListCLass() {
-            return "upload-" + Main.multipleUpload.settings.Theme + "-list";
+            return "upload-".concat(Main.multipleUpload.settings.Theme, "-list");
         }
         function GetSelectCLass() {
-            return "upload-drag " + (Upload.Limited() ? 'item-limited' : '');
+            return "upload-drag ".concat((Upload.Limited() ? 'item-limited' : ''));
         }
         function GetSelectTitle() {
             if (!MultipleUploadSettings.Config.UpperLimit)
                 return null;
-            return Upload.SelectedFileList.length < MultipleUploadSettings.Config.UpperLimit ? "\u8FD8\u53EF\u6DFB\u52A0\u4E2A" + (MultipleUploadSettings.Config.UpperLimit - Upload.SelectedFileList.length) + "\u6587\u4EF6" : "\u6587\u4EF6\u6570\u91CF\u5DF2\u8FBE\u4E0A\u9650";
+            return Upload.SelectedFileList.length < MultipleUploadSettings.Config.UpperLimit ? "\u8FD8\u53EF\u6DFB\u52A0\u4E2A".concat(MultipleUploadSettings.Config.UpperLimit - Upload.SelectedFileList.length, "\u6587\u4EF6") : "\u6587\u4EF6\u6570\u91CF\u5DF2\u8FBE\u4E0A\u9650";
         }
         function ChosingFile(e) {
             if (Upload.Limited())
@@ -695,10 +695,10 @@ window.onload = function () {
             }
         }
         function GetContainerClass(selectedFile) {
-            return "item-container " + (selectedFile.Done ? ' item-done' : '') + " " + (selectedFile.Error ? ' item-error' : '') + " " + (selectedFile.Hover && !selectedFile.Rename && !selectedFile.Checking && !selectedFile.Uploading ? ' item-hover' : '') + " " + (selectedFile.Checking ? ' item-checking' : '') + " " + (selectedFile.Uploading ? ' item-uploading' : '');
+            return "item-container ".concat((selectedFile.Done ? ' item-done' : ''), " ").concat((selectedFile.Error ? ' item-error' : ''), " ").concat((selectedFile.Hover && !selectedFile.Rename && !selectedFile.Checking && !selectedFile.Uploading ? ' item-hover' : ''), " ").concat((selectedFile.Checking ? ' item-checking' : ''), " ").concat((selectedFile.Uploading ? ' item-uploading' : ''));
         }
         function GetContainerTitle(selectedFile) {
-            return (selectedFile.Done ? '上传成功' : '') + " " + (selectedFile.Error ? selectedFile.ErrorMessage : '');
+            return "".concat((selectedFile.Done ? '上传成功' : ''), " ").concat((selectedFile.Error ? selectedFile.ErrorMessage : ''));
         }
         function GetFilename(selectedFile) {
             return (selectedFile.Name || '-') + (selectedFile.Extension || '-');
@@ -713,17 +713,17 @@ window.onload = function () {
             switch (type) {
                 default:
                 case 'conic':
-                    return "\nbackground: conic-gradient(" + color + " " + value1 + "%, transparent " + value2 + "%)  repeat scroll 0% 0%;\nbackground: -moz-conic-gradient(" + color + " " + value1 + "%, transparent " + value2 + "%)  repeat scroll 0% 0%;\nbackground: -o-conic-gradient(" + color + " " + value1 + "%, transparent " + value2 + "%)  repeat scroll 0% 0%;\nbackground: -webkit-conic-gradient(" + color + " " + value1 + "%, transparent " + value2 + "%)  repeat scroll 0% 0%;";
+                    return "\nbackground: conic-gradient(".concat(color, " ").concat(value1, "%, transparent ").concat(value2, "%)  repeat scroll 0% 0%;\nbackground: -moz-conic-gradient(").concat(color, " ").concat(value1, "%, transparent ").concat(value2, "%)  repeat scroll 0% 0%;\nbackground: -o-conic-gradient(").concat(color, " ").concat(value1, "%, transparent ").concat(value2, "%)  repeat scroll 0% 0%;\nbackground: -webkit-conic-gradient(").concat(color, " ").concat(value1, "%, transparent ").concat(value2, "%)  repeat scroll 0% 0%;");
                 case 'linear':
-                    return "\nbackground: linear-gradient(left, " + color + " " + value1 + "%, transparent " + value2 + "%)  repeat scroll 0% 0%;\nbackground: -moz-linear-gradient(left, " + color + " " + value1 + "%, transparent " + value2 + "%)  repeat scroll 0% 0%;\nbackground: -o-linear-gradient(left, " + color + " " + value1 + "%, transparent " + value2 + "%)  repeat scroll 0% 0%;\nbackground: -webkit-linear-gradient(left, " + color + " " + value1 + "%, transparent " + value2 + "%)  repeat scroll 0% 0%;";
+                    return "\nbackground: linear-gradient(left, ".concat(color, " ").concat(value1, "%, transparent ").concat(value2, "%)  repeat scroll 0% 0%;\nbackground: -moz-linear-gradient(left, ").concat(color, " ").concat(value1, "%, transparent ").concat(value2, "%)  repeat scroll 0% 0%;\nbackground: -o-linear-gradient(left, ").concat(color, " ").concat(value1, "%, transparent ").concat(value2, "%)  repeat scroll 0% 0%;\nbackground: -webkit-linear-gradient(left, ").concat(color, " ").concat(value1, "%, transparent ").concat(value2, "%)  repeat scroll 0% 0%;");
             }
         }
         function GetLoadingStyle(selectedFile) {
             var styleType = MultipleUploadSettings.Theme === 'card' ? 'conic' : 'linear';
-            return (selectedFile.Checking ? GetGradientStyle(styleType, 'rgba(255, 236, 201, 0.5)', selectedFile.Percent, 0) : '') + " " + (selectedFile.Uploading ? GetGradientStyle(styleType, 'rgba(144, 206, 255, 0.5)', selectedFile.Percent, selectedFile.VirtualPercent) : '');
+            return "".concat((selectedFile.Checking ? GetGradientStyle(styleType, 'rgba(255, 236, 201, 0.5)', selectedFile.Percent, 0) : ''), " ").concat((selectedFile.Uploading ? GetGradientStyle(styleType, 'rgba(144, 206, 255, 0.5)', selectedFile.Percent, selectedFile.VirtualPercent) : ''));
         }
         function GetLoadingTitle(selectedFile) {
-            return (selectedFile.Checking ? ('扫描中...' + selectedFile.Percent + '%') : '') + " " + (selectedFile.Uploading ? ('上传中...' + selectedFile.Percent + '%') : '');
+            return "".concat((selectedFile.Checking ? ('扫描中...' + selectedFile.Percent + '%') : ''), " ").concat((selectedFile.Uploading ? ('上传中...' + selectedFile.Percent + '%') : ''));
         }
         function EnableRename(selectedFile) {
             return !selectedFile.Uploading;
@@ -766,21 +766,21 @@ window.onload = function () {
             switch (selectedFile.FileType) {
                 case "\u56FE\u7247":
                     var winImage = window.open();
-                    winImage.document.write("<body style=\"" + bodyStyle + "background-color: black;\"><img src=\"" + file.ObjectURL + "\" /img></body>");
+                    winImage.document.write("<body style=\"".concat(bodyStyle, "background-color: black;\"><img src=\"").concat(file.ObjectURL, "\" /img></body>"));
                     break;
                 case "\u97F3\u9891":
                     if (selectedFile.ExtensionLower === '.flac')
                         return;
                     var winAudio = window.open();
-                    winAudio.document.write("<body style=\"" + bodyStyle + "background-color: black;\"><audio src=\"" + file.ObjectURL + "\" controls=\"controls\">\u62B1\u6B49, \u6682\u4E0D\u652F\u6301</audio></body>");
+                    winAudio.document.write("<body style=\"".concat(bodyStyle, "background-color: black;\"><audio src=\"").concat(file.ObjectURL, "\" controls=\"controls\">\u62B1\u6B49, \u6682\u4E0D\u652F\u6301</audio></body>"));
                     break;
                 case "\u89C6\u9891":
                     var winVideo = window.open();
-                    winVideo.document.write("<body style=\"" + bodyStyle + "background-color: black;\"><video src=\"" + file.ObjectURL + "\" controls=\"controls\">\u62B1\u6B49, \u6682\u4E0D\u652F\u6301</video></body>");
+                    winVideo.document.write("<body style=\"".concat(bodyStyle, "background-color: black;\"><video src=\"").concat(file.ObjectURL, "\" controls=\"controls\">\u62B1\u6B49, \u6682\u4E0D\u652F\u6301</video></body>"));
                     break;
                 default:
                     var win = window.open();
-                    win.document.write("<body style=\"" + bodyStyle + "\"><object data=\"" + file.ObjectURL + "\" type=\"" + (selectedFile.ExtensionLower === '.txt' ? 'text/plain' : (selectedFile.ExtensionLower === '.pdf' ? 'application/pdf' : 'application/octet-stream')) + "\" width=\"100%\" height=\"100%\"><iframe src=\"" + file.ObjectURL + "\" scrolling=\"no\" width=\"100%\" height=\"100%\" frameborder=\"0\" ></iframe></object></body>");
+                    win.document.write("<body style=\"".concat(bodyStyle, "\"><object data=\"").concat(file.ObjectURL, "\" type=\"").concat((selectedFile.ExtensionLower === '.txt' ? 'text/plain' : (selectedFile.ExtensionLower === '.pdf' ? 'application/pdf' : 'application/octet-stream')), "\" width=\"100%\" height=\"100%\"><iframe src=\"").concat(file.ObjectURL, "\" scrolling=\"no\" width=\"100%\" height=\"100%\" frameborder=\"0\" ></iframe></object></body>"));
                     break;
             }
         }
@@ -942,7 +942,7 @@ window.onload = function () {
             }
         }
         function GetFolderClass(folder) {
-            return "folder " + (folder.Hover ? ' hover' : '');
+            return "folder ".concat((folder.Hover ? ' hover' : ''));
         }
         function OpenFolder(folder, index) {
             Main.library.currentOpenFolder = folder;
@@ -1184,7 +1184,7 @@ window.onload = function () {
             if (data.FileType === "\u89C6\u9891") {
                 if (!Main.library.videoInfo.previewState)
                     return;
-                Axios.get(ApiUri.Preview(data.Id, 500, 500, Main.library.videoInfo.previewTimespan[0].toString().padStart(2, '0') + ":" + Main.library.videoInfo.previewTimespan[1].toString().padStart(2, '0') + ":" + Main.library.videoInfo.previewTimespan[2].toString().padStart(2, '0') + "." + Main.library.videoInfo.previewTimespan[3].toString().padStart(3, '0')), {
+                Axios.get(ApiUri.Preview(data.Id, 500, 500, "".concat(Main.library.videoInfo.previewTimespan[0].toString().padStart(2, '0'), ":").concat(Main.library.videoInfo.previewTimespan[1].toString().padStart(2, '0'), ":").concat(Main.library.videoInfo.previewTimespan[2].toString().padStart(2, '0'), ".").concat(Main.library.videoInfo.previewTimespan[3].toString().padStart(3, '0'))), {
                     responseType: "blob",
                     onDownloadProgress: function (progressEvent) {
                     }

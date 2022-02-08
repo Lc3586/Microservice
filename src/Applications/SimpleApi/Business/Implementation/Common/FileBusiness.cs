@@ -248,7 +248,7 @@ namespace Business.Implementation.Common
 
                 if (!imagePath.Exists())
                 {
-                    var dir = imagePath.Substring(0, imagePath.LastIndexOf('/'));
+                    var dir = imagePath[..imagePath.LastIndexOf('/')];
                     if (!Directory.Exists(dir))
                         Directory.CreateDirectory(dir);
 
