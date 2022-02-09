@@ -12,10 +12,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using T4CAGC.Configures;
-using T4CAGC.Extension;
 using T4CAGC.Handler;
 using T4CAGC.Log;
 using T4CAGC.Model;
@@ -27,7 +27,22 @@ namespace T4CAGC
     [HelpOption(Description = "帮助信息.")]
     class Program
     {
-        static Task<int> Main(string[] args) => CommandLineApplication.ExecuteAsync<Program>(args);
+        static Task<int> Main(string[] args)
+        {
+#if DEBUG
+            if (args.Length == 0)
+            {
+                //调试时从系统环境变量中读取参数
+                var val = Environment.GetEnvironmentVariable("T4CAGC_Debug_Args", EnvironmentVariableTarget.User);
+                val.ConsoleWrite(ConsoleColor.Cyan, "%T4CAGC_Debug_Args%");
+
+                args = Regex.Matches(val, "([^\" ][^ ]*)|(\"[^\"]*\")").Select(o => o.Value).ToArray();
+
+                string.Join(" ", args).ConsoleWrite(ConsoleColor.Cyan, "args");
+            }
+#endif
+            return CommandLineApplication.ExecuteAsync<Program>(args);
+        }
 
         #region 参数
 
@@ -74,8 +89,10 @@ namespace T4CAGC
         #endregion
 
 #pragma warning disable IDE0051 // 删除未使用的私有成员
+#pragma warning disable IDE0079 // 请删除不必要的忽略
 #pragma warning disable IDE0060 // 删除未使用的参数
         async Task<int> OnExecuteAsync(CommandLineApplication app, CancellationToken cancellationToken = default)
+#pragma warning restore IDE0079 // 请删除不必要的忽略
 #pragma warning restore IDE0060 // 删除未使用的参数
 #pragma warning restore IDE0051 // 删除未使用的私有成员
         {
@@ -83,6 +100,7 @@ namespace T4CAGC
             {
                 if (!Chartset.IsNullOrWhiteSpace())
                 {
+                    //设置字符集
                     Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
                     var encoding = Encoding.GetEncoding(Chartset);
                     Console.OutputEncoding = encoding;

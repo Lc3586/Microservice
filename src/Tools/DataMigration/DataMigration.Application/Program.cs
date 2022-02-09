@@ -21,6 +21,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Logger = DataMigration.Application.Log.Logger;
@@ -32,7 +33,22 @@ namespace DataMigration.Application
     [HelpOption(Description = "帮助信息.")]
     class Program
     {
-        static Task<int> Main(string[] args) => CommandLineApplication.ExecuteAsync<Program>(args);
+        static Task<int> Main(string[] args)
+        {
+#if DEBUG
+            if (args.Length == 0)
+            {
+                //调试时从系统环境变量中读取参数
+                var val = Environment.GetEnvironmentVariable("DataMigration_Debug_Args", EnvironmentVariableTarget.User);
+                val.ConsoleWrite(ConsoleColor.Cyan, "%DataMigration_Debug_Args%");
+
+                args = Regex.Matches(val, "([^\" ][^ ]*)|(\"[^\"]*\")").Select(o => o.Value).ToArray();
+
+                string.Join(" ", args).ConsoleWrite(ConsoleColor.Cyan, "args");
+            }
+#endif
+            return CommandLineApplication.ExecuteAsync<Program>(args);
+        }
 
         #region 参数
 
@@ -110,6 +126,7 @@ namespace DataMigration.Application
             {
                 if (!Chartset.IsNullOrWhiteSpace())
                 {
+                    //设置字符集
                     Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
                     var encoding = Encoding.GetEncoding(Chartset);
                     Console.OutputEncoding = encoding;
@@ -173,7 +190,6 @@ namespace DataMigration.Application
                     $"未设置目标数据库连接字符串.".ConsoleWrite();
                     return 1;
                 }
-
 
                 config.TargetConnectingString = TargetConnectingString;
 #if DEBUG
