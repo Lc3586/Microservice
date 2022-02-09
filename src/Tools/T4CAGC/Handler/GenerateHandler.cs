@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 using System.IO.Compression;
-using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using T4CAGC.Log;
@@ -51,7 +51,7 @@ namespace T4CAGC.Handler
             Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"生成类型为: {Config.GenType}.");
 
             if (Config.GenType == GenType.CompleteProject)
-                GenerateCompleteProject(Config.OutputPath);
+                await GenerateCompleteProject(Config.OutputPath);
             else if (Config.GenType == GenType.SmallProject)
                 GenerateSmallProject(Config.OutputPath);
 
@@ -122,7 +122,7 @@ namespace T4CAGC.Handler
         /// 生成完整项目
         /// </summary>
         /// <param name="outputPath">输出路径</param>
-        void GenerateCompleteProject(string outputPath)
+        async Task GenerateCompleteProject(string outputPath)
         {
             var projectCodeZipFile = new FileInfo(Path.GetFullPath(Config.CompleteProjectCodeZipFile, AppContext.BaseDirectory));
             if (!projectCodeZipFile.Exists)
@@ -134,8 +134,10 @@ namespace T4CAGC.Handler
 
                 Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"尝试从此地址下载项目代码文件: {Config.CompleteProjectCodeZipDownloadUri}.");
 
-                using var client = new WebClient();
-                client.DownloadFile(Config.CompleteProjectCodeZipDownloadUri, projectCodeZipFile.FullName);
+                using var client = new HttpClient();
+                using var stream = await client.GetStreamAsync(Config.CompleteProjectCodeZipDownloadUri);
+                using var file = new FileStream(projectCodeZipFile.FullName, FileMode.CreateNew);
+                await stream.CopyToAsync(file);
 
                 Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"项目代码文件下载完毕.");
             }
@@ -152,8 +154,10 @@ namespace T4CAGC.Handler
         /// </summary>
         /// <param name="outputPath">输出路径</param>
 #pragma warning disable CA1822 // 将成员标记为 static
+#pragma warning disable IDE0079 // 请删除不必要的忽略
 #pragma warning disable IDE0060 // 删除未使用的参数
         void GenerateSmallProject(string outputPath)
+#pragma warning restore IDE0079 // 请删除不必要的忽略
 #pragma warning restore IDE0060 // 删除未使用的参数
 #pragma warning restore CA1822 // 将成员标记为 static
         {

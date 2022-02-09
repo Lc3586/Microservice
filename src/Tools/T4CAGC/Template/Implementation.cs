@@ -1280,7 +1280,7 @@ WritePrimaryField("c", " + ");
             this.Write(")).ToList(c => new { ");
             
             #line 505 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
-WritePrimaryField("c", ", ");
+WritePrimaryFieldToLambda("c", ", ");
             
             #line default
             #line hidden
@@ -2652,14 +2652,21 @@ WritePrimaryField("entity", " + ");
             #line hidden
             this.Write(");\r\n\r\n            var entityList = Repository.Select\r\n                           " +
                     "         .GetPagination(pagination)\r\n                                    .ToList" +
-                    "<Common_FileUploadConfig, ");
+                    "<");
+            
+            #line 1145 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Options.Table.Name));
+            
+            #line default
+            #line hidden
+            this.Write(", ");
             
             #line 1145 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Functions[Function.Export]));
             
             #line default
             #line hidden
-            this.Write(">(typeof(Export).GetNamesWithTagAndOther(true, , \"_");
+            this.Write(">(type.GetNamesWithTagAndOther(true, \"_");
             
             #line 1145 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Functions[Function.Export]));
@@ -2929,9 +2936,9 @@ this.Write(".ToString()");
     }
 
     /// <summary>
-    /// 主键参数
+    /// 主键字段拼接
     /// </summary>
-    private void WritePrimaryParams()
+    private void WritePrimaryFieldToLambda(string obj, string symbol)
     {
         var i = 0;
         foreach (var field in PrimaryKeys)
@@ -2942,14 +2949,7 @@ this.Write(".ToString()");
         #line hidden
         
         #line 1291 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
-this.Write(this.ToStringHelper.ToStringWithCulture(i > 0 ? ", " : ""));
-
-        
-        #line default
-        #line hidden
-        
-        #line 1291 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
-this.Write(this.ToStringHelper.ToStringWithCulture(field.CsTypeKeyword));
+this.Write(this.ToStringHelper.ToStringWithCulture(i > 0 ? symbol : ""));
 
         
         #line default
@@ -2963,13 +2963,95 @@ this.Write(" ");
         #line hidden
         
         #line 1291 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
-this.Write(this.ToStringHelper.ToStringWithCulture(field.Name.ToLower()));
+this.Write(this.ToStringHelper.ToStringWithCulture(field.Name));
 
         
         #line default
         #line hidden
         
         #line 1291 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+this.Write(" = ");
+
+        
+        #line default
+        #line hidden
+        
+        #line 1291 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+this.Write(this.ToStringHelper.ToStringWithCulture(obj));
+
+        
+        #line default
+        #line hidden
+        
+        #line 1291 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+this.Write(".");
+
+        
+        #line default
+        #line hidden
+        
+        #line 1291 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+this.Write(this.ToStringHelper.ToStringWithCulture(field.Name));
+
+        
+        #line default
+        #line hidden
+        
+        #line 1291 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+this.Write(".ToString()");
+
+        
+        #line default
+        #line hidden
+        
+        #line 1291 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+
+            i++;
+        }
+    }
+
+    /// <summary>
+    /// 主键参数
+    /// </summary>
+    private void WritePrimaryParams()
+    {
+        var i = 0;
+        foreach (var field in PrimaryKeys)
+        {
+
+        
+        #line default
+        #line hidden
+        
+        #line 1304 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+this.Write(this.ToStringHelper.ToStringWithCulture(i > 0 ? ", " : ""));
+
+        
+        #line default
+        #line hidden
+        
+        #line 1304 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+this.Write(this.ToStringHelper.ToStringWithCulture(field.CsTypeKeyword));
+
+        
+        #line default
+        #line hidden
+        
+        #line 1304 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+this.Write(" ");
+
+        
+        #line default
+        #line hidden
+        
+        #line 1304 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+this.Write(this.ToStringHelper.ToStringWithCulture(field.Name.ToLower()));
+
+        
+        #line default
+        #line hidden
+        
+        #line 1304 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
             i++;
         }
@@ -2988,49 +3070,49 @@ this.Write(this.ToStringHelper.ToStringWithCulture(field.Name.ToLower()));
         #line default
         #line hidden
         
-        #line 1304 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1317 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(i > 0 ? " && " : ""));
 
         
         #line default
         #line hidden
         
-        #line 1304 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1317 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(obj));
 
         
         #line default
         #line hidden
         
-        #line 1304 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1317 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 this.Write(".");
 
         
         #line default
         #line hidden
         
-        #line 1304 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1317 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(field.Name));
 
         
         #line default
         #line hidden
         
-        #line 1304 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1317 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 this.Write(" == ");
 
         
         #line default
         #line hidden
         
-        #line 1304 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1317 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(field.Name.ToLower()));
 
         
         #line default
         #line hidden
         
-        #line 1304 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
+        #line 1317 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Implementation.tt"
 
             i++;
         }

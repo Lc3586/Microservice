@@ -304,6 +304,7 @@ namespace Business.Utils.CAGC
                             $"-g \"{genType}\" " +
                             $"-s \"{dataSourceFile}\" " +
                             $"-p \"{outputPath}\" " +
+                            $"-cpczf \"{ Config.GetFileAbsolutePath("CAGC-CompleteProjectCodeZipFile")}\" " +
                             $"-o";
 
             Call(arguments);

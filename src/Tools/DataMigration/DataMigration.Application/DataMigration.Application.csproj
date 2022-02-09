@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <PackageId />
   </PropertyGroup>
 
@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="3.1.0" />
+    <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="4.0.1" />
     <PackageReference Include="Microservice.Library.Cache" Version="0.0.0.15-alpha-ga4501b4f30" />
     <PackageReference Include="Microservice.Library.Configuration" Version="0.0.0.15-alpha-ga4501b4f30" />
     <PackageReference Include="Microservice.Library.ConsoleTool" Version="0.0.0.15-alpha-ga4501b4f30" />

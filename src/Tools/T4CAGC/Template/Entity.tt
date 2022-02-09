@@ -25,7 +25,7 @@ namespace Entity.<#=Options.Table.ModuleName#>
         WriteRemark(field);
         WriteAttributes(FieldWithAttributes[field.Name]);
 #>
-        public <#=field.CsTypeKeyword#><#=field.Nullable?"?":""#> <#=field.Name#> { get; set; }
+        public <#=field.CsTypeKeyword#><#=field.Nullable&&field.CsTypeKeyword!="string"?"?":""#> <#=field.Name#> { get; set; }
 
 <#
 	}

@@ -38,13 +38,13 @@ namespace Business.Handler
         /// </summary>
         /// <remarks>
         /// </remarks>
-        readonly ConcurrentQueue<string> IdQueue = new ConcurrentQueue<string>();
+        readonly ConcurrentQueue<string> IdQueue = new();
 
         /// <summary>
         /// 发送分片来源信息任务取消令牌集合
         /// </summary>
         /// <remarks>{Key, CancellationTokenSource}</remarks>
-        public static readonly ConcurrentDictionary<string, CancellationTokenSource> CancellationTokens = new ConcurrentDictionary<string, CancellationTokenSource>();
+        public static readonly ConcurrentDictionary<string, CancellationTokenSource> CancellationTokens = new();
 
         SystemConfig Config
         {
@@ -625,7 +625,7 @@ namespace Business.Handler
         /// <returns></returns>
         Task SendChunksSourceInfoTask(string md5, int specs, int total, CancellationToken cancellationToken)
         {
-            void action(object? state)
+            void action(object state)
             {
                 if (state == null)
                     return;

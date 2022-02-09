@@ -502,7 +502,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
 
         public void Delete(List<string> keys)
         {
-            var entityList = Repository.Select.Where(c => keys.Contains(<#WritePrimaryField("c", " + ");#>)).ToList(c => new { <#WritePrimaryField("c", ", ");#> });
+            var entityList = Repository.Select.Where(c => keys.Contains(<#WritePrimaryField("c", " + ");#>)).ToList(c => new { <#WritePrimaryFieldToLambda("c", ", ");#> });
 
             var orList = new List<Common_OperationRecord>();
 
@@ -1142,7 +1142,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
 
             var entityList = Repository.Select
                                     .GetPagination(pagination)
-                                    .ToList<Common_FileUploadConfig, <#=Functions[Function.Export]#>>(typeof(Export).GetNamesWithTagAndOther(true, , "_<#=Functions[Function.Export]#>"));
+                                    .ToList<<#=Options.Table.Name#>, <#=Functions[Function.Export]#>>(type.GetNamesWithTagAndOther(true, "_<#=Functions[Function.Export]#>"));
 
             var list = Mapper.Map<List<<#=Functions[Function.Export]#>>>(entityList);
 
@@ -1276,6 +1276,19 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
         foreach (var field in PrimaryKeys)
         {
 #><#=i > 0 ? symbol : ""#><#=obj#>.<#=field.Name#>.ToString()<#+
+            i++;
+        }
+    }
+
+    /// <summary>
+    /// 主键字段拼接
+    /// </summary>
+    private void WritePrimaryFieldToLambda(string obj, string symbol)
+    {
+        var i = 0;
+        foreach (var field in PrimaryKeys)
+        {
+#><#=i > 0 ? symbol : ""#> <#=field.Name#> = <#=obj#>.<#=field.Name#>.ToString()<#+
             i++;
         }
     }

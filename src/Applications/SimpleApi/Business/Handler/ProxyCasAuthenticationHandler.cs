@@ -77,7 +77,7 @@ namespace Business.Handler
             }
 
             var service = $"{Config.WebRootUrlMatchScheme(Context.Request.Scheme)}/cas/pre-signin?state={Uri.EscapeDataString(state)}";
-            ICasPrincipal? principal = null;
+            ICasPrincipal principal = null;
             if (Options.ServiceTicketValidator != null)
             {
                 principal = await Options.ServiceTicketValidator

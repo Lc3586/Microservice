@@ -41,7 +41,7 @@ namespace Api.Middleware
 
         }
 
-        protected override ICasPrincipal? BuildPrincipal(string responseBody)
+        protected override ICasPrincipal BuildPrincipal(string responseBody)
         {
             var doc = XElement.Parse(responseBody);
             /* On ticket validation failure:

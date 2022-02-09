@@ -192,6 +192,7 @@ namespace T4CAGC.Template
                     else if (tag_lower.Contains("export"))
                     {
                         NameSpaces.AddWhenNotContains("System.Data");
+                        NameSpaces.AddWhenNotContains("Microsoft.AspNetCore.Http");
                         NameSpaces.AddWhenNotContains("Microservice.Library.OfficeDocuments");
                         NameSpaces.AddWhenNotContains("Model.Utils.Pagination");
                         NameSpaces.AddWhenNotContains("Model.Utils.OfficeDocuments");
