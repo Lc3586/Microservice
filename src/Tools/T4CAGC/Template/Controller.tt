@@ -139,7 +139,7 @@ namespace Api.Controllers.<#=Options.Table.ModuleName#>
 #>
 
         /// <summary>
-        /// 详情数据数据
+        /// 详情数据
         /// </summary>
 <#WritePrimaryParamsRemark();#>
         /// <returns></returns>
