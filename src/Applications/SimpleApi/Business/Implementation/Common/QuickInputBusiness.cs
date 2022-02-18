@@ -96,7 +96,7 @@ namespace Business.Implementation.Common
             Repository.Insert(newData);
         }
 
-        public void Create(List<Create> datas)
+        public void BatchCreate(List<Create> datas)
         {
             datas.ForEach(o => Create(o));
         }

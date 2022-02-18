@@ -34,10 +34,10 @@ namespace Business.Interface.Common
         void Create(Create data);
 
         /// <summary>
-        /// 新增
+        /// 批量新增
         /// </summary>
         /// <param name="datas">数据</param>
-        void Create(List<Create> datas);
+        void BatchCreate(List<Create> datas);
 
         /// <summary>
         /// 删除

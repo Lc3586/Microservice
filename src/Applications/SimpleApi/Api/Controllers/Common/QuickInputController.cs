@@ -49,7 +49,7 @@ namespace Api.Controllers
         }
 
         /// <summary>
-        /// 获取列表数据
+        /// 获取当前账号的匹配数据
         /// </summary>
         /// <param name="category">分类</param>
         /// <param name="keyword">关键词</param>
@@ -57,7 +57,7 @@ namespace Api.Controllers
         /// <param name="rows">每页数据量</param>
         /// <param name="page">页码</param>
         /// <returns></returns>
-        [HttpGet("list")]
+        [HttpGet("match-list")]
         [SwaggerResponse((int)HttpStatusCode.OK, "列表数据", typeof(List))]
         public async Task<object> GetCurrentAccountMatchList(string category, string keyword, bool paging = false, int rows = 50, int page = 1)
         {
@@ -77,14 +77,14 @@ namespace Api.Controllers
         }
 
         /// <summary>
-        /// 新增
+        /// 批量新增
         /// </summary>
         /// <param name="datas">数据</param>
         /// <returns></returns>
-        [HttpPost("create")]
-        public async Task<object> Create([FromBody] IEnumerable<Create> datas)
+        [HttpPost("batch-create")]
+        public async Task<object> BatchCreate([FromBody] IEnumerable<Create> datas)
         {
-            QuickInputBusiness.Create(datas.ToList());
+            QuickInputBusiness.BatchCreate(datas.ToList());
             return await Task.FromResult(Success());
         }
 
