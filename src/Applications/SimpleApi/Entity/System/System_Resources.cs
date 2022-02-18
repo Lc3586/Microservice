@@ -19,11 +19,10 @@ namespace Entity.System
     [Index("S_R_idx_01", nameof(Name) + " ASC")]
     [Index("S_R_idx_02", nameof(Type) + " ASC")]
     [Index("S_R_idx_03", nameof(Code) + " ASC")]
-    [Index("S_R_idx_04", nameof(Uri) + " ASC")]
-    [Index("S_R_idx_05", nameof(Enable) + " DESC")]
-    [Index("S_R_idx_06", nameof(CreatorId) + " ASC")]
-    [Index("S_R_idx_07", nameof(CreateTime) + " DESC")]
-    [Index("S_R_idx_08", nameof(ModifyTime) + " DESC")]
+    [Index("S_R_idx_04", nameof(Enable) + " DESC")]
+    [Index("S_R_idx_05", nameof(CreatorId) + " ASC")]
+    [Index("S_R_idx_06", nameof(CreateTime) + " DESC")]
+    [Index("S_R_idx_07", nameof(ModifyTime) + " DESC")]
     #endregion                                 
     public class System_Resources
     {
@@ -63,7 +62,7 @@ namespace Entity.System
         /// </summary>
         [OpenApiSubTag("List", "Create", "Edit", "Detail", "Authorities")]
         [Description("链接地址")]
-        [Column(StringLength = 2000)]
+        [Column(StringLength = 2048)]
         public string Uri { get; set; }
 
         /// <summary>
