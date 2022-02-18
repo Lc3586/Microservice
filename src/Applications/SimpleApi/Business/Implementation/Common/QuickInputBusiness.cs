@@ -76,6 +76,21 @@ namespace Business.Implementation.Common
 
         public void Create(Create data)
         {
+            var history = Repository.Where(o =>
+                                            ((data.Public == true && o.Public == true)
+                                            || (data.Public == false && o.CreatorId == Operator.AuthenticationInfo.Id))
+                                            && o.Category == data.Category
+                                            && o.Keyword == data.Keyword)
+                                    .ToOne(o => new
+                                    {
+                                        o.Id,
+                                        o.Content
+                                    });
+
+            //已存在则不新增
+            if (history != default && history.Content == data.Content)
+                return;
+
             var newData = Mapper.Map<Common_QuickInput>(data).InitEntity();
             newData.InitEntity();
             Repository.Insert(newData);
@@ -83,9 +98,7 @@ namespace Business.Implementation.Common
 
         public void Create(List<Create> datas)
         {
-            var newDatas = Mapper.Map<List<Common_QuickInput>>(datas);
-            newDatas.ForEach(o => o.InitEntity());
-            Repository.Insert(newDatas);
+            datas.ForEach(o => Create(o));
         }
 
         public void Delete(List<string> ids)
