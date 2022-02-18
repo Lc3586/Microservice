@@ -12,9 +12,9 @@ namespace Entity.Common
     [Table]
     [OraclePrimaryKeyName("pk_C_QI")]
     #region 设置索引
-    [Index("C_QI_idx_" + nameof(Category), nameof(Category) + " ASC")]
-    [Index("C_QI_idx_" + nameof(Keyword), nameof(Keyword) + " ASC")]
-    [Index("C_QI_idx_" + nameof(CreateTime), nameof(CreateTime) + " DESC")]
+    [Index("C_QI_idx_01", nameof(Category) + " ASC," + nameof(Keyword) + " ASC")]
+    [Index("C_QI_idx_02", nameof(Public) + " ASC")]
+    [Index("C_QI_idx_03", nameof(CreatorId) + " ASC," + nameof(CreateTime) + " DESC")]
     #endregion
     public class Common_QuickInput
     {
