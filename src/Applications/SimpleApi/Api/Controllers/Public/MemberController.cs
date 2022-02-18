@@ -174,6 +174,7 @@ namespace Api.Controllers
             };
 
             claims.AddRange(authenticationInfo.RoleTypes.Select(o => new Claim(ClaimTypes.Role, o)));
+            claims.AddRange(authenticationInfo.RoleNames.Select(o => new Claim(nameof(AuthenticationInfo.RoleNames), o)));
 
             await Context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)));
 

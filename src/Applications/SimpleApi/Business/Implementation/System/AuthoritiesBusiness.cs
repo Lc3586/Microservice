@@ -1766,12 +1766,28 @@ namespace Business.Implementation.System
             return roleTypes;
         }
 
+        public List<string> GetUserRoleNames(string userId)
+        {
+            var roleNames = Repository_Role.Where(o => o.Users.AsSelect().Where(p => p.Id == userId).Any() && o.Enable == true)
+                                        .GroupBy(o => o.Name)
+                                        .ToList(o => o.Key);
+            return roleNames;
+        }
+
         public List<string> GetMemberRoleTypes(string memberId)
         {
             var roleTypes = Repository_Role.Where(o => o.Members.AsSelect().Where(p => p.Id == memberId).Any() && o.Enable == true)
                                         .GroupBy(o => o.Type)
                                         .ToList(o => o.Key);
             return roleTypes;
+        }
+
+        public List<string> GetMemberRoleNames(string memberId)
+        {
+            var roleNames = Repository_Role.Where(o => o.Members.AsSelect().Where(p => p.Id == memberId).Any() && o.Enable == true)
+                                        .GroupBy(o => o.Name)
+                                        .ToList(o => o.Key);
+            return roleNames;
         }
 
         public List<Model.System.MenuDTO.Authorities> GetUserMenu(string userId, bool mergeRoleMenu)

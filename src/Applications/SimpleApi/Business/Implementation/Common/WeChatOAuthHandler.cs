@@ -391,6 +391,7 @@ namespace Business.Implementation.Common
             };
 
             claims.AddRange(authenticationInfo.RoleTypes.Select(o => new Claim(ClaimTypes.Role, o)));
+            claims.AddRange(authenticationInfo.RoleNames.Select(o => new Claim(nameof(AuthenticationInfo.RoleNames), o)));
 
             await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)));
         }
@@ -419,6 +420,7 @@ namespace Business.Implementation.Common
             };
 
             claims.AddRange(authenticationInfo.RoleTypes.Select(o => new Claim(ClaimTypes.Role, o)));
+            claims.AddRange(authenticationInfo.RoleNames.Select(o => new Claim(nameof(AuthenticationInfo.RoleNames), o)));
 
             await HttpContextAccessor.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)));
         }

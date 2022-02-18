@@ -476,6 +476,7 @@ namespace Business.Implementation.System
             };
 
             claims.AddRange(authenticationInfo.RoleTypes.Select(o => new Claim(ClaimTypes.Role, o)));
+            claims.AddRange(authenticationInfo.RoleNames.Select(o => new Claim(nameof(AuthenticationInfo.RoleNames), o)));
 
             return claims;
         }
@@ -491,6 +492,7 @@ namespace Business.Implementation.System
                 UserType = claims?.FirstOrDefault(o => o.Type == nameof(AuthenticationInfo.UserType))?.Value,
 
                 RoleTypes = claims?.Where(o => o.Type == ClaimTypes.Role).Select(o => o.Value).ToList(),
+                RoleNames = claims?.Where(o => o.Type == nameof(AuthenticationInfo.RoleNames)).Select(o => o.Value).ToList(),
 
                 Nickname = claims?.FirstOrDefault(o => o.Type == ClaimTypes.GivenName)?.Value,
                 Sex = claims?.FirstOrDefault(o => o.Type == ClaimTypes.Gender)?.Value,
@@ -554,6 +556,7 @@ namespace Business.Implementation.System
                 Id = user.Id,
                 UserType = UserType.系统用户,
                 RoleTypes = AuthoritiesBusiness.GetUserRoleTypes(user.Id),
+                RoleNames = AuthoritiesBusiness.GetUserRoleNames(user.Id),
                 Account = user.Account,
                 Nickname = user.Nickname,
                 Sex = user.Sex,
@@ -622,6 +625,7 @@ namespace Business.Implementation.System
                 Id = user.Id,
                 UserType = UserType.系统用户,
                 RoleTypes = AuthoritiesBusiness.GetUserRoleTypes(user.Id),
+                RoleNames = AuthoritiesBusiness.GetUserRoleNames(user.Id),
                 Account = user.Account,
                 Nickname = user.Name,
                 Sex = user.Sex,

@@ -37,6 +37,7 @@ namespace Business.Implementation.System
                     UserType = httpContextAccessor.HttpContext.User.Claims?.FirstOrDefault(o => o.Type == nameof(AuthenticationInfo.UserType))?.Value,
 
                     RoleTypes = httpContextAccessor.HttpContext.User.Claims?.Where(o => o.Type == ClaimTypes.Role).Select(o => o.Value).ToList(),
+                    RoleNames = httpContextAccessor.HttpContext.User.Claims?.Where(o => o.Type == nameof(AuthenticationInfo.RoleNames)).Select(o => o.Value).ToList(),
 
                     Nickname = httpContextAccessor.HttpContext.User.Claims?.FirstOrDefault(o => o.Type == ClaimTypes.GivenName)?.Value,
                     Sex = httpContextAccessor.HttpContext.User.Claims?.FirstOrDefault(o => o.Type == ClaimTypes.Gender)?.Value,

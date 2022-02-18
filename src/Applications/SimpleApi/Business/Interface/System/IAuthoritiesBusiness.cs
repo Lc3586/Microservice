@@ -414,6 +414,13 @@ namespace Business.Interface.System
         List<string> GetUserRoleTypes(string userId);
 
         /// <summary>
+        /// 获取授权给用户的角色名称
+        /// </summary>
+        /// <param name="userId">用户Id</param>
+        /// <returns>角色名称</returns>
+        List<string> GetUserRoleNames(string userId);
+
+        /// <summary>
         /// 获取授权给会员的角色类型
         /// </summary>
         /// <param name="memberId">会员Id</param>
@@ -421,6 +428,13 @@ namespace Business.Interface.System
         /// <para>角色类型信息<see cref="Model.System.RoleType"/></para>
         /// </returns>
         List<string> GetMemberRoleTypes(string memberId);
+
+        /// <summary>
+        /// 获取授权给会员的角色名称
+        /// </summary>
+        /// <param name="memberId">会员Id</param>
+        /// <returns>角色名称</returns>
+        List<string> GetMemberRoleNames(string memberId);
 
         /// <summary>
         /// 获取授权给用户的菜单

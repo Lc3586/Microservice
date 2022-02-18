@@ -42,7 +42,12 @@ namespace Model.Utils.SampleAuthentication.SampleAuthenticationDTO
         public List<string> RoleTypes { get; set; }
 
         /// <summary>
-        /// 昵称
+        /// 角色名称
+        /// </summary>
+        public List<string> RoleNames { get; set; }
+
+        /// <summary>
+        /// 账号
         /// </summary>
         public string Account { get; set; }
 

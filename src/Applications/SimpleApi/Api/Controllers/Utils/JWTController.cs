@@ -77,6 +77,7 @@ namespace Api.Controllers.Utils
             var claims = UserBusiness.CreateClaims(authenticationInfo, "JWT");
 
             claims.AddRange(authenticationInfo.RoleTypes.Select(o => new Claim(ClaimTypes.Role, o)));
+            claims.AddRange(authenticationInfo.RoleNames.Select(o => new Claim(nameof(AuthenticationInfo.RoleNames), o)));
 
             return Success(JWTHelper.GenerateToken(claims));
         }
