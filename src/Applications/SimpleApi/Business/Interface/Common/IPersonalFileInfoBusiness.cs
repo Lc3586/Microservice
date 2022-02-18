@@ -90,7 +90,17 @@ namespace Business.Interface.Common
         /// 下载
         /// </summary>
         /// <param name="id">Id</param>
+        /// <param name="rename">文件重命名</param>
         /// <returns></returns>
-        Task Download(string id);
+        Task Download(string id, string rename = null);
+
+        /// <summary>
+        /// 下载
+        /// </summary>
+        /// <param name="id">Id</param>
+        /// <param name="dirPath">文件存放路径（文件夹）</param>
+        /// <param name="rename">文件重命名</param>
+        /// <returns></returns>
+        Task Download(string id, string dirPath, string rename = null);
     }
 }

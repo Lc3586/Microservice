@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
@@ -374,9 +375,44 @@ namespace Business.Implementation.Common
             }
 
             HttpResponse.ContentType = file.ContentType.IsNullOrWhiteSpace() ? "applicatoin/octet-stream" : file.ContentType;
-            HttpResponse.Headers.Add("Content-Disposition", $"attachment; filename=\"{UrlEncoder.Default.Encode($"{rename ?? file.Name}{file.Extension}")}\"");
+            HttpResponse.Headers.Add("Content-Disposition", $"attachment; filename=\"{UrlEncoder.Default.Encode($"{(rename.IsNullOrWhiteSpace() ? file.Name : rename)}{file.Extension}")}\"");
 
             await ResponseFile(HttpRequest, HttpResponse, file.Path, file.Bytes);
+        }
+
+        public async Task Download(string id, string dirPath, string rename = null)
+        {
+            var file = Repository.Get(id);
+            if (file == null)
+            {
+                throw new MessageException("文件不存在或已被删除.");
+            }
+
+            if (!await CheckFileStateResponseWhenError(file.State))
+                return;
+
+            var path = Path.Combine(dirPath, $"{(rename.IsNullOrWhiteSpace() ? file.Name : rename)}{file.Extension}");
+
+            if (file.StorageType == StorageType.Uri)
+            {
+                using var client = new HttpClient();
+                using var dsfs = await client.GetStreamAsync(file.Path);
+                await Copy(dsfs);
+                return;
+            }
+            else if (file.StorageType != StorageType.Path)
+            {
+                throw new MessageException("此文件不支持下载.");
+            }
+
+            using var sfs = new FileStream(file.Path, FileMode.Open);
+            await Copy(sfs);
+
+            async Task Copy(Stream sfs)
+            {
+                using var dfs = new FileStream(path, FileMode.CreateNew);
+                await sfs.CopyToAsync(dfs);
+            }
         }
 
         #region 拓展功能

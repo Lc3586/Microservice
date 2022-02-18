@@ -73,6 +73,15 @@ namespace Business.Interface.Common
         /// <returns></returns>
         Task Download(string id, string rename = null);
 
+        /// <summary>
+        /// 下载
+        /// </summary>
+        /// <param name="id">文件Id</param>
+        /// <param name="dirPath">文件存放路径（文件夹）</param>
+        /// <param name="rename">文件重命名</param>
+        /// <returns></returns>
+        Task Download(string id, string dirPath, string rename = null);
+
         #region 拓展功能
 
         /// <summary>

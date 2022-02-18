@@ -150,7 +150,7 @@ namespace Business.Implementation.Common
             await FileBusiness.Browse(file_extension.FileId);
         }
 
-        public async Task Download(string id)
+        public async Task Download(string id, string rename = null)
         {
             var file_extension = Repository.Get(id);
             if (file_extension == null)
@@ -159,7 +159,19 @@ namespace Business.Implementation.Common
                 return;
             }
 
-            await FileBusiness.Download(file_extension.FileId, file_extension.Name);
+            await FileBusiness.Download(file_extension.FileId, rename.IsNullOrWhiteSpace() ? file_extension.Name : rename);
+        }
+
+        public async Task Download(string id, string dirPath, string rename = null)
+        {
+            var file_extension = Repository.Get(id);
+            if (file_extension == null)
+            {
+                Common.FileBusiness.Response(HttpResponse, StatusCodes.Status404NotFound, "文件不存在或已被删除.");
+                return;
+            }
+
+            await FileBusiness.Download(file_extension.FileId, dirPath, rename.IsNullOrWhiteSpace() ? file_extension.Name : rename);
         }
 
         public void Delete(List<string> ids)
