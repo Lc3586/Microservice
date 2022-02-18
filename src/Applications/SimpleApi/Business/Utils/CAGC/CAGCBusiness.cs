@@ -214,44 +214,6 @@ namespace Business.Utils.CAGC
             }
         }
 
-        /// <summary>
-        /// 遍历文件夹
-        /// </summary>
-        /// <param name="directory">文件夹</param>
-        /// <param name="fileCount">文件数量</param>
-        /// <param name="fileLength">文件总字节数</param>
-        /// <param name="delete">删除文件夹</param>
-        void ErgodicDirectorie(DirectoryInfo directory, out int fileCount, out long fileLength, bool delete = false)
-        {
-            fileCount = 0;
-            fileLength = 0;
-
-            if (!directory.Exists)
-                return;
-
-            var directories = directory.GetDirectories();
-            foreach (var deep_directory in directories)
-            {
-                ErgodicDirectorie(deep_directory, out int deep_fileCount, out long deep_fileLength, delete);
-                fileCount += deep_fileCount;
-                fileLength += deep_fileLength;
-
-                if (delete)
-                    deep_directory.Delete();
-            }
-
-            var files = directory.GetFiles();
-
-            foreach (var file in files)
-            {
-                fileCount++;
-                fileLength += file.Length;
-
-                if (delete)
-                    file.Delete();
-            }
-        }
-
         #endregion
 
         #region 公共
@@ -337,7 +299,7 @@ namespace Business.Utils.CAGC
 
         public TempInfo GetTempInfo()
         {
-            ErgodicDirectorie(new DirectoryInfo(TempDir), out int count, out long length);
+            FileBusiness.ErgodicDirectorie(new DirectoryInfo(TempDir), out int count, out long length);
 
             return new TempInfo
             {
@@ -348,7 +310,7 @@ namespace Business.Utils.CAGC
 
         public ClearnTempResult ClearTemp()
         {
-            ErgodicDirectorie(new DirectoryInfo(TempDir), out int count, out long length, true);
+            FileBusiness.ErgodicDirectorie(new DirectoryInfo(TempDir), out int count, out long length, true);
 
             return new ClearnTempResult
             {
