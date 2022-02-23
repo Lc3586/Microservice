@@ -97,7 +97,7 @@ namespace T4CAGC.Template
                 {
                     NameSpaces.AddWhenNotContains("Microservice.Library.OpenApi.JsonExtension");
 
-                    attributes.AddWhenNotContains($"JsonConverter(typeof(DateTimeConverter), {o.OASDTF})");
+                    attributes.AddWhenNotContains($"JsonConverter(typeof(Microservice.Library.OpenApi.JsonExtension.DateTimeConverter), {o.OASDTF})");
                 }
 
                 #endregion

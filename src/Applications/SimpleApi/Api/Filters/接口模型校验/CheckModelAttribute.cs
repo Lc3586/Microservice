@@ -86,7 +86,7 @@ namespace Api
 
             if (ModelErrors.Any_Ex())
             {
-                context.Result = new ContentResult { Content = ResponseDataFactory.Error("数据验证失败", ModelErrors).ToJson(), ContentType = "application/json;charset=utf-8" };
+                context.Result = new ContentResult { Content = ResponseDataFactory.Error("数据验证失败", ModelErrors, ErrorCode.validation).ToJson(), ContentType = "application/json;charset=utf-8" };
                 return;
             }
 
