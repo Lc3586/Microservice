@@ -41,6 +41,30 @@ namespace Business.Implementation.Common
 
         readonly IBaseRepository<Common_QuickInput, string> Repository;
 
+        /// <summary>
+        /// 获取当前账号匹配的选项数据
+        /// </summary>
+        /// <param name="category"></param>
+        /// <param name="keyword"></param>
+        /// <param name="pagination"></param>
+        /// <returns></returns>
+        List<OptionList> CurrentAccountOptionList(string category, string keyword, PaginationDTO pagination = null)
+        {
+            if (category.IsNullOrWhiteSpace() || keyword.IsNullOrWhiteSpace())
+                return new List<OptionList>();
+
+            var iSelect = Orm.Select<Common_QuickInput>()
+                                .Where(o => (o.Public == true || o.CreatorId == Operator.AuthenticationInfo.Id) && o.Category == category && o.Keyword.Contains(keyword) && o.Keyword != keyword);
+
+            if (pagination != null)
+                iSelect.GetPagination(pagination);
+
+            return iSelect.ToList(o => new OptionList
+            {
+                Content = o.Content
+            });
+        }
+
         #endregion
 
         #region 外部接口
@@ -56,20 +80,16 @@ namespace Business.Implementation.Common
             return result;
         }
 
-        public List<List> GetCurrentAccountMatchList(string category, string keyword, bool paging = false, int rows = 50, int page = 1)
+        public List<OptionList> GetCurrentAccountOptionList(string category, string keyword)
         {
-            if (category.IsNullOrWhiteSpace() || keyword.IsNullOrWhiteSpace())
-                return new List<List>();
+            var result = CurrentAccountOptionList(category, keyword);
 
-            var iSelect = Orm.Select<Common_QuickInput>()
-                                .Where(o => (o.Public == true || o.CreatorId == Operator.AuthenticationInfo.Id) && o.Category == category && o.Keyword.Contains(keyword));
+            return result;
+        }
 
-            if (paging)
-                iSelect.Page(page, rows);
-
-            var entityList = iSelect.ToList<Common_QuickInput, List>(typeof(List).GetNamesWithTagAndOther(true, "_List"));
-
-            var result = Mapper.Map<List<List>>(entityList);
+        public List<OptionList> GetCurrentAccountOptionList(string category, string keyword, PaginationDTO pagination)
+        {
+            var result = CurrentAccountOptionList(category, keyword, pagination);
 
             return result;
         }
@@ -96,9 +116,9 @@ namespace Business.Implementation.Common
             Repository.Insert(newData);
         }
 
-        public void BatchCreate(List<Create> datas)
+        public void BatchCreate(BatchCreate data)
         {
-            datas.ForEach(o => Create(o));
+            data.Datas?.ForEach(o => Create(o));
         }
 
         public void Delete(List<string> ids)

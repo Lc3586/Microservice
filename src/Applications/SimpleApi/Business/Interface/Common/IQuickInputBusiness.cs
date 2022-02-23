@@ -17,15 +17,21 @@ namespace Business.Interface.Common
         List<List> GetList(PaginationDTO pagination);
 
         /// <summary>
-        /// 获取当前账号的匹配数据
+        /// 获取当前账号的选项数据
         /// </summary>
         /// <param name="category">分类</param>
         /// <param name="keyword">关键词</param>
-        /// <param name="paging">是否分页</param>
-        /// <param name="rows">每页数据量</param>
-        /// <param name="page">页码</param>
         /// <returns></returns>
-        List<List> GetCurrentAccountMatchList(string category, string keyword, bool paging = false, int rows = 50, int page = 1);
+        List<OptionList> GetCurrentAccountOptionList(string category, string keyword);
+
+        /// <summary>
+        /// 获取当前账号的选项数据（分页）
+        /// </summary>
+        /// <param name="category">分类</param>
+        /// <param name="keyword">关键词</param>
+        /// <param name="pagination">分页设置</param>
+        /// <returns></returns>
+        List<OptionList> GetCurrentAccountOptionList(string category, string keyword, PaginationDTO pagination);
 
         /// <summary>
         /// 新增
@@ -36,8 +42,8 @@ namespace Business.Interface.Common
         /// <summary>
         /// 批量新增
         /// </summary>
-        /// <param name="datas">数据</param>
-        void BatchCreate(List<Create> datas);
+        /// <param name="data">数据</param>
+        void BatchCreate(BatchCreate data);
 
         /// <summary>
         /// 删除

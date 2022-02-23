@@ -49,19 +49,30 @@ namespace Api.Controllers
         }
 
         /// <summary>
-        /// 获取当前账号的匹配数据
+        /// 获取当前账号的选项数据
         /// </summary>
         /// <param name="category">分类</param>
         /// <param name="keyword">关键词</param>
-        /// <param name="paging">是否分页</param>
-        /// <param name="rows">每页数据量</param>
-        /// <param name="page">页码</param>
         /// <returns></returns>
-        [HttpGet("match-list")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "列表数据", typeof(List))]
-        public async Task<object> GetCurrentAccountMatchList(string category, string keyword, bool paging = false, int rows = 50, int page = 1)
+        [HttpGet("option-list")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "列表数据", typeof(OptionList))]
+        public async Task<object> GetCurrentAccountOptionList([FromQuery] string category, [FromQuery] string keyword)
         {
-            return await Task.FromResult(OpenApiJsonContent(QuickInputBusiness.GetCurrentAccountMatchList(category, keyword, paging, rows, page)));
+            return await Task.FromResult(SuccessOpenApiSchema(QuickInputBusiness.GetCurrentAccountOptionList(category, keyword)));
+        }
+
+        /// <summary>
+        /// 获取当前账号的选项数据（使用分页）
+        /// </summary>
+        /// <param name="category">分类</param>
+        /// <param name="keyword">关键词</param>
+        /// <param name="pagination">分页设置</param>
+        /// <returns></returns>
+        [HttpPost("option-list-paging")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "列表数据", typeof(OptionList))]
+        public async Task<object> GetCurrentAccountOptionList([FromQuery] string category, [FromQuery] string keyword, [FromBody] PaginationDTO pagination)
+        {
+            return await Task.FromResult(SuccessOpenApiSchema(QuickInputBusiness.GetCurrentAccountOptionList(category, keyword, pagination)));
         }
 
         /// <summary>
@@ -79,12 +90,12 @@ namespace Api.Controllers
         /// <summary>
         /// 批量新增
         /// </summary>
-        /// <param name="datas">数据</param>
+        /// <param name="data">数据</param>
         /// <returns></returns>
         [HttpPost("batch-create")]
-        public async Task<object> BatchCreate([FromBody] IEnumerable<Create> datas)
+        public async Task<object> BatchCreate([FromBody] BatchCreate data)
         {
-            QuickInputBusiness.BatchCreate(datas.ToList());
+            QuickInputBusiness.BatchCreate(data);
             return await Task.FromResult(Success());
         }
 
