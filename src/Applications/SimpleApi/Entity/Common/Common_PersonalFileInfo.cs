@@ -52,6 +52,8 @@ namespace Entity.Common
         /// <summary>
         /// 文件扩展名
         /// </summary>
+        [OpenApiSubTag("List", "Detail", "PersonalFileInfo")]
+        [Column(StringLength = 256)]
         public string Extension { get; set; }
 
         /// <summary>

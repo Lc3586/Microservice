@@ -11,5 +11,5 @@ class ValidationMD5Response {
     /**
      * 文件信息
      */
-    FileInfo: FileInfo;
+    FileInfo: PersonalFileInfo;
 }

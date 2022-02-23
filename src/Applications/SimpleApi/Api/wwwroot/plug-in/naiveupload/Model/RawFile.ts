@@ -70,7 +70,7 @@ class RawFile {
     /**
      * 文件信息
      */
-    FileInfo: FileInfo;
+    FileInfo: PersonalFileInfo;
 
     /**
      * 上传配置Id

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Model.Common.FileDTO;
 using Model.Common.FileUploadDTO;
+using Model.Common.PersonalFileInfoDTO;
 using Model.Utils.Result;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net;
@@ -109,7 +110,7 @@ namespace Api.Controllers
         /// <param name="filename">文件名</param>
         /// <returns></returns>
         [HttpGet("chunkfile-finished/{file_md5}/{specs}/{total}")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "文件信息", typeof(FileInfo))]
+        [SwaggerResponse((int)HttpStatusCode.OK, "文件信息", typeof(PersonalFileInfo))]
         public async Task<object> UploadChunkFileFinished(string file_md5, int specs, int total, string type, string extension, string filename)
         {
             return await Task.FromResult(OpenApiJsonContent(ResponseDataFactory.Success(FileUploadBusiness.UploadChunkFileFinished(file_md5, specs, total, type, extension, filename))));
@@ -122,7 +123,7 @@ namespace Api.Controllers
         /// <param name="filename">文件名</param>
         /// <returns></returns>
         [HttpPost("single-image-base64")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "文件信息", typeof(FileInfo))]
+        [SwaggerResponse((int)HttpStatusCode.OK, "文件信息", typeof(PersonalFileInfo))]
         public async Task<object> SingleImageFromBase64([FromBody] string base64, string filename)
         {
             return OpenApiJsonContent(ResponseDataFactory.Success(await FileUploadBusiness.SingleImageFromBase64(base64, filename)));
@@ -137,7 +138,7 @@ namespace Api.Controllers
         /// <param name="download">是否下载资源</param>
         /// <returns></returns>
         [HttpPost("single-file-url/{configId}")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "文件信息", typeof(FileInfo))]
+        [SwaggerResponse((int)HttpStatusCode.OK, "文件信息", typeof(PersonalFileInfo))]
         public async Task<object> SingleFileFromUrl(string configId, string url, string filename, bool download = false)
         {
             return OpenApiJsonContent(ResponseDataFactory.Success(await FileUploadBusiness.SingleFileFromUrl(configId, url, filename, download)));
@@ -152,7 +153,7 @@ namespace Api.Controllers
         /// <returns></returns>
         [Consumes("multipart/form-data")]
         [HttpPost("single-file/{configId}")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "文件信息", typeof(FileInfo))]
+        [SwaggerResponse((int)HttpStatusCode.OK, "文件信息", typeof(PersonalFileInfo))]
         public async Task<object> SingleFile(string configId, IFormFile file, string filename)
         {
             return OpenApiJsonContent(ResponseDataFactory.Success(await FileUploadBusiness.SingleFile(configId, file, filename)));
@@ -168,7 +169,7 @@ namespace Api.Controllers
         /// <returns></returns>
         [Consumes("applicatoin/octet-stream")]
         [HttpPost("single-file-arraybuffer/{configId}")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "文件信息", typeof(FileInfo))]
+        [SwaggerResponse((int)HttpStatusCode.OK, "文件信息", typeof(PersonalFileInfo))]
         public async Task<object> SingleFileByArrayBuffer(string configId, string type, string extension, string filename)
         {
             return OpenApiJsonContent(ResponseDataFactory.Success(await FileUploadBusiness.SingleFileByArrayBuffer(configId, type, extension, filename)));

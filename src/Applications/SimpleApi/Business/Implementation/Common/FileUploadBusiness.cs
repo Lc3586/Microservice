@@ -280,6 +280,7 @@ namespace Business.Implementation.Common
             var file_extension = new Common_PersonalFileInfo
             {
                 Name = filename,
+                Extension = file.Extension,
                 FileId = file.Id,
                 State = PersonalFileInfoState.可用
             }.InitEntity();
@@ -380,6 +381,7 @@ namespace Business.Implementation.Common
                     var file_extension = new Common_PersonalFileInfo
                     {
                         Name = filename,
+                        Extension = extension,
                         FileId = state.Id,
                         State = PersonalFileInfoState.可用
                     }.InitEntity();
@@ -470,6 +472,7 @@ namespace Business.Implementation.Common
             var file_extension = new Common_PersonalFileInfo
             {
                 Name = filename,
+                Extension = extension,
                 State = PersonalFileInfoState.可用
             };
 
@@ -522,7 +525,7 @@ namespace Business.Implementation.Common
 
             MergeHandler.Handler(file_md5, specs, total);
 
-            end:
+        end:
             return PersonalFileInfoBusiness.GetDetail(file_extension.Id);
         }
 
@@ -561,6 +564,7 @@ namespace Business.Implementation.Common
             var file_extension = new Common_PersonalFileInfo
             {
                 Name = filename,
+                Extension = file.Extension,
                 FileId = file.Id,
                 State = PersonalFileInfoState.可用
             }.InitEntity();
@@ -659,6 +663,7 @@ namespace Business.Implementation.Common
             var file_extension = new Common_PersonalFileInfo
             {
                 Name = filename,
+                Extension = file.Extension,
                 FileId = file.Id,
                 State = PersonalFileInfoState.可用
             }.InitEntity();

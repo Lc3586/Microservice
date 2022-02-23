@@ -96,7 +96,7 @@ class UploadHelper {
                                 let worker = new Worker('Helper/UploadWorker.js');
                                 this.WorkerUnits.push({ worker: worker, used: false });
                                 try {
-                                    await this.WorkerPostMessage(i, { Type: UploadWorkerMessageType.设置Axios, Data: { Headers: headers } }) as FileInfo;
+                                    await this.WorkerPostMessage(i, { Type: UploadWorkerMessageType.设置Axios, Data: { Headers: headers } }) as PersonalFileInfo;
                                 } catch (e) {
                                     reject(e);
                                     return;
@@ -159,7 +159,7 @@ class UploadHelper {
                         this.CancelTokenList[file.MD5] = cancelToken;
                     })
                 })
-                .then((response: { data: ResponseData_T<FileInfo> }) => {
+                .then((response: { data: ResponseData_T<PersonalFileInfo> }) => {
                     delete this.CancelTokenList[file.MD5];
 
                     if (response.data.Success) {
@@ -238,7 +238,7 @@ class UploadHelper {
             }
 
             try {
-                let fileInfo = await this.WorkerPostMessage(0, { Type: UploadWorkerMessageType.文件, Data: { MD5: file.MD5, Buffer: buffer, Type: file.File.type, Extension: file.Extension, Name: file.Name, ConfigId: file.ConfigId } }, onProgress) as FileInfo;
+                let fileInfo = await this.WorkerPostMessage(0, { Type: UploadWorkerMessageType.文件, Data: { MD5: file.MD5, Buffer: buffer, Type: file.File.type, Extension: file.Extension, Name: file.Name, ConfigId: file.ConfigId } }, onProgress) as PersonalFileInfo;
 
                 file.FileInfo = fileInfo;
             } catch (e) {
@@ -296,12 +296,12 @@ class UploadHelper {
     async WorkerPostMessage(
         handlerIndex: number,
         data: UploadWorkerMessage<UploadWorkerSetUpAxiosMessage | UploadWorkerFileMessage | UploadWorkerChunkFileMessage | UploadWorkerCancelMessage> | null,
-        onProgress?: (progress: UploadProgress) => void): Promise<FileInfo | void> {
+        onProgress?: (progress: UploadProgress) => void): Promise<PersonalFileInfo | void> {
 
         let unit = this.WorkerUnits[handlerIndex];
         unit.used = true;
 
-        const promise = new Promise<FileInfo | void>((resolve, reject) => {
+        const promise = new Promise<PersonalFileInfo | void>((resolve, reject) => {
             unit.worker.onmessage = (event: MessageEvent<UploadWorkerNoticeMessage>) => {
                 switch (event.data.Type) {
                     case UploadWorkerNoticeMessageType.设置成功:
@@ -589,10 +589,10 @@ class UploadHelper {
      * @param filename 文件名
      */
     async UploadChunkFileFinished(file_md5: string, specs: number, total: number, type: string, extension: string, filename: string)
-        : Promise<FileInfo> {
-        const promise = new Promise<FileInfo>((resolve, reject) => {
+        : Promise<PersonalFileInfo> {
+        const promise = new Promise<PersonalFileInfo>((resolve, reject) => {
             this.AxiosInstance.get(ApiUri.UploadChunkfileFinished(file_md5, specs, total, type, extension, filename))
-                .then(function (response: { data: ResponseData_T<FileInfo> }) {
+                .then(function (response: { data: ResponseData_T<PersonalFileInfo> }) {
                     if (response.data.Success) {
                         resolve(response.data.Data);
                     }

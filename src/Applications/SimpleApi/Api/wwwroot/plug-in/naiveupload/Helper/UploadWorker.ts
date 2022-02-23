@@ -61,7 +61,7 @@ class UploadWorker {
                     this.CancelTokenList[md5] = cancelToken;
                 })
             })
-            .then((response: { data: ResponseData_T<FileInfo> }) => {
+            .then((response: { data: ResponseData_T<PersonalFileInfo> }) => {
                 delete this.CancelTokenList[md5];
 
                 if (response.data.Success)
@@ -94,7 +94,7 @@ class UploadWorker {
                     this.CancelTokenList[md5] = cancelToken;
                 })
             })
-            .then((response: { data: ResponseData_T<FileInfo> }) => {
+            .then((response: { data: ResponseData_T<PersonalFileInfo> }) => {
                 delete this.CancelTokenList[md5];
 
                 if (response.data.Success)
