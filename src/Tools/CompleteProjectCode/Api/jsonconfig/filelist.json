@@ -1,0 +1,24 @@
+﻿{
+  "FileList": {
+    "ffmpeg": {
+      "WINDOWS": "Tools/ffmpeg/ffmpeg.exe",
+      "LINUX": "/usr/bin/ffmpeg",
+      "OSX": "/usr/bin/ffmpeg"
+    },
+    "ffprobe": {
+      "WINDOWS": "Tools/ffmpeg/ffprobe.exe",
+      "LINUX": "/usr/bin/ffprobe",
+      "OSX": "/usr/bin/ffprobe"
+    },
+    "ffplay": {
+      "WINDOWS": "Tools/ffmpeg/ffplay.exe",
+      "Linux": "/usr/bin/ffplay",
+      "OSX": "/usr/bin/ffplay"
+    },
+    "CAGC": {
+      "WINDOWS": "Tools/T4CAGC/Windows/T4CAGC.exe",
+      "LINUX": "Tools/T4CAGC/Linux/T4CAGC",
+      "OSX": "Tools/T4CAGC/OSX/T4CAGC"
+    }
+  }
+}

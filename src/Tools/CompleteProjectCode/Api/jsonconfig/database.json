@@ -1,0 +1,47 @@
+﻿{
+  //单数据库配置
+  //各数据库连接字符串可参考 http://freesql.net/guide/getting-started.html#connectionstrings
+  "Single": {
+    "ConnectString": "Server=127.0.0.1;Port=3306;Database=simpleapi;User ID=root;Password=123456;Charset=utf8;SslMode=none;Max pool size=500;AllowLoadLocalInfile=true;",
+    "DatabaseType": "MySql",
+    "EntityAssembly": [ "Entity" ]
+  },
+  //多数据库配置
+  "Multi": [
+    {
+      "Name": "MySql",
+      "Enable": false,
+      "ConnectString": "Data Source=127.0.0.1;Port=3306;User ID=;Password=; Initial Catalog=;Charset=utf8; SslMode=none;Min pool size=1;Max pool size=500;",
+      "DatabaseType": "MySql",
+      "EntityAssembly": "Entity"
+    },
+    {
+      "Name": "MySql",
+      "Enable": false,
+      "ConnectString": "Driver={MySQL ODBC 8.0 Unicode Driver}; Server=127.0.0.1;Persist Security Info=False; Trusted_Connection=Yes;UID=;PWD=; DATABASE=;Charset=utf8; SslMode=none;Max Pool Size=500",
+      "DatabaseType": "OdbcMySql",
+      "EntityAssembly": "Entity"
+    },
+    {
+      "Name": "微软",
+      "Enable": false,
+      "ConnectString": "Server=url;Database=database;User Id=uid;Password=pwd;",
+      "DatabaseType": "SqlServer",
+      "EntityAssembly": "Entity"
+    },
+    {
+      "Name": "达梦",
+      "Enable": false,
+      "ConnectString": "server=url;port=port;user id=uid;password=pwd;database=databse;poolsize=1",
+      "DatabaseType": "Dameng",
+      "EntityAssembly": "Entity"
+    },
+    {
+      "Name": "Oracle",
+      "Enable": false,
+      "ConnectString": "user id=uid;password=pwd;data source=//ip:port/ORCL;Pooling=true;Min Pool Size=1;",
+      "DatabaseType": "Oracle",
+      "EntityAssembly": "Entity"
+    }
+  ]
+}

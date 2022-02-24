@@ -1,0 +1,95 @@
+﻿#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
+
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+
+#安装ffmpeg
+RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list \
+    && apt-get update \
+    && apt-get install -y ffmpeg \
+    && apt-get clean && apt-get autoclean && apt-get autoremove \
+    && rm -rf /var/lib/apt/lists/*
+    
+#安装libgdiplus库
+RUN apt-get update && apt-get install -y libgdiplus libc6-dev && ln -s /usr/lib/libgdiplus.so /usr/lib/gdiplus.dll
+
+#安装libncurses库
+RUN apt-get install -y libncurses5
+
+#配置X-Server (xvfb)
+ENV DISPLAY :10
+COPY linux/xvfb.init /etc/init.d/xvfb
+# Removes any windows line endings because linux can`t start the service in this case
+RUN sed -i -e 's/\r//g' /etc/init.d/xvfb
+RUN chmod +x /etc/init.d/xvfb
+RUN update-rc.d xvfb defaults
+# In the end we need to start the xserver and our API, so run.sh starts them in the right order
+
+#设置时区为中国上海
+#方式一
+ENV TZ=Asia/Shanghai
+ENV DEBIAN_FRONTEND noninteractive
+# 安装 tzdata 软件包
+RUN apt-get update \
+    && apt-get install -y tzdata \
+    && ln -fs /usr/share/zoneinfo/$TZ  /etc/localtime \
+    && rm -rf /var/lib/apt/lists/ \
+    && dpkg-reconfigure -f noninteractive tzdata
+    
+#方式二
+#RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo 'Asia/Shanghai' >/etc/timezone
+
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+
+#运行
+FROM base AS final
+WORKDIR /app
+COPY ./ ./
+
+#添加证书
+COPY certificate/simple-api.crt /usr/local/share/ca-certificates/simple-api.crt
+RUN update-ca-certificates 
+
+ADD linux/run.sh /run.sh
+RUN chmod a+x /run.sh
+CMD /run.sh
+
+#ENTRYPOINT ["dotnet", "SimpleApi.dll"]
+
+#如果SQL SERVER数据库TLS版本较低
+#可以选择安装升级包(建议使用此方式)
+#根据安装的SQL版本按顺序安装升级包
+#以下列出了2014版本的升级包下载地址
+#Microsoft® SQL Server® 2014 Service Pack 1 (SP1)
+#https://www.microsoft.com/zh-CN/download/details.aspx?id=46694
+#Microsoft® SQL Server® 2014 Service Pack 2 (SP2)
+#https://www.microsoft.com/zh-CN/download/details.aspx?id=53168
+#Microsoft® SQL Server® 2014 Service Pack 3 (SP3)
+#https://www.microsoft.com/zh-CN/download/details.aspx?id=57474
+#SQL Server 2014 SP3 安全更新程序 (KB4505218)
+#https://www.microsoft.com/zh-cn/download/details.aspx?id=58487
+#或者降级TLS版本
+#方式一
+#RUN sed -i 's/TLSv1.2/TLSv1.0/g' /etc/ssl/openssl.cnf
+#方式二
+#RUN sed -i 's/MinProtocol = TLSv1.2/MinProtocol = TLSv1/g' /etc/ssl/openssl.cnf
+#RUN sed -i 's/MinProtocol = TLSv1.2/MinProtocol = TLSv1/g' /usr/lib/ssl/openssl.cnf
+
+#创建卷
+#docker volume create --name app_storage_area --label "备注"="应用程序公共存储目录。"
+
+#构建镜像
+#docker build -f Dockerfile.published -t lctr/simple-api .
+
+#创建容器并运行
+#docker run -v app_storage_area:/app-data --name simple-api -p 5001:443 -p 5000:80 --name simple-api --restart always lctr/simple-api
+
+#进入容器
+#docker exec -it [id/name] bash
+
+#目前程序会自动转移wwwroot中的文件,无需手动复制
+#复制数据到共享卷中
+#cp -r /app/wwwroot /app-data/simple-api
+#清理目录
+#rm -rf /app/wwwroot

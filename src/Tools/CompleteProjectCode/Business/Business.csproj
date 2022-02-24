@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!--<TargetFramework>netstandard2.1</TargetFramework>-->
+    <TargetFramework>net5.0</TargetFramework>
+    <UserSecretsId>fb4c1149-21c5-46bc-821a-9cc1f81e8b03</UserSecretsId>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile></DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile></DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Model\Model.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GSS.Authentication.CAS.AspNetCore" Version="5.0.0" />
+    <PackageReference Include="GSS.Authentication.CAS.DistributedCache" Version="5.0.0" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.37" />
+    <PackageReference Include="Microservice.Library.File" Version="0.0.0.15-alpha-ga4501b4f30" />
+    <PackageReference Include="Microservice.Library.NLogger" Version="0.0.0.15-alpha-ga4501b4f30" />
+    <PackageReference Include="Microservice.Library.OfficeDocuments" Version="0.0.0.15-alpha-ga4501b4f30" />
+    <PackageReference Include="Microservice.Library.SelectOption" Version="0.0.0.15-alpha-ga4501b4f30" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.10" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.1.0" />
+    <PackageReference Include="NewId" Version="3.0.3" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,1024 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <!--<TargetFrameworks>net5.0;netcoreapp3.1;net461</TargetFrameworks>-->
+    <TargetFramework>net6.0</TargetFramework>
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+    <UserSecretsId>4be146dc-3dc7-49fc-b525-5a296a2c7c19</UserSecretsId>
+    <AssemblyName>SimpleApi</AssemblyName>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..\..</DockerfileContext>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net5.0|AnyCPU'">
+    <DocumentationFile>Api.xml</DocumentationFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net5.0|AnyCPU'">
+    <DocumentationFile>Api.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TypeScriptCompileOnSaveEnabled>True</TypeScriptCompileOnSaveEnabled>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <DocumentationFile></DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="CAGC\**" />
+    <Compile Remove="log\**" />
+    <Compile Remove="wwwroot\upload\**" />
+    <Content Remove="CAGC\**" />
+    <Content Remove="log\**" />
+    <Content Remove="wwwroot\upload\**" />
+    <EmbeddedResource Remove="CAGC\**" />
+    <EmbeddedResource Remove="log\**" />
+    <EmbeddedResource Remove="wwwroot\upload\**" />
+    <None Remove="CAGC\**" />
+    <None Remove="log\**" />
+    <None Remove="wwwroot\upload\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="appsettings.Development.json" />
+    <Content Remove="appsettings.Production.json" />
+    <Content Remove="jsonconfig\apiversion.json" />
+    <Content Remove="jsonconfig\cas.json" />
+    <Content Remove="jsonconfig\database.json" />
+    <Content Remove="jsonconfig\elasticsearch.json" />
+    <Content Remove="jsonconfig\filelist.json" />
+    <Content Remove="jsonconfig\freesql.json" />
+    <Content Remove="jsonconfig\jwt.json" />
+    <Content Remove="jsonconfig\kafka.json" />
+    <Content Remove="jsonconfig\redis.json" />
+    <Content Remove="jsonconfig\rsa.json" />
+    <Content Remove="jsonconfig\soap.json" />
+    <Content Remove="jsonconfig\swagger.json" />
+    <Content Remove="jsonconfig\wechatservice.json" />
+    <Content Remove="ffmpeg\ffmpeg.exe" />
+    <Content Remove="ffmpeg\ffplay.exe" />
+    <Content Remove="ffmpeg\ffprobe.exe" />
+    <Content Remove="wwwroot\filestate\不可用.jpg" />
+    <Content Remove="wwwroot\filestate\处理中.jpg" />
+    <Content Remove="wwwroot\filestate\已删除.jpg" />
+    <Content Remove="wwwroot\filetypes\7z.png" />
+    <Content Remove="wwwroot\filetypes\accdb.png" />
+    <Content Remove="wwwroot\filetypes\ai.png" />
+    <Content Remove="wwwroot\filetypes\ape.png" />
+    <Content Remove="wwwroot\filetypes\ape_0.png" />
+    <Content Remove="wwwroot\filetypes\apk.png" />
+    <Content Remove="wwwroot\filetypes\apk_0.png" />
+    <Content Remove="wwwroot\filetypes\avi.png" />
+    <Content Remove="wwwroot\filetypes\bmp.png" />
+    <Content Remove="wwwroot\filetypes\css.png" />
+    <Content Remove="wwwroot\filetypes\csv.png" />
+    <Content Remove="wwwroot\filetypes\dbf.png" />
+    <Content Remove="wwwroot\filetypes\dmg.png" />
+    <Content Remove="wwwroot\filetypes\dmg_0.png" />
+    <Content Remove="wwwroot\filetypes\doc.png" />
+    <Content Remove="wwwroot\filetypes\docx.png" />
+    <Content Remove="wwwroot\filetypes\dwg.png" />
+    <Content Remove="wwwroot\filetypes\eml.png" />
+    <Content Remove="wwwroot\filetypes\empty.png" />
+    <Content Remove="wwwroot\filetypes\eps.png" />
+    <Content Remove="wwwroot\filetypes\exe.png" />
+    <Content Remove="wwwroot\filetypes\exe_0.png" />
+    <Content Remove="wwwroot\filetypes\fla.png" />
+    <Content Remove="wwwroot\filetypes\flac.png" />
+    <Content Remove="wwwroot\filetypes\flac_0.png" />
+    <Content Remove="wwwroot\filetypes\flv.png" />
+    <Content Remove="wwwroot\filetypes\flv_0.png" />
+    <Content Remove="wwwroot\filetypes\flv_1.png" />
+    <Content Remove="wwwroot\filetypes\gif.png" />
+    <Content Remove="wwwroot\filetypes\gif_0.png" />
+    <Content Remove="wwwroot\filetypes\gif_1.png" />
+    <Content Remove="wwwroot\filetypes\html.png" />
+    <Content Remove="wwwroot\filetypes\iso.png" />
+    <Content Remove="wwwroot\filetypes\jpeg.png" />
+    <Content Remove="wwwroot\filetypes\jpg.png" />
+    <Content Remove="wwwroot\filetypes\js.png" />
+    <Content Remove="wwwroot\filetypes\json.png" />
+    <Content Remove="wwwroot\filetypes\mid.png" />
+    <Content Remove="wwwroot\filetypes\mid_0.png" />
+    <Content Remove="wwwroot\filetypes\mid_1.png" />
+    <Content Remove="wwwroot\filetypes\mp3.png" />
+    <Content Remove="wwwroot\filetypes\mp4.png" />
+    <Content Remove="wwwroot\filetypes\msi.png" />
+    <Content Remove="wwwroot\filetypes\pdf.png" />
+    <Content Remove="wwwroot\filetypes\pdf_0.png" />
+    <Content Remove="wwwroot\filetypes\png.png" />
+    <Content Remove="wwwroot\filetypes\ppt.png" />
+    <Content Remove="wwwroot\filetypes\pptx.png" />
+    <Content Remove="wwwroot\filetypes\rar.png" />
+    <Content Remove="wwwroot\filetypes\rm.png" />
+    <Content Remove="wwwroot\filetypes\rm_0.png" />
+    <Content Remove="wwwroot\filetypes\rm_1.png" />
+    <Content Remove="wwwroot\filetypes\svg.png" />
+    <Content Remove="wwwroot\filetypes\tmp.png" />
+    <Content Remove="wwwroot\filetypes\torrent.png" />
+    <Content Remove="wwwroot\filetypes\torrent_0.png" />
+    <Content Remove="wwwroot\filetypes\txt.png" />
+    <Content Remove="wwwroot\filetypes\wav.png" />
+    <Content Remove="wwwroot\filetypes\xls.png" />
+    <Content Remove="wwwroot\filetypes\xlsx.png" />
+    <Content Remove="wwwroot\filetypes\xmind.png" />
+    <Content Remove="wwwroot\filetypes\xml.png" />
+    <Content Remove="wwwroot\filetypes\zip.png" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Helper\ChunkFileMergeTaskHelper.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Helper\ChunkFileMergeTaskHelper.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Helper\FileReadHelper.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Helper\FileReadHelper.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Helper\HashHelper.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Helper\HashHelper.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Helper\HashWorker.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Helper\HashWorker.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Helper\ImportHelper.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Helper\ImportHelper.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Helper\UploadHelper.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Helper\UploadHelper.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Helper\UploadWorker.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Helper\UploadWorker.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\index.css" />
+    <Content Remove="wwwroot\plug-in\naiveupload\index.html" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\ApiUri.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\ApiUri.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\AppendFileResult.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\AppendFileResult.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\AppendFileResultStatus.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\AppendFileResultStatus.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\ChunkFile.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\ChunkFile.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\FileInfo.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\FileInfo.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\FIleType.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\FIleType.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\HubState.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\HubState.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\MultipleUploadSetting.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\MultipleUploadSetting.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\PersonalFileInfo.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\PersonalFileInfo.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\PreUploadChunkFileResponse.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\PreUploadChunkFileResponse.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\PreUploadChunkFileState.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\PreUploadChunkFileState.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\RawFile.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\RawFile.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\ResponseData.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\ResponseData.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\SelectedFile.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\SelectedFile.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\TokenInfo.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\TokenInfo.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadConfig.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadConfig.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadConfigAuthoritiesTreeList.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadConfigAuthoritiesTreeList.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadConfigDetail.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadConfigDetail.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadConfigTreeList.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadConfigTreeList.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadProgress.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadProgress.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadTheme.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadTheme.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerCancelMessage.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerCancelMessage.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerChunkFileMessage.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerChunkFileMessage.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerFileMessage.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerFileMessage.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerMessage.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerMessage.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerMessageType.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerMessageType.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerNoticeMessage.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerNoticeMessage.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerNoticeMessageType.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerNoticeMessageType.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerSetUpAxiosMessage.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadWorkerSetUpAxiosMessage.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\ValidationMD5Response.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\ValidationMD5Response.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\NaiveUpload.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\NaiveUpload.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\test.ts" />
+    <Content Remove="wwwroot\plug-in\systemconsole\systemconsole.css" />
+    <Content Remove="wwwroot\plug-in\systemconsole\systemconsole.html" />
+    <Content Remove="wwwroot\plug-in\systemconsole\systemconsole.js" />
+    <Content Remove="wwwroot\swagger\casLogin.js" />
+    <Content Remove="wwwroot\swagger\custom-javascript.js" />
+    <Content Remove="wwwroot\swagger\custom-stylesheet.css" />
+    <Content Remove="wwwroot\swagger\extensions\apiVersion.js" />
+    <Content Remove="wwwroot\swagger\extensions\jwt.js" />
+    <Content Remove="wwwroot\swagger\extensions\naiveUpload.js" />
+    <Content Remove="wwwroot\swagger\extensions\quickInput.js" />
+    <Content Remove="wwwroot\swagger\extensions\systemConsole.js" />
+    <Content Remove="wwwroot\swagger\ignore\swagger-ui-bundle-debug.js" />
+    <Content Remove="wwwroot\swagger\jquery-1.8.3.min.js" />
+    <Content Remove="wwwroot\swagger\saLogin.js" />
+    <Content Remove="wwwroot\swagger\waiting.css" />
+    <Content Remove="wwwroot\swagger\waiting.min.js" />
+    <Content Remove="wwwroot\utils\baseUrl.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="appsettings.Development.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="appsettings.Production.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="jsonconfig\cas.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="jsonconfig\elasticsearch.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="jsonconfig\filelist.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="jsonconfig\freesql.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="jsonconfig\jwt.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="jsonconfig\kafka.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="jsonconfig\redis.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="jsonconfig\rsa.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="jsonconfig\apiversion.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="jsonconfig\swagger.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="jsonconfig\wechatservice.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="jsonconfig\database.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="jsonconfig\soap.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filestate\不可用.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filestate\处理中.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filestate\已删除.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\7z.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\accdb.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\ai.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\ape.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\ape_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\apk.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\apk_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\avi.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\bmp.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\css.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\csv.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\dbf.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\dmg.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\dmg_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\doc.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\docx.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\dwg.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\eml.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\empty.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\eps.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\exe.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\exe_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\fla.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\flac.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\flac_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\flv.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\flv_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\flv_1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\gif.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\gif_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\gif_1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\html.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\iso.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\jpeg.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\jpg.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\js.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\json.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\mid.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\mid_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\mid_1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\mp3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\mp4.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\msi.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\pdf.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\pdf_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\png.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\ppt.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\pptx.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\rar.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\rm.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\rm_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\rm_1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\svg.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\tmp.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\torrent.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\torrent_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\txt.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\wav.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\xls.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\xlsx.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\xmind.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\xml.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\filetypes\zip.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\index.htm" />
+    <None Include="wwwroot\plug-in\naiveupload\Helper\ChunkFileMergeTaskHelper.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Helper\ChunkFileMergeTaskHelper.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Helper\FileReadHelper.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Helper\FileReadHelper.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Helper\HashHelper.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Helper\HashHelper.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Helper\HashWorker.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Helper\HashWorker.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Helper\ImportHelper.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Helper\ImportHelper.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Helper\UploadHelper.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Helper\UploadHelper.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Helper\UploadWorker.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Helper\UploadWorker.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\ApiUri.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\ApiUri.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\AppendFileResult.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\AppendFileResult.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\AppendFileResultStatus.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\AppendFileResultStatus.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\ChunkFile.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\ChunkFile.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\LibraryInfo.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\LibraryInfo.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\FileInfo.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\FileInfo.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\FIleType.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\FIleType.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\HubState.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\HubState.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\MultipleUploadSetting.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\MultipleUploadSetting.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\PersonalFileInfo.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\PersonalFileInfo.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\PreUploadChunkFileResponse.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\PreUploadChunkFileResponse.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\PreUploadChunkFileState.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\PreUploadChunkFileState.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\RawFile.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\RawFile.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\ResponseData.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\ResponseData.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\SelectedFile.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\SelectedFile.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\TokenInfo.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\TokenInfo.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadConfig.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadConfig.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadConfigAuthoritiesTreeList.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadConfigAuthoritiesTreeList.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadConfigDetail.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadConfigDetail.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadConfigTreeList.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadConfigTreeList.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadProgress.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadProgress.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadMode.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadMode.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadTheme.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadTheme.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadWorkerCancelMessage.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadWorkerCancelMessage.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadWorkerChunkFileMessage.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadWorkerChunkFileMessage.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadWorkerFileMessage.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadWorkerFileMessage.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadWorkerMessage.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadWorkerMessage.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadWorkerMessageType.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadWorkerMessageType.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadWorkerNoticeMessage.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadWorkerNoticeMessage.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadWorkerNoticeMessageType.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadWorkerNoticeMessageType.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadWorkerSetUpAxiosMessage.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\UploadWorkerSetUpAxiosMessage.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\ValidationMD5Response.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\ValidationMD5Response.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\index.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\index.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Index.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Index.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\NaiveUpload.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\NaiveUpload.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\systemconsole\systemconsole.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\systemconsole\systemconsole.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\systemconsole\systemconsole.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\swagger\extensions\apiVersion.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\swagger\extensions\casLogin.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\swagger\extensions\jwt.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\swagger\extensions\naiveUpload.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\swagger\extensions\quickInput.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\swagger\extensions\systemConsole.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\swagger\main.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\swagger\main.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\jquery\jquery-1.8.3.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\swagger\extensions\saLogin.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\utils\baseUrl.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\utils\waiting.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\utils\waiting.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Business\Business.csproj" />
+    <ProjectReference Include="..\IocServiceDemo\IocServiceDemo.csproj" />
+    <ProjectReference Include="..\SoapServices\SoapServices.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="app_offline.htm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="certificate\simple-api.crt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="certificate\simple-api.key">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Update="certificate\simple-api.pfx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Dockerfile">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Update="Dockerfile.published">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ffmpeg\ffmpeg.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ffmpeg\ffplay.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ffmpeg\ffprobe.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="linux\run.sh">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="linux\xvfb.init">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.1" />
+    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.5.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot\utils\dayjs\dayjs.zh-cn.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\element-plus\element-plus.es.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\element-plus\element-plus.zh-cn.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\element-plus\theme-chalk\fonts\element-icons.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\element-plus\theme-chalk\fonts\element-icons.woff">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\element-plus\theme-chalk\element-plus.index.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\element-plus\element-plus.index.full.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\plug-in\cagc\cagc.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\plug-in\cagc\cagc.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\plug-in\cagc\cagc.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\plug-in\wechat\confirm.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\plug-in\wechat\confirm.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\plug-in\wechat\confirm.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\plug-in\wechat\qrcode.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\plug-in\wechat\qrcode.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\plug-in\wechat\qrcode.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\swagger\extensions\adminSite.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\swagger\extensions\backToTop.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\swagger\extensions\cagc.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\swagger\extensions\quickNavigation.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\swagger\extensions\wapSite.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\swagger\extensions\logConsole.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\swagger\extensions\wechatUserBind.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\swagger\extensions\wechatUserLogin.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\utils\awesome-qr.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\utils\axios.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\jquery\jquery-2.2.4.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\jquery\jquery-ui.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\jquery\jquery-ui.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\jquery\jquery-ui.min.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\jquery\jquery-ui.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\jquery\jquery-ui.structure.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\jquery\jquery-ui.structure.min.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\jquery\jquery-ui.theme.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\jquery\jquery-ui.theme.min.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\utils\lodash.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\utils\qrcode-1.4.4.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\utils\signalr.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\vent\vant.index.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\vent\vant.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\plug-in\logconsole\logconsole.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\plug-in\logconsole\logconsole.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\plug-in\logconsole\logconsole.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\vue\vue-2.6.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\vue\vue.global.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\vue\vue.global.prod.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <TypeScriptCompile Update="wwwroot\plug-in\naiveupload\Helper\ChunkFileMergeTaskHelper.ts">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </TypeScriptCompile>
+    <TypeScriptCompile Update="wwwroot\plug-in\naiveupload\Model\AppendFileResult.ts">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </TypeScriptCompile>
+    <TypeScriptCompile Update="wwwroot\plug-in\naiveupload\Model\AppendFileResultStatus.ts">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </TypeScriptCompile>
+    <TypeScriptCompile Update="wwwroot\plug-in\naiveupload\Model\HubState.ts">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </TypeScriptCompile>
+    <TypeScriptCompile Update="wwwroot\plug-in\naiveupload\Model\UploadConfig.ts">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </TypeScriptCompile>
+    <TypeScriptCompile Update="wwwroot\plug-in\naiveupload\Model\UploadConfigAuthoritiesTreeList.ts">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </TypeScriptCompile>
+    <TypeScriptCompile Update="wwwroot\plug-in\naiveupload\Model\UploadConfigDetail.ts">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </TypeScriptCompile>
+    <TypeScriptCompile Update="wwwroot\plug-in\naiveupload\Model\UploadConfigTreeList.ts">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </TypeScriptCompile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\swagger\ignore\" />
+    <Folder Include="wwwroot\government\" />
+  </ItemGroup>
+
+  <ProjectExtensions>
+    <VisualStudio><UserProperties jsonconfig_4database_1json__JsonSchema="https://json.schemastore.org/appsettings" jsonconfig_4swagger_1json__JsonSchema="https://json.schemastore.org/appsettings" jsonconfig_4wechatservice_1json__JsonSchema="https://json.schemastore.org/appsettings" properties_4launchsettings_1json__JsonSchema="" /></VisualStudio>
+  </ProjectExtensions>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <TypeScriptTarget>ES5</TypeScriptTarget>
+    <TypeScriptJSXEmit>React</TypeScriptJSXEmit>
+    <TypeScriptModuleKind>None</TypeScriptModuleKind>
+    <TypeScriptCompileOnSaveEnabled>True</TypeScriptCompileOnSaveEnabled>
+    <TypeScriptNoImplicitAny>False</TypeScriptNoImplicitAny>
+    <TypeScriptRemoveComments>True</TypeScriptRemoveComments>
+    <TypeScriptOutFile />
+    <TypeScriptOutDir />
+    <TypeScriptGeneratesDeclarations>False</TypeScriptGeneratesDeclarations>
+    <TypeScriptNoEmitOnError>True</TypeScriptNoEmitOnError>
+    <TypeScriptSourceMap>True</TypeScriptSourceMap>
+    <TypeScriptMapRoot />
+    <TypeScriptSourceRoot />
+  </PropertyGroup>
+
+</Project>
