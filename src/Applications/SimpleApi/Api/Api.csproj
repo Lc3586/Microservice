@@ -157,6 +157,8 @@
     <Content Remove="wwwroot\plug-in\naiveupload\Model\HubState.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\MultipleUploadSetting.js" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\MultipleUploadSetting.js.map" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\PersonalFileInfo.js" />
+    <Content Remove="wwwroot\plug-in\naiveupload\Model\PersonalFileInfo.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\PreUploadChunkFileResponse.js" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\PreUploadChunkFileResponse.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\PreUploadChunkFileState.js" />
@@ -563,6 +565,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="wwwroot\plug-in\naiveupload\Model\MultipleUploadSetting.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\PersonalFileInfo.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\plug-in\naiveupload\Model\PersonalFileInfo.js.map">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="wwwroot\plug-in\naiveupload\Model\PreUploadChunkFileResponse.js">

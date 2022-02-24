@@ -52,15 +52,23 @@ namespace Api.Configures
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy(nameof(ApiAuthorizeRequirement), policy =>
+                options.AddPolicy(nameof(ApiPermissionRequirement), policy =>
                 {
                     policy.AuthenticationSchemes.Add(CookieAuthenticationDefaults.AuthenticationScheme);
-                    policy.Requirements.Add(new ApiAuthorizeRequirement());
+                    policy.Requirements.Add(new ApiPermissionRequirement());
+                });
+                options.AddPolicy(nameof(ApiWithoutPermissionRequirement), policy =>
+                {
+                    policy.AuthenticationSchemes.Add(CookieAuthenticationDefaults.AuthenticationScheme);
+                    policy.Requirements.Add(new ApiWithoutPermissionRequirement());
                 });
             })
-            .AddScoped<IAuthorizationHandler, ApiPermissionHandlerr<ApiAuthorizeRequirement>>()
-            .AddScoped<IAuthorizationHandler, ApiPermissionDefaultHttpContextHandlerr<ApiAuthorizeRequirement>>()
-            .AddScoped<IAuthorizationHandler, ApiPermissionAuthorizationFilterContextHandlerr<ApiAuthorizeRequirement>>()
+            .AddScoped<IAuthorizationHandler, ApiWithoutPermissionHandlerr<ApiWithoutPermissionRequirement>>()
+            .AddScoped<IAuthorizationHandler, ApiWithoutPermissionDefaultHttpContextHandlerr<ApiWithoutPermissionRequirement>>()
+            .AddScoped<IAuthorizationHandler, ApiWithoutPermissionAuthorizationFilterContextHandlerr<ApiWithoutPermissionRequirement>>()
+            .AddScoped<IAuthorizationHandler, ApiPermissionHandlerr<ApiPermissionRequirement>>()
+            .AddScoped<IAuthorizationHandler, ApiPermissionDefaultHttpContextHandlerr<ApiPermissionRequirement>>()
+            .AddScoped<IAuthorizationHandler, ApiPermissionAuthorizationFilterContextHandlerr<ApiPermissionRequirement>>()
             .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(options =>
             {

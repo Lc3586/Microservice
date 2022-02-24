@@ -69,6 +69,8 @@ class NaiveUpload {
                     if (this.Settings.Axios == null)
                         this.Settings.Axios = new (<any>window).axios;
                     this.CreateAxiosInstance();
+                    this.Reset();
+                    this.Initialized = true;
                     resolve();
                 });
         });
@@ -85,6 +87,11 @@ class NaiveUpload {
             this.AxiosInstance.defaults.headers.common[key] = this.Settings.Headers[key];
         }
     }
+
+    /**
+     * 已初始化过
+     */
+    Initialized: boolean = false;
 
     /**
      * 设置
@@ -161,6 +168,16 @@ class NaiveUpload {
     }
 
     /**
+     * 重置
+     */
+    Reset(this: NaiveUpload) {
+        this.CheckQueue.length = 0;
+        this.UploadQueue.length = 0;
+        this.RawFileList.length = 0;
+        this.SelectedFileList.length = 0;
+    }
+
+    /**
      * 追加文件
      * @param {any} files 文件
      * @returns {any} 追加文件返回信息状态
@@ -227,6 +244,44 @@ class NaiveUpload {
         }
 
         return AppendFileResultStatus.成功;
+    }
+
+    /**
+     * 追加已经上传过的文件
+     * @param {any} fileIds 个人文件Id集合
+     * @returns {any} 追加文件返回信息状态
+     */
+    async AppendUploadedFiles(this: NaiveUpload, fileIds: string[]) {
+        for (let fileId of fileIds) {
+            let perFileInfo: PersonalFileInfo;
+
+            try {
+                perFileInfo = await this.GetPersonalFileInfo(fileId);
+            } catch (e) {
+                throw e;
+            }
+
+            //console.debug(perFileInfo);
+
+            let file = <File>{ name: `${perFileInfo.Name}${perFileInfo.Extension}` };
+            let selectedFile = new SelectedFile(file);
+            selectedFile.Uploaded = true;
+            selectedFile.Done = true;
+            selectedFile.Canceled = false;
+            selectedFile.RawIndex = -1;
+            selectedFile.Thumbnail = ApiUri.PersonalFilePreview(perFileInfo.Id);
+
+            this.SelectedFileList.push(selectedFile);
+
+            //console.debug(selectedFile);
+
+            try {
+                //异步获取文件的其他信息
+                this.SetFileInfo(selectedFile, perFileInfo.FileId);
+            } catch (e) {
+                console.error(e);
+            }
+        }
     }
 
     /**
@@ -692,6 +747,58 @@ class NaiveUpload {
             return;
 
         selectedFile.Thumbnail = this.GetRawFile(selectedFile).ObjectURL;
+    }
+
+    /**
+     * 获取个人文件信息
+     * @param {string} fileId
+     */
+    private async GetPersonalFileInfo(personalFileId: string): Promise<PersonalFileInfo> {
+        const promise = new Promise<PersonalFileInfo>((resolve, reject) => {
+            this.AxiosInstance.post(ApiUri.PersonalFileInfoDetailData(personalFileId))
+                .then((response: { data: ResponseData_T<PersonalFileInfo> }) => {
+                    if (response.data.Success)
+                        resolve(response.data.Data);
+                    else
+                        reject(new Error(response.data.Message));
+                })
+                .catch((error) => {
+                    console.error(error);
+                    reject(new Error('获取个人文件信息时发生异常.'));
+                });
+        });
+        return promise;
+    }
+
+    /**
+     * 获取文件信息
+     * @param {string} fileId
+     */
+    private async GetFileInfo(fileId: string): Promise<FileInfo> {
+        const promise = new Promise<FileInfo>((resolve, reject) => {
+            this.AxiosInstance.get(ApiUri.GetFileDetail(fileId))
+                .then((response: { data: ResponseData_T<FileInfo> }) => {
+                    if (response.data.Success)
+                        resolve(response.data.Data);
+                    else
+                        reject(new Error(response.data.Message));
+                })
+                .catch((error) => {
+                    console.error(error);
+                    reject(new Error('获取文件信息时发生异常.'));
+                });
+        });
+        return promise;
+    }
+
+    /**
+     * 设置文件信息
+     * @param {any} selectedFile
+     */
+    private async SetFileInfo(selectedFile: SelectedFile, fileId: string) {
+        const fileInfo = await this.GetFileInfo(fileId);
+        selectedFile.FileType = fileInfo.FileType;
+        selectedFile.Size = fileInfo.Size;
     }
 
     /**

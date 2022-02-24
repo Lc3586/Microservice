@@ -20,7 +20,7 @@ namespace Api.Controllers
     [ApiVersion("1.0")]
     [ApiExplorerSettings(GroupName = "微信拓展")]
     [Route("/wechat-oath")]
-    [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
+    [SampleAuthorize(nameof(ApiWithoutPermissionRequirement))]
     [SwaggerTag("微信认证接口")]
     public class WeChatOAuthController : BaseApiController
     {

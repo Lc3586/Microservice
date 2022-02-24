@@ -192,8 +192,8 @@ new
 
         public Detail GetDetail(string id)
         {
-            if (!Operator.IsSuperAdmin && !AuthoritiesBusiness.CurrentAccountHasCFUC(id))
-                throw new MessageException("无权限.");
+            //if (!Operator.IsSuperAdmin && !AuthoritiesBusiness.CurrentAccountHasCFUC(id))
+            //    throw new MessageException("无权限.");
 
             var entity = Repository.GetAndCheckNull(id);
 
@@ -995,8 +995,8 @@ new
 
         public Config GetConfig(string id)
         {
-            if (!Operator.IsSuperAdmin && !AuthoritiesBusiness.CurrentAccountHasCFUC(id))
-                throw new MessageException("无权限.");
+            //if (!Operator.IsSuperAdmin && !AuthoritiesBusiness.CurrentAccountHasCFUC(id))
+            //    throw new MessageException("无权限.");
 
             if (string.Equals(id, "default", StringComparison.OrdinalIgnoreCase))
                 id = Repository.Where(o => o.Level == 1 && o.Enable == true && o.Public == true).OrderByDescending(o => o.Sort).ToOne(o => o.Id);

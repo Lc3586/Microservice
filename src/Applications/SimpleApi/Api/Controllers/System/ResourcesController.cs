@@ -21,7 +21,7 @@ namespace Api.Controllers
     [ApiVersion("1.0")]
     [ApiExplorerSettings(GroupName = "基础模块,权限模块")]
     [Route("/resources")]
-    [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
+    [SampleAuthorize(nameof(ApiPermissionRequirement))]
     [SwaggerTag("资源接口")]
     public class ResourcesController : BaseApiController
     {

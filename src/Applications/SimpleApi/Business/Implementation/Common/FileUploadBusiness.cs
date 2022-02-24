@@ -235,8 +235,8 @@ namespace Business.Implementation.Common
         /// <returns></returns>
         async Task<PersonalFileInfo> SingleFile(string configId, Stream stream, string type, string extension, string filename)
         {
-            if (!Operator.IsSuperAdmin && !AuthoritiesBusiness.CurrentAccountHasCFUC(configId))
-                throw new MessageException("无权限, 禁止上传.");
+            //if (!Operator.IsSuperAdmin && !AuthoritiesBusiness.CurrentAccountHasCFUC(configId))
+            //    throw new MessageException("无权限, 禁止上传.");
 
             if (!CheckType(configId, type, extension))
                 throw new MessageException("文件类型不合法, 禁止上传.");
@@ -353,8 +353,8 @@ namespace Business.Implementation.Common
 
         public PreUploadFileResponse PreUploadFile(string configId, string md5, string filename, bool section = false, string type = null, string extension = null, int? specs = null, int? total = null)
         {
-            if (!Operator.IsSuperAdmin && !AuthoritiesBusiness.CurrentAccountHasCFUC(configId))
-                throw new MessageException("无权限, 禁止上传.");
+            //if (!Operator.IsSuperAdmin && !AuthoritiesBusiness.CurrentAccountHasCFUC(configId))
+            //    throw new MessageException("无权限, 禁止上传.");
 
             if (!CheckType(configId, type, extension))
                 throw new MessageException("文件类型不合法, 禁止上传.");
@@ -611,8 +611,8 @@ namespace Business.Implementation.Common
 
                 if (configId != null)
                 {
-                    if (!Operator.IsSuperAdmin && !AuthoritiesBusiness.CurrentAccountHasCFUC(configId))
-                        throw new MessageException("无权限, 禁止上传.");
+                    //if (!Operator.IsSuperAdmin && !AuthoritiesBusiness.CurrentAccountHasCFUC(configId))
+                    //    throw new MessageException("无权限, 禁止上传.");
 
                     if (!CheckType(configId, contentType, extension))
                         throw new MessageException("文件类型不合法, 禁止上传.");

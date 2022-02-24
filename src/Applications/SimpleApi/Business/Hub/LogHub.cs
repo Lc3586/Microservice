@@ -9,7 +9,7 @@ namespace Business.Hub
     /// <summary>
     /// 日志中心
     /// </summary>
-    [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
+    [SampleAuthorize(nameof(ApiPermissionRequirement))]
     public class LogHub : SignalrHub
     {
         public LogHub()

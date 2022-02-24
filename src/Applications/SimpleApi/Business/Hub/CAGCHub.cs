@@ -11,7 +11,7 @@ namespace Business.Hub
     /// <summary>
     /// 代码自动生成信息推送
     /// </summary>
-    [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
+    [SampleAuthorize(nameof(ApiPermissionRequirement))]
     public class CAGCHub : SignalrHub
     {
         public CAGCHub()

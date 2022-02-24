@@ -22,7 +22,7 @@ namespace Api.Controllers
     [ApiVersion("1.0")]
     [ApiExplorerSettings(GroupName = "基础模块,权限模块")]
     [Route("/menu")]
-    [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
+    [SampleAuthorize(nameof(ApiPermissionRequirement))]
     [SwaggerTag("菜单接口")]
     public class MenuController : BaseApiController
     {

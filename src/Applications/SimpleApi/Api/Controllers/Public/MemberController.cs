@@ -30,7 +30,7 @@ namespace Api.Controllers
     [ApiExplorerSettings(GroupName = "基础模块,身份验证模块,微信拓展")]
     [Route("/member")]
     [SwaggerTag("会员接口")]
-    [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
+    [SampleAuthorize(nameof(ApiPermissionRequirement))]
     public class MemberController : BaseApiController
     {
         #region DI

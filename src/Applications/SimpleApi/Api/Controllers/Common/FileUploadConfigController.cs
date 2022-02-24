@@ -37,7 +37,7 @@ namespace Api.Controllers.Common
     [ApiVersion("1.0")]
     [ApiExplorerSettings(GroupName = "文件管理")]
     [Route("/file-upload-config")]
-    [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
+    [SampleAuthorize(nameof(ApiWithoutPermissionRequirement))]
     [SwaggerTag("文件上传配置接口")]
     public class FileUploadConfigController : BaseApiController
     {
@@ -90,6 +90,7 @@ namespace Api.Controllers.Common
         /// </summary>
         /// <param name="data">表单数据</param>
         /// <returns></returns>
+        [SampleAuthorize(nameof(ApiPermissionRequirement))]
         [HttpPost("create")]
         public async Task<object> Create([FromBody] Create data)
         {
@@ -102,6 +103,7 @@ namespace Api.Controllers.Common
         /// </summary>
         /// <param name="id">主键</param>
         /// <returns></returns>
+        [SampleAuthorize(nameof(ApiPermissionRequirement))]
         [HttpPost("edit-data/{id}")]
         [SwaggerResponse((int)HttpStatusCode.OK, "编辑数据", typeof(Edit))]
         public async Task<object> GetEdit(string id)
@@ -114,6 +116,7 @@ namespace Api.Controllers.Common
         /// </summary>
         /// <param name="data">表单数据</param>
         /// <returns></returns>
+        [SampleAuthorize(nameof(ApiPermissionRequirement))]
         [HttpPost("edit")]
         public async Task<object> Edit([FromBody] Edit data)
         {
@@ -126,6 +129,7 @@ namespace Api.Controllers.Common
         /// </summary>
         /// <param name="keys">[主键]</param>
         /// <returns></returns>
+        [SampleAuthorize(nameof(ApiPermissionRequirement))]
         [HttpPost("delete")]
         [NoJsonParamter]
         public async Task<object> Delete(IEnumerable<string> keys)
@@ -143,6 +147,7 @@ namespace Api.Controllers.Common
         /// </summary>
         /// <param name="data">数据</param>
         /// <returns></returns>
+        [SampleAuthorize(nameof(ApiPermissionRequirement))]
         [HttpPost("sort")]
         public async Task<object> Sort([FromBody] Sort data)
         {
@@ -155,6 +160,7 @@ namespace Api.Controllers.Common
         /// </summary>
         /// <param name="data">数据</param>
         /// <returns></returns>
+        [SampleAuthorize(nameof(ApiPermissionRequirement))]
         [HttpPost("dragsort")]
         public async Task<object> DragSort([FromBody] TreeDragSort data)
         {
@@ -176,6 +182,7 @@ namespace Api.Controllers.Common
         /// <para>false: 使用预制模板</para>
         /// </param>
         /// <returns></returns>
+        [SampleAuthorize(nameof(ApiPermissionRequirement))]
         [HttpGet("downloadtemplate")]
         public async Task DownloadTemplate(string version = ExcelVersion.xlsx, bool autogenerateTemplate = true)
         {
@@ -192,6 +199,7 @@ namespace Api.Controllers.Common
         /// <para>false: 预制模板</para>
         /// </param>
         /// <returns></returns>
+        [SampleAuthorize(nameof(ApiPermissionRequirement))]
         [HttpPost("import")]
         [SwaggerResponse((int)HttpStatusCode.OK, "导入结果", typeof(ImportResult))]
         [Consumes("multipart/form-data")]
@@ -210,6 +218,7 @@ namespace Api.Controllers.Common
         /// </param>
         /// <param name="paginationJson">分页参数Json字符串</param>
         /// <returns></returns>
+        [SampleAuthorize(nameof(ApiPermissionRequirement))]
         [HttpGet("export")]
         public void Export(string version = ExcelVersion.xlsx, string paginationJson = null)
         {

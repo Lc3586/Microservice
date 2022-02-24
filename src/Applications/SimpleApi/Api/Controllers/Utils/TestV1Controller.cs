@@ -18,7 +18,7 @@ namespace Api.Controllers.Utils
     [ApiVersion("1.0")]
     [ApiExplorerSettings(GroupName = "测试")]
     [Route("/test")]
-    [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
+    [SampleAuthorize(nameof(ApiPermissionRequirement))]
     [SwaggerTag("测试接口")]
     public class TestV1Controller : BaseApiController
     {

@@ -22,13 +22,27 @@ var ApiUri = (function () {
         return "".concat(this.BaseUrl, "/file-upload/single-file-arraybuffer/").concat(configId, "?type=").concat(type, "&extension=").concat(extension, "&filename=").concat(filename);
     };
     ApiUri.Preview = function (id, width, height, time) {
-        return "".concat(this.BaseUrl, "/file/preview/").concat(id, "?width=").concat(width !== null && width !== void 0 ? width : '', "&height=").concat(height !== null && height !== void 0 ? height : '', "&time=").concat(time !== null && time !== void 0 ? time : '');
+        return "".concat(this.BaseUrl, "/file/preview/").concat(id, "?").concat([['width', width === null || width === void 0 ? void 0 : width.toString()], ['height', height === null || height === void 0 ? void 0 : height.toString()], ['item', time]].map(function (item) { if (item[1] && item[1].length > 0)
+            return "".concat(item[0], "=").concat(item[1]); }).join('&'));
     };
     ApiUri.Browse = function (id) {
         return "".concat(this.BaseUrl, "/file/browse/").concat(id);
     };
     ApiUri.Download = function (id) {
         return "".concat(this.BaseUrl, "/file/download/").concat(id);
+    };
+    ApiUri.PersonalFilePreview = function (id, width, height, time) {
+        return "".concat(this.BaseUrl, "/personal-file-info/preview/").concat(id, "?").concat([['width', width === null || width === void 0 ? void 0 : width.toString()], ['height', height === null || height === void 0 ? void 0 : height.toString()], ['item', time]].map(function (item) { if (item[1] && item[1].length > 0)
+            return "".concat(item[0], "=").concat(item[1]); }).join('&'));
+    };
+    ApiUri.PersonalFileBrowse = function (id) {
+        return "".concat(this.BaseUrl, "/personal-file-info/browse/").concat(id);
+    };
+    ApiUri.PersonalFileDownload = function (id) {
+        return "".concat(this.BaseUrl, "/personal-file-info/download/").concat(id);
+    };
+    ApiUri.PersonalFileDelete = function (id) {
+        return "".concat(this.BaseUrl, "/personal-file-info/delete/").concat(id);
     };
     var _a;
     _a = ApiUri;
@@ -38,6 +52,7 @@ var ApiUri = (function () {
     ApiUri.GetToken = _a.BaseUrl + '/jwt/get-token';
     ApiUri.RefreshToken = _a.BaseUrl + '/jwt/refresh-token';
     ApiUri.PersonalFileInfoRename = function (id, filename) { return "".concat(_a.BaseUrl, "/personal-file-info/rename/").concat(id, "?filename=").concat(filename); };
+    ApiUri.PersonalFileInfoDetailData = function (id) { return "".concat(_a.BaseUrl, "/personal-file-info/detail-data/").concat(id); };
     ApiUri.PersonalFileInfoEditData = function (id) { return "".concat(_a.BaseUrl, "/personal-file-info/edit-data/").concat(id); };
     ApiUri.PersonalFileInfoEdit = _a.BaseUrl + '/personal-file-info/edit';
     ApiUri.FileTypeByExtension = function (extension) { return "".concat(_a.BaseUrl, "/file/type-by-extension/").concat(extension); };
@@ -64,7 +79,8 @@ var ApiUri = (function () {
     };
     ApiUri.PreUploadFile = function (configId, md5, filename, section, type, extension, specs, total) {
         if (section === void 0) { section = false; }
-        return "".concat(_a.BaseUrl, "/file-upload/pre-file/").concat(configId, "/").concat(md5, "?filename=").concat(filename, "&section=").concat(section, "&type=").concat(type || '', "&extension=").concat(extension || '', "&specs=").concat(specs || '', "&total=").concat(total || '');
+        return "".concat(_a.BaseUrl, "/file-upload/pre-file/").concat(configId, "/").concat(md5, "?filename=").concat(filename, "&section=").concat(section, "&").concat([['type', type === null || type === void 0 ? void 0 : type.toString()], ['extension', extension === null || extension === void 0 ? void 0 : extension.toString()], ['specs', specs === null || specs === void 0 ? void 0 : specs.toString()]].map(function (item) { if (item[1] && item[1].length > 0)
+            return "".concat(item[0], "=").concat(item[1]); }).join('&'));
     };
     ApiUri.Delete = _a.BaseUrl + '/file/delete';
     ApiUri.CFMTHub = _a.BaseUrl + '/cfmthub';

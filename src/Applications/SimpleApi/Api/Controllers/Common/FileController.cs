@@ -24,7 +24,7 @@ namespace Api.Controllers
     [ApiVersion("1.0")]
     [ApiExplorerSettings(GroupName = "文件管理")]
     [Route("/file")]
-    [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
+    [SampleAuthorize(nameof(ApiWithoutPermissionRequirement))]
     [SwaggerTag("文件信息接口")]
     public class FileController : BaseController
     {
@@ -44,6 +44,7 @@ namespace Api.Controllers
         /// </summary>
         /// <param name="pagination">分页设置</param>
         /// <returns></returns>
+        [SampleAuthorize(nameof(ApiPermissionRequirement))]
         [HttpPost("list")]
         [Consumes("application/json", "application/x-www-form-urlencoded")]
         [Produces("application/json")]
@@ -100,12 +101,12 @@ namespace Api.Controllers
         /// </summary>
         /// <remarks>用于查看文件缩略图或视频截图</remarks>
         /// <param name="id">文件Id</param>
-        /// <param name="width">指定宽度（默认值: 500）</param>
-        /// <param name="height">指定高度（默认值: 500）</param>
+        /// <param name="width">指定宽度（默认值: 100）</param>
+        /// <param name="height">指定高度（默认值: 100）</param>
         /// <param name="time">视频的时间轴位置（默认值: 00:00:00.001）</param>
         /// <returns></returns>
         [HttpGet("preview/{id}")]
-        public async Task Preview(string id, int? width = null, int? height = null, TimeSpan? time = null)
+        public async Task Preview(string id, int? width = 100, int? height = 100, TimeSpan? time = null)
         {
             await FileBusiness.Preview(id, width, height, time);
         }
@@ -137,6 +138,7 @@ namespace Api.Controllers
         /// </summary>
         /// <param name="ids">Id集合</param>
         /// <returns></returns>
+        [SampleAuthorize(nameof(ApiPermissionRequirement))]
         [HttpPost("delete")]
         [Consumes("application/json", "application/x-www-form-urlencoded")]
         [Produces("application/json")]
@@ -222,6 +224,7 @@ namespace Api.Controllers
         /// 获取文件库信息
         /// </summary>
         /// <returns></returns>
+        [SampleAuthorize(nameof(ApiPermissionRequirement))]
         [HttpGet("library-info")]
         [SwaggerResponse((int)HttpStatusCode.OK, "文件库信息", typeof(LibraryInfo))]
         [AllowAnonymous]

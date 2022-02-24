@@ -21,7 +21,7 @@ namespace Api.Controllers
     [ApiVersion("1.0")]
     [ApiExplorerSettings(GroupName = "权限模块")]
     [Route("/authorities")]
-    [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
+    [SampleAuthorize(nameof(ApiPermissionRequirement))]
     public class AuthoritiesController : BaseApiController
     {
         #region DI

@@ -18,7 +18,7 @@ namespace Api.Controllers
     [ApiVersion("1.0")]
     [ApiExplorerSettings(GroupName = "日志模块")]
     [Route("/operationrecord")]
-    [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
+    [SampleAuthorize(nameof(ApiPermissionRequirement))]
     [SwaggerTag("操作记录接口")]
     public class OperationRecordController : BaseApiController
     {

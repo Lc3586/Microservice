@@ -17,7 +17,7 @@ namespace Api.Controllers.Utils
     [ApiVersion("1.0")]
     [ApiExplorerSettings(GroupName = "框架拓展")]
     [Route("/cagc")]
-    [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
+    [SampleAuthorize(nameof(ApiPermissionRequirement))]
     [SwaggerTag("自动生成代码接口")]
     public class CAGCController : BaseApiController
     {

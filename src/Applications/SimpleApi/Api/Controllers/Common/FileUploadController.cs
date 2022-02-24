@@ -20,7 +20,7 @@ namespace Api.Controllers
     [ApiVersion("1.0")]
     [ApiExplorerSettings(GroupName = "文件管理")]
     [Route("/file-upload")]
-    [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
+    [SampleAuthorize(nameof(ApiWithoutPermissionRequirement))]
     [SwaggerTag("文件上传接口")]
     public class FileUploadController : BaseController
     {

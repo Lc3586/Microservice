@@ -20,7 +20,7 @@ namespace Api.Controllers
     [ApiExplorerSettings(GroupName = "框架拓展")]
     [SwaggerTag("快捷输入接口")]
     [Route("/quickinput")]
-    [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
+    [SampleAuthorize(nameof(ApiWithoutPermissionRequirement))]
     public class QuickInputController : BaseApiController
     {
         #region DI

@@ -117,23 +117,26 @@
                                     <div class="upload-btn"
                                          v-on:click="ChosingFile"
                                          :title="multipleUpload.settings.Tip">
-                                        <input type="file"
-                                               ref="fileInput"
-                                               :accept="multipleUpload.settings.Config.AllowedTypeList.join(', ')"
-                                               v-on:change="ChoseFile">
+                                        <div @click.stop="()=>{}">
+                                            <input type="file"
+                                                   ref="fileInput"
+                                                   :accept="multipleUpload.settings.Config.AllowedTypeList.join(', ')"
+                                                   v-on:change="ChoseFile">
+                                        </div>
                                         <div class="upload-drag-container">
                                             <p class="upload-icon icon-plus"></p>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div v-for="(file, index) in multipleUpload.files.filter(data => !data.Canceled)"
+                                <div v-for="(file, index) in multipleUpload.files"
                                      :class="GetContainerClass(multipleUpload.files[index])"
                                      :title="GetContainerTitle(multipleUpload.files[index])"
                                      v-on:mouseenter="multipleUpload.files[index].Hover=true"
                                      v-on:mouseleave="multipleUpload.files[index].Hover=false"
                                      :ref="'file_container_' + index">
-                                    <div class="item-body">
+                                    <div v-if="!file.Canceled"
+                                         class="item-body">
                                         <div class="item-image">
                                             <img :src="multipleUpload.files[index].Thumbnail"
                                                  onerror="javascript: this.src = '/filestate/图裂.jpg';"
@@ -220,11 +223,13 @@
                                      :title="GetSelectTitle()">
                                     <div class="upload-btn"
                                          v-on:click="ChosingFile">
-                                        <input type="file"
-                                               ref="fileInput"
-                                               :accept="multipleUpload.settings.Config.AllowedTypeList.join(', ')"
-                                               multiple="multiple"
-                                               v-on:change="ChoseFile">
+                                        <div @click.stop="()=>{}">
+                                            <input type="file"
+                                                   ref="fileInput"
+                                                   :accept="multipleUpload.settings.Config.AllowedTypeList.join(', ')"
+                                                   multiple="multiple"
+                                                   v-on:change="ChoseFile">
+                                        </div>
                                         <div class="upload-drag-container">
                                             <p class="upload-icon icon-inbox"></p>
                                             <p class="upload-text" v-html="multipleUpload.settings.Config.Explain"></p>
@@ -238,13 +243,14 @@
                                      v-on:mouseenter="multipleUpload.scrollLock=false"
                                      v-on:mouseleave="multipleUpload.scrollLock=true">
                                     <div :class="GetListCLass()">
-                                        <div v-for="(file, index) in multipleUpload.files.filter(data => !data.Canceled)"
+                                        <div v-for="(file, index) in multipleUpload.files"
                                              :class="GetContainerClass(file)"
                                              :title="GetContainerTitle(file)"
                                              v-on:mouseenter="file.Hover=true"
                                              v-on:mouseleave="file.Hover=false"
                                              :ref="'file_container_' + index">
-                                            <div class="item-body">
+                                            <div v-if="!file.Canceled"
+                                                 class="item-body">
                                                 <div class="item-image">
                                                     <img :src="file.Thumbnail"
                                                          onerror="javascript: this.src = '/filestate/图裂.jpg';"

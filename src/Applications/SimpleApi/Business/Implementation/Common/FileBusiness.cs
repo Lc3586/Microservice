@@ -240,8 +240,8 @@ namespace Business.Implementation.Common
             }
             //throw new MessageException("文件已被删除.", file.Path);
 
-            width ??= 500;
-            height ??= 500;
+            width ??= 100;
+            height ??= 100;
 
             if (file.FileType == FileType.图片)
             {

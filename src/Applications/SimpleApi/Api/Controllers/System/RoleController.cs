@@ -22,7 +22,7 @@ namespace Api.Controllers
     [ApiVersion("1.0")]
     [ApiExplorerSettings(GroupName = "基础模块,权限模块")]
     [Route("/role")]
-    [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
+    [SampleAuthorize(nameof(ApiPermissionRequirement))]
     [SwaggerTag("角色接口")]
     public class RoleController : BaseApiController
     {

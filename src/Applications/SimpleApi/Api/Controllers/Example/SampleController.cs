@@ -24,7 +24,7 @@ namespace Api.Controllers
     [ApiVersion("1.0")]
     [ApiExplorerSettings(GroupName = "示例")]
     [Route("/sample")]//路由模板
-    [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
+    [SampleAuthorize(nameof(ApiPermissionRequirement))]
     [SwaggerTag("示例接口，包含列表、增、删、改、查等接口")]//swagger标签
     public class SampleController : BaseApiController//继承接口基本控制器
     {

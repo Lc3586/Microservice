@@ -19,7 +19,7 @@ namespace Api.Controllers
     [ApiExplorerSettings(GroupName = "日志模块,身份验证模块")]
     [SwaggerTag("登录日志接口")]
     [Route("/entrylog")]
-    [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
+    [SampleAuthorize(nameof(ApiPermissionRequirement))]
     public class EntryLogController : BaseApiController
     {
         #region DI

@@ -159,7 +159,7 @@ namespace Api.Controllers.Utils
         /// <param name="logoutCAS">单点注销（当前登录的所有应用都会注销）</param>
         /// <returns></returns>
         [HttpGet("logout")]
-        [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
+        [SampleAuthorize(nameof(ApiPermissionRequirement))]
         public async Task LogOut(string returnUrl, bool logoutCAS = false)
         {
             if (string.IsNullOrEmpty(returnUrl))
@@ -178,7 +178,7 @@ namespace Api.Controllers.Utils
         /// </summary>
         /// <returns></returns>
         [HttpPost("logout")]
-        [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
+        [SampleAuthorize(nameof(ApiPermissionRequirement))]
         public async Task LogOut()
         {
             await Context.SignOutAsync();

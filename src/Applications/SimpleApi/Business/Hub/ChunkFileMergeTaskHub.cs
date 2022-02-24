@@ -12,7 +12,7 @@ namespace Business.Hub
     /// <summary>
     /// 分片文件合并任务中心
     /// </summary>
-    [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
+    [SampleAuthorize(nameof(ApiPermissionRequirement))]
     public class ChunkFileMergeTaskHub : SignalrHub
     {
         public ChunkFileMergeTaskHub()

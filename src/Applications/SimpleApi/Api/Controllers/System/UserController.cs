@@ -23,7 +23,7 @@ namespace Api.Controllers
     [ApiExplorerSettings(GroupName = "基础模块")]
     [SwaggerTag("系统用户接口")]
     [Route("/user")]
-    [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
+    [SampleAuthorize(nameof(ApiPermissionRequirement))]
     public class UserController : BaseApiController
     {
         #region DI

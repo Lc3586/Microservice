@@ -35,6 +35,12 @@ class ApiUri {
     static PersonalFileInfoRename: (id: string, filename: string) => string = (id: string, filename: string) => `${this.BaseUrl}/personal-file-info/rename/${id}?filename=${filename}`;
 
     /**
+     * 获取个人文件信息详情数据
+     * @param id Id
+     * */
+    static PersonalFileInfoDetailData: (id: string) => string = (id: string) => `${this.BaseUrl}/personal-file-info/detail-data/${id}`;
+
+    /**
      * 获取个人文件信息编辑数据
      * @param id Id
      * */
@@ -144,7 +150,7 @@ class ApiUri {
      * @param specs 分片文件规格（单文件上传时忽略此参数）
      * @param total 分片文件总数（单文件上传时忽略此参数）
      * */
-    static PreUploadFile: (configId: string, md5: string, filename: string, section?: boolean, type?: string, extension?: string, specs?: number, total?: number) => string = (configId: string, md5: string, filename: string, section: boolean = false, type: string, extension: string, specs: number, total: number) => `${this.BaseUrl}/file-upload/pre-file/${configId}/${md5}?filename=${filename}&section=${section}&type=${type || ''}&extension=${extension || ''}&specs=${specs || ''}&total=${total || ''}`;
+    static PreUploadFile: (configId: string, md5: string, filename: string, section?: boolean, type?: string, extension?: string, specs?: number, total?: number) => string = (configId: string, md5: string, filename: string, section: boolean = false, type: string, extension: string, specs: number, total: number) => `${this.BaseUrl}/file-upload/pre-file/${configId}/${md5}?filename=${filename}&section=${section}&${[['type', type?.toString()], ['extension', extension?.toString()], ['specs', specs?.toString()]].map(item => { if (item[1] && item[1].length > 0) return `${item[0]}=${item[1]}`; }).join('&')}`;
 
     /**
      * 预备上传分片文件
@@ -212,12 +218,12 @@ class ApiUri {
     /**
      * 预览文件
      * @param id 文件Id
-     * @param width 指定宽度 （默认值500）
-     * @param height 指定高度 （默认值500）
+     * @param width 指定宽度 （默认值100）
+     * @param height 指定高度 （默认值100）
      * @param time 视频的时间轴位置（默认值: 00:00:00.001）
      * */
     static Preview(id: string, width?: number, height?: number, time?: string) {
-        return `${this.BaseUrl}/file/preview/${id}?width=${width ?? ''}&height=${height ?? ''}&time=${time ?? ''}`;
+        return `${this.BaseUrl}/file/preview/${id}?${[['width', width?.toString()], ['height', height?.toString()], ['item', time]].map(item => { if (item[1] && item[1].length > 0) return `${item[0]}=${item[1]}`; }).join('&')}`;
     }
 
     /**
@@ -240,6 +246,41 @@ class ApiUri {
      * 删除文件
      * */
     static Delete: string = this.BaseUrl + '/file/delete';
+
+    /**
+     * 预览个人文件
+     * @param id 个人文件Id
+     * @param width 指定宽度 （默认值100）
+     * @param height 指定高度 （默认值100）
+     * @param time 视频的时间轴位置（默认值: 00:00:00.001）
+     * */
+    static PersonalFilePreview(id: string, width?: number, height?: number, time?: string) {
+        return `${this.BaseUrl}/personal-file-info/preview/${id}?${[['width', width?.toString()], ['height', height?.toString()], ['item', time]].map(item => { if (item[1] && item[1].length > 0) return `${item[0]}=${item[1]}`; }).join('&')}`;
+    }
+
+    /**
+     * 浏览个人文件
+     * @param id 个人文件Id
+     * */
+    static PersonalFileBrowse(id: string) {
+        return `${this.BaseUrl}/personal-file-info/browse/${id}`;
+    }
+
+    /**
+     * 下载个人文件
+     * @param id 个人文件Id
+     * */
+    static PersonalFileDownload(id: string) {
+        return `${this.BaseUrl}/personal-file-info/download/${id}`;
+    }
+
+    /**
+     * 删除个人文件
+     * @param id 个人文件Id
+     * */
+    static PersonalFileDelete(id: string) {
+        return `${this.BaseUrl}/personal-file-info/delete/${id}`;
+    }
 
     /**
      * 分片文件合并任务中心

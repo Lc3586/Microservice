@@ -22,7 +22,7 @@ namespace Api.Controllers
     [ApiVersion("1.0")]
     [ApiExplorerSettings(GroupName = "文件管理")]
     [Route("/personal-file-info")]
-    [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
+    [SampleAuthorize(nameof(ApiWithoutPermissionRequirement))]
     [SwaggerTag("个人文件信息接口")]
     public class PersonalFileInfoController : BaseController
     {
@@ -161,7 +161,7 @@ namespace Api.Controllers
         /// <param name="time">视频的时间轴位置（默认值: 00:00:00.001）</param>
         /// <returns></returns>
         [HttpGet("preview/{id}")]
-        public async Task Preview(string id, int width = 500, int height = 500, TimeSpan? time = null)
+        public async Task Preview(string id, int width = 100, int height = 100, TimeSpan? time = null)
         {
             await PersonalFileInfoBusiness.Preview(id, width, height, time);
         }

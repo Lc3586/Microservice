@@ -19,7 +19,7 @@ namespace Api.Controllers.Utils
     [ApiVersion("1.0")]
     [ApiExplorerSettings(GroupName = "日志模块")]
     [Route("/log")]
-    [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
+    [SampleAuthorize(nameof(ApiPermissionRequirement))]
     [SwaggerTag("日志接口")]
     public class LogController : BaseApiController
     {

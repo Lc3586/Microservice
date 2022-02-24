@@ -36,6 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 var NaiveUpload = (function () {
     function NaiveUpload() {
+        this.Initialized = false;
         this.RawFileList = [];
         this.SelectedFileList = [];
         this.CheckQueue = [];
@@ -109,6 +110,8 @@ var NaiveUpload = (function () {
                             if (_this.Settings.Axios == null)
                                 _this.Settings.Axios = new window.axios;
                             _this.CreateAxiosInstance();
+                            _this.Reset();
+                            _this.Initialized = true;
                             resolve();
                         });
                         return [2];
@@ -136,6 +139,12 @@ var NaiveUpload = (function () {
             var file = _a[_i];
             file.Canceled = true;
         }
+    };
+    NaiveUpload.prototype.Reset = function () {
+        this.CheckQueue.length = 0;
+        this.UploadQueue.length = 0;
+        this.RawFileList.length = 0;
+        this.SelectedFileList.length = 0;
     };
     NaiveUpload.prototype.AppendFiles = function (files) {
         var _this = this;
@@ -198,6 +207,52 @@ var NaiveUpload = (function () {
                 return state_1.value;
         }
         return "OK";
+    };
+    NaiveUpload.prototype.AppendUploadedFiles = function (fileIds) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _i, fileIds_1, fileId, perFileInfo, e_1, file, selectedFile;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _i = 0, fileIds_1 = fileIds;
+                        _a.label = 1;
+                    case 1:
+                        if (!(_i < fileIds_1.length)) return [3, 7];
+                        fileId = fileIds_1[_i];
+                        perFileInfo = void 0;
+                        _a.label = 2;
+                    case 2:
+                        _a.trys.push([2, 4, , 5]);
+                        return [4, this.GetPersonalFileInfo(fileId)];
+                    case 3:
+                        perFileInfo = _a.sent();
+                        return [3, 5];
+                    case 4:
+                        e_1 = _a.sent();
+                        throw e_1;
+                    case 5:
+                        file = { name: "".concat(perFileInfo.Name).concat(perFileInfo.Extension) };
+                        selectedFile = new SelectedFile(file);
+                        selectedFile.Uploaded = true;
+                        selectedFile.Done = true;
+                        selectedFile.Canceled = false;
+                        selectedFile.RawIndex = -1;
+                        selectedFile.Thumbnail = ApiUri.PersonalFilePreview(perFileInfo.Id);
+                        this.SelectedFileList.push(selectedFile);
+                        try {
+                            this.SetFileInfo(selectedFile, perFileInfo.FileId);
+                        }
+                        catch (e) {
+                            console.error(e);
+                        }
+                        _a.label = 6;
+                    case 6:
+                        _i++;
+                        return [3, 1];
+                    case 7: return [2];
+                }
+            });
+        });
     };
     NaiveUpload.prototype.HandleFile = function (selectedFileIndex) {
         var _this = this;
@@ -272,7 +327,7 @@ var NaiveUpload = (function () {
                         calc = function (end, blob, unitIndex) {
                             if (unitIndex === void 0) { unitIndex = 0; }
                             return __awaiter(_this, void 0, void 0, function () {
-                                var e_1;
+                                var e_2;
                                 return __generator(this, function (_a) {
                                     switch (_a.label) {
                                         case 0:
@@ -290,9 +345,9 @@ var NaiveUpload = (function () {
                                             return [2, null];
                                         case 7: return [3, 9];
                                         case 8:
-                                            e_1 = _a.sent();
-                                            this.CheckError(selectedFileIndex, '文件校验失败，请删除后重新上传.', true, e_1);
-                                            throw e_1;
+                                            e_2 = _a.sent();
+                                            this.CheckError(selectedFileIndex, '文件校验失败，请删除后重新上传.', true, e_2);
+                                            throw e_2;
                                         case 9: return [2];
                                     }
                                 });
@@ -301,7 +356,7 @@ var NaiveUpload = (function () {
                         handlerData = function (blob, end, unitIndex) {
                             if (unitIndex === void 0) { unitIndex = 0; }
                             return __awaiter(_this, void 0, void 0, function () {
-                                var percent, result, e_2;
+                                var percent, result, e_3;
                                 return __generator(this, function (_a) {
                                     switch (_a.label) {
                                         case 0:
@@ -315,8 +370,8 @@ var NaiveUpload = (function () {
                                             result = (_a.sent()) || true;
                                             return [3, 4];
                                         case 3:
-                                            e_2 = _a.sent();
-                                            this.CheckError(selectedFileIndex, '文件校验失败，请删除后重新上传.', true, e_2);
+                                            e_3 = _a.sent();
+                                            this.CheckError(selectedFileIndex, '文件校验失败，请删除后重新上传.', true, e_3);
                                             return [2, false];
                                         case 4:
                                             switch (unitIndex) {
@@ -399,7 +454,7 @@ var NaiveUpload = (function () {
     };
     NaiveUpload.prototype.Upload = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var next, selectedFileIndex, selectedFile, rawFile, uploadHelper, close, cancel, e_3;
+            var next, selectedFileIndex, selectedFile, rawFile, uploadHelper, close, cancel, e_4;
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -460,9 +515,9 @@ var NaiveUpload = (function () {
                         selectedFile.Done = true;
                         return [3, 5];
                     case 4:
-                        e_3 = _a.sent();
-                        console.error('error', e_3.message);
-                        this.UploadError(selectedFileIndex, "\u6587\u4EF6\u4E0A\u4F20\u5931\u8D25\uFF0C".concat(e_3.message, "."), true, e_3);
+                        e_4 = _a.sent();
+                        console.error('error', e_4.message);
+                        this.UploadError(selectedFileIndex, "\u6587\u4EF6\u4E0A\u4F20\u5931\u8D25\uFF0C".concat(e_4.message, "."), true, e_4);
                         return [3, 5];
                     case 5:
                         close();
@@ -574,6 +629,65 @@ var NaiveUpload = (function () {
         if (selectedFile.FileType !== "\u56FE\u7247")
             return;
         selectedFile.Thumbnail = this.GetRawFile(selectedFile).ObjectURL;
+    };
+    NaiveUpload.prototype.GetPersonalFileInfo = function (personalFileId) {
+        return __awaiter(this, void 0, void 0, function () {
+            var promise;
+            var _this = this;
+            return __generator(this, function (_a) {
+                promise = new Promise(function (resolve, reject) {
+                    _this.AxiosInstance.post(ApiUri.PersonalFileInfoDetailData(personalFileId))
+                        .then(function (response) {
+                        if (response.data.Success)
+                            resolve(response.data.Data);
+                        else
+                            reject(new Error(response.data.Message));
+                    })
+                        .catch(function (error) {
+                        console.error(error);
+                        reject(new Error('获取个人文件信息时发生异常.'));
+                    });
+                });
+                return [2, promise];
+            });
+        });
+    };
+    NaiveUpload.prototype.GetFileInfo = function (fileId) {
+        return __awaiter(this, void 0, void 0, function () {
+            var promise;
+            var _this = this;
+            return __generator(this, function (_a) {
+                promise = new Promise(function (resolve, reject) {
+                    _this.AxiosInstance.get(ApiUri.GetFileDetail(fileId))
+                        .then(function (response) {
+                        if (response.data.Success)
+                            resolve(response.data.Data);
+                        else
+                            reject(new Error(response.data.Message));
+                    })
+                        .catch(function (error) {
+                        console.error(error);
+                        reject(new Error('获取文件信息时发生异常.'));
+                    });
+                });
+                return [2, promise];
+            });
+        });
+    };
+    NaiveUpload.prototype.SetFileInfo = function (selectedFile, fileId) {
+        return __awaiter(this, void 0, void 0, function () {
+            var fileInfo;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, this.GetFileInfo(fileId)];
+                    case 1:
+                        fileInfo = _a.sent();
+                        selectedFile.FileType = fileInfo.FileType;
+                        selectedFile.Size = fileInfo.Size;
+                        return [2];
+                }
+            });
+        });
     };
     NaiveUpload.prototype.GetFileSize = function (selectedFile) {
         this.AxiosInstance.get(ApiUri.FileSize(this.GetRawFile(selectedFile).Size))

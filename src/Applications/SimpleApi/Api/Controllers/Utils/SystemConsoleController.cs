@@ -22,7 +22,7 @@ namespace Api.Controllers
     [ApiVersion("1.0")]
     [ApiExplorerSettings(GroupName = "框架拓展")]
     [Route("/system-console")]
-    [SampleAuthorize(nameof(ApiAuthorizeRequirement))]
+    [SampleAuthorize(nameof(ApiPermissionRequirement))]
     [SwaggerTag("系统中控台")]
     public class SystemConsoleController : BaseApiController
     {
