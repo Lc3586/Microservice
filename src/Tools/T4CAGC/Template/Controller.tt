@@ -23,10 +23,10 @@ namespace Api.Controllers.<#=Options.Table.ModuleName#>
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="<#=Options.Table.ReducedName.ToLower()#>Business"></param>
-        public <#=Options.Table.ReducedName#>Controller(I<#=Options.Table.ReducedName#>Business <#=Options.Table.ReducedName.ToLower()#>Business)
+        /// <param name="_<#=Options.Table.ReducedName#>Business"></param>
+        public <#=Options.Table.ReducedName#>Controller(I<#=Options.Table.ReducedName#>Business _<#=Options.Table.ReducedName#>Business)
         {
-            <#=Options.Table.ReducedName#>Business = <#=Options.Table.ReducedName.ToLower()#>Business;
+            <#=Options.Table.ReducedName#>Business = _<#=Options.Table.ReducedName#>Business;
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace Api.Controllers.<#=Options.Table.ModuleName#>
         /// </summary>
         /// <returns></returns>
         [HttpPost("all-<#=field.Name.ToLower()#>")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "<#=field.Remark#>", typeof(List<string>))]
+        [SwaggerResponse((int)HttpStatusCode.OK, "<#=field.Remark#> {名称: 值}", typeof(Dictionary<string, string>))]
         public async Task<object> GetAll<#=field.Name#>()
         {
             return await Task.FromResult(Success(<#=Options.Table.ReducedName#>Business.GetAll<#=field.Name#>()));
@@ -67,7 +67,7 @@ namespace Api.Controllers.<#=Options.Table.ModuleName#>
         /// </summary>
         /// <returns></returns>
         [HttpPost("all-<#=field.Name.ToLower()#>")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "{名称: 值}", typeof(Dictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.OK, "<#=field.Remark#> {名称: 值}", typeof(Dictionary<string, string>))]
         public async Task<object> GetAll<#=field.Name#>()
         {
             return await Task.FromResult(Success(<#=Options.Table.ReducedName#>Business.GetAll<#=field.Name#>()));
@@ -139,7 +139,7 @@ namespace Api.Controllers.<#=Options.Table.ModuleName#>
 #>
 
         /// <summary>
-        /// 详情数据数据
+        /// 详情数据
         /// </summary>
 <#WritePrimaryParamsRemark();#>
         /// <returns></returns>
@@ -367,7 +367,7 @@ namespace Api.Controllers.<#=Options.Table.ModuleName#>
         var i = 0;
         foreach (var field in PrimaryKeys)
         {
-#><#=i > 0 ? ", " : ""#><#=field.Type#> <#=field.Name.ToLower()#><#+
+#><#=i > 0 ? ", " : ""#><#=field.CsTypeKeyword#> <#=field.Name.ToLower()#><#+
             i++;
         }
     }

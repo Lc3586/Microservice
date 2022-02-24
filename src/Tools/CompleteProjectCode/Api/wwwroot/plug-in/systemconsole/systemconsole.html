@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>系统控制台</title>
+    <script src="../../vue/vue.global.prod.js"></script>
+
+    <script src="../../utils/axios.min.js"></script>
+
+    <link href="../../element-plus/theme-chalk/element-plus.index.css" rel="stylesheet" />
+    <script src="../../element-plus/element-plus.index.full.js"></script>
+    <script src="../../element-plus/element-plus.es.js"></script>
+    <script src="../../element-plus/element-plus.zh-cn.js"></script>
+    <script src="../../utils/dayjs/dayjs.min.js"></script>
+    <script src="../../utils/dayjs/dayjs.zh-cn.js"></script>
+
+    <script src="../../utils/lodash.min.js"></script>
+
+    <link href="systemconsole.css" rel="stylesheet" />
+    <script src="../../utils/baseUrl.js"></script>
+    <script src="systemconsole.js"></script>
+</head>
+<body>
+    <div id="app">
+        <el-container class="main_container">
+            <el-row :gutter="24" v-for="(y,index) in modulars.data" :key="index">
+                <el-col :span="24/modulars.x" v-for="modular in y" :key="modular.Name">
+                    <el-card class="modular-card"
+                             shadow="hover">
+                        <template #header>
+                            <div class="modular-header" v-loading="modular.loading">
+                                <i :class="modular.icon" :title="modular.explain"></i><span>{{modular.Name}}</span>
+                                <div v-if="modular.State == 'stop'" class="modular-tool">
+                                    <el-button type="primary"
+                                               round
+                                               :disabled="modular.disable"
+                                               @click="start(modular.Name)">启动</el-button>
+                                </div>
+                                <div v-else-if="modular.State != 'none'" class="modular-tool">
+                                    <el-button type="danger"
+                                               round
+                                               :disabled="modular.disable"
+                                               @click="shutdown(modular.Name)">关停</el-button>
+                                    <el-button type="warning"
+                                               round
+                                               :disabled="modular.disable"
+                                               @click="reboot(modular.Name)">重启</el-button>
+                                </div>
+                            </div>
+                        </template>
+                        <div v-if="!!modular.error" class="modular-error">
+                            <h3>{{modular.error}}</h3>
+                        </div>
+                        <div v-if="!!modular.Data" class="modular-data">
+                            <div v-for="(val,key) in modular.Data" :key="key" :title="key">
+                                <h6>{{key}}</h6>
+                                <span>{{val}}</span>
+                            </div>
+                        </div>
+                    </el-card>
+                </el-col>
+            </el-row>
+        </el-container>
+
+        <!--SA身份验证-->
+        <el-dialog title="SA身份验证"
+                   v-model="sa.show"
+                   :width="350"
+                   :close-on-click-modal="false"
+                   :close-on-press-escape="false"
+                   :show-close="false"
+                   v-loading="sa.loading">
+            <el-form :model="sa">
+                <el-form-item label="用户名" :label-width="200">
+                    <el-input type="text" v-model="sa.username" :maxlength="20" size="medium"></el-input>
+                </el-form-item>
+                <el-form-item label="密码" :label-width="200">
+                    <el-input type="text" v-model="sa.password" :maxlength="25" size="medium" show-password></el-input>
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <span class="dialog-footer">
+                    <el-button type="primary" @click="saLogin">登录</el-button>
+                </span>
+            </template>
+        </el-dialog>
+    </div>
+</body>
+</html>

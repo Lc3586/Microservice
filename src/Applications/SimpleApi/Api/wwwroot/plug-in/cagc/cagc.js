@@ -3,14 +3,14 @@
 
     //接口地址
     const apiUrls = {
-        saLogin: '/sa/login',
-        genTypes: '/cagc/gen-types',
-        generateByCSV: '/cagc/generate-by-csv',
-        download: '/cagc/download',
-        cagcHub: '/cagchub',
-        getTempInfo: '/cagc/temp-info',
-        clearTemp: '/cagc/clear-temp',
-        getVersionInfo: '/cagc/version-info'
+        saLogin: window.BaseUrl + '/sa/login',
+        genTypes: window.BaseUrl + '/cagc/gen-types',
+        generateByCSV: window.BaseUrl + '/cagc/generate-by-csv',
+        download: window.BaseUrl + '/cagc/download',
+        cagcHub: window.BaseUrl + '/cagchub',
+        getTempInfo: window.BaseUrl + '/cagc/temp-info',
+        clearTemp: window.BaseUrl + '/cagc/clear-temp',
+        getVersionInfo: window.BaseUrl + '/cagc/version-info'
     };
 
     //vue实例
@@ -294,7 +294,7 @@
 
             main.output.list.push({
                 content: data,
-                icon: 'el-icon-info',
+                type: 'info',
                 size: 'large',
                 timestamp: dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss.SSS')
             });
@@ -306,7 +306,7 @@
 
             main.output.list.push({
                 content: data,
-                icon: 'el-icon-error',
+                type: 'error',
                 size: 'large',
                 timestamp: dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss.SSS')
             });

@@ -1,0 +1,89 @@
+﻿/*拓展功能部分*/
+#plugInBody {
+    position: fixed;
+    top: 100px;
+    right: 100px;
+    height: auto;
+    width: auto;
+    z-index: 100;
+}
+
+.plug-in-all {
+    position: absolute;
+    display: block;
+    z-index: 100;
+}
+
+.plug-in {
+    position: absolute;
+    display: block;
+    z-index: 99;
+    opacity: 0;
+    top: 0px;
+    margin-top: 10px;
+}
+
+/*返回顶部图标*/
+.scrollToTop {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    right: 10px;
+    bottom: 300px;
+}
+
+/*显示/隐藏快速导航标签图标*/
+.changeTags {
+    /*display: none;*/
+    position: fixed;
+    z-index: 100;
+    top: 50%;
+}
+
+/*左侧标签*/
+.tagsBody {
+    display: flex;
+    flex-direction: column;
+    line-height: 50px;
+    text-align: left;
+    font-size: 20px;
+    position: absolute;
+    z-index: 99;
+    left: 10px;
+}
+
+    .tagsBody span {
+        position: fixed;
+        min-width: 200px;
+        padding: 5px 10px 5px 10px;
+        margin-bottom: 10px;
+        background-color: gainsboro;
+        border-radius: 10px 25px 25px 10px;
+    }
+
+/*弹窗部分*/
+.swBtn {
+    margin-right: 10px !important;
+}
+
+.dialog-ux-none {
+    position: relative !important;
+}
+
+    .dialog-ux-none .modal-ux {
+        max-width: 70% !important;
+        position: fixed !important;
+    }
+
+    .dialog-ux-none .modal-ux-content {
+        max-height: 100% !important;
+    }
+
+.modal-ux {
+    /*max-width: 70% !important;*/
+}
+
+.swIframe {
+    width: 100%;
+    min-height: 700px;
+}

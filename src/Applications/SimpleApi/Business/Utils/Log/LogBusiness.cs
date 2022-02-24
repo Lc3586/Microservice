@@ -178,7 +178,7 @@ namespace Business.Utils.Log
             if (!pagination.FilterToSql(ref sql))
                 throw new MessageException("搜索条件不支持");
 
-            if (!pagination.OrderByToSql(ref sql, null, true))
+            if (!pagination.OrderByToSql(ref sql, null, '"', true))
                 throw new MessageException("排序条件不支持");
 
             var list = GetElasticsearchClient().SearchWithSql<System_Log>(

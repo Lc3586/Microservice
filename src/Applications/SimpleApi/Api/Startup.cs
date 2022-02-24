@@ -4,6 +4,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Autofac.Extras.DynamicProxy;
 using Business.Handler;
+using Business.Utils;
 using IocServiceDemo;
 using Microservice.Library.Configuration;
 using Microservice.Library.ConsoleTool;
@@ -25,7 +26,6 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Runtime.InteropServices;
 
 namespace Api
 {
@@ -50,8 +50,8 @@ namespace Api
             Config = new ConfigHelper(Configuration).GetModel<SystemConfig>("SystemConfig");
             "已读取配置.".ConsoleWrite();
             Bar?.Normal(6);
-            Console.Title = Config.ProjectName;
-            Config.ProjectName.ConsoleWrite();
+            Console.Title = Config.SystemName;
+            Config.SystemName.ConsoleWrite();
             $"运行模式 => {Config.RunMode}.".ConsoleWrite();
         }
 
@@ -165,6 +165,9 @@ namespace Api
             if (Config.EnableCache)
                 services.RegisterCache(Config);
 
+            if (Config.EnableCAS && Config.EnableSampleAuthentication)
+                throw new MessageException("禁止同时启用简易身份认证（SA）和统一身份认证（CAS）.");
+
             Bar?.Normal(17);
             if (Config.EnableSampleAuthentication)
                 services.RegisterSampleAuthentication(Config);
@@ -222,6 +225,9 @@ namespace Api
             Bar?.Normal(28);
             if (Config.EnableRSA)
                 services.RegisterRSAHelper(Config);
+
+            "关闭默认模型状态过滤器.".ConsoleWrite();
+            services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
         }
 
         /// <summary>
@@ -234,11 +240,11 @@ namespace Api
 
             "配置Autofac容器.".ConsoleWrite();
 
-            "注册IDependency接口.".ConsoleWrite();
-
             // 在这里添加服务注册
             var baseType = typeof(IDependency);
 
+            Bar?.Normal(59);
+            "注册IDependency接口.".ConsoleWrite();
             //自动注入IDependency接口,支持AOP,生命周期为InstancePerDependency
             var diTypes = Config.FxAssembly.GetTypes()
                 .Where(x => baseType.IsAssignableFrom(x) && x != baseType)
@@ -250,20 +256,20 @@ namespace Api
                 .EnableInterfaceInterceptors()
                 .InterceptedBy(typeof(Interceptor));
 
-            Bar?.Normal(59);
+            Bar?.Normal(60);
             "注册控制器.".ConsoleWrite();
             //注册Controller
             builder.RegisterAssemblyTypes(typeof(Startup).GetTypeInfo().Assembly)
                 .Where(t => typeof(Controller).IsAssignableFrom(t) && t.Name.EndsWith(nameof(Controller), StringComparison.Ordinal))
                 .PropertiesAutowired();
 
-            Bar?.Normal(50);
+            Bar?.Normal(61);
             "注册Interceptor(AOP).".ConsoleWrite();
             //AOP
             builder.RegisterType<Interceptor>();
 
-            Bar?.Normal(51);
-            "注册DisposableContainer(请求结束自动释放).".ConsoleWrite();
+            Bar?.Normal(62);
+            "注册DisposableContainer(请求结束自动释放).\r\n".ConsoleWrite();
             //请求结束自动释放
             builder.RegisterType<DisposableContainer>()
                 .As<IDisposableContainer>()

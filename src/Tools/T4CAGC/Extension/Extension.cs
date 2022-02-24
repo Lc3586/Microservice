@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using T4CAGC.Model;
 
 namespace T4CAGC.Extension
 {
@@ -8,6 +10,28 @@ namespace T4CAGC.Extension
     /// </summary>
     public static class Extension
     {
+        /// <summary>
+        /// 数据表信息集合
+        /// </summary>
+        static List<TableInfo> TableInfos;
+
+        /// <summary>
+        /// 设置数据表信息集合
+        /// </summary>
+        public static void SetTableInfos(List<TableInfo> types)
+        {
+            TableInfos = types;
+        }
+
+        /// <summary>
+        /// 获取数据库实体集合
+        /// </summary>
+        /// <returns></returns>
+        public static List<TableInfo> GetTableInfos()
+        {
+            return TableInfos;
+        }
+
         /// <summary>
         /// 如果集合中不包含这个值则添加
         /// </summary>
@@ -119,6 +143,220 @@ namespace T4CAGC.Extension
 
                 return result;
             }
+        }
+
+        /// <summary>
+        /// 分析名称
+        /// </summary>
+        /// <param name="table">数据表信息</param>
+        public static void AnalysisName(this TableInfo table)
+        {
+            var index = table.Name.IndexOf('_');
+            table.ModuleName = table.Name.Substring(0, index);
+            table.ReducedName = table.Name[(index + 1)..];
+        }
+
+        /// <summary>
+        /// 是否存在
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="keyword"></param>
+        /// <returns></returns>
+        public static bool Exist(this string value, string keyword)
+        {
+            return value == $"${keyword}" || value.Contains($"${keyword}[");
+        }
+
+        /// <summary>
+        /// 是否存在
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="keyword"></param>
+        /// <param name="value1"></param>
+        /// <returns></returns>
+        public static bool Exist(this string value, string keyword, string value1)
+        {
+            return value.Contains($"${keyword}[{value1}]");
+        }
+
+        /// <summary>
+        /// 匹配
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="keyword"></param>
+        /// <param name="value1"></param>
+        /// <returns></returns>
+        public static bool TryMatch(this string value, string keyword, out string value1)
+        {
+            value1 = null;
+            var match = Regex.Match(value, @$"[$]{keyword}[[](.*?)[]]");
+            if (!match.Success)
+                return false;
+
+            value1 = match.Groups[1].Value;
+
+            return true;
+        }
+
+        /// <summary>
+        /// 匹配
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="keyword"></param>
+        /// <param name="value1"></param>
+        /// <param name="value2"></param>
+        /// <returns></returns>
+        public static bool TryMatch(this string value, string keyword, out string value1, out string value2)
+        {
+            value1 = value2 = null;
+            var match = Regex.Match(value, @$"[$]{keyword}[[](.*?)[]]{{(.*?)}}");
+            if (!match.Success)
+                return false;
+
+            value1 = match.Groups[1].Value;
+            if (match.Groups.Count >= 3)
+                value2 = match.Groups[2].Value;
+
+            return true;
+        }
+
+        /// <summary>
+        /// 设置异常
+        /// </summary>
+        /// <param name="keyword"></param>
+        public static void SettingException(this string keyword)
+        {
+            throw new ApplicationException($"{keyword}设置有误, 请检查格式是否与此一致: ${keyword}[].");
+        }
+
+        /// <summary>
+        /// 设置值异常
+        /// </summary>
+        /// <param name="keyword"></param>
+        public static void SettingValueException(this string keyword, string value)
+        {
+            throw new ApplicationException($"无效的{keyword}值{value}.");
+        }
+
+        /// <summary>
+        /// 获取类型
+        /// </summary>
+        /// <param name="typeName"></param>
+        /// <param name="throw">错误时抛出异常</param>
+        public static Type GetCsType(this string typeName, bool @throw = true)
+        {
+            var type = typeName.ToLower() switch
+            {
+                "bool" => typeof(bool),
+                "byte" => typeof(byte),
+                "sbyte" => typeof(sbyte),
+                "char" => typeof(char),
+                "decimal" => typeof(decimal),
+                "double" => typeof(double),
+                "float" => typeof(float),
+                "int" => typeof(int),
+                "uint" => typeof(uint),
+                "long" => typeof(long),
+                "ulong" => typeof(ulong),
+                "object" => typeof(object),
+                "short" => typeof(short),
+                "ushort" => typeof(ushort),
+                "string" => typeof(string),
+                "date" => typeof(DateTime),
+                "datetime" => typeof(DateTime),
+                "time" => typeof(TimeSpan),
+                "guid" => typeof(Guid),
+                _ => Type.GetType(typeName, false, true)
+            };
+
+            if (type == null && @throw)
+                throw new ApplicationException($"无效的类型名称{typeName}.");
+
+            return type;
+        }
+
+        /// <summary>
+        /// 获取类型关键字名称
+        /// </summary>
+        /// <param name="typeName"></param>
+        /// <param name="throw">错误时抛出异常</param>
+        public static string GetCsTypeKeyword(this string typeName, bool @throw = true)
+        {
+            var type_lower = typeName.ToLower();
+            var type = type_lower switch
+            {
+                "bool" or
+                "byte" or
+                "sbyte" or
+                "char" or
+                "short" or
+                "ushort" or
+                "int" or
+                "uint" or
+                "long" or
+                "ulong" or
+                "decimal" or
+                "double" or
+                "float" or
+                "object" or
+                "string" => type_lower,
+
+                "boolean" => "bool",
+                "int16" => "short",
+                "uint16" => "ushort",
+                "int32" => "int",
+                "uint32" => "uint",
+                "int64" => "long",
+                "uint64" => "ulong",
+                "single" => "float",
+
+                "date" or
+                "datetime" => "DateTime",
+                "time" or
+                "timespan" => "TimeSpan",
+                "guid" => "Guid",
+
+                _ => type_lower
+            };
+
+            if (type == null && @throw)
+                throw new ApplicationException($"无效的类型名称{typeName}.");
+
+            return type;
+        }
+
+        /// <summary>
+        /// 是否为数值类型
+        /// </summary>
+        /// <param name="dbType">数据库类型</param>
+        /// <param name="precision">精度</param>
+        /// <param name="scale">小数位</param>
+        /// <returns></returns>
+        public static bool IsNumerical(this string dbType, out int precision, out int scale)
+        {
+            precision = 0;
+            scale = 0;
+
+            var match = Regex.Match(dbType.ToLower(), @"(\w+)\((\d+)(\D*?)(\d+)\)");
+
+            if (!match.Success)
+                return false;
+
+            var type = match.Groups[1].Value;
+
+            switch (type)
+            {
+                case "numeric":
+                case "decimal":
+                    break;
+                default:
+                    return false;
+            }
+
+            precision = int.Parse(match.Groups[2].Value);
+            scale = int.Parse(match.Groups[4].Value);
+
+            return true;
         }
     }
 }

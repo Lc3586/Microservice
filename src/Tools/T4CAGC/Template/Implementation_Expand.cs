@@ -94,6 +94,7 @@ namespace T4CAGC.Template
 
             NameSpaces.AddWhenNotContains($"Entity.{Options.Table.ModuleName}");
             NameSpaces.AddWhenNotContains($"Model.{Options.Table.ModuleName}.{Options.Table.ReducedName}DTO");
+            NameSpaces.AddWhenNotContains("Model.Utils.Log");
             NameSpaces.AddWhenNotContains($"Business.Interface.{Options.Table.ModuleName}");
             NameSpaces.AddWhenNotContains("Business.Interface.Common");
             NameSpaces.AddWhenNotContains("Entity.Common");
@@ -105,6 +106,8 @@ namespace T4CAGC.Template
             NameSpaces.AddWhenNotContains("Microservice.Library.DataMapping.Gen");
             NameSpaces.AddWhenNotContains("Microservice.Library.OpenApi.Extention");
             NameSpaces.AddWhenNotContains("Business.Utils");
+
+            DIServices.GetAndAddWhenNotContains("IOperationRecordBusiness", "OperationRecordBusiness");
 
             Functions.GetAndAddWhenNotContains(Function.Delete);
 
@@ -182,11 +185,14 @@ namespace T4CAGC.Template
                         NameSpaces.AddWhenNotContains("System.Reflection");
                         NameSpaces.AddWhenNotContains("System.IO");
 
+                        DIServices.GetAndAddWhenNotContains("IHttpContextAccessor", "HttpContextAccessor");
+
                         Functions.GetAndAddWhenNotContains(Function.Import, tag);
                     }
                     else if (tag_lower.Contains("export"))
                     {
                         NameSpaces.AddWhenNotContains("System.Data");
+                        NameSpaces.AddWhenNotContains("Microsoft.AspNetCore.Http");
                         NameSpaces.AddWhenNotContains("Microservice.Library.OfficeDocuments");
                         NameSpaces.AddWhenNotContains("Model.Utils.Pagination");
                         NameSpaces.AddWhenNotContains("Model.Utils.OfficeDocuments");
@@ -195,6 +201,8 @@ namespace T4CAGC.Template
                         NameSpaces.AddWhenNotContains("System.Reflection");
                         NameSpaces.AddWhenNotContains("System.Text.Encodings.Web");
                         NameSpaces.AddWhenNotContains("System.IO");
+
+                        DIServices.GetAndAddWhenNotContains("IHttpContextAccessor", "HttpContextAccessor");
 
                         Functions.GetAndAddWhenNotContains(Function.Export, tag);
                     }

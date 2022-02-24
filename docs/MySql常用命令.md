@@ -8,9 +8,17 @@
 
 > mysqld
 
+###### #查询安装目录
+
+> select @@basedir;
+
 ###### #查询数据库
 
 > show databases;
+
+###### #查询命名规则
+
+> show variables like 'lower_case_table_names';
 
 ###### #查询字符集
 
@@ -50,7 +58,7 @@
 >
 > #修改数据库的字符集
 >
-> alter database dbA default character set uft8mb4;
+> alter database dbA default character set utf8mb4;
 >
 > ​	#: tbA(id...为表信息；utf8mb4为字符集名；
 >

@@ -3,9 +3,9 @@
 
     //接口地址
     const apiUrls = {
-        explain: '/wechat-oath/explain',
-        canfirm: '/wechat-oath/confirm',
-        cancel: '/wechat-oath/cancel',
+        explain: window.BaseUrl + '/wechat-oath/explain',
+        canfirm: window.BaseUrl + '/wechat-oath/confirm',
+        cancel: window.BaseUrl + '/wechat-oath/cancel',
     };
 
     //vue实例

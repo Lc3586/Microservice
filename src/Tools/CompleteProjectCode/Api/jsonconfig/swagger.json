@@ -1,0 +1,78 @@
+﻿{
+  "XmlComments": [
+    "Api.xml",
+    "Business.xml",
+    "Model.xml",
+    "Entity.xml"
+  ],
+  "ApiVersions": [
+    {
+      "Name": "示例系统接口文档v1.0",
+      "Title": "示例系统接口文档v1.0",
+      "Version": "1.0",
+      "Description": "系统基础接口v1.0"
+    },
+    {
+      "Name": "示例系统接口文档v2.0",
+      "Title": "示例系统接口文档v2.0",
+      "Version": "2.0",
+      "Description": "系统基础接口v2.0"
+    }
+  ],
+  "Groups": [
+    {
+      "Name": "基础模块",
+      "Title": "基础模块接口",
+      "Description": "用户、会员、角色、菜单、资源、字典",
+      "Versions": [ "1.0" ]
+    },
+    {
+      "Name": "日志模块",
+      "Title": "日志模块接口",
+      "Description": "系统日志、登录日志、操作记录",
+      "Versions": [ "1.0" ]
+    },
+    {
+      "Name": "权限模块",
+      "Title": "权限模块接口",
+      "Description": "角色、菜单、资源、授权、取消授权、查询授权",
+      "Versions": [ "1.0" ]
+    },
+    {
+      "Name": "身份验证模块",
+      "Title": "身份验证模块接口",
+      "Description": "登录、注销、用户、会员、登录日志",
+      "Versions": [ "1.0" ]
+    },
+    {
+      "Name": "微信拓展",
+      "Title": "微信拓展接口",
+      "Description": "会员、微信用户、微信认证",
+      "Versions": [ "1.0" ]
+    },
+    {
+      "Name": "文件管理",
+      "Title": "文件管理接口",
+      "Description": "文件查询、上传、下载",
+      "Versions": [ "1.0" ]
+    },
+    {
+      "Name": "框架拓展",
+      "Title": "框架拓展功能接口",
+      "Description": "系统中控台、自动生成代码",
+      "Versions": [ "1.0" ]
+    },
+    {
+      "Name": "测试",
+      "Title": "测试接口",
+      "Description": "数据库测试",
+      "Versions": [ "1.0", "2.0" ]
+    },
+    {
+      "Name": "示例",
+      "Title": "示例接口",
+      "Description": "示例",
+      "Versions": [ "1.0" ]
+    }
+  ]
+}

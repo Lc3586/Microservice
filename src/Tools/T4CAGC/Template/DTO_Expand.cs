@@ -69,8 +69,11 @@ namespace T4CAGC.Template
             }
 
             NameSpaces.AddWhenNotContains($"Entity.{Options.Table.ModuleName}");
-            NameSpaces.AddWhenNotContains($"Microservice.Library.DataMapping.Annotations");
-            NameSpaces.AddWhenNotContains($"Microservice.Library.OpenApi.Annotations");
+            NameSpaces.AddWhenNotContains("Microservice.Library.DataMapping.Annotations");
+            NameSpaces.AddWhenNotContains("Microservice.Library.OpenApi.Annotations");
+
+            NameSpaces.AddWhenNotContains("System.ComponentModel");
+            NameSpaces.AddWhenNotContains("System.Collections.Generic");
 
             //分析基础特性
             Options.Table.Fields.ForEach(o =>

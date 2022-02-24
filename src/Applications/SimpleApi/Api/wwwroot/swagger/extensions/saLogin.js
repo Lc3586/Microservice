@@ -221,7 +221,7 @@ window.onInformationLoaded(() => {
                 switch (mode) {
                     case 1:
                     default:
-                        location.href = window.apiUri.BaseUrl + '/sa/logout?returnUrl=' + location.href;
+                        location.href = window.baseUri + '/sa/logout?returnUrl=' + location.href;
                         break;
                 }
             };

@@ -19,6 +19,11 @@
       "WINDOWS": "Tools/T4CAGC/Windows/T4CAGC.exe",
       "LINUX": "Tools/T4CAGC/Linux/T4CAGC",
       "OSX": "Tools/T4CAGC/OSX/T4CAGC"
+    },
+    "CAGC-CompleteProjectCodeZipFile": {
+      "WINDOWS": "Tools/T4CAGC/CompleteProjectCode.zip",
+      "LINUX": "Tools/T4CAGC/CompleteProjectCode.zip",
+      "OSX": "Tools/T4CAGC/CompleteProjectCode.zip"
     }
   }
 }

@@ -1,0 +1,73 @@
+﻿/*头部样式*/
+.modular-header {
+    text-align: left;
+    line-height: 60px;
+    color: #586069;
+    font-weight: 400;
+}
+
+    .modular-header i {
+        font-size: 39px;
+    }
+
+/*设置行*/
+.el-row {
+    width: 100%;
+    min-height: 50px;
+    margin-bottom: 20px;
+    /*align-items: center;*/
+}
+
+/*容器样式*/
+body > .full_container {
+    margin-bottom: 40px;
+}
+
+.main_container {
+    height: calc(100vh - 80px);
+}
+
+/*日志状态的图标样式*/
+.modular-header i {
+    background-color: white;
+    border-radius: 20px;
+    transition: color .15s linear;
+    font-size: 32px;
+}
+
+.modular-tool {
+    float: right;
+}
+
+.modular-error {
+    background: #f0808069;
+}
+
+/*未启用状态的图标*/
+.el-icon-turn-off {
+    color: #808080;
+}
+
+/*运行状态的图标*/
+.el-icon-loading {
+    color: #5e6d82;
+}
+
+/*空闲状态的图标*/
+.el-icon-remove-outline {
+    color: #28a745;
+}
+
+/*未知状态的图标*/
+.el-icon-question {
+    color: #ffc107;
+}
+
+/*已停止状态的图标*/
+.el-icon-switch-button {
+    color: #cb2431;
+}
+
+.el-dialog__body {
+    min-height: 300px;
+}

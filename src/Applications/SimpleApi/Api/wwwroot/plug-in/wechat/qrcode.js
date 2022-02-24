@@ -3,10 +3,10 @@
 
     //接口地址
     const apiUrls = {
-        bindQRCodeUrl: '/wechat-oath/user-bind-url',
-        loginQRCodeUrl: '/wechat-oath/user-login-url',
-        loginUrl: '/wechat-oath/user-login',
-        wechatHub: '/wechathub',
+        bindQRCodeUrl: window.BaseUrl + '/wechat-oath/user-bind-url',
+        loginQRCodeUrl: window.BaseUrl + '/wechat-oath/user-login-url',
+        loginUrl: window.BaseUrl + '/wechat-oath/user-login',
+        wechatHub: window.BaseUrl + '/wechathub',
     };
 
     //vue实例

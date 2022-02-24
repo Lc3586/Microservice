@@ -1,0 +1,56 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <PackageId />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="appsettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="4.0.1" />
+    <PackageReference Include="Microservice.Library.Cache" Version="0.0.0.15-alpha-ga4501b4f30" />
+    <PackageReference Include="Microservice.Library.Configuration" Version="0.0.0.15-alpha-ga4501b4f30" />
+    <PackageReference Include="Microservice.Library.ConsoleTool" Version="0.0.0.15-alpha-ga4501b4f30" />
+    <PackageReference Include="Microservice.Library.DataMapping" Version="0.0.0.15-alpha-ga4501b4f30" />
+    <PackageReference Include="Microservice.Library.Elasticsearch" Version="0.0.0.15-alpha-ga4501b4f30" />
+    <PackageReference Include="Microservice.Library.File" Version="0.0.0.15-alpha-ga4501b4f30" />
+    <PackageReference Include="Microservice.Library.FreeSql" Version="0.0.0.15-alpha-ga4501b4f30" />
+    <PackageReference Include="Microservice.Library.Http" Version="0.0.0.15-alpha-ga4501b4f30" />
+    <PackageReference Include="Microservice.Library.NLogger" Version="0.0.0.15-alpha-ga4501b4f30" />
+    <PackageReference Include="Microservice.Library.OpenApi" Version="0.0.0.15-alpha-ga4501b4f30" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="config\config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="config\welcome">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="NOTICE.TXT">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="RazorTemplates\实体类+特性+导航属性（支持子父级结构）.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="shell\dotnet-install.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="shell\dotnet-install.sh">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
+
+</Project>

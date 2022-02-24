@@ -18,6 +18,13 @@ namespace Model.Utils.JWT.JWTDTO
         public string AccessToken { get; set; }
 
         /// <summary>
+        /// 创建时间
+        /// </summary>
+        [OpenApiSchema(OpenApiSchemaType.@string, OpenApiSchemaFormat.string_datetime)]
+        [JsonConverter(typeof(Microservice.Library.OpenApi.JsonExtension.DateTimeConverter), "yyyy-MM-dd HH:mm:ss.ffff")]
+        public DateTime Created { get; set; }
+
+        /// <summary>
         /// 过期时间
         /// </summary>
         [OpenApiSchema(OpenApiSchemaType.@string, OpenApiSchemaFormat.string_datetime)]

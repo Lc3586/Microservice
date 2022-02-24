@@ -76,56 +76,56 @@
                 Tag: ImportFileTag.JS,
                 Attributes: {
                     type: 'text/javascript',
-                    src: ApiUri.BaseUrl + '/NaiveUpload.js'
+                    src: ApiUri.BaseUrl + '/plug-in/naiveupload/Model/ApiUri.js'
                 }
             },
             {
                 Tag: ImportFileTag.JS,
                 Attributes: {
                     type: 'text/javascript',
-                    src: ApiUri.BaseUrl + '/Model/MultipleUploadSetting.js'
+                    src: ApiUri.BaseUrl + '/plug-in/naiveupload/NaiveUpload.js'
                 }
             },
             {
                 Tag: ImportFileTag.JS,
                 Attributes: {
                     type: 'text/javascript',
-                    src: ApiUri.BaseUrl + '/Model/ApiUri.js'
+                    src: ApiUri.BaseUrl + '/plug-in/naiveupload/Model/MultipleUploadSetting.js'
                 }
             },
             {
                 Tag: ImportFileTag.JS,
                 Attributes: {
                     type: 'text/javascript',
-                    src: ApiUri.BaseUrl + '/Helper/ChunkFileMergeTaskHelper.js'
+                    src: ApiUri.BaseUrl + '/plug-in/naiveupload/Helper/ChunkFileMergeTaskHelper.js'
                 }
             },
             {
                 Tag: ImportFileTag.JS,
                 Attributes: {
                     type: 'text/javascript',
-                    src: ApiUri.BaseUrl + '/Model/UploadConfigDetail.js'
+                    src: ApiUri.BaseUrl + '/plug-in/naiveupload/Model/UploadConfigDetail.js'
                 }
             },
             {
                 Tag: ImportFileTag.JS,
                 Attributes: {
                     type: 'text/javascript',
-                    src: ApiUri.BaseUrl + '/Model/Pagination.js'
+                    src: ApiUri.BaseUrl + '/plug-in/naiveupload/Model/Pagination.js'
                 }
             },
             {
                 Tag: ImportFileTag.JS,
                 Attributes: {
                     type: 'text/javascript',
-                    src: ApiUri.BaseUrl + '/Model/LibraryInfo.js'
+                    src: ApiUri.BaseUrl + '/plug-in/naiveupload/Model/LibraryInfo.js'
                 }
             },
             {
                 Tag: ImportFileTag.JS,
                 Attributes: {
                     type: 'text/javascript',
-                    src: ApiUri.BaseUrl + '/Model/VideoInfo.js'
+                    src: ApiUri.BaseUrl + '/plug-in/naiveupload/Model/VideoInfo.js'
                 }
             }
         ],
@@ -329,7 +329,7 @@
             Upload.Init(MultipleUploadSettings).then(async () => {
                 //设置默认配置
                 try {
-                    await Upload.UpdateConfig('6D9A0000-F269-0025-F631-08D98FA532D4');
+                    await Upload.UpdateConfig('default');
                 } catch (e) {
                     console.error(e);
                     ElementPlus.ElMessage(e.message);
@@ -521,7 +521,7 @@
                     if (response.data.Success) {
                         MultipleUploadSettings.Headers['Authorization'] = response.data.Data.AccessToken;
                         //定时更新令牌
-                        setTimeout(RefreshToken, new Date(response.data.Data.Expires).getTime() - new Date().getTime() - 60 * 1000);
+                        setTimeout(RefreshToken, new Date(response.data.Data.Expires).getTime() - new Date(response.data.Data.Created).getTime() - 60 * 1000);
 
                         Main.sa.show = false;
                     }

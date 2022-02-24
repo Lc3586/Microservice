@@ -3,18 +3,18 @@
 
     //接口地址
     const apiUrls = {
-        saLogin: '/sa/login',
-        defaultLoggerType: '/log/default-type',
-        logLevels: '/log/log-levels/',
-        logTypes: '/log/log-types/',
-        logHub: '/loghub',
-        logFileList: '/log/file-list/',
-        logFileContent: '/log/file-content/',
-        logFileDownload: '/log/file-download/',
-        logESList: '/log/es-list',
-        logESDetail: '/log/es-detail-data/',
-        logDBList: '/log/db-list',
-        logDBDetail: '/log/db-detail-data/'
+        saLogin: window.BaseUrl + '/sa/login',
+        defaultLoggerType: window.BaseUrl + '/log/default-type',
+        logLevels: window.BaseUrl + '/log/log-levels/',
+        logTypes: window.BaseUrl + '/log/log-types/',
+        logHub: window.BaseUrl + '/loghub',
+        logFileList: window.BaseUrl + '/log/file-list/',
+        logFileContent: window.BaseUrl + '/log/file-content/',
+        logFileDownload: window.BaseUrl + '/log/file-download/',
+        logESList: window.BaseUrl + '/log/es-list',
+        logESDetail: window.BaseUrl + '/log/es-detail-data/',
+        logDBList: window.BaseUrl + '/log/db-list',
+        logDBDetail: window.BaseUrl + '/log/db-detail-data/'
     };
 
     //vue实例

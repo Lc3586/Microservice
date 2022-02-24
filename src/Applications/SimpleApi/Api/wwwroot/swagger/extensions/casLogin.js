@@ -210,11 +210,11 @@ window.onInformationLoaded(() => {
             let login = (mode) => {
                 switch (mode) {
                     case 2:
-                        location.href = window.apiUri.BaseUrl + '/cas/authorize?returnUrl=' + location.href;
+                        location.href = window.baseUri + '/cas/authorize?returnUrl=' + location.href;
                         break;
                     case 1:
                     default:
-                        location.href = window.apiUri.BaseUrl + '/cas/login?returnUrl=' + location.href;
+                        location.href = window.baseUri + '/cas/login?returnUrl=' + location.href;
                         break;
                 }
             };
@@ -234,7 +234,7 @@ window.onInformationLoaded(() => {
                     case 1:
                     default:
                         let done = (logoutCAS) => {
-                            location.href = window.apiUri.BaseUrl + '/cas/logout?returnUrl=' + location.href + '&logoutCAS=' + logoutCAS;
+                            location.href = window.baseUri + '/cas/logout?returnUrl=' + location.href + '&logoutCAS=' + logoutCAS;
                         };
 
                         window.showDialog(

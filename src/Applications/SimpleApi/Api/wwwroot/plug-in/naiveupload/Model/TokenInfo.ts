@@ -8,6 +8,11 @@ class TokenInfo {
     AccessToken: string;
 
     /**
+     * 创建时间
+     */
+    Created: Date;
+
+    /**
      * 过期时间
      */
     Expires: Date;

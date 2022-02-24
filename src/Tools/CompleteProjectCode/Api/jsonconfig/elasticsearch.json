@@ -1,0 +1,12 @@
+﻿{
+  "ElasticSearch": {
+    "Nodes": [ "http://127.0.0.1:9200" ],
+    "SecurityType": "Basic",
+    "UserName": "elastic",
+    "Password": "",
+    //"UserName": "remote_monitoring_user",
+    //"Password": "",
+    "KeyId": null,
+    "ApiKey": null
+  }
+}

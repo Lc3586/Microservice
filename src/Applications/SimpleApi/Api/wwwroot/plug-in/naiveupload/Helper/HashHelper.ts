@@ -41,7 +41,7 @@ class HashHelper {
                         Tag: ImportFileTag.JS,
                         Attributes: {
                             type: 'text/javascript',
-                            src: ApiUri.BaseUrl + '/Helper/FileReadHelper.js'
+                            src: ApiUri.BaseUrl + '/plug-in/naiveupload/Helper/FileReadHelper.js'
                         }
                     }],
                 () => {
@@ -65,7 +65,7 @@ class HashHelper {
                                     Tag: ImportFileTag.JS,
                                     Attributes: {
                                         type: 'text/javascript',
-                                        src: ApiUri.BaseUrl + '/../utils/spark-md5.min.js'
+                                        src: ApiUri.BaseUrl + '/utils/spark-md5.min.js'
                                     }
                                 }],
                             () => {

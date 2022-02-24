@@ -13,6 +13,7 @@ using System.Xml.Serialization;
 
 namespace Api.Filter.Soap
 {
+    [Obsolete]
     public class MessageFilter : IMessageFilter
     {
         public void OnRequestExecuting(Message message)

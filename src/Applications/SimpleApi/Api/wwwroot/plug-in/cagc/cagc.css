@@ -117,6 +117,13 @@ body > .full_container {
     font-size: 32px;
 }
 
+.block p.info {
+}
+
+.block p.error {
+    color: #f78989;
+}
+
 /*一般日志的图标*/
 .el-icon-info {
     color: #5e6d82;

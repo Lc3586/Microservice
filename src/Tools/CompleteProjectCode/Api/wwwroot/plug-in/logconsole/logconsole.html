@@ -1,0 +1,498 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>日志中心</title>
+    <script src="../../vue/vue.global.prod.js"></script>
+
+    <script src="../../utils/axios.min.js"></script>
+
+    <link href="../../element-plus/theme-chalk/element-plus.index.css" rel="stylesheet" />
+    <script src="../../element-plus/element-plus.index.full.js"></script>
+    <script src="../../element-plus/element-plus.es.js"></script>
+    <script src="../../element-plus/element-plus.zh-cn.js"></script>
+    <script src="../../utils/dayjs/dayjs.min.js"></script>
+    <script src="../../utils/dayjs/dayjs.zh-cn.js"></script>
+
+    <script src="../../utils/signalr.min.js"></script>
+
+    <script src="../../utils/lodash.min.js"></script>
+
+    <link href="logconsole.css" rel="stylesheet" />
+    <script src="../../utils/baseUrl.js"></script>
+    <script src="logconsole.js"></script>
+</head>
+<body>
+    <div id="app">
+        <el-container class="full_container" v-loading="loading">
+            <el-header><i :class="overall.state"></i><span class="overall_title">{{overall.title}}</span> <span class="overall_explain">{{overall.explain}}</span></el-header>
+            <el-container class="main_container">
+                <el-tabs tab-position="left" v-model="logConfig.LoggerType" @tab-click="logTypeTabsChanged">
+                    <el-tab-pane label="实时日志" class="reallog_pane" name="Console" v-loading="logReal.loading">
+                        <div class="tool">
+                            <div class="item max-slider">
+                                <el-slider v-model="logReal.max"
+                                           :max="10000"
+                                           :step="10"
+                                           title="数据缓存上限">
+                                </el-slider>
+                            </div>
+                            <el-switch class="item"
+                                       v-model="logReal.scroll"
+                                       active-color="#13ce66"
+                                       inactive-color="#ff4949"
+                                       active-text="滚动"
+                                       inactive-text="停留"
+                                       @change="logReal.scrollLocked = !logReal.scrollLocked">
+                            </el-switch>
+                            <el-switch class="item"
+                                       v-model="logReal.receive"
+                                       active-color="#13ce66"
+                                       inactive-color="#ff4949"
+                                       active-text="启动"
+                                       inactive-text="暂停"
+                                       @change="realReceiveChange">
+                            </el-switch>
+                            <el-button class="item"
+                                       type="danger"
+                                       @click="logReal.list = []">清空</el-button>
+                        </div>
+                        <div class="filter">
+                            <el-collapse v-model="activeNames">
+                                <el-collapse-item title="级别 & 类型 & 过滤 & 筛选" name="1">
+                                    <el-checkbox :indeterminate="logReal.isLevelIndeterminate" v-model="logReal.checkAllLevels" @change="realAllLevel">所有日志级别</el-checkbox>
+                                    <div style="margin: 15px 0;"></div>
+                                    <el-checkbox-group v-model="logReal.levels" @change="realLevelChange">
+                                        <el-checkbox v-for="level in logConfig.levels" :label="level" :key="level">{{level}}</el-checkbox>
+                                    </el-checkbox-group>
+                                    <hr />
+                                    <el-checkbox :indeterminate="logReal.isTypeIndeterminate" v-model="logReal.checkAllTypes" @change="realAllType">所有日志类型</el-checkbox>
+                                    <div style="margin: 15px 0;"></div>
+                                    <el-checkbox-group v-model="logReal.types" @change="realTypeChange">
+                                        <el-checkbox v-for="type in logConfig.types" :label="type" :key="type">{{type}}</el-checkbox>
+                                    </el-checkbox-group>
+                                    <hr />
+                                    <el-tag :key="tag"
+                                            v-for="filter in logReal.filters"
+                                            closable
+                                            :disable-transitions="false"
+                                            @close="handleFilterClose(filter)">
+                                        {{filter}}
+                                    </el-tag>
+                                    <el-input class="input-new-tag"
+                                              title="按下回车键确认新增"
+                                              v-if="logReal.filterInputVisible"
+                                              v-model="logReal.filterInputValue"
+                                              ref="saveFilterInput"
+                                              size="small"
+                                              @keyup.enter.native="handleFilterInputConfirm">
+                                    </el-input>
+                                    <el-button v-else class="button-new-tag" size="small" @click="showFilterInput">+ 新增过滤条件</el-button>
+                                    <hr />
+                                    <el-tag :key="tag"
+                                            v-for="keyword in logReal.keywords"
+                                            closable
+                                            :disable-transitions="false"
+                                            @close="handleKeywordClose(keyword)">
+                                        {{keyword}}
+                                    </el-tag>
+                                    <el-input class="input-new-tag"
+                                              title="按下回车键确认新增"
+                                              v-if="logReal.keywordInputVisible"
+                                              v-model="logReal.keywordInputValue"
+                                              ref="saveKeywordInput"
+                                              size="small"
+                                              @keyup.enter.native="handleKeywordInputConfirm">
+                                    </el-input>
+                                    <el-button v-else class="button-new-tag" size="small" @click="showKeywordInput">+ 新增筛选条件</el-button>
+                                </el-collapse-item>
+                            </el-collapse>
+                            <el-input type="textarea"
+                                      :autosize="{ minRows: 1, maxRows: 6}"
+                                      placeholder="搜索输出的内容"
+                                      v-model="logReal.search">
+                            </el-input>
+                        </div>
+                        <div class="block" ref="realLog" @mouseenter="mouseenterConsole" @mouseleave="mouseleaveConsole">
+                            <el-timeline>
+                                <el-timeline-item v-for="(log, index) in logReal.list.filter(data => !logReal.search || data.content.includes(logReal.search))"
+                                                  :key="index"
+                                                  :icon="log.icon"
+                                                  :type="log.type"
+                                                  :color="log.color"
+                                                  :size="log.size"
+                                                  :timestamp="log.timestamp"
+                                                  placement="top">
+                                    <p v-html="!logReal.search ? log.content : log.content.replace(new RegExp(logReal.search, 'g'), `<span class='keyword'>${logReal.search}</span>`)"></p>
+                                </el-timeline-item>
+                            </el-timeline>
+                        </div>
+                    </el-tab-pane>
+                    <el-tab-pane label="文件日志" name="File">
+                        <el-row :gutter="20">
+                            <el-col :span="5" :offset="13">
+                                <el-date-picker v-model="logFile.date"
+                                                type="daterange"
+                                                unlink-panels
+                                                range-separator="至"
+                                                start-placeholder="开始日期"
+                                                end-placeholder="结束日期"
+                                                format="YYYY-MM-DD"
+                                                :shortcuts="dataRangShortcuts">
+                                </el-date-picker>
+                            </el-col>
+                            <el-col :span="3" :offset="1">
+                                <el-input v-model="logFile.search"
+                                          prefix-icon="el-icon-search"
+                                          placeholder="输入文件名筛选" />
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="20">
+                            <el-col :span="24">
+                                <el-table :data="logFile.list.filter(data => !logFile.search || data.Name.includes(logFile.search))"
+                                          stripe
+                                          :default-sort="{prop: 'Name', order: 'descending'}"
+                                          :empty-text="logFile.error"
+                                          v-loading="logFile.loading"
+                                          style="width: 100%">
+                                    <el-table-column label="文件名"
+                                                     prop="Name"
+                                                     sortable>
+                                    </el-table-column>
+                                    <el-table-column label="文件后缀"
+                                                     prop="Suffix">
+                                    </el-table-column>
+                                    <el-table-column label="字节数"
+                                                     prop="Bytes"
+                                                     sortable>
+                                    </el-table-column>
+                                    <el-table-column label="文件大小"
+                                                     prop="Size"
+                                                     sortable>
+                                    </el-table-column>
+                                    <el-table-column label="创建时间"
+                                                     prop="CreateTime"
+                                                     sortable>
+                                    </el-table-column>
+                                    <el-table-column label="最后写入时间"
+                                                     prop="LastWriteTime"
+                                                     sortable>
+                                    </el-table-column>
+                                    <el-table-column align="center">
+                                        <template #default="scope">
+                                            <el-button size="mini"
+                                                       @click="openLogFile(scope.$index, scope.row)">查看</el-button>
+                                            <el-button size="mini"
+                                                       type="primary"
+                                                       @click="downloadLogFile(scope.$index, scope.row)">下载</el-button>
+                                        </template>
+                                    </el-table-column>
+                                </el-table>
+                            </el-col>
+                        </el-row>
+                    </el-tab-pane>
+                    <el-tab-pane label="Elasticsearch日志" name="ElasticSearch">
+                        <el-row :gutter="20">
+                            <el-col :span="6">
+                                <el-checkbox :indeterminate="logES.isLevelIndeterminate" v-model="logES.checkAllLevels" @change="esAllLevel">所有日志级别</el-checkbox>
+                                <div style="margin: 15px 0;"></div>
+                                <el-checkbox-group v-model="logES.levels" @change="esLevelChange">
+                                    <el-checkbox v-for="level in logConfig.levels" :label="level" :key="level">{{level}}</el-checkbox>
+                                </el-checkbox-group>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-checkbox :indeterminate="logES.isTypeIndeterminate" v-model="logES.checkAllTypes" @change="esAllType">所有日志类型</el-checkbox>
+                                <div style="margin: 15px 0;"></div>
+                                <el-checkbox-group v-model="logES.types" @change="esTypeChange">
+                                    <el-checkbox v-for="type in logConfig.types" :label="type" :key="type">{{type}}</el-checkbox>
+                                </el-checkbox-group>
+                            </el-col>
+                            <el-col :span="5" :offset="1">
+                                <el-date-picker v-model="logES.date"
+                                                type="datetimerange"
+                                                unlink-panels
+                                                range-separator="至"
+                                                start-placeholder="开始日期"
+                                                end-placeholder="结束日期"
+                                                format="YYYY-MM-DD"
+                                                :shortcuts="dataRangShortcuts">
+                                </el-date-picker>
+                            </el-col>
+                            <el-col :span="3" :offset="1">
+                                <el-input v-model="logES.content"
+                                          prefix-icon="el-icon-search"
+                                          placeholder="输入日志内容搜索" />
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="20">
+                            <el-col :span="24">
+                                <el-table :data="logES.list"
+                                          stripe
+                                          :empty-text="logES.error"
+                                          v-loading="logES.loading"
+                                          @sort-change="logESSort"
+                                          style="width: 100%"
+                                          :row-class-name="logESListRowClassName">
+                                    <el-table-column label="级别"
+                                                     prop="Level"
+                                                     sortable="custom">
+                                    </el-table-column>
+                                    <el-table-column label="类型"
+                                                     prop="LogType"
+                                                     sortable="custom">
+                                    </el-table-column>
+                                    <el-table-column label="内容"
+                                                     prop="LogContent">
+                                    </el-table-column>
+                                    <el-table-column label="操作者"
+                                                     prop="CreatorName" e>
+                                    </el-table-column>
+                                    <el-table-column label="操作时间"
+                                                     prop="CreateTime"
+                                                     sortable="custom">
+                                    </el-table-column>
+                                    <el-table-column align="center">
+                                        <template #default="scope">
+                                            <el-button size="mini"
+                                                       @click="LogESDetail(scope.$index, scope.row)">详情</el-button>
+                                        </template>
+                                    </el-table-column>
+                                </el-table>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="20">
+                            <el-col :span="24">
+                                <el-pagination @size-change="logESListSizeChange"
+                                               @current-change="logESListCurrentChange"
+                                               :current-page="logES.currentPage"
+                                               :page-sizes="pageConfig.sizes"
+                                               :page-size="logES.pageSize"
+                                               layout="total, sizes, prev, pager, next, jumper"
+                                               :hide-on-single-page="logES.hidePagination"
+                                               :total="logES.total">
+                                </el-pagination>
+                            </el-col>
+                        </el-row>
+                    </el-tab-pane>
+                    <el-tab-pane label="数据库日志" name="RDBMS">
+                        <el-row :gutter="20">
+                            <el-col :span="6">
+                                <el-checkbox :indeterminate="logDB.isLevelIndeterminate" v-model="logDB.checkAllLevels" @change="dbAllLevel">所有日志级别</el-checkbox>
+                                <div style="margin: 15px 0;"></div>
+                                <el-checkbox-group v-model="logDB.levels" @change="dbLevelChange">
+                                    <el-checkbox v-for="level in logConfig.levels" :label="level" :key="level">{{level}}</el-checkbox>
+                                </el-checkbox-group>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-checkbox :indeterminate="logDB.isTypeIndeterminate" v-model="logDB.checkAllTypes" @change="dbAllType">所有日志类型</el-checkbox>
+                                <div style="margin: 15px 0;"></div>
+                                <el-checkbox-group v-model="logDB.types" @change="dbTypeChange">
+                                    <el-checkbox v-for="type in logConfig.types" :label="type" :key="type">{{type}}</el-checkbox>
+                                </el-checkbox-group>
+                            </el-col>
+                            <el-col :span="5" :offset="1">
+                                <el-date-picker v-model="logDB.date"
+                                                type="datetimerange"
+                                                unlink-panels
+                                                range-separator="至"
+                                                start-placeholder="开始日期"
+                                                end-placeholder="结束日期"
+                                                format="YYYY-MM-DD"
+                                                :shortcuts="dataRangShortcuts">
+                                </el-date-picker>
+                            </el-col>
+                            <el-col :span="3" :offset="1">
+                                <el-input v-model="logDB.content"
+                                          prefix-icon="el-icon-search"
+                                          placeholder="输入日志内容搜索" />
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="20">
+                            <el-col :span="24">
+                                <el-table :data="logDB.list"
+                                          stripe
+                                          :empty-text="logDB.error"
+                                          v-loading="logDB.loading"
+                                          @sort-change="logDBSort"
+                                          style="width: 100%;"
+                                          :row-class-name="logDBListRowClassName">
+                                    <el-table-column label="级别"
+                                                     prop="Level"
+                                                     sortable="custom">
+                                    </el-table-column>
+                                    <el-table-column label="类型"
+                                                     prop="LogType"
+                                                     sortable="custom">
+                                    </el-table-column>
+                                    <el-table-column label="内容"
+                                                     prop="LogContent">
+                                    </el-table-column>
+                                    <el-table-column label="操作者"
+                                                     prop="CreatorName">
+                                    </el-table-column>
+                                    <el-table-column label="操作时间"
+                                                     prop="CreateTime"
+                                                     sortable="custom">
+                                    </el-table-column>
+                                    <el-table-column align="center">
+                                        <template #default="scope">
+                                            <el-button size="mini"
+                                                       @click="LogDBDetail(scope.$index, scope.row)">详情</el-button>
+                                        </template>
+                                    </el-table-column>
+                                </el-table>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="20">
+                            <el-col :span="24">
+                                <el-pagination @size-change="logDBListSizeChange"
+                                               @current-change="logDBListCurrentChange"
+                                               :current-page="logDB.currentPage"
+                                               :page-sizes="pageConfig.sizes"
+                                               :page-size="logDB.pageSize"
+                                               layout="total, sizes, prev, pager, next, jumper"
+                                               :hide-on-single-page="logDB.hidePagination"
+                                               :total="logDB.total">
+                                </el-pagination>
+                            </el-col>
+                        </el-row>
+                    </el-tab-pane>
+                </el-tabs>
+            </el-container>
+        </el-container>
+
+        <!--SA身份验证-->
+        <el-dialog title="SA身份验证"
+                   v-model="sa.show"
+                   :width="350"
+                   :close-on-click-modal="false"
+                   :close-on-press-escape="false"
+                   :show-close="false"
+                   v-loading="sa.loading">
+            <el-form :model="sa">
+                <el-form-item label="用户名" :label-width="200">
+                    <el-input type="text" v-model="sa.username" :maxlength="20" size="medium"></el-input>
+                </el-form-item>
+                <el-form-item label="密码" :label-width="200">
+                    <el-input type="text" v-model="sa.password" :maxlength="25" size="medium" show-password></el-input>
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <span class="dialog-footer">
+                    <el-button type="primary" @click="saLogin">登录</el-button>
+                </span>
+            </template>
+        </el-dialog>
+
+        <!--文件内容-->
+        <el-dialog custom-class="logfile-content-dialog"
+                   :title="logFile.fileContent.currentFile + '   ' + logFile.fileContent.size"
+                   v-model="logFile.fileContent.show"
+                   fullscreen="true">
+            <el-progress v-show="logFile.fileContent.loading"
+                         :text-inside="true"
+                         :stroke-width="18"
+                         :percentage="logFile.fileContent.percentage"></el-progress>
+            <div class="logfile-content">
+                <el-skeleton :rows="10"
+                             v-show="logFile.fileContent.loading"></el-skeleton>
+                <p v-html="logFile.fileContent.content"></p>
+            </div>
+            <template #footer>
+                <span class="dialog-footer">
+                    <el-button @click="closeLogFile">关闭</el-button>
+                    <el-button type="primary" @click="downloadFileContent">下载</el-button>
+                </span>
+            </template>
+        </el-dialog>
+
+        <!--日志详情-->
+        <el-dialog title="日志详情"
+                   v-model="log.show">
+            <el-skeleton :loading="log.loading"
+                         animated
+                         :throttle="500">
+                <template #template>
+                    <el-row :gutter="20">
+                        <el-col :span="10">
+                            <el-skeleton-item variant="text" />
+                        </el-col>
+                        <el-col :span="8">
+                            <el-skeleton-item variant="text" />
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+                        <el-col :span="10">
+                            <el-skeleton-item variant="text" />
+                        </el-col>
+                        <el-col :span="8">
+                            <el-skeleton-item variant="text" />
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+                        <el-col :span="20">
+                            <el-skeleton-item variant="text" />
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+                        <el-col :span="20">
+                            <el-skeleton-item variant="text" />
+                        </el-col>
+                    </el-row>
+                </template>
+                <template #default>
+                    <el-row :gutter="20">
+                        <el-col :span="2">
+                            <h3>级别</h3>
+                        </el-col>
+                        <el-col :span="10">
+                            <el-tag :type="log.tag">{{log.Level}}</el-tag>
+                        </el-col>
+                        <el-col :span="4">
+                            <h3>类型</h3>
+                        </el-col>
+                        <el-col :span="8">
+                            <span>{{log.LogType}}</span>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+                        <el-col :span="2">
+                            <h3>操作者</h3>
+                        </el-col>
+                        <el-col :span="10">
+                            <span>{{log.CreatorName}}</span>
+                        </el-col>
+                        <el-col :span="4">
+                            <h3>操作时间</h3>
+                        </el-col>
+                        <el-col :span="8">
+                            <span class="time">{{log.CreateTime}}</span>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+                        <el-col :span="2">
+                            <h3>内容</h3>
+                        </el-col>
+                        <el-col :span="22">
+                            <span>{{log.LogContent}}</span>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+                        <el-col :span="2">
+                            <h3>数据备份</h3>
+                        </el-col>
+                        <el-col :span="22">
+                            <p v-html="log.Data" class="logfile-content"></p>
+                        </el-col>
+                    </el-row>
+                </template>
+            </el-skeleton>
+            <template #footer>
+                <span class="dialog-footer">
+                    <el-button @click="closeLog">关闭</el-button>
+                </span>
+            </template>
+        </el-dialog>
+    </div>
+</body>
+</html>

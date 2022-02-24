@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "DataMigration.Application": {
+      "commandName": "Project"
+    }
+  }
+}

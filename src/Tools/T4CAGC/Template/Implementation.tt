@@ -14,31 +14,31 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
         #region DI
 
         public <#=Options.Table.ReducedName#>Business(
+            IAutoMapperProvider autoMapperProvider
 <#
         if (Options.Table.FreeSql)
         {
 #>
-            IFreeSqlProvider freeSqlProvider,
+            ,IFreeSqlProvider freeSqlProvider
 <#
         }
 
         if (Options.Table.Elasticsearch)
         {
 #>
-            IElasticsearchProvider elasticsearchProvider,
+            ,IElasticsearchProvider elasticsearchProvider
 <#
         }
 
-        if (Functions.ContainsKey(Function.Import) || Functions.ContainsKey(Function.Export))
+        foreach(var service in DIServices)
         {
 #>
-            IHttpContextAccessor httpContextAccessor,
+            ,<#=service.Key#> <#=char.ToLower(service.Value[0]) + service.Value[1..]#>
 <#
         }
-#>
-            IAutoMapperProvider autoMapperProvider,
-            IOperationRecordBusiness operationRecordBusiness)
+#>)
         {
+            Mapper = autoMapperProvider.GetMapper();
 <#
 
         if (Options.Table.FreeSql)
@@ -56,20 +56,20 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
 <#
         }
 
-        if (Functions.ContainsKey(Function.Import) || Functions.ContainsKey(Function.Export))
+        foreach(var service in DIServices.Values)
         {
 #>
-            HttpContextAccessor = httpContextAccessor;
+            <#=service#> = <#=char.ToLower(service[0]) + service[1..]#>;
 <#
         }
 #>
-            Mapper = autoMapperProvider.GetMapper();
-            OperationRecordBusiness = operationRecordBusiness;
         }
 
         #endregion
 
         #region 私有成员
+
+        readonly IMapper Mapper;
 <#
         if (Options.Table.FreeSql)
         {
@@ -88,19 +88,15 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
         readonly ElasticsearchClient ESClient;
 <#
         }
-        
-        if (Functions.ContainsKey(Function.Import) || Functions.ContainsKey(Function.Export))
+
+        foreach(var service in DIServices)
         {
 #>
 
-        readonly IHttpContextAccessor HttpContextAccessor;
+        readonly <#=service.Key#> <#=service.Value#>;
 <#
         }
 #>
-
-        readonly IMapper Mapper;
-
-        readonly IOperationRecordBusiness OperationRecordBusiness;
 
         #endregion
 
@@ -112,9 +108,9 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
         {
 #>
 
-        public List<string> GetAll<#=field.Name#>()
+        public Dictionary<string, string> GetAll<#=field.Name#>()
         {
-            return typeof(<#=Options.Table.ReducedName#>_<#=field.Name#>).GetFields().Select(o => (string)o.GetValue(null)).ToList();
+            return typeof(<#=Options.Table.ReducedName#>_<#=field.Name#>).GetFields().ToDictionary(k => k.Name, v => (string)v.GetValue(null));
         }
 <#
         }
@@ -388,7 +384,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
                 var orId = OperationRecordBusiness.Create(new Common_OperationRecord
                 {
                     DataType = nameof(<#=Options.Table.Name#>),
-                    DataId = <#WritePrimaryField("newData", " + ");#>,
+                    DataId = <#WritePrimaryField("newData", " + ");#>.ToString(),
                     Explain = $"创建<#=Options.Table.Remark#>[@字段说明#待完善@]."
                 });
             });
@@ -488,7 +484,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
                 var orId = OperationRecordBusiness.Create(new Common_OperationRecord
                 {
                     DataType = nameof(<#=Options.Table.Name#>),
-                    DataId = <#WritePrimaryField("editData", " + ");#>,
+                    DataId = <#WritePrimaryField("editData", " + ");#>.ToString(),
                     Explain = $"修改<#=Options.Table.Remark#>[@字段说明#待完善@].",
                     Remark = $"变更详情: \r\n\t{changed_}"
                 });
@@ -506,7 +502,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
 
         public void Delete(List<string> keys)
         {
-            var entityList = Repository.Select.Where(c => keys.Contains(<#WritePrimaryField("c", " + ");#>)).ToList(c => new { <#WritePrimaryField("c", ", ");#> });
+            var entityList = Repository.Select.Where(c => keys.Contains(<#WritePrimaryField("c", " + ");#>)).ToList(c => new { <#WritePrimaryFieldToLambda("c", ", ");#> });
 
             var orList = new List<Common_OperationRecord>();
 
@@ -517,14 +513,14 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
                 orList.Add(new Common_OperationRecord
                 {
                     DataType = nameof(<#=Options.Table.Name#>),
-                    DataId = <#WritePrimaryField("entity", " + ");#>,
+                    DataId = <#WritePrimaryField("entity", " + ");#>.ToString(),
                     Explain = $"删除<#=Options.Table.Remark#>[@字段说明#待完善@]."
                 });
             }
 
             (bool success, Exception ex) = Orm.RunTransaction(() =>
             {
-                if (Repository.Delete(o => keys.Contains(<#WritePrimaryField("o", " + ");#>)) <= 0)
+                if (Repository.Delete(o => keys.Contains(<#WritePrimaryField("o", " + ");#>.ToString())) <= 0)
                     throw new MessageException("未删除任何数据");
 
                 var orIds = OperationRecordBusiness.Create(orList);
@@ -572,7 +568,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
                 var orId = OperationRecordBusiness.Create(new Common_OperationRecord
                 {
                     DataType = nameof(<#=Options.Table.Name#>),
-                    DataId = <#WritePrimaryField("entity", " + ");#>,
+                    DataId = <#WritePrimaryField("entity", " + ");#>.ToString(),
                     Explain = $"{(enable ? "启用" : "禁用")}<#=Options.Table.Remark#>[@字段说明#待完善@]."
                 });
             });
@@ -604,7 +600,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
 <#
         }
 #>
-                                        o.Sort
+                                        o.<#=FunctionsWithField[Function.Sort].Name#>
                                     });
 
             if (current == default)
@@ -619,80 +615,82 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
         {
 #>
                     SortMethod.top => Repository.Where(o => o.ParentId == current.ParentId)
-                                                .OrderBy(o => o.Sort)
+                                                .OrderBy(o => o.<#=FunctionsWithField[Function.Sort].Name#>)
 <#
         }
         else
         {
 #>
-                    SortMethod.top => Repository.Select.OrderBy(o => o.Sort)
+                    SortMethod.top => Repository.Select.OrderBy(o => o.<#=FunctionsWithField[Function.Sort].Name#>)
 <#
         }
 #>
                                                 .First(o => new
                                                 {
                                                     o.Id,
-                                                    o.Sort
+                                                    o.<#=FunctionsWithField[Function.Sort].Name#>
                                                 }),
 <#
         if(Options.Table.Tree)
         {
 #>
-                    SortMethod.up => Repository.Select.Where(o => o.ParentId == current.ParentId && o.Sort < current.Sort)
-                                                .OrderByDescending(o => o.Sort)
+                    SortMethod.up => Repository.Select.Where(o => o.ParentId == current.ParentId && o.<#=FunctionsWithField[Function.Sort].Name#> < current.<#=FunctionsWithField[Function.Sort].Name#>)
+                                                .OrderByDescending(o => o.<#=FunctionsWithField[Function.Sort].Name#>)
 <#
         }
         else
         {
 #>
-                    SortMethod.up => Repository.Select.OrderByDescending(o => o.Sort)
+                    SortMethod.up => Repository.Where(o => o.<#=FunctionsWithField[Function.Sort].Name#> < current.<#=FunctionsWithField[Function.Sort].Name#>)
+                                               .OrderByDescending(o => o.<#=FunctionsWithField[Function.Sort].Name#>)
 <#
         }
 #>
                                                .First(o => new
                                                {
                                                    o.Id,
-                                                   o.Sort
+                                                   o.<#=FunctionsWithField[Function.Sort].Name#>
                                                }),
 <#
         if(Options.Table.Tree)
         {
 #>
-                    SortMethod.down => Repository.Select.Where(o => o.ParentId == current.ParentId && o.Sort > current.Sort)
-                                                .OrderBy(o => o.Sort)
+                    SortMethod.down => Repository.Select.Where(o => o.ParentId == current.ParentId && o.<#=FunctionsWithField[Function.Sort].Name#> > current.<#=FunctionsWithField[Function.Sort].Name#>)
+                                                .OrderBy(o => o.<#=FunctionsWithField[Function.Sort].Name#>)
 <#
         }
         else
         {
 #>
-                    SortMethod.down => Repository.Select.OrderBy(o => o.Sort)
+                    SortMethod.down => Repository.Where(o => o.<#=FunctionsWithField[Function.Sort].Name#> > current.<#=FunctionsWithField[Function.Sort].Name#>)
+                                                 .OrderBy(o => o.<#=FunctionsWithField[Function.Sort].Name#>)
 <#
         }
 #>
                                                  .First(o => new
                                                  {
                                                      o.Id,
-                                                     o.Sort
+                                                     o.<#=FunctionsWithField[Function.Sort].Name#>
                                                  }),
 <#
         if(Options.Table.Tree)
         {
 #>
                     SortMethod.low => Repository.Select.Where(o => o.ParentId == current.ParentId)
-                                                .OrderByDescending(o => o.Sort)
+                                                .OrderByDescending(o => o.<#=FunctionsWithField[Function.Sort].Name#>)
 <#
         }
         else
         {
 #>
-                    SortMethod.low => Repository.Select.OrderByDescending(o => o.Sort)
+                    SortMethod.low => Repository.Select.OrderByDescending(o => o.<#=FunctionsWithField[Function.Sort].Name#>)
 <#
         }
 #>
                                                 .First(o => new
                                                 {
                                                     o.Id,
-                                                    o.Sort
+                                                    o.<#=FunctionsWithField[Function.Sort].Name#>
                                                 }),
                     _ => throw new MessageException($"不支持的排序方法 {data.Method}."),
                 };
@@ -702,18 +700,18 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
 
                 if (Repository.UpdateDiy
                          .Where(o => o.Id == target.Id)
-                         .Set(o => o.Sort, current.Sort)
+                         .Set(o => o.<#=FunctionsWithField[Function.Sort].Name#>, current.<#=FunctionsWithField[Function.Sort].Name#>)
                          .ExecuteAffrows() < 0
                     || Repository.UpdateDiy
                          .Where(o => o.Id == current.Id)
-                         .Set(o => o.Sort, target.Sort)
+                         .Set(o => o.<#=FunctionsWithField[Function.Sort].Name#>, target.<#=FunctionsWithField[Function.Sort].Name#>)
                          .ExecuteAffrows() < 0)
                     throw new MessageException("<#=Options.Table.Remark#>排序失败.");
 
                 var orId = OperationRecordBusiness.Create(new Common_OperationRecord
                 {
                     DataType = nameof(<#=Options.Table.Name#>),
-                    DataId = <#WritePrimaryField("target", " + ");#>,
+                    DataId = <#WritePrimaryField("target", " + ");#>.ToString(),
                     Explain = $"<#=Options.Table.Remark#>排序[排序方法: {data.Method}@字段说明#待完善@]."
                 });
             });
@@ -739,7 +737,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
 <#
         }
 #>
-                                        o.Sort
+                                        o.<#=FunctionsWithField[Function.Sort].Name#>
                                     });
 
             if (current == default)
@@ -759,7 +757,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
 <#
         }
 #>
-                                        o.Sort
+                                        o.<#=FunctionsWithField[Function.Sort].Name#>
                                     });
 
             if (target == default)
@@ -779,33 +777,33 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
 
                     if (data.Append)
                     {
-                        target_new = Repository.Where(o => o.ParentId == target.ParentId && o.Sort == target.Sort + 1)
+                        target_new = Repository.Where(o => o.ParentId == target.ParentId && o.<#=FunctionsWithField[Function.Sort].Name#> == target.<#=FunctionsWithField[Function.Sort].Name#> + 1)
                                              .First(o => new
                                              {
                                                  o.Id,
-                                                 o.Sort
+                                                 o.<#=FunctionsWithField[Function.Sort].Name#>
                                              });
                     }
                     else
                     {
-                        target_new = Repository.Where(o => o.ParentId == target.ParentId && o.Sort == current.Sort - 1)
+                        target_new = Repository.Where(o => o.ParentId == target.ParentId && o.<#=FunctionsWithField[Function.Sort].Name#> == current.<#=FunctionsWithField[Function.Sort].Name#> - 1)
                                              .First(o => new
                                              {
                                                  o.Id,
-                                                 o.Sort
+                                                 o.<#=FunctionsWithField[Function.Sort].Name#>
                                              });
                     }
 
                     string target_newId = target_new.Id;
-                    int target_newSort = target_new.Sort;
+                    int target_newSort = target_new.<#=FunctionsWithField[Function.Sort].Name#>;
 
                     if (Repository.UpdateDiy
                              .Where(o => o.Id == target_newId)
-                             .Set(o => o.Sort, current.Sort)
+                             .Set(o => o.<#=FunctionsWithField[Function.Sort].Name#>, current.<#=FunctionsWithField[Function.Sort].Name#>)
                              .ExecuteAffrows() < 0
                         || Repository.UpdateDiy
                              .Where(o => o.Id == current.Id)
-                             .Set(o => o.Sort, target_newSort)
+                             .Set(o => o.<#=FunctionsWithField[Function.Sort].Name#>, target_newSort)
                              .ExecuteAffrows() < 0)
                         throw new MessageException("<#=Options.Table.Remark#>排序失败.");
 
@@ -816,16 +814,16 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
                     #region 异层级排序
 
                     if (Repository.UpdateDiy
-                             .Where(o => o.ParentId == current.ParentId && o.Sort > current.Sort)
-                             .Set(o => o.Sort - 1)
+                             .Where(o => o.ParentId == current.ParentId && o.<#=FunctionsWithField[Function.Sort].Name#> > current.<#=FunctionsWithField[Function.Sort].Name#>)
+                             .Set(o => o.<#=FunctionsWithField[Function.Sort].Name#> - 1)
                              .ExecuteAffrows() < 0
                         || Repository.UpdateDiy
-                             .Where(o => o.ParentId == target.ParentId && o.Sort > (data.Append == true ? target.Sort : (target.Sort - 1)))
-                             .Set(o => o.Sort + 1)
+                             .Where(o => o.ParentId == target.ParentId && o.<#=FunctionsWithField[Function.Sort].Name#> > (data.Append == true ? target.<#=FunctionsWithField[Function.Sort].Name#> : (target.<#=FunctionsWithField[Function.Sort].Name#> - 1)))
+                             .Set(o => o.<#=FunctionsWithField[Function.Sort].Name#> + 1)
                              .ExecuteAffrows() < 0
                         || Repository.UpdateDiy
                                 .Where(o => o.Id == current.Id)
-                                .Set(o => o.Sort, data.Inside == true ? 0 : (data.Append == true ? (target.Sort + 1) : target.Sort))
+                                .Set(o => o.<#=FunctionsWithField[Function.Sort].Name#>, data.Inside == true ? 0 : (data.Append == true ? (target.<#=FunctionsWithField[Function.Sort].Name#> + 1) : target.<#=FunctionsWithField[Function.Sort].Name#>))
                                 .Set(o => o.ParentId, data.Inside == true ? target.Id : target.ParentId)
                                 .Set(o => o.Level, data.Inside == true ? (target.Level + 1) : target.Level)
                                 .Set(o => o.RootId, target.RootId)
@@ -843,33 +841,33 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
 
                     if (data.Append)
                     {
-                        target_new = Repository.Where(o => o.Sort == target.Sort + 1)
+                        target_new = Repository.Where(o => o.<#=FunctionsWithField[Function.Sort].Name#> == target.<#=FunctionsWithField[Function.Sort].Name#> + 1)
                                              .First(o => new
                                              {
                                                  o.Id,
-                                                 o.Sort
+                                                 o.<#=FunctionsWithField[Function.Sort].Name#>
                                              });
                     }
                     else
                     {
-                        target_new = Repository.Where(o => o.Sort == current.Sort - 1)
+                        target_new = Repository.Where(o => o.<#=FunctionsWithField[Function.Sort].Name#> == current.<#=FunctionsWithField[Function.Sort].Name#> - 1)
                                              .First(o => new
                                              {
                                                  o.Id,
-                                                 o.Sort
+                                                 o.<#=FunctionsWithField[Function.Sort].Name#>
                                              });
                     }
 
                     string target_newId = target_new.Id;
-                    int target_newSort = target_new.Sort;
+                    int target_newSort = target_new.<#=FunctionsWithField[Function.Sort].Name#>;
 
                     if (Repository.UpdateDiy
                              .Where(o => o.Id == target_newId)
-                             .Set(o => o.Sort, current.Sort)
+                             .Set(o => o.<#=FunctionsWithField[Function.Sort].Name#>, current.<#=FunctionsWithField[Function.Sort].Name#>)
                              .ExecuteAffrows() < 0
                         || Repository.UpdateDiy
                              .Where(o => o.Id == current.Id)
-                             .Set(o => o.Sort, target_newSort)
+                             .Set(o => o.<#=FunctionsWithField[Function.Sort].Name#>, target_newSort)
                              .ExecuteAffrows() < 0)
                         throw new MessageException("<#=Options.Table.Remark#>排序失败.");
 <#
@@ -879,7 +877,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
                 _ = OperationRecordBusiness.Create(new Common_OperationRecord
                 {
                     DataType = nameof(<#=Options.Table.Name#>),
-                    DataId = <#WritePrimaryField("target", " + ");#>,
+                    DataId = <#WritePrimaryField("target", " + ");#>.ToString(),
                     Explain = $"<#=Options.Table.Remark#>拖动排序[@字段说明#待完善@]."
                 });
             });
@@ -1087,7 +1085,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
                     //    orList.Add(new Common_OperationRecord
                     //    {
                     //        DataType = nameof(<#=Options.Table.Name#>),
-                    //        DataId = <#WritePrimaryField("entity", " + ");#>,
+                    //        DataId = <#WritePrimaryField("entity", " + ");#>.ToString(),
                     //        Explain = $"导入数据（更新）<#=Options.Table.Remark#>[@字段说明#待完善@]."
                     //    });
                     //}
@@ -1098,7 +1096,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
                     //    orList.Add(new Common_OperationRecord
                     //    {
                     //        DataType = nameof(<#=Options.Table.Name#>),
-                    //        DataId = <#WritePrimaryField("entity", " + ");#>,
+                    //        DataId = <#WritePrimaryField("entity", " + ");#>.ToString(),
                     //        Explain = $"导入数据（新增）<#=Options.Table.Remark#>[@字段说明#待完善@]."
                     //    });
                     //}
@@ -1144,7 +1142,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
 
             var entityList = Repository.Select
                                     .GetPagination(pagination)
-                                    .ToList<Common_FileUploadConfig, <#=Functions[Function.Export]#>>(typeof(Export).GetNamesWithTagAndOther(true, , "_<#=Functions[Function.Export]#>"));
+                                    .ToList<<#=Options.Table.Name#>, <#=Functions[Function.Export]#>>(type.GetNamesWithTagAndOther(true, "_<#=Functions[Function.Export]#>"));
 
             var list = Mapper.Map<List<<#=Functions[Function.Export]#>>>(entityList);
 
@@ -1235,7 +1233,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
 
         foreach (var field in PrimaryKeys)
         {
-#><#=i > 0 ? ", " : ""#><#=field.Type#><#+
+#><#=i > 0 ? ", " : ""#><#=field.CsTypeKeyword#><#+
             i++;
         }
 
@@ -1277,7 +1275,20 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
         var i = 0;
         foreach (var field in PrimaryKeys)
         {
-#><#=i > 0 ? symbol : ""#><#=obj#>.<#=field.Name#><#+
+#><#=i > 0 ? symbol : ""#><#=obj#>.<#=field.Name#>.ToString()<#+
+            i++;
+        }
+    }
+
+    /// <summary>
+    /// 主键字段拼接
+    /// </summary>
+    private void WritePrimaryFieldToLambda(string obj, string symbol)
+    {
+        var i = 0;
+        foreach (var field in PrimaryKeys)
+        {
+#><#=i > 0 ? symbol : ""#> <#=field.Name#> = <#=obj#>.<#=field.Name#>.ToString()<#+
             i++;
         }
     }
@@ -1290,7 +1301,7 @@ namespace Business.Implementation.<#=Options.Table.ModuleName#>
         var i = 0;
         foreach (var field in PrimaryKeys)
         {
-#><#=i > 0 ? ", " : ""#><#=field.Type#> <#=field.Name.ToLower()#><#+
+#><#=i > 0 ? ", " : ""#><#=field.CsTypeKeyword#> <#=field.Name.ToLower()#><#+
             i++;
         }
     }

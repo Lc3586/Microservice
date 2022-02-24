@@ -19,7 +19,7 @@ namespace T4CAGC.Template
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Const.tt"
+    #line 1 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Const.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "16.0.0.0")]
     public partial class Const : ConstBase
     {
@@ -36,14 +36,14 @@ namespace T4CAGC.Template
 |*      此代码由T4模板自动生成																	|
 |*		版本:");
             
-            #line 6 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
+            #line 6 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Version.PadRight(83, ' ')));
             
             #line default
             #line hidden
             this.Write("|__\r\n|*\t\t日期:");
             
-            #line 7 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
+            #line 7 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
             this.Write(this.ToStringHelper.ToStringWithCulture(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss").PadRight(86, ' ')));
             
             #line default
@@ -51,7 +51,7 @@ namespace T4CAGC.Template
             this.Write("≣|\r\n|*\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tby  LCTR\t\t   ≣|\r\n|* ___________________________________" +
                     "_____________________________________________________________≣|\r\n\\*/\r\n\r\n\r\n\r\n");
             
-            #line 14 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
+            #line 14 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
 
 	foreach (var @namespace in NameSpaces?.OrderBy(o => o))
 	{
@@ -61,14 +61,14 @@ namespace T4CAGC.Template
             #line hidden
             this.Write("using ");
             
-            #line 18 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
+            #line 18 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
             this.Write(this.ToStringHelper.ToStringWithCulture(@namespace));
             
             #line default
             #line hidden
             this.Write(";\r\n");
             
-            #line 19 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
+            #line 19 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\.\Reuseable\BaseHead.ttinclude"
 
 	}
 
@@ -77,42 +77,42 @@ namespace T4CAGC.Template
             #line hidden
             this.Write("\r\nnamespace Model.");
             
-            #line 7 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Const.tt"
+            #line 7 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Const.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.ModuleName));
             
             #line default
             #line hidden
             this.Write("\r\n{\r\n    /// <summary>\r\n    /// ");
             
-            #line 10 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Const.tt"
+            #line 10 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Const.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.TableRemark));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 10 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Const.tt"
+            #line 10 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Const.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Field.Remark));
             
             #line default
             #line hidden
             this.Write("\r\n    /// </summary>\r\n    public static class ");
             
-            #line 12 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Const.tt"
+            #line 12 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Const.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.ReducedName));
             
             #line default
             #line hidden
             this.Write("_");
             
-            #line 12 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Const.tt"
+            #line 12 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Const.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Options.Field.Name));
             
             #line default
             #line hidden
             this.Write("\r\n    {\r\n");
             
-            #line 14 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Const.tt"
+            #line 14 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Const.tt"
 
 	foreach (var @const in Options.Field.Consts.OrderBy(o => o.Key))
 	{
@@ -122,21 +122,21 @@ namespace T4CAGC.Template
             #line hidden
             this.Write("        public const string ");
             
-            #line 18 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Const.tt"
+            #line 18 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Const.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(@const.Key));
             
             #line default
             #line hidden
             this.Write(" = \"");
             
-            #line 18 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Const.tt"
+            #line 18 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Const.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(@const.Value));
             
             #line default
             #line hidden
             this.Write("\";\r\n");
             
-            #line 19 "F:\图锐信息\项目框架学习\GitHub社区项目\Microservice\src\Tools\T4CAGC\Template\Const.tt"
+            #line 19 "D:\源码\Github\社区框架\Microservice\src\Tools\T4CAGC\Template\Const.tt"
 
     }
 

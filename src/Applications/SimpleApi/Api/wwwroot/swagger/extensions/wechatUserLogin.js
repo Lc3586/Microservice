@@ -48,7 +48,7 @@ window.onInformationLoaded(() => {
                         '确认': {
                             'click': () => {
                                 close();
-                                let url = '/plug-in/wechat/qrcode.html?method=login&size=' + $('#key_0').val();
+                                let url = window.baseUri + '/plug-in/wechat/qrcode.html?method=login&size=' + $('#key_0').val();
                                 window.showDialog(
                                     '系统用户微信登录',
                                     [

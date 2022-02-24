@@ -104,7 +104,7 @@ namespace Api.Configures
                             options.FreeSqlDevOptions.SyncStructureOnStartup = config.FreeSql.SyncStructureOnStartup;
 
                             options.FreeSqlDbContextOptions.EnableAddOrUpdateNavigateList = true;
-                            options.FreeSqlDbContextOptions.EntityAssembly = d.EntityAssembly;
+                            options.FreeSqlDbContextOptions.EntityAssemblys = d.EntityAssembly;
                         });
                     });
             });
