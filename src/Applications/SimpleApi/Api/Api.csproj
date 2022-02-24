@@ -165,12 +165,8 @@
     <Content Remove="wwwroot\plug-in\naiveupload\Model\PreUploadChunkFileState.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\RawFile.js" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\RawFile.js.map" />
-    <Content Remove="wwwroot\plug-in\naiveupload\Model\ResponseData.js" />
-    <Content Remove="wwwroot\plug-in\naiveupload\Model\ResponseData.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\SelectedFile.js" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\SelectedFile.js.map" />
-    <Content Remove="wwwroot\plug-in\naiveupload\Model\TokenInfo.js" />
-    <Content Remove="wwwroot\plug-in\naiveupload\Model\TokenInfo.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadConfig.js" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadConfig.js.map" />
     <Content Remove="wwwroot\plug-in\naiveupload\Model\UploadConfigAuthoritiesTreeList.js" />
@@ -591,22 +587,10 @@
     <None Include="wwwroot\plug-in\naiveupload\Model\RawFile.js.map">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="wwwroot\plug-in\naiveupload\Model\ResponseData.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="wwwroot\plug-in\naiveupload\Model\ResponseData.js.map">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="wwwroot\plug-in\naiveupload\Model\SelectedFile.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="wwwroot\plug-in\naiveupload\Model\SelectedFile.js.map">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="wwwroot\plug-in\naiveupload\Model\TokenInfo.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="wwwroot\plug-in\naiveupload\Model\TokenInfo.js.map">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="wwwroot\plug-in\naiveupload\Model\UploadConfig.js">

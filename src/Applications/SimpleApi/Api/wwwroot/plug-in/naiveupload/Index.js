@@ -147,7 +147,7 @@ window.onload = function () {
             Tag: "script",
             Attributes: {
                 type: 'text/javascript',
-                src: ApiUri.BaseUrl + '/plug-in/naiveupload/Model/Pagination.js'
+                src: ApiUri.BaseUrl + '/ts-common/Model/Pagination.js'
             }
         },
         {

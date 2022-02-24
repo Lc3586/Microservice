@@ -18,6 +18,17 @@ class ApiUri {
     static SALogin: string = this.BaseUrl + '/sa/login';
 
     /**
+     * SA登出
+     * @param returnUrl 登出后跳转地址
+     * */
+    static SALogout: (returnUrl: string) => string = (returnUrl: string) => `${this.BaseUrl}/sa/logout?ReturnUrl=${returnUrl}`;
+
+    /**
+     * JWT登录验证
+     * */
+    static JWTAuthorized: string = this.BaseUrl + '/jwt/authorized';
+
+    /**
      * 获取令牌
      * */
     static GetToken: string = this.BaseUrl + '/jwt/get-token';
