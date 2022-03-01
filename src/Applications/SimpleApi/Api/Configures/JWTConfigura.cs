@@ -55,7 +55,16 @@ namespace Api.Configures
                                             if (bearerAuth)
                                                 return JwtBearerDefaults.AuthenticationScheme;
                                             else
-                                                return CookieAuthenticationDefaults.AuthenticationScheme;
+                                            {
+                                                if (context.Request.Query.ContainsKey("token")
+                                                    && context.Request.Query.TryGetValue("token", out StringValues token)
+                                                    && context.Request.Headers.TryAdd("Authorization", token.First().TrimStart().StartsWith("Bearer ") ? token.First() : $"Bearer {token.First()}"))
+                                                {
+                                                    return JwtBearerDefaults.AuthenticationScheme;
+                                                }
+                                                else
+                                                    return CookieAuthenticationDefaults.AuthenticationScheme;
+                                            }
                                         };
                                     });
             }
@@ -79,7 +88,27 @@ namespace Api.Configures
                 .AddScoped<IAuthorizationHandler, ApiPermissionHandlerr<ApiPermissionRequirement>>()
                 .AddScoped<IAuthorizationHandler, ApiPermissionDefaultHttpContextHandlerr<ApiPermissionRequirement>>()
                 .AddScoped<IAuthorizationHandler, ApiPermissionAuthorizationFilterContextHandlerr<ApiPermissionRequirement>>()
-                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme);
+                .AddAuthentication("JWT+")
+                .AddPolicyScheme("JWT+", "JWT and Token", options =>
+                {
+                    options.ForwardDefaultSelector = context =>
+                    {
+                        var bearerAuth = context.Request.Headers["Authorization"].FirstOrDefault()?.StartsWith("Bearer ") ?? false;
+                        if (bearerAuth)
+                            return JwtBearerDefaults.AuthenticationScheme;
+                        else
+                        {
+                            if (context.Request.Query.ContainsKey("token")
+                                && context.Request.Query.TryGetValue("token", out StringValues token)
+                                && context.Request.Headers.TryAdd("Authorization", token.First().TrimStart().StartsWith("Bearer ") ? token.First() : $"Bearer {token.First()}"))
+                            {
+                                return JwtBearerDefaults.AuthenticationScheme;
+                            }
+                            else
+                                return CookieAuthenticationDefaults.AuthenticationScheme;
+                        }
+                    };
+                });
 
             builder.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
             {
