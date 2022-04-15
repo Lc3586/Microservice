@@ -6,7 +6,7 @@ var UploadWorker = (function () {
         this.AxiosInstance = self.axios.create({});
     }
     UploadWorker.prototype.SetUpAxios = function (headers) {
-        this.AxiosInstance.defaults.headers.post['Content-Type'] = 'applicatoin/octet-stream';
+        this.AxiosInstance.defaults.headers.post['Content-Type'] = 'application/octet-stream';
         if (headers != null) {
             for (var key in headers) {
                 this.AxiosInstance.defaults.headers.common[key] = headers[key];
