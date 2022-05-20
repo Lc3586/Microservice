@@ -1,8 +1,7 @@
 {
   "profiles": {
     "DataMigration.Application": {
-      "commandName": "Project",
-      "commandLineArgs": " -sc \"Data Source=www.lctr.top;Port=3306;User ID=root;Password=-3068-4411-8b9E-; Initial Catalog=220112T图锐官方网站2022版;Charset=utf8; SslMode=none;Min pool size=1;Max pool size=500;\" -st MySql -tc \"Data Source=mysql.turuitech.com;Port=3306;User ID=2022;Password=2022turui; Initial Catalog=220210fhy;Charset=utf8; SslMode=none;Min pool size=1;Max pool size=500;\" -tt MySql -tm \"CMS_.+\" -mll \"Trace\""
+      "commandName": "Project"
     }
   }
 }
