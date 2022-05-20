@@ -133,11 +133,11 @@ namespace Business.Utils.Pagination
             Check(pagination.Filter);
 #pragma warning restore CS0618 // 类型或成员已过时
 
-            if (!pagination.FilterToSql(ref where, alias, Orm.Ado.GetCharacter()))
+            if (!pagination.FilterToSql(ref where, out Dictionary<string, object> @params, alias, Orm.Ado.GetCharacter()))
                 throw new MessageException("搜索条件不支持");
 
             if (!string.IsNullOrWhiteSpace(where))
-                source.Where(where);
+                source.Where(where, @params);
 
             return source;
 
