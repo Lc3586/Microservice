@@ -83,8 +83,8 @@ namespace DataMigration.Application.Handler
             {
                 var entityTypes = FreeSqlMultipleProvider.GetEntityTypes(
                     0,
-                    (Config.TableMatch?.ContainsKey(OperationType.All) == true ? new List<string> { Config.TableMatch[OperationType.All] } : new List<string>())
-                    .Concat(Config.TableMatch?.ContainsKey(OperationType.Schema) == true ? new List<string> { Config.TableMatch[OperationType.Schema] } : new List<string>())
+                    (Config.TableMatch?.ContainsKey(OperationType.All) == true ? Config.TableMatch[OperationType.All] : new List<string>())
+                    .Concat(Config.TableMatch?.ContainsKey(OperationType.Schema) == true ? Config.TableMatch[OperationType.Schema] : new List<string>())
                     .ToList(),
                     (Config.Tables?.ContainsKey(OperationType.All) == true ? Config.Tables[OperationType.All] : new List<string>())
                     .Concat(Config.Tables?.ContainsKey(OperationType.Schema) == true ? Config.Tables[OperationType.Schema] : new List<string>())
@@ -94,7 +94,19 @@ namespace DataMigration.Application.Handler
                     .ToList());
 
                 if (entityTypes.Any_Ex())
-                    FreeSqlMultipleProvider.GetOrm(1).CodeFirst.SyncStructure(entityTypes.ToArray());
+                {
+                    entityTypes.ForEach(x =>
+                    {
+                        try
+                        {
+                            FreeSqlMultipleProvider.GetOrm(Config.SameDb ? 0 : 1).CodeFirst.SyncStructure(x);
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new ApplicationException($"同步{x.Name}实体类结构失败", ex);
+                        }
+                    });
+                }
 
                 //FreeSqlMultipleProvider.SyncStructure(1);
             }
@@ -117,8 +129,8 @@ namespace DataMigration.Application.Handler
             if (!Tables.ContainsKey(key))
                 Tables.Add(key, FreeSqlMultipleProvider.GetTablesByDatabase(
                          key,
-                         (Config.TableMatch?.ContainsKey(OperationType.All) == true ? new List<string> { Config.TableMatch[OperationType.All] } : new List<string>())
-                         .Concat(Config.TableMatch?.ContainsKey(OperationType.Schema) == true ? new List<string> { Config.TableMatch[OperationType.Schema] } : new List<string>())
+                         (Config.TableMatch?.ContainsKey(OperationType.All) == true ? Config.TableMatch[OperationType.All] : new List<string>())
+                         .Concat(Config.TableMatch?.ContainsKey(OperationType.Schema) == true ? Config.TableMatch[OperationType.Schema] : new List<string>())
                          .ToList(),
                          (Config.Tables?.ContainsKey(OperationType.All) == true ? Config.Tables[OperationType.All] : new List<string>())
                          .Concat(Config.Tables?.ContainsKey(OperationType.Schema) == true ? Config.Tables[OperationType.Schema] : new List<string>())
@@ -173,9 +185,9 @@ namespace DataMigration.Application.Handler
                             continue;
                         }
 
-                        var character = FreeSqlMultipleProvider.GetOrm(1).Ado.GetCharacter();
-                        var fk_table = FreeSqlMultipleProvider.GetOrm(1).Ado.GetDatabaseTableName(foreign.Value.Table);
-                        var fk_referencedTable = FreeSqlMultipleProvider.GetOrm(1).Ado.GetDatabaseTableName(foreign.Value.ReferencedTable);
+                        var character = FreeSqlMultipleProvider.GetOrm(Config.SameDb ? 0 : 1).Ado.GetCharacter();
+                        var fk_table = FreeSqlMultipleProvider.GetOrm(Config.SameDb ? 0 : 1).Ado.GetDatabaseTableName(foreign.Value.Table);
+                        var fk_referencedTable = FreeSqlMultipleProvider.GetOrm(Config.SameDb ? 0 : 1).Ado.GetDatabaseTableName(foreign.Value.ReferencedTable);
                         var fk_name = foreign.Key;
                         //var fk_name = $"{character}fk_{foreign.Value.Table.Name}_{foreign.Value.Columns[0].Name}_{foreign.Value.ReferencedTable.Name}_{foreign.ReferencedColumns[0].Name}{character}";
 
@@ -199,7 +211,7 @@ namespace DataMigration.Application.Handler
 
                             //添加外键
                             var fk_add_sql = $"ALTER TABLE {fk_table} ADD CONSTRAINT {fk_name} FOREIGN KEY ({character}{foreign.Value.Columns[0].Name}{character}) REFERENCES {fk_referencedTable} ({character}{foreign.Value.ReferencedColumns[0].Name}{character})";
-                            if (FreeSqlMultipleProvider.GetOrm(1).Ado.ExecuteNonQuery(fk_add_sql) < 0)
+                            if (FreeSqlMultipleProvider.GetOrm(Config.SameDb ? 0 : 1).Ado.ExecuteNonQuery(fk_add_sql) < 0)
                                 throw new ApplicationException($"执行sql失败: {fk_add_sql}, 请检查数据库版本是否支持SQL-92中移除&添加外键的语法.");
 
                             Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "已添加.");
@@ -241,7 +253,7 @@ namespace DataMigration.Application.Handler
 
                     try
                     {
-                        ModifyComment(table_target);
+                        ModifyComment(table_source, table_target);
                     }
                     catch (Exception ex)
                     {
@@ -258,10 +270,11 @@ namespace DataMigration.Application.Handler
         /// <summary>
         /// 编辑表注释
         /// </summary>
-        /// <param name="dbTable">表信息</param>
+        /// <param name="dbTable_source">来源表信息</param>
+        /// <param name="dbTable_target">目标表信息</param>
         /// <returns></returns>
         /// <exception cref="ApplicationException"></exception>
-        void ModifyComment(DbTableInfo dbTable)
+        void ModifyComment(DbTableInfo dbTable_source, DbTableInfo dbTable_target)
         {
             try
             {
@@ -269,23 +282,23 @@ namespace DataMigration.Application.Handler
                 {
                     case DataType.MySql:
                     case DataType.OdbcMySql:
-                        ModifyComment_MySql(dbTable);
+                        ModifyComment_MySql(dbTable_source, dbTable_target);
                         break;
                     case DataType.SqlServer:
                     case DataType.OdbcSqlServer:
-                        ModifyComment_SqlServer(dbTable);
+                        ModifyComment_SqlServer(dbTable_source, dbTable_target);
                         break;
                     case DataType.Oracle:
                     case DataType.OdbcOracle:
-                        ModifyComment_Oracle(dbTable);
+                        ModifyComment_Oracle(dbTable_source, dbTable_target);
                         break;
                     case DataType.Dameng:
                     case DataType.OdbcDameng:
-                        ModifyComment_Dameng(dbTable);
+                        ModifyComment_Dameng(dbTable_source, dbTable_target);
                         break;
                     case DataType.PostgreSQL:
                     case DataType.OdbcPostgreSQL:
-                        ModifyComment_PostgreSQL(dbTable);
+                        ModifyComment_PostgreSQL(dbTable_source, dbTable_target);
                         break;
                     case DataType.Sqlite:
                     case DataType.Odbc:
@@ -308,31 +321,33 @@ namespace DataMigration.Application.Handler
         /// <summary>
         /// 编辑注释（MySql）
         /// </summary>
-        /// <param name="dbTable">表信息</param>
+        /// <param name="dbTable_source">来源表信息</param>
+        /// <param name="dbTable_target">目标表信息</param>
         /// <returns></returns>
-        void ModifyComment_MySql(DbTableInfo dbTable)
+        void ModifyComment_MySql(DbTableInfo dbTable_source, DbTableInfo dbTable_target)
         {
-            var character = FreeSqlMultipleProvider.GetOrm(1).Ado.GetCharacter();
+            var character = FreeSqlMultipleProvider.GetOrm(Config.SameDb ? 0 : 1).Ado.GetCharacter();
 
-            var sql = $"ALTER TABLE {FreeSqlMultipleProvider.GetOrm(1).Ado.GetDatabaseTableName(dbTable)} ";
+            var sql = $"ALTER TABLE {FreeSqlMultipleProvider.GetOrm(Config.SameDb ? 0 : 1).Ado.GetDatabaseTableName(dbTable_target)} ";
 
             var columns_comment = string.Join(
                 ",",
-                dbTable.Columns
-                .Where(c => !c.Comment.IsNullOrWhiteSpace())
+                dbTable_target.Columns
+                .Select(x => new { columns_target = x, columns_source = dbTable_source.Columns.Find(y => y.Name.Equals(x.Name, StringComparison.OrdinalIgnoreCase)) })
+                .Where(c => !c.columns_source.Comment.IsNullOrWhiteSpace())
                 .Select(c =>
                 {
-                    Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到列注释: {c.Comment}.");
-                    return $"MODIFY COLUMN {character}{c.Name}{character} {c.DbTypeTextFull} {(c.IsNullable ? "NULL" : "NOT NULL")} {(c.DefaultValue == null ? c.IsNullable ? "DEFAULT NULL" : "" : $"DEFAULT {c.DefaultValue}")} COMMENT '{c.Comment}'";
+                    Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到列注释: {c.columns_source.Comment}.");
+                    return $"MODIFY COLUMN {character}{c.columns_target.Name}{character} {c.columns_target.DbTypeTextFull} {(c.columns_target.IsNullable ? "NULL" : "NOT NULL")} {(c.columns_target.DefaultValue.IsNullOrWhiteSpace() ? c.columns_target.IsNullable ? "DEFAULT NULL" : "" : $"DEFAULT {c.columns_target.DefaultValue}")} COMMENT '{c.columns_source.Comment}'";
                 }));
 
-            if (columns_comment.IsNullOrWhiteSpace() && dbTable.Comment.IsNullOrWhiteSpace())
+            if (columns_comment.IsNullOrWhiteSpace() && dbTable_source.Comment.IsNullOrWhiteSpace())
                 return;
 
-            if (!dbTable.Comment.IsNullOrWhiteSpace())
+            if (!dbTable_source.Comment.IsNullOrWhiteSpace())
             {
-                Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到表注释: {dbTable.Comment}.");
-                sql += $"{(columns_comment.IsNullOrWhiteSpace() ? "Add" : ",")} COMMENT = '{dbTable.Comment}'";
+                Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到表注释: {dbTable_source.Comment}.");
+                sql += $"{(columns_comment.IsNullOrWhiteSpace() ? "Add" : $"{columns_comment},")} COMMENT = '{dbTable_source.Comment}'";
             }
 
             ExecModifyCommentSQL(sql);
@@ -341,55 +356,60 @@ namespace DataMigration.Application.Handler
         /// <summary>
         /// 编辑注释（SqlServer）
         /// </summary>
-        /// <param name="dbTable">表信息</param>
+        /// <param name="dbTable_source">来源表信息</param>
+        /// <param name="dbTable_target">目标表信息</param>
         /// <returns></returns>
-        void ModifyComment_SqlServer(DbTableInfo dbTable)
+        void ModifyComment_SqlServer(DbTableInfo dbTable_source, DbTableInfo dbTable_target)
         {
-            //var schema = dbTable.Schema.IsNullOrWhiteSpace() ? FreeSqlMultipleProvider.GetOrm(1).Ado.QuerySingle<string>($"SELECT table_schema FROM information_schema.tables WHERE table_name = '{dbTable.Name}'") : dbTable.Schema;
-            var schema = dbTable.Schema;
+            //var schema = dbTable.Schema.IsNullOrWhiteSpace() ? FreeSqlMultipleProvider.GetOrm(Config.SameDb ? 0 : 1).Ado.QuerySingle<string>($"SELECT table_schema FROM information_schema.tables WHERE table_name = '{dbTable.Name}'") : dbTable.Schema;
+            var schema = dbTable_target.Schema;
 
-            if (!dbTable.Comment.IsNullOrWhiteSpace())
+            if (!dbTable_source.Comment.IsNullOrWhiteSpace())
             {
-                Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到表注释: {dbTable.Comment}.");
+                Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到表注释: {dbTable_source.Comment}.");
 
                 var sql = @$"
 IF ((SELECT COUNT(*) FROM ::fn_listextendedproperty('MS_Description',
 'SCHEMA', N'{schema}',
-'TABLE', N'{dbTable.Name}', NULL, NULL)) > 0)
+'TABLE', N'{dbTable_target.Name}', NULL, NULL)) > 0)
     EXEC sp_updateextendedproperty
-'MS_Description', N'{dbTable.Comment}',
+'MS_Description', N'{dbTable_target.Comment}',
 'SCHEMA', N'{schema}',
-'TABLE', N'{dbTable.Name}'
+'TABLE', N'{dbTable_target.Name}'
 ELSE EXEC sp_addextendedproperty
-'MS_Description', N'{dbTable.Comment}',
+'MS_Description', N'{dbTable_target.Comment}',
 'SCHEMA', N'{schema}',
-'TABLE', N'{dbTable.Name}'";
+'TABLE', N'{dbTable_target.Name}'";
 
                 ExecModifyCommentSQL(sql);
             }
 
-            dbTable.Columns
-                .Where(c => !c.Comment.IsNullOrWhiteSpace())
-                .ForEach(c =>
+            dbTable_target.Columns
+                .ForEach(x =>
                 {
-                    Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到列注释: {c.Comment}.");
+                    DbColumnInfo columns_source = dbTable_source.Columns.Find(y => y.Name.Equals(x.Name, StringComparison.OrdinalIgnoreCase));
+
+                    if (columns_source.Comment.IsNullOrWhiteSpace())
+                        return;
+
+                    Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到列注释: {columns_source.Comment}.");
 
                     var sql = $@"
 IF ((SELECT COUNT(*) FROM ::fn_listextendedproperty('MS_Description',
 'SCHEMA', N'{schema}',
-'TABLE', N'{dbTable.Name}',
-'COLUMN', N'{c.Name}')) > 0)
+'TABLE', N'{dbTable_target.Name}',
+'COLUMN', N'{x.Name}')) > 0)
     EXEC sp_updateextendedproperty
-'MS_Description', N'{c.Comment}',
+'MS_Description', N'{columns_source.Comment}',
 'SCHEMA', N'{schema}',
-'TABLE', N'{dbTable.Name}',
-'COLUMN', N'{c.Name}'
+'TABLE', N'{dbTable_target.Name}',
+'COLUMN', N'{x.Name}'
 ELSE
     EXEC sp_addextendedproperty
-'MS_Description', N'{c.Comment}',
+'MS_Description', N'{columns_source.Comment}',
 'SCHEMA', N'{schema}',
-'TABLE', N'{dbTable.Name}',
-'COLUMN', N'{c.Name}'";
+'TABLE', N'{dbTable_target.Name}',
+'COLUMN', N'{x.Name}'";
 
                     ExecModifyCommentSQL(sql);
                 });
@@ -398,29 +418,34 @@ ELSE
         /// <summary>
         /// 编辑注释（Oracle）
         /// </summary>
-        /// <param name="dbTable">表信息</param>
+        /// <param name="dbTable_source">来源表信息</param>
+        /// <param name="dbTable_target">目标表信息</param>
         /// <returns></returns>
-        void ModifyComment_Oracle(DbTableInfo dbTable)
+        void ModifyComment_Oracle(DbTableInfo dbTable_source, DbTableInfo dbTable_target)
         {
-            //var schema = dbTable.Schema.IsNullOrWhiteSpace() ? FreeSqlMultipleProvider.GetOrm(1).Ado.QuerySingle<string>($"SELECT OWNER FROM sys.dba_tables WHERE table_name = '{dbTable.Name}'") : dbTable.Schema;
-            var schema = dbTable.Schema;
+            //var schema = dbTable.Schema.IsNullOrWhiteSpace() ? FreeSqlMultipleProvider.GetOrm(Config.SameDb ? 0 : 1).Ado.QuerySingle<string>($"SELECT OWNER FROM sys.dba_tables WHERE table_name = '{dbTable.Name}'") : dbTable.Schema;
+            var schema = dbTable_target.Schema;
 
-            if (!dbTable.Comment.IsNullOrWhiteSpace())
+            if (!dbTable_source.Comment.IsNullOrWhiteSpace())
             {
-                Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到表注释: {dbTable.Comment}.");
+                Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到表注释: {dbTable_source.Comment}.");
 
-                var sql = $"COMMENT ON TABLE \"{schema}\".\"{dbTable.Name}\" IS '{dbTable.Comment}'";
+                var sql = $"COMMENT ON TABLE {(schema.IsNullOrWhiteSpace() ? "" : "\"{schema}\".")}\"{dbTable_target.Name}\" IS '{dbTable_source.Comment}'";
 
                 ExecModifyCommentSQL(sql);
             }
 
-            dbTable.Columns
-                .Where(c => !c.Comment.IsNullOrWhiteSpace())
-                .ForEach(c =>
+            dbTable_target.Columns
+                .ForEach(x =>
                 {
-                    Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到列注释: {c.Comment}.");
+                    DbColumnInfo columns_source = dbTable_source.Columns.Find(y => y.Name.Equals(x.Name, StringComparison.OrdinalIgnoreCase));
 
-                    var sql = $"COMMENT ON COLUMN \"{schema}\".\"{dbTable.Name}\".\"{c.Name}\" IS '{c.Comment}'";
+                    if (columns_source.Comment.IsNullOrWhiteSpace())
+                        return;
+
+                    Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到列注释: {columns_source.Comment}.");
+
+                    var sql = $"COMMENT ON COLUMN {(schema.IsNullOrWhiteSpace() ? "" : "\"{schema}\".")}\"{dbTable_target.Name}\".\"{x.Name}\" IS '{columns_source.Comment}'";
 
                     ExecModifyCommentSQL(sql);
                 });
@@ -429,25 +454,27 @@ ELSE
         /// <summary>
         /// 编辑注释（Dameng）
         /// </summary>
-        /// <param name="dbTable">表信息</param>
+        /// <param name="dbTable_source">来源表信息</param>
+        /// <param name="dbTable_target">目标表信息</param>
         /// <returns></returns>
-        void ModifyComment_Dameng(DbTableInfo dbTable)
+        void ModifyComment_Dameng(DbTableInfo dbTable_source, DbTableInfo dbTable_target)
         {
             //SQL语句和Orcale一样
-            ModifyComment_Oracle(dbTable);
+            ModifyComment_Oracle(dbTable_source, dbTable_target);
         }
 
         /// <summary>
         /// 编辑注释（PostgreSQL）
         /// </summary>
-        /// <param name="dbTable">表信息</param>
+        /// <param name="dbTable_source">来源表信息</param>
+        /// <param name="dbTable_target">目标表信息</param>
         /// <returns></returns>
-        void ModifyComment_PostgreSQL(DbTableInfo dbTable)
+        void ModifyComment_PostgreSQL(DbTableInfo dbTable_source, DbTableInfo dbTable_target)
         {
-            //dbTable.Schema = dbTable.Schema.IsNullOrWhiteSpace() ? FreeSqlMultipleProvider.GetOrm(1).Ado.QuerySingle<string>($"SELECT table_schema FROM information_schema.tables WHERE table_name = '{dbTable.Name}'") : dbTable.Schema;
+            //dbTable.Schema = dbTable.Schema.IsNullOrWhiteSpace() ? FreeSqlMultipleProvider.GetOrm(Config.SameDb ? 0 : 1).Ado.QuerySingle<string>($"SELECT table_schema FROM information_schema.tables WHERE table_name = '{dbTable.Name}'") : dbTable.Schema;
 
             //SQL语句和Orcale一样
-            ModifyComment_Oracle(dbTable);
+            ModifyComment_Oracle(dbTable_source, dbTable_target);
         }
 
         /// <summary>
@@ -459,7 +486,7 @@ ELSE
         {
             try
             {
-                FreeSqlMultipleProvider.GetOrm(1).Ado.QuerySingle<object>(sql);
+                FreeSqlMultipleProvider.GetOrm(Config.SameDb ? 0 : 1).Ado.QuerySingle<object>(sql);
 
                 Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "已更新注释.");
             }

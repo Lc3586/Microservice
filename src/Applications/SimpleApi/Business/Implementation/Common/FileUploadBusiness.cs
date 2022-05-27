@@ -254,7 +254,7 @@ namespace Business.Implementation.Common
 
             var md5 = await Common.FileBusiness.GetMD5(path);
 
-            var validation = PreUploadFile(configId, md5, filename, false, type);
+            var validation = PreUploadFile(configId, md5, filename, false, type, extension);
             if (validation.Uploaded)
             {
                 File.Delete(path);

@@ -175,7 +175,7 @@ namespace Business.Utils.Log
         {
             var sql = string.Empty;
 
-            if (!pagination.FilterToSql(ref sql))
+            if (!pagination.FilterToSql(ref sql, out Dictionary<string, object> @params))
                 throw new MessageException("搜索条件不支持");
 
             if (!pagination.OrderByToSql(ref sql, null, '"', true))

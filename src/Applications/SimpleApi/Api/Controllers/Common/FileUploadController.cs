@@ -91,7 +91,7 @@ namespace Api.Controllers
         /// <param name="key">上传标识</param>
         /// <param name="md5">分片文件MD5值</param>
         /// <returns></returns>
-        [Consumes("applicatoin/octet-stream")]
+        [Consumes("application/octet-stream")]
         [HttpPost("single-chunkfile-arraybuffer/{key}/{md5}")]
         public async Task<object> SingleChunkFileByArrayBuffer(string key, string md5)
         {
@@ -167,7 +167,7 @@ namespace Api.Controllers
         /// <param name="extension">文件拓展名</param>
         /// <param name="filename">文件名</param>
         /// <returns></returns>
-        [Consumes("applicatoin/octet-stream")]
+        [Consumes("application/octet-stream")]
         [HttpPost("single-file-arraybuffer/{configId}")]
         [SwaggerResponse((int)HttpStatusCode.OK, "文件信息", typeof(PersonalFileInfo))]
         public async Task<object> SingleFileByArrayBuffer(string configId, string type, string extension, string filename)

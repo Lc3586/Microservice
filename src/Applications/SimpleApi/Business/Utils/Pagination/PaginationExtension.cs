@@ -16,11 +16,13 @@ namespace Business.Utils.Pagination
         /// </summary>
         /// <param name="pagination">分页设置</param>
         /// <param name="sql">sql语句</param>
+        /// <param name="params">参数</param>
         /// <param name="alias">别名</param>
         /// <param name="character">名称标识符</param>
         /// <returns>筛选条件是否有误</returns>
-        public static bool FilterToSql(this PaginationDTO pagination, ref string sql, string alias = null, char character = '"')
+        public static bool FilterToSql(this PaginationDTO pagination, ref string sql, out Dictionary<string, object> @params, string alias = null, char character = '"')
         {
+            @params = new Dictionary<string, object>();
 #pragma warning disable CS0618 // 类型或成员已过时
             if (pagination.Filter == null || !pagination.Filter.Any())
 #pragma warning restore CS0618 // 类型或成员已过时
@@ -42,21 +44,28 @@ namespace Business.Utils.Pagination
                     if (filter.Group?.Flag == FilterGroupFlag.start)
                         predicate += "(";
 
-                    string field = filter.Field;
-                    if (alias != null)
-                        field = $"{character}{alias}{character}.{character}{field}{character}";
-                    else
-                        field = $"{character}{field}{character}";
+                    string field = filter.Field.Replace("'", "''").Replace("-", "");
 
-                    string value = filter.Value?.ToString();
+                    string value;
                     if (filter.ValueIsField)
                     {
-
+                        value = filter.Value?.ToString();
                         if (alias != null)
                             value = $"{character}{alias}{character}.{character}{value}{character}";
                         else
                             value = $"{character}{value}{character}";
                     }
+                    else
+                    {
+                        value = $"@{field}";
+
+                        @params.Add(field, filter.Value);
+                    }
+
+                    if (alias != null)
+                        field = $"{character}{alias}{character}.{character}{field}{character}";
+                    else
+                        field = $"{character}{field}{character}";
 
                     bool skip = false;
                     switch (filter.Compare)
@@ -67,10 +76,7 @@ namespace Business.Utils.Pagination
                                 skip = true;
                                 break;
                             }
-                            if (filter.ValueIsField)
-                                predicate += $"{field} LIKE {value}";
-                            else
-                                predicate += $"{field} LIKE '{value}'";
+                            predicate += $"{field} LIKE {value}";
                             break;
 #pragma warning disable CS0618 // 类型或成员已过时
                         case FilterCompare.includedIn:
@@ -80,20 +86,14 @@ namespace Business.Utils.Pagination
                                 skip = true;
                                 break;
                             }
-                            if (filter.ValueIsField)
-                                predicate += $"{value} LIKE CONCAT('%',{field},'%')";
-                            else
-                                predicate += $"'{value}' LIKE CONCAT('%',{field},'%')";
+                            predicate += $"{value} LIKE CONCAT('%',{field},'%')";
                             break;
                         case FilterCompare.eq:
                             if (value == null)
                                 predicate += $"{field} is null";
                             else
                             {
-                                if (filter.ValueIsField)
-                                    predicate += $"{field} = {value}";
-                                else
-                                    predicate += $"{field} = '{value}'";
+                                predicate += $"{field} = {value}";
                             }
                             break;
                         case FilterCompare.notEq:
@@ -101,35 +101,20 @@ namespace Business.Utils.Pagination
                                 predicate += $"{field} is not null";
                             else
                             {
-                                if (filter.ValueIsField)
-                                    predicate += $"{field} != {value}";
-                                else
-                                    predicate += $"{field} != '{value}'";
+                                predicate += $"{field} != {value}";
                             }
                             break;
                         case FilterCompare.le:
-                            if (filter.ValueIsField)
-                                predicate += $"{field} <= {value}";
-                            else
-                                predicate += $"{field} <= '{value}'";
+                            predicate += $"{field} <= {value}";
                             break;
                         case FilterCompare.lt:
-                            if (filter.ValueIsField)
-                                predicate += $"{field} < {value}";
-                            else
-                                predicate += $"{field} < '{value}'";
+                            predicate += $"{field} < {value}";
                             break;
                         case FilterCompare.ge:
-                            if (filter.ValueIsField)
-                                predicate += $"{field} >= {value}";
-                            else
-                                predicate += $"{field} >= '{value}'";
+                            predicate += $"{field} >= {value}";
                             break;
                         case FilterCompare.gt:
-                            if (filter.ValueIsField)
-                                predicate += $"{field} > {value}";
-                            else
-                                predicate += $"{field} > '{value}'";
+                            predicate += $"{field} > {value}";
                             break;
                         case FilterCompare.inSet:
                             predicate += $"{field} IN ({value})";
@@ -196,7 +181,7 @@ namespace Business.Utils.Pagination
                         if (item == null)
                             continue;
 
-                        string field = item.Field;
+                        string field = item.Field.Replace("'", "''").Replace("-", "");
                         if (alias != null)
                             field = $" {character}{alias}{character}.{character}{field}{character} ";
                         else
@@ -215,7 +200,7 @@ namespace Business.Utils.Pagination
                 }
                 else if (!string.IsNullOrEmpty(pagination.SortField))
                 {
-                    predicate += $" {(alias != null ? $" {character}{alias}{character}.{character}{pagination.SortField}{character} " : $" {character}{pagination.SortField}{character} ")} {pagination.SortType} ";
+                    predicate += $" {(alias != null ? $" {character}{alias}{character}.{character}{pagination.SortField.Replace("'", "''").Replace("-", "")}{character} " : $" {character}{pagination.SortField.Replace("'", "''").Replace("-", "")}{character} ")} {pagination.SortType} ";
                 }
 
                 if (!string.IsNullOrWhiteSpace(predicate))

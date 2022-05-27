@@ -49,6 +49,8 @@ var ApiUri = (function () {
     ApiUri.BaseUrl = window.BaseUrl;
     ApiUri.SAAuthorized = _a.BaseUrl + '/sa/authorized';
     ApiUri.SALogin = _a.BaseUrl + '/sa/login';
+    ApiUri.SALogout = function (returnUrl) { return "".concat(_a.BaseUrl, "/sa/logout?ReturnUrl=").concat(returnUrl); };
+    ApiUri.JWTAuthorized = _a.BaseUrl + '/jwt/authorized';
     ApiUri.GetToken = _a.BaseUrl + '/jwt/get-token';
     ApiUri.RefreshToken = _a.BaseUrl + '/jwt/refresh-token';
     ApiUri.PersonalFileInfoRename = function (id, filename) { return "".concat(_a.BaseUrl, "/personal-file-info/rename/").concat(id, "?filename=").concat(filename); };

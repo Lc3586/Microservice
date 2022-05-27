@@ -78,44 +78,45 @@ namespace DataMigration.Application.Configures
                      options.FreeSqlDbContextOptions.EntityAssemblyFiles = config.EntityAssemblyFiles;
                  });
 
-                 options.Add(1, options =>
-                 {
-                     options.FreeSqlGeneratorOptions.ConnectionString = config.TargetConnectingString;
-                     options.FreeSqlGeneratorOptions.DatabaseType = config.TargetDataType;
-                     options.FreeSqlGeneratorOptions.LazyLoading = true;
-
-                     options.FreeSqlGeneratorOptions.MonitorCommandExecuting = (cmd) =>
+                 if (!config.SameDb)
+                     options.Add(1, options =>
                      {
-                         Logger.Log(
-                             NLog.LogLevel.Trace,
-                             LogType.系统跟踪,
-                             "Target-FreeSql-MonitorCommandExecuting",
-                             cmd.CommandText);
-                     };
-                     options.FreeSqlGeneratorOptions.MonitorCommandExecuted = (cmd, log) =>
-                     {
-                         Logger.Log(
-                             NLog.LogLevel.Trace,
-                             LogType.系统跟踪,
-                             "Target-FreeSql-MonitorCommandExecuted",
-                             $"命令: {cmd.CommandText},\r\n日志: {log}.");
-                     };
-                     options.FreeSqlGeneratorOptions.HandleCommandLog = (content) =>
-                     {
-                         Logger.Log(
-                             NLog.LogLevel.Trace,
-                             LogType.系统跟踪,
-                             "Target-FreeSql-MonitorCommandExecuting",
-                             content);
-                     };
+                         options.FreeSqlGeneratorOptions.ConnectionString = config.TargetConnectingString;
+                         options.FreeSqlGeneratorOptions.DatabaseType = config.TargetDataType;
+                         options.FreeSqlGeneratorOptions.LazyLoading = true;
 
-                     options.FreeSqlDevOptions.AutoSyncStructure = false;
-                     options.FreeSqlDevOptions.SyncStructureNameConvert = config.SyncStructureNameConvert;
-                     options.FreeSqlDevOptions.SyncStructureOnStartup = false;
+                         options.FreeSqlGeneratorOptions.MonitorCommandExecuting = (cmd) =>
+                         {
+                             Logger.Log(
+                                 NLog.LogLevel.Trace,
+                                 LogType.系统跟踪,
+                                 "Target-FreeSql-MonitorCommandExecuting",
+                                 cmd.CommandText);
+                         };
+                         options.FreeSqlGeneratorOptions.MonitorCommandExecuted = (cmd, log) =>
+                         {
+                             Logger.Log(
+                                 NLog.LogLevel.Trace,
+                                 LogType.系统跟踪,
+                                 "Target-FreeSql-MonitorCommandExecuted",
+                                 $"命令: {cmd.CommandText},\r\n日志: {log}.");
+                         };
+                         options.FreeSqlGeneratorOptions.HandleCommandLog = (content) =>
+                         {
+                             Logger.Log(
+                                 NLog.LogLevel.Trace,
+                                 LogType.系统跟踪,
+                                 "Target-FreeSql-MonitorCommandExecuting",
+                                 content);
+                         };
 
-                     options.FreeSqlDbContextOptions.EnableAddOrUpdateNavigateList = true;
-                     options.FreeSqlDbContextOptions.EntityAssemblyFiles = config.EntityAssemblyFiles;
-                 });
+                         options.FreeSqlDevOptions.AutoSyncStructure = false;
+                         options.FreeSqlDevOptions.SyncStructureNameConvert = config.SyncStructureNameConvert;
+                         options.FreeSqlDevOptions.SyncStructureOnStartup = false;
+
+                         options.FreeSqlDbContextOptions.EnableAddOrUpdateNavigateList = true;
+                         options.FreeSqlDbContextOptions.EntityAssemblyFiles = config.EntityAssemblyFiles;
+                     });
              });
 
             return services;

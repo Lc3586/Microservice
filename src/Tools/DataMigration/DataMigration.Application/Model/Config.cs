@@ -39,6 +39,11 @@ namespace DataMigration.Application.Model
         public DataType TargetDataType { get; set; }
 
         /// <summary>
+        /// 源数据库和目标数据库为同一数据库
+        /// </summary>
+        public bool SameDb { get; set; }
+
+        /// <summary>
         /// 日志组件类型
         /// </summary>
         public LoggerType LoggerType { get; set; }
@@ -76,7 +81,7 @@ namespace DataMigration.Application.Model
         /// <summary>
         /// 表名正则表达式，只生成匹配的表，如：dbo\.TB_.+
         /// </summary>
-        public Dictionary<OperationType, string> TableMatch { get; set; }
+        public Dictionary<OperationType, List<string>> TableMatch { get; set; }
 
         /// <summary>
         /// 指定数据库表

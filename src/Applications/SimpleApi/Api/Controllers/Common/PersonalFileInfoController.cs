@@ -127,10 +127,10 @@ namespace Api.Controllers
         /// </summary>
         /// <param name="data">数据</param>
         /// <returns></returns>
-        [HttpGet("edit")]
+        [HttpPost("edit")]
         [Consumes("application/json")]
         [Produces("application/json")]
-        public async Task<object> Edit(Edit data)
+        public async Task<object> Edit([FromBody] Edit data)
         {
             PersonalFileInfoBusiness.Edit(data);
             return await Task.FromResult(Success());

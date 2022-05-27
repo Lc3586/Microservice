@@ -68,7 +68,7 @@ namespace DataMigration.Application
         [Option("-l|--LoggerType", Description = "日志类型（默认Console）.")]
         public LoggerType LoggerType { get; } = LoggerType.Console;
 
-        [Option("-mll|--MinLogLevel", Description = "需要记录的日志的最低等级（默认Trace）.")]
+        [Option("-mll|--MinLogLevel", Description = "需要记录的日志的最低等级（默认Info）.")]
         public string MinLogLevel { get; }
 
         [Option("-sc|--SourceConnectingString", Description = "源数据库连接字符串.")]
@@ -199,6 +199,12 @@ namespace DataMigration.Application
                 config.TargetDataType = TargetDataType;
                 $"目标数据库类型: {TargetDataType}.\r\n".ConsoleWrite();
 
+                if (config.SourceConnectingString.Equals(config.TargetConnectingString))
+                {
+                    config.SameDb = true;
+                    "检测到源数据库和目标数据库为同一数据库.\r\n".ConsoleWrite();
+                }
+
                 if (!EntityAssemblys.Any_Ex())
                 {
                     $"未设置实体类dll文件，将使用工具自动生成实体类.".ConsoleWrite();
@@ -209,7 +215,7 @@ namespace DataMigration.Application
                 else
                 {
                     config.EntityAssemblyFiles = EntityAssemblys.Select(o => Path.IsPathRooted(o) ? o : Path.GetFullPath(o, AppContext.BaseDirectory)).ToList();
-                    $"实体类dll文件: { string.Join(";", EntityAssemblys) }.\r\n".ConsoleWrite();
+                    $"实体类dll文件: {string.Join(";", EntityAssemblys)}.\r\n".ConsoleWrite();
                 }
 
                 config.OperationType = OperationType;
@@ -224,16 +230,16 @@ namespace DataMigration.Application
                     .Where(o => o != null)
                     .ToDictionary(k => k[0].ToLower(), v => v[1]);
 
-                config.TableMatch = new Dictionary<OperationType, string>();
+                config.TableMatch = new Dictionary<OperationType, List<string>>();
                 TableMatch?.Select(o => o.Match(@$"[$][[](.*?)[]]{{(.*?)}}") ?? new List<string> { o })
                     .ForEach(o =>
                     {
                         if (o.Count == 1)
-                            config.TableMatch.AddOrUpdate(OperationType.All, o[0]);
+                            config.TableMatch.AddOrAppend(OperationType.All, o[0]);
                         else
-                            config.TableMatch.AddOrUpdate(o[0].ToEnum<OperationType>(), o[1]);
+                            config.TableMatch.AddOrAppend(o[0].ToEnum<OperationType>(), o[1]);
                     });
-                $"表名正则表达式: { string.Join(";", config.TableMatch.Select(o => $"{o.Key} => {o.Value}")) }.\r\n".ConsoleWrite();
+                $"表名正则表达式: {string.Join(";", config.TableMatch.Select(o => $"{o.Key} => {o.Value}"))}.\r\n".ConsoleWrite();
 
                 config.Tables = new Dictionary<OperationType, List<string>>();
                 Tables?.Select(o => o.Match(@$"[$][[](.*?)[]]{{(.*?)}}") ?? new List<string> { o })
@@ -244,7 +250,7 @@ namespace DataMigration.Application
                         else
                             config.Tables.AddOrAppend(o[0].ToEnum<OperationType>(), o[1]);
                     });
-                $"指定数据库表: { string.Join(";", config.Tables.Select(o => $"{o.Key} => {string.Join(",", o.Value)}")) }.\r\n".ConsoleWrite();
+                $"指定数据库表: {string.Join(";", config.Tables.Select(o => $"{o.Key} => {string.Join(",", o.Value)}"))}.\r\n".ConsoleWrite();
 
                 config.ExclusionTables = new Dictionary<OperationType, List<string>>();
                 ExclusionTables?.Select(o => o.Match(@$"[$][[](.*?)[]]{{(.*?)}}") ?? new List<string> { o })
@@ -255,7 +261,7 @@ namespace DataMigration.Application
                         else
                             config.ExclusionTables.AddOrAppend(o[0].ToEnum<OperationType>(), o[1]);
                     });
-                $"排除数据库表: { string.Join(";", config.ExclusionTables.Select(o => $"{o.Key} => {string.Join(",", o.Value)}")) }.\r\n".ConsoleWrite();
+                $"排除数据库表: {string.Join(";", config.ExclusionTables.Select(o => $"{o.Key} => {string.Join(",", o.Value)}"))}.\r\n".ConsoleWrite();
 
                 config.SyncStructureNameConvert = SyncStructureNameConvert;
                 $"实体类名 -> 数据库表名&列名，命名转换规则: {SyncStructureNameConvert}.\r\n".ConsoleWrite();
