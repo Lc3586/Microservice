@@ -332,12 +332,13 @@ namespace DataMigration.Application.Handler
 
             var columns_comment = string.Join(
                 ",",
-                dbTable_source.Columns
-                .Where(c => !c.Comment.IsNullOrWhiteSpace())
+                dbTable_target.Columns
+                .Select(x => new { columns_target = x, columns_source = dbTable_source.Columns.Find(y => y.Name.Equals(x.Name, StringComparison.OrdinalIgnoreCase)) })
+                .Where(c => !c.columns_source.Comment.IsNullOrWhiteSpace())
                 .Select(c =>
                 {
-                    Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到列注释: {c.Comment}.");
-                    return $"MODIFY COLUMN {character}{c.Name}{character} {c.DbTypeTextFull} {(c.IsNullable ? "NULL" : "NOT NULL")} {(c.DefaultValue.IsNullOrWhiteSpace() ? c.IsNullable ? "DEFAULT NULL" : "" : $"DEFAULT {c.DefaultValue}")} COMMENT '{c.Comment}'";
+                    Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到列注释: {c.columns_source.Comment}.");
+                    return $"MODIFY COLUMN {character}{c.columns_target.Name}{character} {c.columns_target.DbTypeTextFull} {(c.columns_target.IsNullable ? "NULL" : "NOT NULL")} {(c.columns_target.DefaultValue.IsNullOrWhiteSpace() ? c.columns_target.IsNullable ? "DEFAULT NULL" : "" : $"DEFAULT {c.columns_target.DefaultValue}")} COMMENT '{c.columns_source.Comment}'";
                 }));
 
             if (columns_comment.IsNullOrWhiteSpace() && dbTable_source.Comment.IsNullOrWhiteSpace())
@@ -383,28 +384,32 @@ ELSE EXEC sp_addextendedproperty
                 ExecModifyCommentSQL(sql);
             }
 
-            dbTable_source.Columns
-                .Where(c => !c.Comment.IsNullOrWhiteSpace())
-                .ForEach(c =>
+            dbTable_target.Columns
+                .ForEach(x =>
                 {
-                    Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到列注释: {c.Comment}.");
+                    DbColumnInfo columns_source = dbTable_source.Columns.Find(y => y.Name.Equals(x.Name, StringComparison.OrdinalIgnoreCase));
+
+                    if (columns_source.Comment.IsNullOrWhiteSpace())
+                        return;
+
+                    Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到列注释: {columns_source.Comment}.");
 
                     var sql = $@"
 IF ((SELECT COUNT(*) FROM ::fn_listextendedproperty('MS_Description',
 'SCHEMA', N'{schema}',
 'TABLE', N'{dbTable_target.Name}',
-'COLUMN', N'{c.Name}')) > 0)
+'COLUMN', N'{x.Name}')) > 0)
     EXEC sp_updateextendedproperty
-'MS_Description', N'{c.Comment}',
+'MS_Description', N'{columns_source.Comment}',
 'SCHEMA', N'{schema}',
 'TABLE', N'{dbTable_target.Name}',
-'COLUMN', N'{c.Name}'
+'COLUMN', N'{x.Name}'
 ELSE
     EXEC sp_addextendedproperty
-'MS_Description', N'{c.Comment}',
+'MS_Description', N'{columns_source.Comment}',
 'SCHEMA', N'{schema}',
 'TABLE', N'{dbTable_target.Name}',
-'COLUMN', N'{c.Name}'";
+'COLUMN', N'{x.Name}'";
 
                     ExecModifyCommentSQL(sql);
                 });
@@ -430,13 +435,17 @@ ELSE
                 ExecModifyCommentSQL(sql);
             }
 
-            dbTable_source.Columns
-                .Where(c => !c.Comment.IsNullOrWhiteSpace())
-                .ForEach(c =>
+            dbTable_target.Columns
+                .ForEach(x =>
                 {
-                    Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到列注释: {c.Comment}.");
+                    DbColumnInfo columns_source = dbTable_source.Columns.Find(y => y.Name.Equals(x.Name, StringComparison.OrdinalIgnoreCase));
 
-                    var sql = $"COMMENT ON COLUMN {(schema.IsNullOrWhiteSpace() ? "" : "\"{schema}\".")}\"{dbTable_target.Name}\".\"{c.Name}\" IS '{c.Comment}'";
+                    if (columns_source.Comment.IsNullOrWhiteSpace())
+                        return;
+
+                    Logger.Log(NLog.LogLevel.Info, LogType.系统信息, $"检测到列注释: {columns_source.Comment}.");
+
+                    var sql = $"COMMENT ON COLUMN {(schema.IsNullOrWhiteSpace() ? "" : "\"{schema}\".")}\"{dbTable_target.Name}\".\"{x.Name}\" IS '{columns_source.Comment}'";
 
                     ExecModifyCommentSQL(sql);
                 });

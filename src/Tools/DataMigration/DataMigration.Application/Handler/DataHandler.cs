@@ -1,23 +1,16 @@
 ﻿using DataMigration.Application.Extension;
 using DataMigration.Application.Log;
 using DataMigration.Application.Model;
-using Dm;
 using FreeSql;
 using FreeSql.DatabaseModel;
 using Microservice.Library.Extension;
 using Microservice.Library.FreeSql.Extention;
 using Microservice.Library.FreeSql.Gen;
-using Microsoft.Data.SqlClient;
-using MySqlConnector;
-using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace DataMigration.Application.Handler
 {
@@ -55,9 +48,9 @@ namespace DataMigration.Application.Handler
         string InsertMethodName;
 
         /// <summary>
-        /// 使用批量插入方法
+        /// 工作单元
         /// </summary>
-        bool UseBulkInsertMethod;
+        IRepositoryUnitOfWork UOW;
 
         /// <summary>
         /// 处理
@@ -83,12 +76,22 @@ namespace DataMigration.Application.Handler
         {
             Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "运行事务.");
 
-            SyncData();
 
-            //(bool success, Exception ex) = FreeSqlMultipleProvider.GetOrm(Config.SameDb ? 0 : 1).RunTransaction(SyncData);
-
-            //if (!success)
-            //    throw new ApplicationException("同步数据失败.", ex);
+            UOW = FreeSqlMultipleProvider.GetOrm(Config.SameDb ? 0 : 1).CreateUnitOfWork();
+            try
+            {
+                SyncData();
+                UOW.Commit();
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("同步数据失败.", ex);
+            }
+            finally
+            {
+                UOW.Rollback();
+                UOW.Dispose();
+            }
         }
 
         /// <summary>
@@ -143,21 +146,16 @@ namespace DataMigration.Application.Handler
         {
             InsertMethodName = Config.UseBulkCopy ? Config.TargetDataType switch
             {
-                DataType.MySql or DataType.OdbcMySql => nameof(FreeSqlMySqlConnectorGlobalExtensions.ExecuteMySqlBulkCopy),
-                DataType.SqlServer or DataType.OdbcSqlServer => nameof(FreeSqlSqlServerGlobalExtensions.ExecuteSqlBulkCopy),
-                DataType.PostgreSQL or DataType.OdbcPostgreSQL => nameof(FreeSqlPostgreSQLGlobalExtensions.ExecutePgCopy),
-                DataType.Oracle or DataType.OdbcOracle => nameof(FreeSqlOracleGlobalExtensions.ExecuteOracleBulkCopy),
-                DataType.Dameng or DataType.OdbcDameng => nameof(FreeSqlDamengGlobalExtensions.ExecuteDmBulkCopy),
+                DataType.MySql => nameof(FreeSqlMySqlConnectorGlobalExtensions.ExecuteMySqlBulkCopy),
+                DataType.SqlServer => nameof(FreeSqlSqlServerGlobalExtensions.ExecuteSqlBulkCopy),
+                DataType.PostgreSQL => nameof(FreeSqlPostgreSQLGlobalExtensions.ExecutePgCopy),
+                DataType.Oracle => nameof(FreeSqlOracleGlobalExtensions.ExecuteOracleBulkCopy),
+                DataType.Dameng => nameof(FreeSqlDamengGlobalExtensions.ExecuteDmBulkCopy),
                 _ => null
             } : null;
 
             if (InsertMethodName == null)
-            {
                 InsertMethodName = nameof(IInsert<object>.ExecuteAffrows);
-                UseBulkInsertMethod = false;
-            }
-            else
-                UseBulkInsertMethod = true;
         }
 
         /// <summary>
@@ -206,7 +204,7 @@ namespace DataMigration.Application.Handler
         void SyncDataByDatabase()
         {
             var orm_source = FreeSqlMultipleProvider.GetOrm(0);
-            var orm_target = FreeSqlMultipleProvider.GetOrm(Config.SameDb ? 0 : 1);
+            var orm_target = UOW.Orm;
 
             var tables_source = GetTables(0);
             var tables_target = GetTables(1);
@@ -266,10 +264,11 @@ namespace DataMigration.Application.Handler
                         var iInsert = orm_target.Insert<object>().AsType(entityType);
 
                         iInsert.AppendData(data);
+                        iInsert.NoneParameter(false);
 
-#if DEBUG
-                        iInsert.NoneParameter(true);
-#endif
+                        //#if DEBUG
+                        //                        iInsert.NoneParameter(true);
+                        //#endif
 
                         var result = Insert(iInsert, entityType);
                         rows = result ?? rows;
@@ -296,7 +295,7 @@ namespace DataMigration.Application.Handler
                             goto retry;
                         }
 
-                        break;
+                        throw;
                     }
                 }
             }
@@ -402,7 +401,7 @@ namespace DataMigration.Application.Handler
         /// <param name="disable">禁用</param>
         void SwitchForeignKeyCheck_MySql(bool disable)
         {
-            var ado = FreeSqlMultipleProvider.GetOrm(Config.SameDb ? 0 : 1).Ado;
+            var ado = UOW.Orm.Ado;
             var sql = $"SET FOREIGN_KEY_CHECKS={(disable ? '0' : '1')}";
 
             try
@@ -421,7 +420,7 @@ namespace DataMigration.Application.Handler
         /// <param name="disable">禁用</param>
         void SwitchForeignKeyCheck_SqlServer(bool disable)
         {
-            var ado = FreeSqlMultipleProvider.GetOrm(Config.SameDb ? 0 : 1).Ado;
+            var ado = UOW.Orm.Ado;
             var sql = $"EXEC sp_MSforeachtable @command1='ALTER TABLE ? {(disable ? "NOCHECK" : "CHECK")} CONSTRAINT ALL'";
 
             try
@@ -440,7 +439,7 @@ namespace DataMigration.Application.Handler
         /// <param name="disable">禁用</param>
         void SwitchForeignKeyCheck_Oracle(bool disable)
         {
-            var ado = FreeSqlMultipleProvider.GetOrm(Config.SameDb ? 0 : 1).Ado;
+            var ado = UOW.Orm.Ado;
             var select_sql = @$"
 SELECT 
     'ALTER TABLE ""'||TABLE_NAME||'"" {(disable ? "DISABLE" : "ENABLE")} CONSTRAINT ""'||constraint_name||'"" ' 
@@ -470,7 +469,7 @@ WHERE CONSTRAINT_TYPE='R'
         /// <param name="disable">禁用</param>
         void SwitchForeignKeyCheck_Dameng(bool disable)
         {
-            var ado = FreeSqlMultipleProvider.GetOrm(Config.SameDb ? 0 : 1).Ado;
+            var ado = UOW.Orm.Ado;
             var select_sql = @$"
 SELECT 
     'ALTER TABLE ""'||OWNER||'"".""'||TABLE_NAME||'"" {(disable ? "DISABLE" : "ENABLE")} CONSTRAINT ""'||CONSTRAINT_NAME||'""'
@@ -502,7 +501,7 @@ WHERE a.ID=b.ID
         /// <param name="disable">禁用</param>
         void SwitchForeignKeyCheck_PostgreSQL(bool disable)
         {
-            var ado = FreeSqlMultipleProvider.GetOrm(Config.SameDb ? 0 : 1).Ado;
+            var ado = UOW.Orm.Ado;
             var sql = $"SET session_replication_role='{(disable ? "replica" : "origin")}'";
             try
             {
