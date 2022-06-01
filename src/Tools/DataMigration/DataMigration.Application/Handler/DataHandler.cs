@@ -82,6 +82,7 @@ namespace DataMigration.Application.Handler
             {
                 SyncData();
                 UOW.Commit();
+                Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "事务已提交.");
             }
             catch (Exception ex)
             {
@@ -91,6 +92,7 @@ namespace DataMigration.Application.Handler
             {
                 UOW.Rollback();
                 UOW.Dispose();
+                Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "事务已回滚.");
             }
         }
 
