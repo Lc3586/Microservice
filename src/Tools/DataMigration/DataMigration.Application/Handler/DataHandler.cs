@@ -74,7 +74,7 @@ namespace DataMigration.Application.Handler
         /// </summary>
         void Sync()
         {
-            Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "运行事务.");
+            Logger.Log(NLog.LogLevel.Info, LogType.系统信息, "在目标数据库开启事务.");
 
 
             UOW = FreeSqlMultipleProvider.GetOrm(Config.SameDb ? 0 : 1).CreateUnitOfWork();
