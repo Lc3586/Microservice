@@ -97,9 +97,10 @@ namespace DataMigration.Application.Extension
                 {
                     var dbTable = orm.CodeFirst.GetTableByEntity(o);
 
-                    if ((!tableMatchs.Any_Ex(p => Regex.IsMatch(dbTable.DbName, p, RegexOptions.IgnoreCase) == true)
+                    if (tableMatchs.Any_Ex() || tables.Any_Ex() || exclusionTables.Any_Ex())
+                        if ((!tableMatchs.Any_Ex(p => Regex.IsMatch(dbTable.DbName, p, RegexOptions.IgnoreCase) == true)
                             && (!tables.Any_Ex() || !tables.Any(p => string.Equals(dbTable.DbName, p, StringComparison.OrdinalIgnoreCase))))
-                        || (!exclusionTables.Any_Ex() && exclusionTables.Any(p => string.Equals(dbTable.DbName, p, StringComparison.OrdinalIgnoreCase))))
+                        || (exclusionTables.Any_Ex() && exclusionTables.Any(p => string.Equals(dbTable.DbName, p, StringComparison.OrdinalIgnoreCase))))
                         return;
 
                     result.Add(o);
